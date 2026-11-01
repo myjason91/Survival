@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; manifest-src 'self'; worker-src 'self'; connect-src 'self' https://api.open-meteo.com; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0f1216">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -256,6 +256,24 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   z-index:101; width:52px; height:52px; border-radius:50%; border:2px solid #ffb224; background:rgba(0,0,0,.55);
   color:#ffb224; font-size:26px; font-weight:800; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center}
 #flash-ov .ov-close{border-color:#555; color:#333; background:rgba(255,255,255,.6)}
+/* 무음 카메라 오버레이 */
+#cam-ov{position:fixed; inset:0; z-index:100; background:#000; display:flex; flex-direction:column}
+#cam-ov video{flex:1; width:100%; object-fit:cover; min-height:0}
+#cam-rec{position:fixed; top:calc(12px + env(safe-area-inset-top,0px)); left:50%; transform:translateX(-50%); z-index:101;
+  background:rgba(214,55,46,.9); color:#fff; font-size:12.5px; font-weight:800; padding:5px 12px; border-radius:99px; white-space:nowrap}
+#cam-bar{display:flex; align-items:center; justify-content:center; gap:18px; padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px)); background:#000}
+#cam-shot{width:72px; height:72px; border-radius:50%; background:#fff; border:4px solid #888; cursor:pointer}
+#cam-shot:active{background:#ddd}
+.cam-mini{width:52px; height:52px; border-radius:10px; object-fit:cover; border:1px solid #444; background:#111}
+.cam-ico{width:52px; height:52px; border-radius:50%; border:1px solid #555; background:rgba(255,255,255,.08); color:#fff;
+  font:inherit; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center}
+#cam-msg{color:#bbb; font-size:13px; text-align:center; padding:16px}
+/* 극한 절전 오버레이 */
+#power-ov{position:fixed; inset:0; z-index:100; background:#000; color:#2a2a2a; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; cursor:pointer;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+#power-ov .clock{font-size:17vw; font-weight:800; font-variant-numeric:tabular-nums; color:#3a3a3a; line-height:1}
+#power-ov .pwr-info{font-size:14px; color:#2e2e2e; text-align:center; line-height:1.6}
+#power-ov .pwr-hint{position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); font-size:11.5px; color:#222; text-align:center; padding:0 20px}
 @keyframes pulse{0%{transform:scale(1)} 50%{transform:scale(1.22)} 100%{transform:scale(1)}}
 .metro-dot{width:64px; height:64px; border-radius:50%; background:var(--danger); margin:10px auto}
 .metro-dot.on{animation:pulse .545s infinite}
@@ -762,6 +780,15 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     <p class="sm faint" style="margin-bottom:0">복사가 안 되면 문구를 길게 눌러 직접 복사. "지도에서 보기"는 온라인 전용이며 누르는 순간 좌표가 지도 서비스로 전달된다.</p>
   </div>
   <div class="card">
+    <span class="eyebrow">온라인일 때 · 날씨 기온</span>
+    <h3 style="margin-top:4px">현재 지역 기온 <span class="sm mut">· 체온계 아님</span></h3>
+    <div class="kv"><span class="k">기온</span><span class="v num" id="wx-temp">—</span></div>
+    <div class="kv"><span class="k">체감</span><span class="v num" id="wx-feels">—</span></div>
+    <div class="kv"><span class="k">상태 · 바람</span><span class="v" id="wx-cond">—</span></div>
+    <div class="btnrow" style="margin-top:10px"><button class="btn" id="btn-wx">기온 불러오기</button></div>
+    <p class="sm faint" id="wx-status" style="margin-bottom:0">GPS로 현재 위치의 기온을 조회합니다(인터넷 필요). 기기 센서가 아니라 기상 데이터입니다.</p>
+  </div>
+  <div class="card">
     <h3>국가지점번호란?</h3>
     <p class="sm mut" style="margin-bottom:0">산·바다·들판처럼 주소가 없는 곳을 10m 단위로 표시하는 국가 공식 격자 주소(문자 2 + 숫자 4+4). 119·112 신고 체계가 그대로 인식한다. 등산로·해안 기둥 표지판의 번호와 같은 체계다.</p>
   </div>
@@ -788,7 +815,24 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 12h10"/></svg>
       <b>구조 표지판</b><span>화면에 크게: SOS · 사람 있음</span>
     </button>
+    <button class="tool" id="t-cam">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.2"/></svg>
+      <b>무음 현장 기록</b><span>피해·증거 사진 · 셔터음 없음</span>
+    </button>
+    <button class="tool" id="t-power">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M6.5 7a8 8 0 1 0 11 0"/></svg>
+      <b>극한 절전 화면</b><span>검은 화면 · 배터리 아끼기</span>
+    </button>
   </div>
+
+  <div class="card">
+    <span class="eyebrow">외국군·구조대와 대화</span>
+    <h3 style="margin-top:4px">영어 수첩 <span class="sm mut">· 🔊 소리 / 상대에게 화면 보여주기</span></h3>
+    <p class="sm mut" style="margin-top:0">무장 군인·외국 구조대를 만나면 <b>양손을 보이고 천천히</b>. 급한 동작 금지. 아래를 눌러 들려주거나 화면을 보여주세요.</p>
+    <div id="phrases"></div>
+    <p class="sm faint" style="margin-bottom:0">음성은 기기 내장 엔진으로 재생(오프라인 가능, 기기에 따라 발음 차이). 발음 표기는 근사치입니다.</p>
+  </div>
+
   <div class="card">
     <h3>긴급 전화</h3>
     <div class="tel"><span class="no num">119</span><span class="what">화재 · 구조 · 구급 · 재난 (영상통화 지도 가능)</span></div>
@@ -973,7 +1017,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.0
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.1
   </footer>
 </main>
 </div>
@@ -989,6 +1033,23 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
 
 <div id="flash-ov" hidden><button class="ov-close" id="flash-close" aria-label="종료">✕</button><div class="hint">화면이나 ✕ 를 누르면 종료 · 기기 밝기를 최대로 올리세요</div></div>
 <div id="board-ov" hidden><button class="ov-close" id="board-close" aria-label="종료">✕</button><div class="txt" id="board-txt">SOS</div><div class="hint">가운데를 탭: 문구 변경 (SOS → 사람 있음 → 구조 요청) · ✕ 로 종료</div></div>
+<div id="cam-ov" hidden>
+  <button class="ov-close" id="cam-close" aria-label="종료">✕</button>
+  <div id="cam-rec">● 현장 기록 모드 (촬영 중)</div>
+  <video id="cam-video" playsinline autoplay muted></video>
+  <div id="cam-msg" hidden></div>
+  <div id="cam-bar">
+    <button class="cam-ico" id="cam-flip" aria-label="전후 전환">전환</button>
+    <button id="cam-shot" aria-label="촬영"></button>
+    <a class="cam-ico" id="cam-save" download="현장기록.jpg" aria-label="저장" style="text-decoration:none" hidden>저장</a>
+  </div>
+</div>
+<div id="power-ov" hidden>
+  <div class="clock" id="pwr-clock">--:--</div>
+  <div class="pwr-info" id="pwr-info">배터리 절약 중</div>
+  <div class="pwr-hint">화면을 탭하면 절전 체크리스트 · ✕(위 모서리)로 종료 · <b>화면 밝기는 직접 최소로</b></div>
+  <button class="ov-close" id="power-close" aria-label="종료">✕</button>
+</div>
 
 <script>
 'use strict';
@@ -1291,6 +1352,120 @@ $$('#prep-jump button').forEach(btn=>btn.addEventListener('click',()=>{
   const t=document.getElementById(btn.dataset.j);
   if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
 }));
+
+/* ===== 영어 수첩 (외국군·구조대) ===== */
+const PHRASES=[
+  ['I am a civilian. Please don’t shoot.','저는 민간인입니다. 쏘지 마세요.','아이 앰 어 씨빌리언. 플리즈 돈(트) 슛'],
+  ['I am unarmed.','무기가 없습니다.','아이 앰 언아암드'],
+  ['I need help.','도움이 필요합니다.','아이 니드 헬프'],
+  ['I need a doctor. / Medical help.','의사가 / 치료가 필요합니다.','아이 니드 어 닥터'],
+  ['There are injured people here.','여기 다친 사람이 있습니다.','데어 아 인저어드 피플 히어'],
+  ['I have children with me.','아이들과 함께 있습니다.','아이 해브 칠드런 위드 미'],
+  ['My family is missing.','가족이 실종됐습니다.','마이 패밀리 이즈 미씽'],
+  ['Where is the shelter / safe place?','대피소 / 안전한 곳이 어디입니까?','웨어 이즈 더 쉘터'],
+  ['We have no food or water.','먹을 것과 물이 없습니다.','위 해브 노 푸드 오어 워러'],
+  ['Can you help us evacuate?','대피를 도와주시겠습니까?','캔 유 헬프 어스 이배큐에잇'],
+  ['Do you speak Korean?','한국어 하십니까?','두 유 스픽 코리언'],
+  ['Thank you.','감사합니다.','땡 큐'],
+];
+(function(){
+  const wrap=$('#phrases');if(!wrap)return;
+  wrap.innerHTML=PHRASES.map((p,i)=>`<div class="chk" style="align-items:center">
+    <button class="play" data-say="${i}" style="margin-top:0;flex:none" aria-label="소리">🔊</button>
+    <label style="cursor:default"><b style="font-size:15px">${p[0]}</b><span class="sm" style="color:var(--mut)">${p[1]} · [${p[2]}]</span></label>
+  </div>`).join('');
+  function speak(i){
+    try{const u=new SpeechSynthesisUtterance(PHRASES[i][0].replace(/’/g,"'"));u.lang='en-US';u.rate=.9;
+      speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}
+  }
+  wrap.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b)speak(+b.dataset.say)});
+})();
+
+/* ===== 무음 현장 기록 카메라 ===== */
+(function(){
+  const ov=$('#cam-ov'),video=$('#cam-video'),msg=$('#cam-msg'),rec=$('#cam-rec'),
+    shot=$('#cam-shot'),save=$('#cam-save'),flip=$('#cam-flip'),closeBtn=$('#cam-close'),openBtn=$('#t-cam');
+  let stream=null,facing='environment',lastUrl=null;
+  async function start(){
+    stop();
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});
+      video.srcObject=stream;video.hidden=false;msg.hidden=true;rec.hidden=false;shot.hidden=false;flip.hidden=false;
+    }catch(e){
+      video.hidden=true;rec.hidden=true;shot.hidden=true;flip.hidden=true;
+      msg.hidden=false;
+      msg.textContent=(e&&e.name==='NotAllowedError')
+        ?'카메라 권한이 거부되었습니다. 브라우저 설정에서 허용 후 다시 열어 주세요.'
+        :'카메라를 열 수 없습니다. 설치판(홈 화면 앱)에서만 작동하며, 다른 앱이 카메라를 쓰고 있지 않은지 확인하세요.';
+    }
+  }
+  function stop(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null}
+  function open(){ov.hidden=false;save.hidden=true;requestWake();start()}
+  function close(){stop();ov.hidden=true;if(lastUrl){URL.revokeObjectURL(lastUrl);lastUrl=null}releaseWake()}
+  openBtn.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  flip.addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';start()});
+  shot.addEventListener('click',()=>{
+    if(!stream)return;
+    const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;
+    c.getContext('2d').drawImage(video,0,0);
+    const stamp=new Date().toLocaleString('ko-KR');
+    c.toBlob(b=>{
+      if(!b)return;
+      if(lastUrl)URL.revokeObjectURL(lastUrl);
+      lastUrl=URL.createObjectURL(b);
+      save.href=lastUrl;save.download='현장기록_'+stamp.replace(/[^0-9]/g,'').slice(0,14)+'.jpg';
+      save.hidden=false;
+      // 저장 버튼에 미니 썸네일 느낌: 배경 이미지
+      save.style.backgroundImage=`url(${lastUrl})`;save.style.backgroundSize='cover';save.style.color='transparent';
+    },'image/jpeg',0.92);
+  });
+})();
+
+/* ===== 극한 절전 화면 (앱 레벨) ===== */
+(function(){
+  const ov=$('#power-ov'),clock=$('#pwr-clock'),info=$('#pwr-info'),openBtn=$('#t-power'),closeBtn=$('#power-close');
+  let timer=null;
+  async function paintBattery(){
+    let txt='배터리 절약 중 · 화면을 끄면 가장 절약됩니다';
+    try{if(navigator.getBattery){const b=await navigator.getBattery();txt=`배터리 ${Math.round(b.level*100)}%${b.charging?' (충전 중)':''} · 화면 끄기가 최고 절약`;}}catch(e){}
+    info.textContent=txt;
+  }
+  function tick(){const d=new Date();clock.textContent=d.toLocaleTimeString('ko-KR',{hour12:false,hour:'2-digit',minute:'2-digit'})}
+  function open(){ov.hidden=false;tick();paintBattery();timer=setInterval(tick,10000);/* wake lock 미사용: 화면이 꺼지게 둠 */}
+  function close(){if(timer){clearInterval(timer);timer=null}ov.hidden=true}
+  openBtn.addEventListener('click',open);
+  closeBtn.addEventListener('click',e=>{e.stopPropagation();close()});
+  ov.addEventListener('click',e=>{
+    if(e.target.closest('#power-close'))return;
+    showTab('now');close();openGuide('g-black'); // 정전·통신두절 가이드(절전 체크리스트 포함)로
+  });
+})();
+
+/* ===== 지역 기온 (온라인) ===== */
+(function(){
+  const btn=$('#btn-wx'),st=$('#wx-status');if(!btn)return;
+  const WMO={0:'맑음',1:'대체로 맑음',2:'구름 조금',3:'흐림',45:'안개',48:'짙은 안개',51:'약한 이슬비',53:'이슬비',55:'강한 이슬비',
+    61:'약한 비',63:'비',65:'강한 비',71:'약한 눈',73:'눈',75:'강한 눈',80:'소나기',81:'소나기',82:'강한 소나기',95:'뇌우',96:'우박 뇌우',99:'우박 뇌우'};
+  function fetchWx(lat,lon){
+    st.textContent='기온 불러오는 중…';
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m`)
+      .then(r=>r.json()).then(d=>{
+        const c=d.current;if(!c)throw 0;
+        $('#wx-temp').textContent=Math.round(c.temperature_2m*10)/10+' °C';
+        $('#wx-feels').textContent=Math.round(c.apparent_temperature*10)/10+' °C';
+        $('#wx-cond').textContent=(WMO[c.weather_code]||'—')+' · 바람 '+Math.round(c.wind_speed_10m)+' km/h';
+        st.textContent='조회 시각 '+new Date().toLocaleTimeString('ko-KR',{hour12:false})+' · 기상청/Open-Meteo';
+      }).catch(()=>{st.textContent='오프라인이거나 조회 실패 — 기온은 인터넷 연결 시에만 가능합니다.';});
+  }
+  btn.addEventListener('click',()=>{
+    if(typeof lastFix!=='undefined'&&lastFix){fetchWx(lastFix.lat,lastFix.lon);return;}
+    if(!('geolocation'in navigator)){st.textContent='위치 기능이 없어 기온을 조회할 수 없습니다.';return;}
+    st.textContent='위치 확인 중…';
+    navigator.geolocation.getCurrentPosition(p=>fetchWx(p.coords.latitude,p.coords.longitude),
+      ()=>{st.textContent='위치 권한이 필요합니다. 내 위치 탭에서 GPS를 먼저 켜 보세요.';},{enableHighAccuracy:false,timeout:15000,maximumAge:600000});
+  });
+})();
 </script>
 
 <script>
