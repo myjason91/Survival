@@ -297,6 +297,14 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h4v4M20 4l-7 7M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM7 17l-4 4M11 17l3 3"/></svg>
         <div><b>폭력 상황 회피·탈출</b><span>이기지 말고 벗어나라 · 아이 먼저</span></div>
       </button>
+      <button class="sit" data-g="g-water">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M8.5 14a3.5 3.5 0 0 0 3.5 3.5"/></svg>
+        <div><b>물 안전하게 만들기</b><span>끓이기·소독 비율 · 물이 먼저다</span></div>
+      </button>
+      <button class="sit" data-g="g-temp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v5"/></svg>
+        <div><b>저체온·온열질환</b><span>추위·더위로 쓰러졌을 때</span></div>
+      </button>
       <button class="sit" data-g="g-black">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
         <div><b>정전·통신두절</b><span>문자 우선 · 라디오 · 배터리 아끼기</span></div>
@@ -568,6 +576,51 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     <p class="src">기준: 경찰청·여성안전 호신 수칙 등 공개 자료 종합 (2026.11). 회피·탈출 중심 — 가해·제압 기술은 포함하지 않음.</p>
   </section>
 
+  <!-- ===== 물 정수 ===== -->
+  <section class="guide" id="g-water" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>물 안전하게 만들기</h2></div>
+    <div class="do-now"><span class="eyebrow">사람은 물 없이 3일을 못 넘긴다</span><b>의심스러운 물은 반드시<br>끓이거나 소독한 뒤 마신다.</b></div>
+    <div class="note">단수·침수·오염 시 수돗물도 못 믿는 상황이 온다. 가장 확실한 순서는 <b>거르기 → 끓이기</b>, 끓일 수 없으면 <b>소독(락스)</b>이다. 둘 다 바이러스·세균을 잡는다.</div>
+    <div class="phase"><span class="phase-tag">끓이기 (가장 안전)</span>
+      <ol class="steps">
+        <li><b>탁하면 깨끗한 천·커피필터로 먼저 거른다.</b></li>
+        <li><b>펄펄 끓은 뒤 1분간 더 끓인다.</b><span class="why">고지대(산)에서는 3분. 식힌 뒤 마신다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">소독 — 가정용 락스 (끓이기 불가 시)</span>
+      <ol class="steps">
+        <li><b>향·세정제 없는 일반 염소표백제(차아염소산나트륨 5~6%)만 사용.</b><span class="why">'향기'·'산소계'·'청소용'은 금지. 식용 목적 표시가 없어도 무향 일반 락스면 가능.</span></li>
+        <li><b>맑은 물 1L당 2방울, 탁한 물(거른 뒤) 4방울.</b><span class="why">미국 CDC 기준 1갤런(약 3.8L)당 맑은 물 8방울·탁한 물 16방울 환산. 2L 생수병이면 맑은 물 4방울.</span></li>
+        <li><b>잘 저어 섞고 30분 이상 기다린다.</b><span class="why">희미한 소독약(수영장) 냄새가 나야 정상. 안 나면 같은 양을 한 번 더 넣고 15분 더.</span></li>
+      </ol>
+    </div>
+    <div class="warn">끓이기·소독으로 <b>안 되는 것</b>: 중금속·화학물질·방사능 오염. 공업지대 침수수·화생방 의심수는 소독해도 마시지 말 것. 이럴 땐 생수·정부 급수에 의존.</div>
+    <p class="src">출처: 美 CDC·메릴랜드주 보건부 비상 식수 소독 가이드(한국어판) (2026.11 확인). 락스 농도·상태에 따라 효과 차이.</p>
+  </section>
+
+  <!-- ===== 체온 응급 ===== -->
+  <section class="guide" id="g-temp" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>저체온·온열질환</h2></div>
+    <div class="do-now"><span class="eyebrow">정전·노숙 시 온도가 사람을 죽인다</span><b>떨림이 멈추거나, 말이 어눌하거나,<br>의식이 흐려지면 응급이다.</b></div>
+    <div class="phase"><span class="phase-tag">저체온증 (추위)</span>
+      <ol class="steps">
+        <li><b>젖은 옷을 벗기고 마른 것으로 갈아입힌다.</b><span class="why">젖은 옷은 체온을 급속히 뺏는다. 바닥의 냉기도 차단(깔개).</span></li>
+        <li><b>담요·침낭·은박담요로 머리까지 감싼다. 겨드랑이·사타구니·목을 데운다.</b><span class="why">큰 혈관이 지나는 곳을 데워야 효율적. 핫팩은 수건에 싸서.</span></li>
+        <li><b>의식이 있으면 따뜻한 단 음료.</b><span class="why">술·카페인은 금지(혈관 확장·이뇨로 악화).</span></li>
+        <li><b>심하게 떨지도 않고 의식이 흐리면 중증 — 거칠게 다루지 말고 119.</b><span class="why">갑자기 주무르거나 뜨겁게 하면 부정맥 위험.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">온열질환 (더위)</span>
+      <ol class="steps">
+        <li><b>그늘·시원한 곳으로 옮기고 옷을 느슨하게.</b></li>
+        <li><b>물수건·부채로 식히고, 의식 있으면 물·이온음료를 조금씩.</b><span class="why">목·겨드랑이·사타구니를 집중적으로 식힌다.</span></li>
+        <li><b>의식 저하·경련·땀이 멎고 피부가 뜨겁고 건조 = 열사병, 즉시 119.</b><span class="why">생명이 위험한 응급. 119 오는 동안 계속 식힌다.</span></li>
+        <li><b>의식 없으면 억지로 물을 먹이지 않는다.</b><span class="why">기도로 넘어간다. 눕히고 식히며 구급대 대기.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 질병관리청 한랭·폭염 건강수칙, 대한적십자사 응급처치 (2026.11 확인)</p>
+  </section>
+
   <!-- ===== 정전/통신 ===== -->
   <section class="guide" id="g-black" hidden>
     <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>정전·통신두절</h2></div>
@@ -577,7 +630,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <li><b>재난문자는 데이터·Wi-Fi를 꺼도 수신된다.</b><span class="why">기지국 직접 방송(CBS) 방식. 휴대폰 자체를 끄지는 말 것.</span></li>
         <li><b>음성 폭주 시 문자(SMS)가 더 잘 간다.</b><span class="why">안부는 문자로 보내고 회선을 구조 통신에 양보.</span></li>
         <li><b>재난 시 통신 3사 Wi-Fi가 무료 개방된다 — SSID: <u>Public WiFi Emergency</u></b></li>
-        <li><b>휴대용 라디오 = 최후의 정보망.</b><span class="why">KBS 제1라디오(재난방송 주관): 수도권 FM 97.3 · 대전/세종/충남 FM 94.7 · AM 711kHz (지역별 상이, 평시 확인)</span></li>
+        <li><b>휴대용 라디오 = 최후의 정보망.</b><span class="why">KBS 제1라디오(재난주관방송) — <b>천안 FM 89.9 · 아산권 대전 FM 94.7 · AM 882kHz</b>. 서산 88.1 · 보령 107.3. (수도권은 FM 97.3) 평시에 맞춰 놓고 확인해 둘 것.</span></li>
       </ol>
     </div>
     <div class="phase"><span class="phase-tag">배터리 연장</span>
@@ -730,12 +783,65 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   </div>
 
   <div class="card">
-    <h3>대피소 · 비상급수 미리 확인</h3>
+    <span class="eyebrow">오프라인에서도 바로 뜨는 우리 집 정보</span>
+    <h3 style="margin-top:4px">우리 지역 — 대피소·병원·주유소 등록</h3>
+    <p class="sm mut" style="margin-top:0">통신이 끊기면 지도 검색이 안 된다. 평소에 한 번 확인해 적어두면 이 칸은 오프라인에서도 보인다.</p>
+    <div class="field"><label for="loc-shelter1">집 근처 대피소 ①</label><input id="loc-shelter1" placeholder="예: 탕정 호반써밋 지하주차장 B2 / 도보 2분"></div>
+    <div class="field"><label for="loc-shelter2">집 근처 대피소 ②</label><input id="loc-shelter2" placeholder="예: ○○초등학교 지하 / 도보 6분"></div>
+    <div class="field"><label for="loc-work">회사 근처 대피소</label><input id="loc-work" placeholder="예: 회사 지하 1층"></div>
+    <div class="field"><label for="loc-hospital">가까운 응급실(24시간) 병원</label><input id="loc-hospital" placeholder="예: 단국대병원 응급실 / 041-xxx"></div>
+    <div class="field"><label for="loc-fuel">주유소·충전소</label><input id="loc-fuel" placeholder="예: 집앞 ○○주유소 (평소 연료 절반 이상 유지)"></div>
+    <div class="field"><label for="loc-water">비상급수시설</label><input id="loc-water" placeholder="예: ○○공원 지하수 급수전"></div>
+    <div class="btnrow" style="margin-top:4px">
+      <a class="btn" href="https://www.safekorea.go.kr/idsiSFK/neo/main/main.html" target="_blank" rel="noopener">국민재난안전포털로 조회</a>
+    </div>
+    <p class="sm faint" style="margin-bottom:0">조회: 네이버지도·카카오맵·T맵 "대피소" 검색 또는 안전디딤돌 앱. 아파트는 지하주차장이 대피소인 경우가 많다 — 도보 몇 분인지 재 둘 것. 자동 저장 · 외부 전송 없음.</p>
+  </div>
+
+  <div class="card">
+    <span class="eyebrow">내가 못 말할 때 구조대가 보는 정보</span>
+    <h3 style="margin-top:4px">가족 의료 정보 카드</h3>
+    <p class="sm mut" style="margin-top:0">의식을 잃으면 혈액형·알레르기·복용약이 생사를 가른다. 적어두면 구급대·의료진에게 보여줄 수 있다.</p>
+    <div class="field"><label for="med-blood">가족 혈액형</label><input id="med-blood" placeholder="예: 본인 A+ / 배우자 O+ / 윤재 B+"></div>
+    <div class="field"><label for="med-allergy">알레르기 (약·음식)</label><input id="med-allergy" placeholder="예: 페니실린, 땅콩 — 없으면 '없음'"></div>
+    <div class="field"><label for="med-meds">복용 중인 약 · 지병</label><textarea id="med-meds" rows="2" placeholder="예: 본인 고혈압약(○○정) 매일 / 윤재 천식 흡입기"></textarea></div>
+    <div class="field"><label for="med-contact">비상 의료 연락처</label><input id="med-contact" placeholder="예: 단골 내과 041-xxx / 가족 주치의"></div>
+    <p class="sm faint" style="margin-bottom:0">자동 저장 · 이 기기에만. 종이 사본을 지갑·배낭에 넣어 두면 폰이 꺼져도 쓸 수 있다.</p>
+  </div>
+
+  <div class="card">
+    <h3>대피소 · 비상급수 미리 확인 (요령)</h3>
     <ol class="steps">
-      <li><b>집·회사 근처 민방위 대피소 2곳씩 확인.</b><span class="why">네이버지도·카카오맵·T맵 "대피소" 검색, 안전디딤돌 앱, 국민재난안전포털.</span></li>
+      <li><b>집·회사 근처 민방위 대피소 2곳씩 확인.</b><span class="why">네이버지도·카카오맵·T맵 "대피소" 검색, 안전디딤돌 앱, 국민재난안전포털. 위에 등록해 두면 오프라인에서도 보인다.</span></li>
       <li><b>아파트는 지하주차장이 대피소인 경우가 많다 — 걸어서 몇 분인지 재 보기.</b></li>
       <li><b>비상급수시설(지하수·급수탑) 위치도 같은 앱에서 확인.</b></li>
     </ol>
+  </div>
+
+  <div class="card">
+    <h3>상황별 추가 준비물</h3>
+    <details><summary>🚗 차량 비상 키트 (겨울 고립 대비)</summary><div class="inner">
+      <p>· 연료는 <b>항상 절반 이상</b> — 고립 시 히터가 유일한 난방.</p>
+      <p>· 담요·침낭, 손전등, 창문 깨는 비상망치(+안전벨트 커터), 점프 케이블, 견인줄.</p>
+      <p>· 장갑·목도리·핫팩, 생수·에너지바, 삽·모래주머니(눈길), 성에 제거기.</p>
+      <p>· 눈 속 고립 시: <b>배기구를 눈에서 비워야</b> 일산화탄소 중독을 막는다. 히터는 창을 살짝 열고 간헐적으로.</p>
+    </div></details>
+    <details><summary>👶 아이 있는 집</summary><div class="inner">
+      <p>· 분유·이유식·기저귀·물티슈(최소 3일분), 상비약(해열제·체온계), 여벌옷.</p>
+      <p>· 아이 사진(최근)·인적사항 카드를 배낭에 — 미아 대비.</p>
+      <p>· 아이 학교·어린이집의 대피 장소와 비상 연락망을 미리 확인(위 '우리 지역'에 메모).</p>
+      <p>· 겁먹지 않게 평소에 "대피는 놀이처럼" 한번 연습.</p>
+    </div></details>
+    <details><summary>🐾 반려동물</summary><div class="inner">
+      <p>· 사료·물 3일분, 이동장(케이지), 목줄·배변봉투, 예방접종·등록 정보 사본.</p>
+      <p>· 대피소는 동물 동반이 안 되는 곳이 많다 — 동반 가능 시설·맡길 곳을 미리 정해둘 것.</p>
+      <p>· 동물 전용 비상식량은 사람 것과 분리 보관.</p>
+    </div></details>
+    <details><summary>📄 중요 서류 보관</summary><div class="inner">
+      <p>· 신분증·여권·통장·보험증권·부동산/차량 서류·가족사진을 <b>사진으로 찍어</b> 보관.</p>
+      <p>· 원본은 방수 지퍼백에 모아 배낭에, 사본은 클라우드(이메일 첨부 등)에 한 부.</p>
+      <p>· 현금(잔돈 포함)도 함께 — 정전 시 카드·페이는 전부 멈춘다.</p>
+    </div></details>
   </div>
 
   <!-- ===== 비상식량 가성비 ===== -->
@@ -810,13 +916,13 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <div class="card">
     <h3>개인정보 · 데이터</h3>
     <p class="sm mut">이 앱은 서버가 없다. 체크리스트·가족 계획·위치 등 모든 데이터는 이 기기 브라우저 안에만 존재하며 어디로도 전송되지 않는다. 기기를 바꾸거나 넘기기 전에는 아래로 지울 것.</p>
-    <button class="btn ghost w" id="wipe-all">입력 데이터 전체 삭제 (체크 · 가족 계획)</button>
+    <button class="btn ghost w" id="wipe-all">입력 데이터 전체 삭제 (체크·계획·지역·의료)</button>
   </div>
 
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v1.5
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v1.6
   </footer>
 </main>
 </div>
@@ -1081,9 +1187,12 @@ const KIT=[
   $('#kit-reset').addEventListener('click',()=>{KIT.forEach((_,i)=>$('#kit'+i).checked=false);update()});
 })();
 
-/* family plan autosave */
-['plan-meet1','plan-meet2','plan-contact','plan-etc'].forEach(id=>{
+/* 자동저장 입력란 (가족계획 + 우리지역 + 의료카드) */
+['plan-meet1','plan-meet2','plan-contact','plan-etc',
+ 'loc-shelter1','loc-shelter2','loc-work','loc-hospital','loc-fuel','loc-water',
+ 'med-blood','med-allergy','med-meds','med-contact'].forEach(id=>{
   const el=document.getElementById(id);
+  if(!el)return;
   el.value=store.get('sv.'+id,'');
   el.addEventListener('input',()=>store.set('sv.'+id,el.value));
 });
@@ -1111,7 +1220,7 @@ const KIT=[
   btn.addEventListener('click',()=>{
     if(!armed){
       btn.textContent='한 번 더 누르면 모두 삭제됩니다';btn.style.color='var(--danger)';
-      armed=setTimeout(()=>{armed=null;btn.textContent='입력 데이터 전체 삭제 (체크 · 가족 계획)';btn.style.color=''},3000);
+      armed=setTimeout(()=>{armed=null;btn.textContent='입력 데이터 전체 삭제 (체크·계획·지역·의료)';btn.style.color=''},3000);
       return;
     }
     clearTimeout(armed);
