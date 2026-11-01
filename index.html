@@ -232,12 +232,17 @@ details .inner{padding:2px 13px 12px; font-size:14px}
 .verdict.go{background:var(--ok-bg); border-color:color-mix(in srgb, var(--ok) 40%, transparent)}
 footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1.7}
 /* ---------- overlays ---------- */
+#flash-ov,#board-ov{user-select:none; -webkit-user-select:none; -webkit-touch-callout:none}
 #flash-ov{position:fixed; inset:0; z-index:100; background:#fff; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
 #flash-ov .hint{color:#555; font-size:14px; font-weight:700; padding:0 20px calc(30px + env(safe-area-inset-bottom,0px))}
 #board-ov{position:fixed; inset:0; z-index:100; background:#000; color:#ffb224; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; gap:10px;
   padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
 #board-ov .txt{font-size:min(26vw,170px); font-weight:900; letter-spacing:.02em; line-height:1.05; text-align:center; word-break:keep-all}
 #board-ov .hint{color:#777; font-size:13px}
+.ov-close{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); right:calc(14px + env(safe-area-inset-right,0px));
+  z-index:101; width:52px; height:52px; border-radius:50%; border:2px solid #ffb224; background:rgba(0,0,0,.55);
+  color:#ffb224; font-size:26px; font-weight:800; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center}
+#flash-ov .ov-close{border-color:#555; color:#333; background:rgba(255,255,255,.6)}
 @keyframes pulse{0%{transform:scale(1)} 50%{transform:scale(1.22)} 100%{transform:scale(1)}}
 .metro-dot{width:64px; height:64px; border-radius:50%; background:var(--danger); margin:10px auto}
 .metro-dot.on{animation:pulse .545s infinite}
@@ -922,7 +927,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v1.6
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v1.7
   </footer>
 </main>
 </div>
@@ -935,8 +940,8 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <a href="#prep" id="nav-prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M4 7h16l-1.2 12.2A2 2 0 0 1 16.8 21H7.2a2 2 0 0 1-2-1.8L4 7z"/></svg>대비</a>
 </div></nav>
 
-<div id="flash-ov" hidden><div class="hint">탭하면 종료 · 기기 밝기를 최대로 올리세요</div></div>
-<div id="board-ov" hidden><div class="txt" id="board-txt">SOS</div><div class="hint">탭: 문구 변경 (SOS → 사람 있음 → 구조 요청) · 길게 누르면 종료</div></div>
+<div id="flash-ov" hidden><button class="ov-close" id="flash-close" aria-label="종료">✕</button><div class="hint">화면이나 ✕ 를 누르면 종료 · 기기 밝기를 최대로 올리세요</div></div>
+<div id="board-ov" hidden><button class="ov-close" id="board-close" aria-label="종료">✕</button><div class="txt" id="board-txt">SOS</div><div class="hint">가운데를 탭: 문구 변경 (SOS → 사람 있음 → 구조 요청) · ✕ 로 종료</div></div>
 
 <script>
 'use strict';
@@ -1066,13 +1071,16 @@ $('#t-sos').addEventListener('click',()=>{
   })();
 });
 
-/* signal board */
-const boardOv=$('#board-ov'),boardTxt=$('#board-txt'),boardMsgs=['SOS','사람 있음','구조 요청'];let boardIdx=0,boardHold=null;
+/* signal board — ✕ 버튼으로 종료(길게누르기 제거: 안드로이드 텍스트선택 충돌) */
+const boardOv=$('#board-ov'),boardTxt=$('#board-txt'),boardMsgs=['SOS','사람 있음','구조 요청'];let boardIdx=0;
+function closeBoard(){boardOv.hidden=true;releaseWake()}
 $('#t-board').addEventListener('click',()=>{boardOv.hidden=false;boardIdx=0;boardTxt.textContent=boardMsgs[0];requestWake()});
-boardOv.addEventListener('click',()=>{boardIdx=(boardIdx+1)%boardMsgs.length;boardTxt.textContent=boardMsgs[boardIdx]});
-boardOv.addEventListener('pointerdown',()=>{boardHold=setTimeout(()=>{boardOv.hidden=true;releaseWake()},650)});
-boardOv.addEventListener('pointerup',()=>clearTimeout(boardHold));
-boardOv.addEventListener('pointercancel',()=>clearTimeout(boardHold));
+boardOv.addEventListener('click',e=>{
+  if(e.target.closest('#board-close'))return; // 닫기 버튼은 아래 핸들러가 처리
+  boardIdx=(boardIdx+1)%boardMsgs.length;boardTxt.textContent=boardMsgs[boardIdx];
+});
+$('#board-close').addEventListener('click',e=>{e.stopPropagation();closeBoard()});
+$('#flash-close').addEventListener('click',e=>{e.stopPropagation();closeFlash()});
 
 /* ========== GPS & UTM-K ========== */
 // WGS84 → UTM-K(EPSG:5179) Transverse Mercator (GRS80). 기준 라이브러리(proj4) 대비 오차 < 1cm 검증.
