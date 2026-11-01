@@ -670,15 +670,33 @@ function pickEvent(){
 }
 
 /* ---------- 행동 ---------- */
-function needsCare(){const order=['bleed','contam','co','cold','heat','sick','burn','fracture','injury'];
-  let best=null,score=-1;G.fam.forEach(m=>{m.c.forEach(c=>{const s=100-order.indexOf(c);if(s>score){score=s;best={m,c}}});
+/* 상태별 올바른 처치 — 약으로 낫지 않는 것(일산화탄소·저체온 등)은 약을 쓰지 않는다. 피부 오염은 '씻기' 행동으로만 */
+const TREAT={
+  bleed:{n:'직접압박·붕대',meds:1,t:m=>`두꺼운 거즈로 세게 눌러 붕대로 감았다. ${m.n}의 출혈이 멈췄다.`},
+  co:{n:'신선한 공기·119',t:m=>`${josa(m.n,'을를')} 환기되는 출입구 쪽으로 옮기고 119에 알렸다. 두통이 가라앉는다.`},
+  cold:{n:'체온 유지',need:()=>warmth(),t:m=>warmth()?`담요로 ${m.n}의 머리까지 감싸고 바닥 냉기를 막았다.`:`담요가 없어 겉옷과 박스를 덧댔다.`},
+  heat:{n:'식히기·수분',t:m=>{res('water',-.5);return `그늘에서 물수건으로 ${m.n}의 목·겨드랑이를 식히고 물을 조금씩 먹였다.`}},
+  sick:{n:'경구수액(ORS)',t:m=>{res('water',-1);return `물 1L에 설탕·소금을 타서 ${m.n}에게 조금씩 먹였다.`}},
+  burn:{n:'식힌 뒤 거즈',meds:1,t:m=>`흐르는 물로 식힌 화상 부위를 깨끗한 거즈로 느슨하게 덮었다.`},
+  fracture:{n:'부목 고정',t:m=>`박스와 잡지로 ${m.n}의 위·아래 관절까지 고정했다.`},
+  injury:{n:'소독·붕대',meds:1,t:m=>`${m.n}의 상처를 씻고 붕대를 감았다.`},
+  none:{n:'체력 회복',meds:1,t:m=>`${josa(m.n,'을를')} 눕히고 돌봤다.`}
+};
+function treat(m,c){const T=TREAT[c||'none'];let ok=true,used=false;
+  if(T.meds){if(G.res.meds>0){res('meds',-1);used=true}else ok=chance(c==='bleed'?.75:.55)}
+  if(c==='cold'&&!warmth())ok=chance(.5);
+  const txt=T.t(m);
+  if(ok){if(c==='fracture'){clrC(m,'fracture');addC(m,'injury')}else if(c)clrC(m,c);heal(m,used?14:8);return txt}
+  heal(m,2);return txt+' 하지만 약과 도구가 모자라 상태가 크게 나아지지 않았다.'}
+function needsCare(){const order=['bleed','co','cold','heat','sick','burn','fracture','injury'];
+  let best=null,score=-1;G.fam.forEach(m=>{m.c.forEach(c=>{if(order.indexOf(c)<0)return;const s=100-order.indexOf(c);if(s>score){score=s;best={m,c}}});
     if(!m.c.length&&m.hp<65&&!m.crit&&score<1){score=1;best={m,c:null}}});return best}
 const ACTIONS=[
   {id:'radio',n:'라디오 듣기',ic:'radio',d:()=>'정부 안내 · 다음 2번 힌트',show:()=>true,ok:()=>has('radio'),na:'라디오를 챙기지 못했다'},
   {id:'phone',n:'재난문자 확인',ic:'phone',d:()=>'힌트 1번 · 전력 −8%',show:()=>!has('radio'),ok:()=>G.res.power>=8&&!G.flags.emp,na:()=>G.flags.emp?'통신망 먹통':'전력 부족'},
-  {id:'treat',n:'응급처치',ic:'aid',d:()=>{const n=needsCare();return n?`${n.m.n}${n.c?' · '+CONDS[n.c].n:' · 체력 회복'}${G.res.meds?' · 약 1':' · 약 없음'}`:'다친 사람 없음'},show:()=>true,ok:()=>!!needsCare(),na:'다친 사람 없음'},
+  {id:'treat',n:'응급처치',ic:'aid',d:()=>{const n=needsCare();if(!n)return '다친 사람 없음';const how=TREAT[n.c||'none'];return `${n.m.n} · ${how.n}${how.meds?(G.res.meds?' · 약 1':' · 약 없음'):''}`},show:()=>true,ok:()=>!!needsCare(),na:'다친 사람 없음'},
   {id:'wash',n:'오염 씻어내기',ic:'drop',d:()=>G.flags.tap?'수돗물 사용':'물 3L 사용',show:()=>G.fam.some(m=>m.c.includes('contam')),ok:()=>G.flags.tap||G.res.water>=3},
-  {id:'purify',n:'물 정수',ic:'bleach',d:()=>'수돗물 거르고 락스 · 물 +4L',show:()=>has('bleach')&&G.flags.tap&&G.scen!=='chem',ok:()=>true},
+  {id:'purify',n:'물 정수',ic:'bleach',d:()=>'수돗물 거르고 락스 · 물 +4L',show:()=>has('bleach')&&G.flags.tap&&G.scen==='conv',ok:()=>true},
   {id:'rest',n:'휴식·수면',ic:'moon',d:()=>'전원 체력 +6 · 사기 +2',show:()=>true,ok:()=>true},
   {id:'care',n:'가족 돌보기',ic:'heart',d:()=>has('teddy')&&hasKid()?'사기 +14 (애착인형)':'사기 +8',show:()=>G.fam.length>1,ok:()=>true},
   {id:'scout',n:'주변 살피기',ic:'pin',d:()=>(G.scen==='nuke'&&G.turn<4)?'낙진 시간대 — 피폭 위험!':'물자 발견 가능 · 부상 위험',show:()=>G.loc!=='gym',ok:()=>!G.fam.find(m=>m.id==='me').c.includes('fracture'),warn:()=>G.scen==='nuke'&&G.turn<4,na:'골절로 움직일 수 없다'},
@@ -692,10 +710,9 @@ function doAction(id){
       chem:G.flags.chemAlert?'"고층 실내에서 창문과 환풍구를 밀폐하십시오. 오염 의심수는 마시지 마십시오."':'"공격 원인을 확인 중입니다. 지하 대피를 유지하십시오."'};
     t='KBS 재난방송: '+L[G.scen]}
   else if(id==='phone'){res('power',-8);G.infoTurns=1;if(G.scen!=='chem'||G.flags.chemAlert)reveal();t='재난문자 3건을 확인했다. 정부 안내를 한 번 더 읽어 두었다.'}
-  else if(id==='treat'){const n=needsCare();if(!n){t='돌볼 부상자가 없다.'}else{const m=n.m;
-    if(G.res.meds>0){res('meds',-1);if(n.c)clrC(m,n.c);heal(m,18);t=`${josa(m.n,'을를')} 처치했다.${n.c?' '+CONDS[n.c].n+' 상태가 나아졌다.':''}`}
-    else{let okp=n.c==='bleed'?.8:n.c==='cold'?(warmth()?1:.5):n.c==='contam'?.4:.6;if(chance(okp)){if(n.c)clrC(m,n.c);heal(m,6);t=`약은 없지만 있는 천과 물로 ${josa(m.n,'을를')} 돌봤다. 고비는 넘겼다.`}else{heal(m,2);t=`약도 도구도 없다. ${m.n}의 상태가 그대로다.`}}}}
-  else if(id==='wash'){if(!G.flags.tap)res('water',-3);G.fam.forEach(m=>clrC(m,'contam'));heal('all',3);t='비누와 흐르는 물로 15분씩 씻었다. 오염된 옷은 비닐에 묶었다.'}
+  else if(id==='treat'){const n=needsCare();if(!n){t='돌볼 부상자가 없다.'}else{t=treat(n.m,n.c)}}
+  else if(id==='wash'){if(G.flags.tap){G.fam.forEach(m=>clrC(m,'contam'));heal('all',3);t='비누와 흐르는 물로 15분 이상 씻었다. 오염된 옷은 비닐에 묶었다.'}
+    else{res('water',-3);const m=G.fam.find(x=>x.c.includes('contam'));if(m&&chance(.6)){clrC(m,'contam');t=`수돗물이 없어 생수 3L로 ${m.n}의 오염 부위만 씻어냈다. 다행히 반점이 가라앉았다.`}else t='생수 3L로는 15분을 흘려 씻기에 턱없이 모자랐다. 오염이 남아 있다.'}}
   else if(id==='purify'){res('water',4);t='천으로 거른 수돗물에 무향 락스를 1L당 4방울, 30분 기다렸다. 희미한 소독약 냄새 — 정상이다.'}
   else if(id==='rest'){if(!G.flags.dry)heal('all',6);else heal('all',2);mor(2);t=G.flags.dry?'목이 말라 깊이 잠들지 못했다.':'교대로 눈을 붙였다. 몸이 조금 풀렸다.'}
   else if(id==='care'){mor(8);if(has('teddy')&&hasKid())mor(6);t=hasKid()?(has('teddy')?'애착인형을 안은 아이가 처음으로 웃었다. 끝말잇기를 하며 시간을 보냈다.':'아이와 손바닥 그림자놀이를 했다. 서로의 체온이 위안이 된다.'):'이야기를 나누며 다음 할 일을 함께 정했다.'}
@@ -716,7 +733,7 @@ function scout(){
 }
 
 /* ---------- 턴 종료 ---------- */
-const RATION={full:{n:'충분히',w:1,f:.375,hp:2,mo:2,d:'1인 하루 4L · 1.5끼니'},base:{n:'기본',w:.5,f:.25,hp:0,mo:0,d:'1인 하루 2L · 1끼니'},save:{n:'절약',w:.25,f:.125,hp:-2,mo:-3,d:'1인 하루 1L · 0.5끼니'}};
+const RATION={full:{n:'충분히',w:1,f:.375,hp:2,mo:2,d:'1인 하루 4L · 1.5끼니'},base:{n:'기본',w:.5,f:.25,hp:0,mo:0,d:'1인 하루 2L · 1끼니'},save:{n:'절약',w:.25,f:.125,hp:-2,mo:-3,d:'1인 하루 1L · 0.5끼니'},lean:{n:'식량만 절약',w:.5,f:.125,hp:-1,mo:-2,d:'물 2L는 지키고 0.5끼니'}};
 function endTurn(){
   FX=[];const notes=[];const n=G.fam.length;const R=RATION[G.ration];
   let wNeed=R.w*n+.25*G.fam.filter(m=>m.c.includes('sick')).length+(G.season==='summer'&&G.loc!=='gym'?.1*n:0);
@@ -847,14 +864,14 @@ E({id:'mv_nuke2',art:'clock',tone:'amber',cat:'낙진 전 10분',timed:8,title:'
   ],timeout:()=>{G.loc='park';mor(-2);return '이웃을 따라 지하주차장으로 내려갔다.'},
   lesson:'폭풍이 지나면 낙진 도달 전 약 10분 안에 가장 가까운 콘크리트 건물의 지하·중심부로. 차량·조립식 건물은 방호가 안 된다.',src:SRC.nuke});
 E({id:'mv_chem',art:'wind',tone:'amber',cat:'대피 이동',timed:5,title:'둔탁한 폭발음',
-  text:'멀리서 둔탁한 폭발음. 계단 창틈으로 마늘 같은 매캐한 냄새가 스민다.',
-  hint:'원인 모를 냄새·연기엔 코와 입부터 막는다.',
+  text:'멀리서 둔탁한 폭발음. 계단 창틈으로 매캐한 연기 냄새가 스민다.',
+  hint:'원인 모를 연기·냄새엔 코와 입부터 막고, 음성방송에 귀를 기울인다.',
   choices:[
-    {t:'젖은 수건·마스크로 코와 입을 막고 계속 내려간다',ok:true,go:()=>{G.flags.covered=1;return '모두 소매와 수건으로 얼굴을 가렸다.'}},
+    {t:'젖은 수건·마스크로 코와 입을 막고, 음성방송에 귀 기울이며 대피를 이어 간다',ok:true,go:()=>{G.flags.covered=1;return '모두 소매와 수건으로 얼굴을 가렸다.'}},
     {t:'1층 밖으로 나가 냄새의 정체를 확인한다',ok:false,go:()=>{hurt('me',14);addC(M('me'),'contam');pol(15);return '눈이 타는 듯 따갑다. 서둘러 돌아왔다.'}},
     {t:'신경 쓰지 않고 서두른다',ok:false,go:()=>{hurt('all',4);pol(5);return '계단을 내려갈수록 기침이 났다.'}}
   ],timeout:()=>{hurt('all',4);pol(5);return '머뭇거리는 사이 냄새가 짙어졌다.'},
-  lesson:'원인 모를 냄새·연기는 화학 공격일 수 있다. KF 마스크·젖은 수건으로 코와 입부터 막고 공식 경보(음성방송)를 확인한다.',src:SRC.chem});
+  lesson:'원인 모를 연기·냄새엔 KF 마스크·젖은 수건으로 코와 입부터 막는다. 화생방경보(음성방송)가 나오면 그때는 지하가 아니라 높은 곳으로 간다.',src:SRC.chem});
 E({id:'mv_loc',art:'pin',tone:'amber',cat:'대피 장소',timed:8,title:'어디로 갈까',
   text:'1층 현관. 사이렌은 계속된다.',
   hint:'가장 가까운 지하로 — 지하철역·지하주차장·건물 지하. 아파트는 단지 지하주차장이 지정 대피소인 경우가 많다.',
@@ -881,8 +898,8 @@ E({id:'settle',art:'group',tone:'amber',cat:'자리 잡기',title:()=>G.loc==='h
   hint:()=>G.loc==='home'?'지하가 있으면 지하가 우선이다. 실내 안쪽은 지하가 없을 때의 차선책.':'지하에서도 유리·출입구·외벽에서 떨어진 깊은 안쪽이 기준이다.',
   lesson:()=>G.loc==='home'?'공습엔 가장 가까운 지하가 원칙이다. 집 안 욕실·안쪽 방은 지하가 없을 때만 쓰는 차선책이다.':'지하로 들어간 뒤에도 유리·출입구·외벽에서 떨어진 안쪽이 안전하다. 폭풍과 파편은 수평으로도 온다.',
   choices:()=>G.loc==='home'?[
-    {t:'멎은 틈에 계단으로 단지 지하주차장까지 내려간다',ok:true,go:()=>{G.loc='park';mor(2);return '계단으로 B2까지. 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
-    {t:'욕실 안에서 버틴다',ok:false,go:()=>{mor(-5);if(chance(.5)){const v=victim();hurt(v,10);addC(v,'injury');return `근처 폭발로 욕실 거울이 깨졌다. ${josa(v.n,'이가')} 파편에 다쳤다.`}return '밤새 건물이 흔들렸다. 아무도 잠들지 못했다.'}}
+    {t:'멎은 건 해제가 아니다. 지금 계단으로 단지 지하주차장까지 내려간다',ok:true,go:()=>{G.loc='park';mor(2);return '계단으로 B2까지. 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
+    {t:'욕실 안에서 버틴다',s:'지하가 없을 때의 차선책',ok:null,go:()=>{mor(-5);if(chance(.5)){const v=victim();hurt(v,10);addC(v,'injury');return `근처 폭발로 욕실 거울이 깨졌다. ${josa(v.n,'이가')} 파편에 다쳤다.`}return '밤새 건물이 흔들렸다. 아무도 잠들지 못했다.'}}
   ]:[
     {t:'출입구에서 가장 먼 깊은 안쪽',s:'기둥·내벽 쪽',ok:true,go:()=>{mor(4);return '폭음이 울릴 때마다 출입구 쪽 사람들이 몸을 숙였다. 안쪽은 비교적 조용했다.'}},
     {t:'출입구 바로 옆',s:'공기 좋고 나가기 쉽다',ok:false,go:()=>{if(chance(.5)){const v=victim();hurt(v,10);addC(v,'injury');return `근처 폭발의 압력파와 파편이 출입구로 밀려 들어왔다. ${josa(v.n,'이가')} 파편에 긁혔다.`}mor(-4);return '폭음이 출입구를 타고 그대로 들어온다. 아무도 잠들지 못했다.'}},
@@ -967,9 +984,9 @@ E({id:'outside',art:'store',tone:'red',cat:'외출 유혹',title:'편의점에 �
   text:'폭발 후 약 18시간. 이웃이 "길 건너 편의점 생수 가져오자, 지금 아무도 없다"며 같이 가자고 한다.',
   hint:'방사선은 처음 몇 시간이 가장 강하고 빠르게 약해진다. 최소 24시간 실내 대기.',
   choices:[
-    {t:'최소 24시간은 나가지 않는다. 배급을 줄여 버틴다',ok:true,go:()=>{mor(-2);return '나갔던 이웃은 생수를 들고 왔지만, 다음 날부터 심하게 구토했다.'}},
+    {t:'최소 24시간은 나가지 않는다. 물은 필요한 만큼 마시고, 활동과 식량을 줄인다',ok:true,go:()=>{mor(-2);return '나갔던 이웃은 생수를 들고 왔지만, 다음 날부터 심하게 구토했다.'}},
     {t:'마스크 쓰고 빠르게 다녀온다',ok:false,go:()=>{res('water',8);pol(30);hurt('me',8);return '생수 8L. 하지만 밖에 있던 20분 동안 피폭 지수가 크게 올랐다.'}}
-  ],lesson:'낙진의 방사선은 처음 몇 시간이 가장 강하다. 최소 24시간은 실내에 머물고, 물자 확보는 정부 안내 이후로 미룬다.',src:SRC.nuke});
+  ],lesson:'낙진의 방사선은 처음 몇 시간이 가장 강하다. 최소 24시간은 실내에 머물고, 물자 확보는 정부 안내 이후로 미룬다. 당국 지시가 없으면 마실 물은 줄이지 않는다.',src:SRC.nuke+' · Ready.gov 식수 관리'});
 E({id:'reunite',art:'car',tone:'amber',cat:'가족',title:'어머니를 모시러 가야 한다',
   text:()=>fam1()?'시내 요양원에 계신 어머니와 연락이 끊겼다. 지금이라도 차로 가야 할 것 같다.':'배우자가 시내 요양원에 계신 어머니와 연락이 끊겼다며, 지금 차로 가야 한다고 한다.',
   hint:'가족이 흩어져 있어도 각자 실내 대기가 더 안전하다. 재회는 나중에.',
@@ -1021,7 +1038,7 @@ E({id:'chemwater',art:'bleach',tone:'amber',cat:'식수',title:'빗물과 락스
   text:'수돗물이 끊겼다. 베란다 양동이에 받아 둔 빗물이 있다. 누군가 "락스 몇 방울이면 마실 수 있다"고 한다.',
   hint:'끓이기·소독으로 안 되는 것 — 중금속·화학물질·방사능 오염. 화생방 의심수는 마시지 않는다.',
   choices:[
-    {t:'오염 의심수는 마시지 않는다. 생수를 아끼며 급수를 기다린다',ok:true,go:()=>{res('water',2*G.fam.length);mor(-2);return '구청 급수차가 다음 날 아침 왔다. 빗물을 마신 집에선 복통 환자가 나왔다.'}},
+    {t:'오염 의심수는 마시지 않는다. 남은 생수를 마시며 급수를 기다린다',ok:true,go:()=>{res('water',2*G.fam.length);mor(-2);return '구청 급수차가 다음 날 아침 왔다. 빗물을 마신 집에선 복통 환자가 나왔다.'}},
     {t:'락스로 소독해서 마신다',ok:false,go:()=>{res('water',6);const v=victim();addC(v,'sick');hurt(v,10);return `물은 늘었지만 ${v.n}에게 구토와 복통. 소독은 세균만 잡는다.`}},
     {t:'끓여서 마신다',ok:false,go:()=>{res('water',5);const v=victim();addC(v,'sick');hurt(v,10);return `끓여도 화학물질은 그대로다. ${v.n}에게 구토와 복통.`}}
   ],lesson:'끓이기·락스 소독은 세균·바이러스만 잡는다. 화학물질·중금속·방사능 오염수는 소독해도 마시지 말고 생수·정부 급수에 의존한다.',src:SRC.water});
@@ -1060,46 +1077,46 @@ E({id:'bleed',pool:1,w:2,art:'drop',tone:'red',cat:'대량 출혈',title:'피가
     {t:'휴대폰 충전 케이블로 상처 위를 꽉 묶는다',ok:false,go:()=>{mor(-5);return '가는 줄은 살을 파고들 뿐 피를 막지 못했다.'}}
   ],lesson:'거의 모든 출혈은 직접압박으로 멈춘다. 최소 10분, 확인하려고 떼지 말고, 피가 배어 나오면 그 위에 덧댄다.',src:SRC.bleed,guide:'aid'});
 E({id:'bleed2',art:'drop',tone:'red',cat:'지혈대',title:'압박으로 안 멈춘다',
-  text:'출혈이 다시 거세졌다. 손에 허리띠와 볼펜이 있다.',
+  text:'출혈이 다시 거세졌다. 손에 허리띠, 부러진 빗자루 자루, 볼펜이 있다.',
   hint:'상처보다 심장 쪽 5~7cm, 관절은 피해서 감고, 피가 멈출 때까지 조인 뒤 감은 시각을 적는다.',
   choices:[
-    {t:'상처보다 심장 쪽 5~7cm에 감아 피가 멈출 때까지 조이고, 시각을 적는다',ok:true,go:()=>{trust(1);mor(3);return `볼펜으로 이마에 "${clockAt(G.turn)} 지혈대"라고 적었다. 출혈이 멈췄다.`}},
+    {t:'상처보다 심장 쪽 5~7cm에 허리띠를 감고, 막대를 돌려 피가 멈출 때까지 조인 뒤 시각을 적는다',ok:true,go:()=>{trust(1);mor(3);return `볼펜으로 이마에 "${clockAt(G.turn)} 지혈대"라고 적었다. 출혈이 멈췄다.`}},
     {t:'상처 바로 아래(발 쪽)에 감는다',ok:false,go:()=>{mor(-6);return '피는 심장 쪽에서 내려온다. 출혈은 계속됐고 다른 이웃이 다시 감았다.'}},
     {t:'5분마다 풀어서 상태를 확인한다',ok:false,go:()=>{mor(-4);return '풀 때마다 피가 다시 쏟아졌다.'}}
-  ],lesson:'지혈대는 출혈 부위보다 심장 쪽 5~7cm, 아플 만큼 조이고, 감은 시각을 기록한다. 한번 감으면 임의로 풀지 않는다.',src:SRC.bleed,guide:'aid'});
+  ],lesson:'지혈대는 출혈 부위보다 심장 쪽 5~7cm에 넓은 띠를 감고 막대를 돌려 아플 만큼 조인 뒤, 감은 시각을 기록한다. 끈·전선처럼 가는 것은 금지, 한번 감으면 임의로 풀지 않는다.',src:SRC.bleed,guide:'aid'});
 E({id:'choke',pool:1,art:'hand',tone:'red',cat:'질식',
   pre:()=>{G.cur.v=(hasKid()?M('kid'):victim('other')).id},
   title:()=>V().id==='me'?'목에 걸렸다 — 혼자다':'목에 걸렸다',
   text:()=>V().id==='me'?'비상식량을 급히 먹다 덩어리가 목에 걸렸다. 기침도, 소리도 나지 않는다. 주변엔 아무도 없다.':`${vn('이가')} 비상식량을 먹다 목을 감싸쥔다. 기침도, 소리도 나지 않는다.`,
   hint:'기침도 소리도 못 내면 등 두드리기 5회 → 복부 밀어올리기 5회를 반복한다.',
   choices:()=>V().id==='me'?[
-    {t:'의자 등받이·모서리에 명치를 대고 체중으로 밀어올린다',ok:true,go:()=>{mor(2);return '두 번째에 덩어리가 튀어나왔다. 거친 숨을 몰아쉬었다.'}},
+    {t:'의자 등받이·모서리에 윗배(배꼽 위, 명치 아래)를 대고 체중으로 밀어올린다',ok:true,go:()=>{mor(2);return '두 번째에 덩어리가 튀어나왔다. 거친 숨을 몰아쉬었다.'}},
     {t:'물을 마셔 넘긴다',ok:false,go:()=>{hurt('me',15);return '물은 넘어가지 않았다. 바닥을 구르다 간신히 뱉어냈다.'}}
   ]:[
     {t:'등 두드리기 5회, 안 되면 뒤에서 안아 복부 밀어올리기 5회 반복',ok:true,go:()=>{mor(4);return `세 번째 밀어올리기에 덩어리가 튀어나왔다. ${vn('이가')} 크게 숨을 들이쉰다.`}},
     {t:'물을 마시게 한다',ok:false,go:()=>{hurt(V(),15);mor(-6);return '물은 넘어가지 않았다. 옆 사람이 달려와 등을 두드려 겨우 뱉어냈다.'}},
     {t:'입에 손가락을 넣어 꺼내려 한다',ok:false,go:()=>{hurt(V(),12);return '보이지 않는 이물질을 손가락이 더 깊이 밀어 넣었다. 간신히 등을 두드려 빼냈다.'}}
-  ],lesson:'기침을 할 수 있으면 기침하게 두고, 소리·기침이 안 되면 등 두드리기 5회 ↔ 복부 밀어올리기 5회. 혼자면 의자 등받이에 명치를 대고 밀어올린다. 보이지 않는 이물질에 손가락을 넣지 않는다.',src:SRC.aid,guide:'aid'});
+  ],lesson:'기침을 할 수 있으면 기침하게 두고, 소리·기침이 안 되면 등 두드리기 5회 ↔ 복부 밀어올리기 5회(1세 미만 영아는 등 5회 ↔ 가슴 5회). 혼자면 의자 등받이에 윗배를 대고 밀어올린다. 보이지 않는 이물질에 손가락을 넣지 않는다.',src:SRC.aid,guide:'aid'});
 E({id:'diarrhea',pool:1,w:()=>G.flags.dirtyWater?4:1,art:'drop',tone:'amber',cat:'탈수',
   pre:()=>{const v=hasKid()?M('kid'):victim();G.cur.v=v.id;addC(v,'sick')},
   title:'설사가 멈추지 않는다',
   text:()=>`${vn('이가')} 밤새 설사를 반복하더니 축 처졌다. 입술이 바싹 말랐다.`,
   hint:'물만 많이 마시는 것보다 경구수액(ORS): 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술을 조금씩 자주.',
   choices:[
-    {t:'깨끗한 물 1L에 설탕 6작은술·소금 ½작은술을 타서 조금씩 자주 먹인다',need:()=>G.res.water>=1,na:'물이 1L도 없다',ok:true,go:()=>{res('water',-1);clrC(V(),'sick');heal(V(),8);return `눈물 같은 짠맛. 몇 시간 뒤 ${vn('이가')} 소변을 봤다. 고비를 넘겼다.`}},
+    {t:'물 1L에 설탕 6작은술·소금 ½작은술을 타서 조금씩 먹이며, 의료진·119에 알린다',need:()=>G.res.water>=1,na:'물이 1L도 없다',ok:true,go:()=>{res('water',-1);clrC(V(),'sick');heal(V(),8);return `눈물 같은 짠맛. 대피소 의료진이 상태를 살폈고, 몇 시간 뒤 ${vn('이가')} 소변을 봤다. 고비를 넘겼다.`}},
     {t:'맹물을 한꺼번에 많이 마시게 한다',ok:false,go:()=>{res('water',-1.5);hurt(V(),4);return '물을 마셨지만 곧 다시 설사. 빠져나간 전해질은 채워지지 않았다.'}},
     {t:'설사가 멈출 때까지 아무것도 먹이지 않는다',ok:false,go:()=>{hurt(V(),12);return '탈수가 심해졌다. 아이·노인은 탈수에 특히 취약하다.'}}
-  ],lesson:'설사·탈수엔 경구수액(ORS)이 맹물보다 빠르다. 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술(WHO 비율), 조금씩 자주.',src:SRC.ors+' · 생존 수첩 물 안전',guide:'aid'});
+  ],lesson:'설사·탈수엔 경구수액(ORS)이 맹물보다 빠르다. 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술(WHO 비율), 조금씩 자주. 축 처지거나 소변이 줄면 위험 신호 — 의료진·119에 알린다.',src:SRC.ors+' · 생존 수첩 물 안전',guide:'aid'});
 E({id:'cold',pool:1,cond:()=>['winter','cool'].includes(G.season)&&['park','bldg','subway'].includes(G.loc),w:()=>G.season==='winter'?3:1,art:'snow',tone:'blue',cat:'저체온',
   pre:()=>{const v=hasKid()?M('kid'):victim();G.cur.v=v.id;addC(v,'cold')},
   title:'떨림이 멈췄다',
   text:()=>`콘크리트 바닥 냉기가 올라온다. 심하게 떨던 ${vn('이가')} 어느새 떨지 않고, 말이 어눌하다.`,
   hint:'떨림이 멈추고 말이 어눌하면 응급이다. 젖은 옷 교체, 담요로 머리까지, 바닥 냉기 차단.',
   choices:[
-    {t:'마른 옷으로 갈아입히고 담요로 머리까지 감싸 바닥 냉기를 막는다',ok:true,go:()=>{if(warmth()){clrC(V(),'cold');heal(V(),6);return `담요로 머리까지 감싸고 박스를 깔았다. 30분 뒤 ${V().n}의 볼에 혈색이 돌았다.`}if(chance(.5)){clrC(V(),'cold');return '담요가 없어 겉옷과 박스를 덧댔다. 조금씩 나아졌다.'}return '담요가 없다. 겉옷을 덧댔지만 냉기를 다 막지 못했다.'}},
+    {t:'119·의료진을 부르고, 마른 옷으로 갈아입혀 담요로 머리까지 감싸 바닥 냉기를 막는다',s:'조심스럽게 다룬다',ok:true,go:()=>{if(warmth()){clrC(V(),'cold');heal(V(),6);return `담요로 머리까지 감싸고 박스를 깔았다. 30분 뒤 ${V().n}의 볼에 혈색이 돌았다.`}if(chance(.5)){clrC(V(),'cold');return '담요가 없어 겉옷과 박스를 덧댔다. 조금씩 나아졌다.'}return '담요가 없다. 겉옷을 덧댔지만 냉기를 다 막지 못했다.'}},
     {t:'팔다리를 세게 주무르고 뜨거운 물에 손을 담근다',ok:false,go:()=>{hurt(V(),12);return `갑자기 주무르거나 뜨겁게 하면 부정맥 위험이 있다. ${vn('이가')} 더 처졌다.`}},
     {t:'몸 녹이라고 진한 커피를 마시게 한다',ok:false,go:()=>{hurt(V(),6);return '카페인은 이뇨 작용으로 탈수와 저체온을 악화시킨다.'}}
-  ],lesson:'저체온은 젖은 옷 교체 → 담요로 머리까지 감싸기 → 겨드랑이·목 데우기. 술·카페인은 금지, 거칠게 주무르지 않는다.',src:SRC.cold,guide:'aid'});
+  ],lesson:'떨림이 멈추고 의식이 흐리면 중증 저체온 — 119를 부르고 거칠게 다루지 않는다. 젖은 옷 교체 → 담요로 머리까지 → 겨드랑이·목 데우기. 술·카페인 금지.',src:SRC.cold,guide:'aid'});
 E({id:'heat',pool:1,cond:()=>G.season==='summer'&&['park','bldg','subway'].includes(G.loc),w:3,art:'thermo',tone:'red',cat:'열사병',title:'땀이 멎었다',
   text:'환기 안 되는 대피소가 30℃를 넘었다. 옆 할머니의 땀이 멎고 피부가 뜨겁고 말랐다. 대답이 어눌하다.',
   hint:'땀이 멎고 피부가 뜨겁고 건조하면 열사병 — 즉시 119, 계속 식히고, 의식이 흐리면 물을 먹이지 않는다.',
@@ -1134,22 +1151,23 @@ E({id:'loot',pool:1,scen:['conv'],cond:()=>G.turn>=3&&G.loc!=='home',art:'store'
   ],lesson:'경보가 해제되기 전 대피소를 벗어나는 것 자체가 가장 큰 위험이다.',src:SRC.air});
 E({id:'wifi',pool:1,cond:()=>!G.flags.emp&&G.res.power>=5,art:'wifi',tone:'blue',cat:'통신',title:'Public WiFi Emergency',
   text:'휴대폰에 처음 보는 와이파이가 잡힌다. "Public WiFi Emergency" — 비밀번호가 없다.',
-  hint:'재난 때 통신 3사 와이파이가 무료로 개방된다. 필요한 것만 확인하고 배터리를 아낀다.',
+  hint:'통신 재난이 발령되면 통신 3사 와이파이가 무료로 개방된다. 필요한 것만 확인하고 배터리를 아낀다.',
   choices:[
     {t:'접속해 정부 안내와 가족 문자만 확인하고 끊는다',ok:true,go:()=>{res('power',-3);G.infoTurns+=1;mor(5);return '가족 단톡에 "전원 무사"가 올라와 있었다.'}},
     {t:'접속해서 영상 뉴스를 계속 본다',ok:false,go:()=>{res('power',-22);mor(2);return '속보 영상은 불안만 키웠고, 배터리가 22% 사라졌다.'}},
     {t:'가짜 와이파이일 수 있으니 무시한다',ok:false,go:()=>{mor(-2);return '옆 사람들은 가족 소식을 확인하고 있었다.'}}
-  ],lesson:'재난 때 통신 3사 와이파이가 무료 개방된다(SSID: Public WiFi Emergency). 필요한 확인만 하고 배터리를 아낀다.',src:SRC.comm});
+  ],lesson:'통신 재난 경보가 발령되면 통신 3사 와이파이가 무료 개방된다(SSID: Public WiFi Emergency). 필요한 확인만 하고 배터리를 아낀다.',src:SRC.comm});
 E({id:'battery',pool:1,cond:()=>!G.flags.emp&&G.res.power<45&&!G.flags.saver,w:3,art:'battery',tone:'amber',cat:'배터리',
   title:()=>`배터리 ${Math.round(G.res.power)}%`,
   text:()=>`휴대폰 배터리가 ${Math.round(G.res.power)}%다. 다음 경보와 가족 연락을 받으려면 버텨야 한다.`,
-  hint:'저전력·밝기 최소, 신호가 약하면 비행기모드로 두고 정시에만 확인. 휴대폰을 끄지는 않는다.',
+  hint:'저전력·밝기 최소·안 쓰는 앱 종료. 비행기모드와 전원 끄기는 재난문자 수신까지 막는다.',
   choices:[
-    {t:'저전력·밝기 최소, 지하에선 비행기모드로 두고 정시에만 확인한다',ok:true,go:()=>{G.flags.saver=1;return '배터리 소모가 절반으로 줄었다.'}},
+    {t:'저전력 모드·밝기 최소, 안 쓰는 앱을 끄고 휴대폰은 켜 둔다',ok:true,go:()=>{G.flags.saver=1;return '배터리 소모가 절반으로 줄었다. 재난문자는 계속 받는다.'}},
+    {t:'비행기모드로 바꿔 배터리를 아낀다',ok:false,go:()=>{G.flags.saver=1;mor(-3);return '배터리는 아꼈지만, 비행기모드에선 재난문자도 오지 않는다. 대피 안내를 몇 시간 늦게 봤다.'}},
     {t:'불안해서 계속 새로고침한다',ok:false,go:()=>{res('power',-12);return '숫자만 빠르게 줄었다.'}},
     {t:'아예 전원을 꺼 둔다',ok:false,go:()=>{G.flags.saver=1;mor(-3);return '재난문자는 데이터를 꺼도 수신되지만, 전원을 끄면 받을 수 없다. 대피 안내 문자를 몇 시간 늦게 봤다.'}}
-  ],lesson:'약한 전파 속 기지국 탐색이 배터리 최대 소모원이다. 비행기모드·저전력으로 두되 휴대폰 자체는 끄지 않는다(재난문자 수신).',src:SRC.comm});
-E({id:'tapwater',pool:1,scen:['conv','nuke'],loc:['park','bldg','subway'],cond:()=>G.scen!=='nuke'||G.turn>=4,w:()=>G.res.water<6?4:1,art:'bleach',tone:'amber',cat:'식수',title:'누런 수돗물',
+  ],lesson:'경보가 이어지는 동안엔 저전력·밝기 최소로 버티고 휴대폰을 켜 둔다. 비행기모드와 전원 끄기는 재난문자(셀 방송) 수신까지 막는다.',src:SRC.comm});
+E({id:'tapwater',pool:1,scen:['conv'],loc:['park','bldg','subway'],w:()=>G.res.water<6?4:1,art:'bleach',tone:'amber',cat:'식수',title:'누런 수돗물',
   pre:()=>{G.flags.tap=1},
   text:'대피소 화장실 수도에서 누런 물이 나온다. 우리 물은 줄어들고 있다.',
   hint:'탁하면 먼저 거르고, 무향 락스를 1L당 4방울(맑은 물은 2방울) 넣어 30분 기다린다.',
@@ -1170,14 +1188,19 @@ E({id:'fracture',pool:1,w:()=>G.flags.blackout&&!G.flags.light?4:1,art:'bone',to
     {t:'괜찮다며 걷게 한다',ok:false,go:()=>{hurt(V(),10);return '몇 걸음 만에 주저앉았다.'}}
   ],lesson:'골절은 맞추려 하지 말고 그 자세 그대로 위·아래 관절까지 고정한다. 고정 후 손발 끝의 감각·온기·색을 확인한다.',src:'대한적십자사 응급처치(부목)',guide:'aid'});
 const REPORT_CHOICES=[
-  {t:'생존 수첩 "내 위치"의 국가지점번호를 불러준다',s:'예: 다바 6471 6632',ok:true,go:()=>{trust(1);mor(6);return '"다바 6471 6632, 확인했습니다." 구급대가 헤매지 않고 도착했다.'}},
-  {t:'"○○아파트 지하주차장이요"라고만 말한다',ok:false,go:()=>{mor(-4);return '이름이 비슷한 단지가 근처에 두 곳. 구급대가 40분을 헤맸다.'}},
-  {t:'전화를 끊고 직접 업고 병원으로 간다',ok:false,go:()=>{hurt('me',10);pol(G.scen==='nuke'?8:0);mor(-4);return '두 블록 만에 주저앉았다. 결국 다시 119를 불렀다.'}}
+  {t:'도로명주소·단지 이름·동, "지하 2층 15번 기둥 옆 출입구"까지 말한다',ok:true,go:()=>{trust(1);mor(6);return '"○○로 12, 101동 지하 2층 15번 기둥, 확인했습니다." 구급대가 헤매지 않고 도착했다.'}},
+  {t:'"아파트 지하주차장이요"라고만 말한다',ok:false,go:()=>{mor(-4);return '이름이 비슷한 단지가 근처에 두 곳, 주차장 출입구도 여섯 곳. 구급대가 40분을 헤맸다.'}},
+  {t:'지하에서 GPS로 국가지점번호를 찾아 불러준다',ok:false,go:()=>{mor(-3);return '지하에선 위성 신호가 잡히지 않는다. 엉뚱한 좌표를 불렀다가 다시 주소를 설명했다.'}}
+];
+const GRID_CHOICES=[
+  {t:'하늘이 보이는 곳에서 생존 수첩 "내 위치"로 GPS를 잡아 국가지점번호를 불러준다',s:'예: 다바 6471 6632',ok:true,go:()=>{trust(1);mor(6);return '"다바 6471 6632, 확인했습니다." 주소가 없는 국도 위였지만 구급대가 곧장 왔다.'}},
+  {t:'"남쪽 가는 국도 어딘가요"라고 설명한다',ok:false,go:()=>{mor(-4);return '같은 국도가 수십 km. 구급대가 1시간을 헤맸다.'}},
+  {t:'전화를 끊고 업고 걸어간다',ok:false,go:()=>{hurt('me',10);pol(8);mor(-4);return '1km 만에 주저앉았다. 결국 다시 119를 불렀다.'}}
 ];
 E({id:'report',pool:1,scen:['conv','chem'],cond:()=>G.turn>=5,art:'pin',tone:'blue',cat:'구조 요청',title:'"정확한 위치를 말씀해 주세요"',
   text:'중상자 이송을 위해 119와 겨우 연결됐다. 상황실 요원이 묻는다. "정확한 위치를 말씀해 주세요."',
-  hint:'생존 수첩 "내 위치" 탭 — GPS는 인터넷 없이 작동하고, 국가지점번호는 119·112가 쓰는 격자 주소다.',
-  choices:REPORT_CHOICES,lesson:'주소가 애매한 곳에선 국가지점번호(가로세로 10m 격자)로 위치를 말한다. 생존 수첩 "내 위치" 탭이 GPS로 바로 계산한다.',src:SRC.grid,guide:'loc'});
+  hint:'주소가 있는 건물은 도로명주소·건물명·동·층·출입구와 주변 지형지물로 말한다.',
+  choices:REPORT_CHOICES,lesson:'주소가 있는 곳은 도로명주소·건물명·동·층·출입구와 주변 지형지물로 위치를 말한다. 국가지점번호는 산·도로처럼 주소가 없는 실외용이고, GPS는 하늘이 보이는 곳에서만 잡힌다.',src:'행정안전부 국가지점번호 · 119 신고 요령'});
 E({id:'sos',pool:1,scen:['conv','chem'],cond:()=>G.turn>=4&&!['high','home'].includes(G.loc),art:'torch',tone:'blue',cat:'구조 신호',title:'구조대 불빛',
   text:'부상자가 생겼는데 연락이 닿지 않는다. 멀리 지상 출입구 쪽으로 구조대 손전등 불빛이 지나간다.',
   hint:'구조 신호는 체력을 아끼는 방식으로 — 호루라기, 손전등 SOS(짧게 3·길게 3·짧게 3).',
@@ -1201,19 +1224,21 @@ E({id:'thanks',pool:1,cond:()=>G.trust>=2&&G.fam.some(m=>m.c.length||m.hp<70),w:
 /* ================= 마지막 72시간 ================= */
 E({id:'final_conv',art:'siren',tone:'green',cat:'경보 해제',title:'경보 해제',
   text:()=>G.flags.gas?'음성방송: "경보를 해제합니다." 72시간 만에 집으로 올라간다. 미리 잠가 둔 가스 밸브 덕에 집 안은 조용하다.':`음성방송: "경보를 해제합니다." 72시간 만에 집으로 올라간다.${G.flags.homeDamaged?' 주방 쪽은 불에 그을렸다.':''} 현관문을 열자 — 희미한 가스 냄새가 난다.`,
-  hint:()=>G.flags.gas?null:'가스 냄새가 나면 불·전기 스위치를 건드리지 말고, 환기하고 밸브를 잠근 뒤 밖에서 신고한다.',
+  hint:()=>G.flags.gas?null:'가스 냄새가 나면 불·전기 스위치를 건드리지 말고, 밸브를 잠근 뒤 환기하고 밖에서 신고한다.',
   choices:()=>G.flags.gas?[
     {t:'창문을 열고 집 상태부터 점검한다',ok:true,go:()=>{mor(5);return '대피 전 1분이 72시간 뒤의 사고를 막았다.'}}
   ]:[
-    {t:'스위치·불은 건드리지 않고 창문을 열고 밸브를 잠근 뒤 밖에서 신고한다',ok:true,go:()=>{mor(3);return '점검반이 배관 균열을 찾아 막았다. 불꽃 하나 없이 끝났다.'}},
+    {t:'스위치·불은 건드리지 않고 밸브부터 잠근 뒤 창문을 열고(환풍기 금지) 밖에서 신고한다',ok:true,go:()=>{mor(3);return '점검반이 배관 균열을 찾아 막았다. 불꽃 하나 없이 끝났다.'}},
     {t:'전등을 켜고 냄새 나는 곳을 찾는다',ok:false,go:()=>{hurt('me',30);addC(M('me'),'burn');return '스위치를 켜는 순간 "펑" 소리와 함께 불꽃이 튀었다.'}},
     {t:'라이터를 켜서 가스레인지 쪽을 비춰 본다',ok:false,go:()=>{hurt('me',40);addC(M('me'),'burn');return '불꽃이 순간 번졌다. 앞머리와 손이 그을렸다.'}}
-  ],lesson:()=>G.flags.gas?'대피 전 여유가 있으면 가스 밸브를 잠그고 전기를 차단한다 — 귀가 후 2차 사고를 막는다.':'가스 냄새가 나면 스위치·라이터 등 불씨를 만들지 말고, 창문을 열어 환기하고 밸브를 잠근 뒤 밖에서 신고한다.',
+  ],lesson:()=>G.flags.gas?'대피 전 여유가 있으면 가스 밸브를 잠그고 전기를 차단한다 — 귀가 후 2차 사고를 막는다.':'가스 냄새가 나면 스위치·라이터·환풍기 등 불씨를 만들지 말고, 밸브를 잠근 뒤 창문을 열어 환기하고 밖에서 신고한다.',
   src:()=>G.flags.gas?SRC.air:SRC.gas});
 E({id:'final_nuke',art:'pin',tone:'blue',cat:'구조 요청',title:'"정확한 위치를 말씀해 주세요"',
-  text:()=>G.loc==='gym'?'남부 대피소로 가는 정부 버스가 도중에 멈췄다. 일행 중 노인이 쓰러져 119와 연결됐다. "정확한 위치를 말씀해 주세요."':'구조대가 지역을 수색 중이라는 방송. 겨우 119와 연결됐다. "정확한 위치를 말씀해 주세요."',
-  hint:'생존 수첩 "내 위치" 탭 — GPS는 인터넷 없이 작동하고, 국가지점번호는 119·112가 쓰는 격자 주소다.',
-  choices:REPORT_CHOICES,lesson:'주소가 애매한 곳에선 국가지점번호(가로세로 10m 격자)로 위치를 말한다. 생존 수첩 "내 위치" 탭이 GPS로 바로 계산한다.',src:SRC.grid,guide:'loc'});
+  text:()=>G.loc==='gym'?'남부 대피소로 가는 정부 버스가 국도 한가운데서 멈췄다. 일행 중 노인이 쓰러져 119와 연결됐다. "정확한 위치를 말씀해 주세요."':'구조대가 지역을 수색 중이라는 방송. 겨우 119와 연결됐다. "정확한 위치를 말씀해 주세요."',
+  hint:()=>G.loc==='gym'?'주소가 없는 도로·산에선 국가지점번호. GPS는 인터넷 없이 작동하지만 하늘이 보여야 잡힌다.':'주소가 있는 건물은 도로명주소·건물명·동·층·출입구와 주변 지형지물로 말한다.',
+  choices:()=>G.loc==='gym'?GRID_CHOICES:REPORT_CHOICES,
+  lesson:()=>G.loc==='gym'?'산·도로처럼 주소가 없는 곳에선 국가지점번호(가로세로 10m 격자)로 위치를 말한다. 생존 수첩 "내 위치" 탭이 GPS로 바로 계산한다 — 하늘이 보이는 곳에서.':'주소가 있는 곳은 도로명주소·건물명·동·층·출입구와 주변 지형지물로 말한다. 국가지점번호는 주소가 없는 실외용이고, GPS는 지하에선 잡히지 않는다.',
+  src:()=>G.loc==='gym'?SRC.grid:'행정안전부 국가지점번호 · 119 신고 요령',guide:'loc'});
 E({id:'final_chem',art:'tape',tone:'green',cat:'경보 해제',title:'제독 완료',
   text:'"경보를 해제합니다." 정부 제독반이 단지를 물로 씻어 낸다. 현관 앞엔 오염된 옷을 묶어 둔 비닐봉투가 있다.',
   hint:'오염된 옷은 비닐에 밀봉해 격리하고, 처리는 당국 안내를 따른다.',
@@ -1568,8 +1593,8 @@ function rationCard(){
   const n=G.fam.length;const day=dayOf(G.turn);
   const est=k=>{const per=RATION[k].w*4*n;const d=G.res.water/per;return d>=10?'충분':`물 ${d.toFixed(1)}일분`};
   return `<div class="sheet fade-in"><div class="lead"><div class="badge blue">${ic('water')}</div><div><div class="eyebrow">${day}일차 아침 회의</div><h2>오늘 배급을 정하자</h2></div></div>
-  <p>물 ${fmtL(G.res.water)}L · 식량 ${fmtL(G.res.food)}일분 · ${n}명. 구조까지 ${72-G.turn*6}시간 남았다. 사람은 물 없이 3일을 넘기기 어렵고, 음식은 몇 주를 버틴다.</p>
-  <div class="choices">${['full','base','save'].map((k,i)=>`<button class="choice" data-a="ration" data-v="${k}"><span class="k">${'ABC'[i]}</span><span class="ct"><b>${RATION[k].n} — ${RATION[k].d}</b><small>${est(k)} · ${k==='full'?'체력·사기 회복':k==='base'?'최소 음용량 유지':'체력·사기 감소'}</small></span></button>`).join('')}</div></div>`;
+  <p>물 ${fmtL(G.res.water)}L · 식량 ${fmtL(G.res.food)}일분 · ${n}명. 구조까지 ${72-G.turn*6}시간 남았다. 사람은 물 없이 3일을 넘기기 어렵고, 음식은 몇 주를 버틴다. 당국 지시가 없으면 마실 물은 줄이지 않는 것이 원칙이다(FEMA).</p>
+  <div class="choices">${['full','base','lean','save'].map((k,i)=>`<button class="choice" data-a="ration" data-v="${k}"><span class="k">${'ABCD'[i]}</span><span class="ct"><b>${RATION[k].n} — ${RATION[k].d}</b><small>${est(k)} · ${k==='full'?'체력·사기 회복':k==='base'?'최소 음용량 유지':k==='lean'?'물은 지키고 식량을 아낀다':'탈수 위험 · 당국 지시 없이 권장되지 않음'}</small></span></button>`).join('')}</div></div>`;
 }
 function actionCard(){
   const acts=ACTIONS.filter(a=>a.show());
