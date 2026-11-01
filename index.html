@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f1216">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+</head>
+<body>
+<title>생존 수첩</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: single column utility app, fixed bottom tab bar, full-screen guide subviews.
+   Dark-first: 정전·야간·대피소가 기본 시나리오 (OLED 절전). 외부 리소스 0 — 오프라인 완전 자립. */
+:root{
+  --bg:#0f1216; --card:#171d24; --card2:#1f2731; --line:#2b3542;
+  --fg:#edf1f5; --mut:#96a2ae; --faint:#6b7784;
+  --acc:#ffb224; --acc-ink:#1b1200; --acc-dim:#8a6a2a;
+  --danger:#ff6157; --danger-bg:#3a1a17; --ok:#46d08c; --ok-bg:#15301f; --info:#5aa8ff; --info-bg:#16283d;
+  --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f3f1ea; --card:#ffffff; --card2:#f6f3ec; --line:#ded7c8;
+    --fg:#1b2026; --mut:#5c6670; --faint:#8a929b;
+    --acc:#e09a00; --acc-ink:#1b1200; --acc-dim:#a97d1d;
+    --danger:#d6372e; --danger-bg:#fbe9e7; --ok:#1e9e62; --ok-bg:#e4f5ec; --info:#1769c4; --info-bg:#e7f0fb;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f3f1ea; --card:#ffffff; --card2:#f6f3ec; --line:#ded7c8;
+  --fg:#1b2026; --mut:#5c6670; --faint:#8a929b;
+  --acc:#e09a00; --acc-ink:#1b1200; --acc-dim:#a97d1d;
+  --danger:#d6372e; --danger-bg:#fbe9e7; --ok:#1e9e62; --ok-bg:#e4f5ec; --info:#1769c4; --info-bg:#e7f0fb;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important} /* 오프라인 단독 파일에서도 보장 */
+html,body{height:100%}
+body{margin:0}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--sans);
+  font-size:16px; line-height:1.55; -webkit-text-size-adjust:100%;
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:40; background:var(--bg)}
+.wrap{
+  max-width:580px; margin:0 auto;
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+  padding-block:0 calc(86px + env(safe-area-inset-bottom,0px));
+}
+/* ---------- type ---------- */
+h1{font-size:20px; margin:0; letter-spacing:-.01em}
+h2{font-size:18px; margin:0 0 4px; letter-spacing:-.01em; text-wrap:balance}
+h3{font-size:15px; margin:0 0 6px}
+p{margin:6px 0}
+small,.sm{font-size:13px}
+.mut{color:var(--mut)}
+.faint{color:var(--faint)}
+.eyebrow{font-size:11.5px; font-weight:700; letter-spacing:.09em; color:var(--acc); text-transform:uppercase}
+.num{font-variant-numeric:tabular-nums}
+/* ---------- header ---------- */
+header.app{
+  display:flex; align-items:center; gap:10px; padding-block:14px 10px;
+}
+.logo{width:34px; height:34px; flex:none; border-radius:9px; background:var(--acc); color:var(--acc-ink);
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px}
+header.app .sub{font-size:12px; color:var(--mut); margin-top:1px}
+.offline-badge{margin-left:auto; font-size:11px; font-weight:700; color:var(--ok); background:var(--ok-bg);
+  border:1px solid color-mix(in srgb, var(--ok) 35%, transparent); padding:3px 8px; border-radius:99px; white-space:nowrap}
+/* ---------- tab bar ---------- */
+nav.tabs{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  background:color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+nav.tabs .row{max-width:580px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr)}
+nav.tabs a{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:9px 2px 8px; text-decoration:none; color:var(--mut); font-size:11.5px; font-weight:600;
+  border-top:2px solid transparent; margin-top:-1px;
+}
+nav.tabs a svg{width:22px; height:22px}
+nav.tabs a.on{color:var(--acc); border-top-color:var(--acc)}
+/* ---------- cards & buttons ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 15px; margin:10px 0}
+.card h2 .src, .src{display:block; font-size:11.5px; font-weight:500; color:var(--faint); margin-top:2px}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  font:inherit; font-weight:700; font-size:15px; color:var(--fg);
+  background:var(--card2); border:1px solid var(--line); border-radius:11px;
+  padding:11px 14px; cursor:pointer; min-height:46px; text-decoration:none;
+}
+.btn:active{transform:translateY(1px)}
+.btn.acc{background:var(--acc); color:var(--acc-ink); border-color:var(--acc)}
+.btn.dngr{background:var(--danger); color:#fff; border-color:var(--danger)}
+.btn.ghost{background:transparent}
+.btn.w{width:100%}
+.btnrow{display:flex; gap:8px; flex-wrap:wrap}
+.btnrow .btn{flex:1 1 130px}
+/* ---------- situation grid ---------- */
+.sit-grid{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px}
+button.sit{
+  font:inherit; text-align:left; cursor:pointer;
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:13px 13px 12px; color:var(--fg); min-height:92px;
+  display:flex; flex-direction:column; gap:8px;
+}
+button.sit:active{background:var(--card2)}
+.sit svg{width:26px; height:26px; color:var(--acc)}
+.sit b{font-size:15.5px; line-height:1.3; display:block; letter-spacing:-.01em}
+.sit span{font-size:12px; color:var(--mut); line-height:1.35; display:block; margin-top:2px}
+.sit.hot{border-color:color-mix(in srgb, var(--danger) 55%, var(--line))}
+.sit.hot svg{color:var(--danger)}
+/* ---------- guide subview ---------- */
+.guide-head{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg); padding-block:10px; border-bottom:1px solid var(--line); margin-bottom:8px;
+}
+.guide-head h2{font-size:17px; margin:0}
+.back{flex:none; width:44px; height:44px; border-radius:11px; border:1px solid var(--line);
+  background:var(--card); color:var(--fg); cursor:pointer; display:flex; align-items:center; justify-content:center}
+.back svg{width:20px; height:20px}
+.do-now{
+  background:var(--danger-bg); border:1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  border-radius:14px; padding:13px 15px; margin:10px 0;
+}
+.do-now .eyebrow{color:var(--danger)}
+.do-now b{font-size:18px; line-height:1.4; display:block; margin-top:3px; letter-spacing:-.01em}
+.phase{margin:14px 0}
+.phase-tag{display:inline-block; font-size:12px; font-weight:800; letter-spacing:.05em;
+  color:var(--acc); border:1px solid var(--acc-dim); border-radius:99px; padding:2px 10px; margin-bottom:8px}
+ol.steps{margin:0; padding:0; list-style:none; counter-reset:st}
+ol.steps li{
+  counter-increment:st; position:relative; padding:9px 0 9px 38px; border-bottom:1px dashed var(--line);
+}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{
+  content:counter(st); position:absolute; left:0; top:10px;
+  width:26px; height:26px; border-radius:8px; background:var(--card2); border:1px solid var(--line);
+  color:var(--acc); font-weight:800; font-size:13.5px; display:flex; align-items:center; justify-content:center;
+  font-variant-numeric:tabular-nums;
+}
+ol.steps b{font-size:16px}
+ol.steps .why{display:block; font-size:13px; color:var(--mut); margin-top:2px}
+.note{background:var(--info-bg); border:1px solid color-mix(in srgb, var(--info) 35%, transparent);
+  border-radius:11px; padding:10px 12px; font-size:13.5px; margin:10px 0}
+.warn{background:var(--danger-bg); border:1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-radius:11px; padding:10px 12px; font-size:13.5px; margin:10px 0}
+/* ---------- alarm table ---------- */
+.alarm{display:flex; gap:11px; align-items:flex-start; padding:11px 0; border-bottom:1px dashed var(--line)}
+.alarm:last-child{border-bottom:0}
+.alarm .tag{flex:none; width:74px; font-size:12.5px; font-weight:800; padding:4px 0; text-align:center;
+  border-radius:8px; background:var(--card2); border:1px solid var(--line)}
+.alarm .tag.red{color:var(--danger); border-color:color-mix(in srgb, var(--danger) 50%, transparent)}
+.alarm .tag.amb{color:var(--acc); border-color:var(--acc-dim)}
+.alarm .tag.blu{color:var(--info)}
+.alarm b{font-size:14.5px}
+.alarm .sm{display:block; color:var(--mut); margin-top:1px}
+.play{font:inherit; font-size:12px; font-weight:700; color:var(--info); background:none; border:1px solid color-mix(in srgb,var(--info) 40%,transparent);
+  border-radius:99px; padding:2px 10px; cursor:pointer; margin-top:4px}
+/* ---------- GPS ---------- */
+.fix{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin:10px 0}
+.fix .big{font-size:27px; font-weight:800; letter-spacing:-.01em; line-height:1.25; font-variant-numeric:tabular-nums; word-break:break-all}
+.fix .grid-no{font-size:31px; color:var(--acc)}
+.kv{display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:14px}
+.kv:last-child{border-bottom:0}
+.kv .k{color:var(--mut); flex:none}
+.kv .v{font-variant-numeric:tabular-nums; text-align:right; word-break:break-all; min-width:0}
+.acc-pill{display:inline-block; font-size:12.5px; font-weight:700; border-radius:99px; padding:3px 10px; margin-top:6px}
+.acc-pill.good{color:var(--ok); background:var(--ok-bg)}
+.acc-pill.bad{color:var(--danger); background:var(--danger-bg)}
+.report-box{
+  width:100%; font:inherit; font-size:14px; line-height:1.5; color:var(--fg);
+  background:var(--card2); border:1px solid var(--line); border-radius:11px; padding:10px 12px; margin-top:8px;
+  min-height:92px; resize:vertical;
+}
+/* ---------- SOS tools ---------- */
+.tool-grid{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+button.tool{
+  font:inherit; cursor:pointer; text-align:center;
+  background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 10px;
+  color:var(--fg); display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+button.tool:active{background:var(--card2)}
+.tool svg{width:28px; height:28px; color:var(--acc)}
+.tool b{font-size:15px}
+.tool span{font-size:12px; color:var(--mut)}
+.tel{display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px dashed var(--line)}
+.tel:last-child{border-bottom:0}
+.tel .no{font-size:25px; font-weight:800; font-variant-numeric:tabular-nums; min-width:74px; letter-spacing:.01em}
+.tel .what{font-size:13.5px; color:var(--mut); flex:1; min-width:0}
+/* ---------- checklist ---------- */
+.chk{display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px dashed var(--line)}
+.chk:last-child{border-bottom:0}
+.chk input{width:21px; height:21px; margin:1px 0 0; accent-color:var(--acc); flex:none}
+.chk label{flex:1; min-width:0; cursor:pointer}
+.chk label .sm{display:block; color:var(--mut)}
+.chk input:checked + label{color:var(--faint); text-decoration:line-through}
+.chk input:checked + label .sm{text-decoration:none}
+.progress{height:8px; border-radius:99px; background:var(--card2); border:1px solid var(--line); overflow:hidden; margin:8px 0 4px}
+.progress i{display:block; height:100%; background:var(--acc); width:0%; transition:width .25s}
+/* ---------- misc ---------- */
+.field{margin:9px 0}
+.field label{display:block; font-size:12.5px; font-weight:700; color:var(--mut); margin-bottom:4px}
+.field input,.field textarea{
+  width:100%; font:inherit; font-size:15px; color:var(--fg); background:var(--card2);
+  border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+}
+table.cmp{width:100%; border-collapse:collapse; font-size:13.5px; min-width:430px}
+table.cmp th,table.cmp td{text-align:left; padding:8px 9px; border-bottom:1px solid var(--line); vertical-align:top}
+table.cmp th{font-size:12px; color:var(--mut); font-weight:700; white-space:nowrap}
+table.cmp td b{font-variant-numeric:tabular-nums}
+.scroll-x{overflow-x:auto; margin:8px -2px}
+details{border:1px solid var(--line); border-radius:11px; background:var(--card2); margin:8px 0}
+details summary{padding:11px 13px; font-weight:700; font-size:14.5px; cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px}
+details summary::after{content:"+"; margin-left:auto; color:var(--mut); font-weight:800}
+details[open] summary::after{content:"–"}
+details .inner{padding:2px 13px 12px; font-size:14px}
+.verdict{border-radius:11px; padding:11px 13px; font-size:14px; margin-top:10px; background:var(--card2); border:1px solid var(--line)}
+.verdict.go{background:var(--ok-bg); border-color:color-mix(in srgb, var(--ok) 40%, transparent)}
+footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1.7}
+/* ---------- overlays ---------- */
+#flash-ov{position:fixed; inset:0; z-index:100; background:#fff; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
+#flash-ov .hint{color:#555; font-size:14px; font-weight:700; padding:0 20px calc(30px + env(safe-area-inset-bottom,0px))}
+#board-ov{position:fixed; inset:0; z-index:100; background:#000; color:#ffb224; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; gap:10px;
+  padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+#board-ov .txt{font-size:min(26vw,170px); font-weight:900; letter-spacing:.02em; line-height:1.05; text-align:center; word-break:keep-all}
+#board-ov .hint{color:#777; font-size:13px}
+@keyframes pulse{0%{transform:scale(1)} 50%{transform:scale(1.22)} 100%{transform:scale(1)}}
+.metro-dot{width:64px; height:64px; border-radius:50%; background:var(--danger); margin:10px auto}
+.metro-dot.on{animation:pulse .545s infinite}
+@media (prefers-reduced-motion: reduce){ .metro-dot.on{animation:none} }
+@media (max-width:360px){ .sit-grid,.tool-grid{grid-template-columns:1fr} }
+</style>
+
+<div class="wrap">
+
+<header class="app">
+  <div class="logo">生</div>
+  <div>
+    <h1>생존 수첩</h1>
+    <div class="sub">전쟁·재난 행동요령 + 위치·신호 도구</div>
+  </div>
+  <span class="offline-badge">오프라인 작동</span>
+</header>
+
+<!-- ================= 긴급 탭 ================= -->
+<main id="tab-now">
+  <div id="sit-home">
+    <p class="mut sm" style="margin-top:2px">상황을 선택하세요. 실제 경보 상황에서는 <b>재난문자와 정부 방송 안내가 항상 우선</b>입니다.</p>
+    <div class="sit-grid">
+      <button class="sit hot" data-g="g-air">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M4.2 7.2l2.8 2.8M19.8 7.2 17 10M12 21a7 7 0 0 0 7-7H5a7 7 0 0 0 7 7z"/></svg>
+        <div><b>공습·미사일</b><span>사이렌 1분 · 즉시 지하로</span></div>
+      </button>
+      <button class="sit hot" data-g="g-nuke">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><path d="M12 4a8 8 0 0 1 6.9 4l-4.4 2.6M12 20a8 8 0 0 1-6.9-4l4.4-2.6M19 16a8 8 0 0 1-2.1 2.4"/><path d="M5 8a8 8 0 0 1 2.1-2.4"/></svg>
+        <div><b>핵폭발·낙진</b><span>섬광 보지 말 것 · 반대로 엎드려</span></div>
+      </button>
+      <button class="sit" data-g="g-cbr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5l-5 8a4 4 0 0 0 3.4 6h7.2A4 4 0 0 0 19 16l-5-8V3"/><path d="M7.5 14h9"/></svg>
+        <div><b>화생방 공격</b><span>화학은 높은 곳 · 밀폐 · 끓여먹기</span></div>
+      </button>
+      <button class="sit" data-g="g-quake">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 3 12 2.5-8L16 14h5"/></svg>
+        <div><b>지진</b><span>탁자 아래 · 흔들림 멈추면 계단으로</span></div>
+      </button>
+      <button class="sit" data-g="g-fire">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c3.9 0 6.5-2.5 6.5-6 0-4-3.5-6-3.5-9-2.5 1.5-3 4-3 4s-1-1.5-1-3.5C8 8 5.5 10.5 5.5 15c0 3.5 2.6 6 6.5 6z"/><path d="M12 21c-1.8 0-3-1.3-3-3 0-1.8 1.5-2.6 3-4.5 1.5 1.9 3 2.7 3 4.5 0 1.7-1.2 3-3 3z"/></svg>
+        <div><b>아파트·건물 화재</b><span>무조건 뛰지 말고, 살펴서 대피</span></div>
+      </button>
+      <button class="sit" data-g="g-cpr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.6-9-9c-1.2-2.8.7-6 3.8-6C9 5 10.5 6.5 12 8.5 13.5 6.5 15 5 17.2 5c3.1 0 5 3.2 3.8 6-2 4.4-9 9-9 9z"/><path d="M5 12h4l1.5-3 2 6 1.5-3h5"/></svg>
+        <div><b>심폐소생술</b><span>분당 100–120회 · 박자 도우미</span></div>
+      </button>
+      <button class="sit" data-g="g-black">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        <div><b>정전·통신두절</b><span>문자 우선 · 라디오 · 배터리 아끼기</span></div>
+      </button>
+      <button class="sit" data-g="g-alarm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+        <div><b>경보 소리 구분</b><span>이 소리가 무슨 경보인지 (듣기)</span></div>
+      </button>
+    </div>
+    <p class="sm faint" style="margin-top:12px">대피소 위치: 네이버지도·카카오맵·T맵에서 “대피소” 검색, 또는 안전디딤돌 앱 · 국민재난안전포털</p>
+  </div>
+
+  <!-- ===== 공습 ===== -->
+  <section class="guide" id="g-air" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>공습·미사일 경보</h2></div>
+    <div class="do-now"><span class="eyebrow">지금 당장</span><b>가장 가까운 지하로 들어간다.<br>지하철역 · 지하주차장 · 건물 지하</b></div>
+    <div class="phase"><span class="phase-tag">0 – 30초</span>
+      <ol class="steps">
+        <li><b>하던 일을 멈추고 지하로 이동.</b><span class="why">공습경보 = 파상음 사이렌 1분. 아파트라면 단지 지하주차장이 지정 대피소인 경우가 많다.</span></li>
+        <li><b>지하가 없으면 낮은 곳·엄폐물 뒤에 엎드려 머리 보호.</b><span class="why">도랑·움푹 파인 곳. 폭풍과 파편은 위→아래, 수평으로 온다.</span></li>
+        <li><b>유리창·간판·외벽에서 떨어질 것.</b><span class="why">사상 원인의 다수가 비산 유리·낙하물.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">1 – 10분</span>
+      <ol class="steps">
+        <li><b>운전 중엔 도로 오른쪽 정차, 키를 꽂아둔 채 대피.</b><span class="why">긴급차량 통행로 확보를 위해 차량은 두고 몸만 이동.</span></li>
+        <li><b>여유가 있으면 가스 밸브 잠그고 전기 차단 후 이동.</b></li>
+        <li><b>챙길 것(있으면): 휴대폰·보조배터리, 물, 마스크, 신분증.</b><span class="why">완벽히 챙기느라 지체하지 말 것. 몸이 먼저다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">대피 후</span>
+      <ol class="steps">
+        <li><b>재난문자·라디오로 정부 안내 청취, 경보해제까지 대기.</b></li>
+        <li><b>유언비어에 동요하지 말 것.</b><span class="why">확인된 정보는 재난문자·KBS 재난방송뿐이라고 전제한다.</span></li>
+        <li><b>통화는 최소화, 안부는 문자로.</b><span class="why">회선 폭주 시 문자 성공률이 높고, 구조 통신 회선을 양보하게 된다.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 행정안전부 민방공 국민행동요령 · 국민재난안전포털 (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 핵 ===== -->
+  <section class="guide" id="g-nuke" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>핵폭발·낙진</h2></div>
+    <div class="do-now"><span class="eyebrow">섬광을 느낀 순간</span><b>절대 섬광을 보지 말 것(실명 위험).<br>그 자리에서 폭발 반대 방향으로 엎드린다.</b></div>
+    <div class="phase"><span class="phase-tag">0 – 10초 · 섬광</span>
+      <ol class="steps">
+        <li><b>2~3보 이상 움직이지 말고 즉시 엎드린다.</b><span class="why">대피소를 찾아 뛰는 것보다 그 자리 엄폐가 생존율이 높다.</span></li>
+        <li><b>자세: 눈 감고 · 귀 막고 · 입은 벌리고 · 배는 바닥에서 띄운다.</b><span class="why">입을 벌려 고막 보호, 배를 띄워 폭풍압으로부터 내장 보호.</span></li>
+        <li><b>폭풍(충격파)이 완전히 지나갈 때까지 유지.</b><span class="why">수 km 밖이라면 섬광 후 폭풍 도달까지 수 초~수십 초 걸린다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">폭풍 후 ~10분 · 낙진 도달 전</span>
+      <ol class="steps">
+        <li><b>가장 가까운 콘크리트 건물의 지하 또는 중심부로 이동.</b><span class="why">낙진이 내려오기 전 약 10분 안팎이 이동 가능한 시간.</span></li>
+        <li><b>창문·외벽·지붕에서 최대한 떨어진다.</b><span class="why">차량·조립식 건물은 방호가 안 된다. 콘크리트가 기준.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">실내 진입 직후</span>
+      <ol class="steps">
+        <li><b>겉옷을 벗어 비닐봉투에 밀봉한다.</b><span class="why">겉옷 제거만으로 방사성 물질을 최대 90% 제거(美 FEMA).</span></li>
+        <li><b>비누로 샤워. 문지르거나 긁지 말 것. 린스·컨디셔너 금지.</b><span class="why">린스는 방사성 물질을 머리카락에 고착시킨다.</span></li>
+        <li><b>샤워가 어려우면 깨끗한 젖은 수건으로 노출 피부·머리를 닦고, 코 풀고 눈꺼풀을 닦는다.</b></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">24시간 이상</span>
+      <ol class="steps">
+        <li><b>최소 24시간 실내 대기.</b><span class="why">방사선은 첫 수 시간이 가장 강하고 빠르게 약해진다.</span></li>
+        <li><b>가족이 흩어져 있어도 각자 실내 대기가 더 안전. 재회는 나중에.</b></li>
+        <li><b>라디오·재난문자로 정부 지시 청취. 이동 지시가 나오면 비닐·우의로 피부 노출을 최소화.</b></li>
+      </ol>
+    </div>
+    <div class="warn">전자기펄스(EMP)로 휴대폰·전자기기가 먹통일 수 있다. <b>건전지 라디오</b>가 이 상황의 유일한 정보망이다.</div>
+    <p class="src">출처: 행정안전부 핵공격 국민행동요령 · 美 FEMA Ready.gov Nuclear Explosion (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 화생방 ===== -->
+  <section class="guide" id="g-cbr" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>화생방 공격</h2></div>
+    <div class="do-now"><span class="eyebrow">화생방경보는 음성방송으로 온다</span><b>호흡기부터 막고, 화학 공격이면<br>낮은 곳이 아니라 높은 곳으로.</b></div>
+    <div class="phase"><span class="phase-tag">화학무기 공격</span>
+      <ol class="steps">
+        <li><b>높은 곳·건물 고층으로 대피한다.</b><span class="why">화학작용제는 공기보다 무거워 지하·저지대에 고인다. 공습 때의 "지하로"와 반대다.</span></li>
+        <li><b>야외에서는 바람을 가로질러(측방) 높은 곳으로.</b><span class="why">오염운의 바람이 불어가는 방향에서 벗어나는 게 핵심.</span></li>
+        <li><b>방독면이 없으면: KF 마스크·물수건으로 코와 입, 비닐·우의로 피부를 덮는다.</b></li>
+        <li><b>실내: 창문·문·환풍구를 테이프와 비닐로 밀폐, 에어컨·환기장치 정지.</b></li>
+        <li><b>피부에 닿았으면 비누와 흐르는 물로 15분 이상 씻는다.</b><span class="why">오염된 옷은 비닐에 밀봉해 격리.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">생물학무기 공격</span>
+      <ol class="steps">
+        <li><b>마스크 착용, 의심 물질·환자와 접촉 금지.</b></li>
+        <li><b>물과 음식은 반드시 끓여서 섭취.</b></li>
+        <li><b>몸과 생활공간 청결 유지, 정부 안내에 따라 검사·예방접종.</b><span class="why">증상이 없어도 노출 가능성이 있으면 보건소 안내를 따른다.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 행정안전부 화생방 국민행동요령 (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 지진 ===== -->
+  <section class="guide" id="g-quake" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>지진</h2></div>
+    <div class="do-now"><span class="eyebrow">흔들리는 동안</span><b>탁자 아래로 — 머리를 보호하고<br>탁자 다리를 꽉 잡는다.</b></div>
+    <div class="phase"><span class="phase-tag">흔들리는 동안 (수십 초)</span>
+      <ol class="steps">
+        <li><b>탁자 아래에서 머리 보호, 다리를 꽉 잡기.</b><span class="why">탁자가 없으면 방석·가방으로 머리를 감싸고 기둥·내벽 쪽으로.</span></li>
+        <li><b>섣불리 밖으로 뛰어나가지 말 것.</b><span class="why">흔들리는 동안 이동하다 낙하물에 다치는 경우가 가장 많다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">흔들림이 멈추면</span>
+      <ol class="steps">
+        <li><b>가스 잠그고 전기 차단, 문을 열어 출구 확보.</b><span class="why">여진으로 문틀이 틀어지면 못 나간다.</span></li>
+        <li><b>신발을 신고 계단으로 이동. 엘리베이터 금지.</b><span class="why">유리 파편 대비. 탑승 중이었다면 모든 층을 눌러 먼저 열리는 층에서 내린다.</span></li>
+        <li><b>건물·담장·유리창·간판에서 떨어져 운동장·공원 등 넓은 곳으로.</b><span class="why">가방·손으로 머리를 보호하며 이동. 차량은 오른쪽 정차.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 행정안전부 지진 국민행동요령 (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 화재 ===== -->
+  <section class="guide" id="g-fire" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>아파트·건물 화재</h2></div>
+    <div class="do-now"><span class="eyebrow">먼저 판단</span><b>어디에 불이 났는가?<br>무조건 뛰쳐나가는 게 더 위험할 수 있다.</b></div>
+    <div class="note">아파트 화재 사상자의 약 40%가 <b>대피하다가</b> 연기에 당했다(소방청, 2023~2025). 2023년부터 공식 수칙이 "불나면 대피 먼저"에서 <b>"불나면 살펴서 대피"</b>로 바뀌었다.</div>
+    <div class="phase"><span class="phase-tag">우리 집에 불</span>
+      <ol class="steps">
+        <li><b>"불이야!" 외치고 비상벨. 대피 가능하면 현관문을 꼭 닫고 계단으로 지상.</b><span class="why">문을 열어두면 연기가 계단을 타고 올라가 이웃을 덮친다.</span></li>
+        <li><b>낮은 자세, 젖은 수건으로 코와 입.</b></li>
+        <li><b>현관이 막혔으면: 대피공간·경량칸막이·하향식 피난구로.</b><span class="why">베란다 벽 중 두드려 보면 가벼운 석고판(경량칸막이)은 발로 쳐서 옆집으로 넘어갈 수 있다. 평소에 위치 확인.</span></li>
+        <li><b>그것도 없으면 불에서 먼 방으로 — 문 닫고 젖은 수건으로 틈새 막기. 욕실이면 수도를 틀어 둔다.</b><span class="why">119에 동·호수와 위치를 말하고 기다리는 게 연기 속 돌파보다 안전.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">다른 집에 불</span>
+      <ol class="steps">
+        <li><b>우리 집에 연기가 안 들어오면: 집 안에서 대기.</b><span class="why">창문 닫고 안내방송 청취. 계단이 굴뚝이 된 상태에서 나가는 게 더 위험.</span></li>
+        <li><b>연기·불길이 들어오면: 지상 또는 옥상으로 대피.</b><span class="why">옥상 출입문이 열리는지 평소에 확인해 둘 것.</span></li>
+        <li><b>이동이 어려우면 문 닫고 틈새 막고 119에 구조 요청.</b></li>
+      </ol>
+    </div>
+    <div class="warn">공통: <b>엘리베이터 절대 금지</b>(정전 시 연기 속 밀폐). 10층 이하는 완강기 위치를 평소에 확인.</div>
+    <p class="src">출처: 소방청 아파트 화재 피난행동요령(2023.11 개정) (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== CPR ===== -->
+  <section class="guide" id="g-cpr" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>심폐소생술</h2></div>
+    <div class="do-now"><span class="eyebrow">심정지 — 4분이 뇌 손상 분기점</span><b>반응 없고 호흡 없으면<br>즉시 가슴압박. 멈추지 않는 게 핵심.</b></div>
+    <ol class="steps" style="margin-top:6px">
+      <li><b>반응 확인:</b> 어깨를 두드리며 "괜찮으세요?"</li>
+      <li><b>신고 분담:</b> 주변 사람을 손가락으로 지목 — "119 신고해 주세요", "자동심장충격기(AED) 가져와 주세요".<span class="why">혼자면 스피커폰으로 119. 상담원이 영상통화로 압박을 지도해 준다.</span></li>
+      <li><b>호흡 확인(10초 이내):</b> 없거나 헐떡임뿐이면 심정지로 판단.</li>
+      <li><b>가슴압박:</b> 가슴뼈 아래쪽 절반에 손꿈치, 팔꿈치 펴고 수직으로.<span class="why">분당 100–120회 · 깊이 약 5cm · 압박 후 가슴이 완전히 올라오게. 편한 손을 아래로(2025 지침).</span></li>
+      <li><b>인공호흡은 배운 사람만 30:2.</b> 모르면 압박만 계속 — 구급대 도착까지.</li>
+      <li><b>AED 도착:</b> 전원 켜고 음성 안내대로. 분석·충격 시 "모두 떨어지세요".<span class="why">여성 환자는 속옷을 벗기지 말고 위치만 조정해 맨 가슴에 패드 부착(2025 지침).</span></li>
+    </ol>
+    <div class="card" style="text-align:center">
+      <h3>압박 박자 도우미 · 분당 110회</h3>
+      <div class="metro-dot" id="metro-dot"></div>
+      <button class="btn acc w" id="btn-metro">박자 시작</button>
+      <p class="sm mut" style="margin-bottom:0">"삐" 소리에 맞춰 1회씩 압박 · 화면이 꺼지지 않게 유지됩니다</p>
+    </div>
+    <div class="note">영아(1세 미만): 양손으로 가슴을 감싸 <b>두 엄지</b>로 압박(2025 지침). 깊이는 가슴 두께의 1/3.</div>
+    <p class="src">출처: 질병관리청·대한심폐소생협회 「2025 한국 심폐소생술 가이드라인」 (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 정전/통신 ===== -->
+  <section class="guide" id="g-black" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>정전·통신두절</h2></div>
+    <div class="do-now"><span class="eyebrow">원칙</span><b>통화 대신 문자.<br>배터리는 "통신용"으로만 아낀다.</b></div>
+    <div class="phase"><span class="phase-tag">통신</span>
+      <ol class="steps">
+        <li><b>재난문자는 데이터·Wi-Fi를 꺼도 수신된다.</b><span class="why">기지국 직접 방송(CBS) 방식. 휴대폰 자체를 끄지는 말 것.</span></li>
+        <li><b>음성 폭주 시 문자(SMS)가 더 잘 간다.</b><span class="why">안부는 문자로 보내고 회선을 구조 통신에 양보.</span></li>
+        <li><b>재난 시 통신 3사 Wi-Fi가 무료 개방된다 — SSID: <u>Public WiFi Emergency</u></b></li>
+        <li><b>휴대용 라디오 = 최후의 정보망.</b><span class="why">KBS 제1라디오(재난방송 주관): 수도권 FM 97.3 · 대전/세종/충남 FM 94.7 · AM 711kHz (지역별 상이, 평시 확인)</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">배터리 연장</span>
+      <ol class="steps">
+        <li><b>저전력 모드 + 밝기 최소 + 안 쓰는 앱 종료.</b></li>
+        <li><b>전파가 약한 곳에선 비행기모드.</b><span class="why">기지국 탐색이 배터리 최대 소모원. 정시마다 잠깐 해제해 문자만 확인.</span></li>
+        <li><b>GPS·블루투스는 평소 꺼 두고, 위치 신고 직전에만 켠다.</b></li>
+        <li><b>차량 USB·보조배터리는 통신용으로만.</b></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">정전 생활</span>
+      <ol class="steps">
+        <li><b>냉장고 문 최소 개방.</b><span class="why">미개방 기준 냉장 약 4시간, 냉동 24~48시간 유지.</span></li>
+        <li><b>조명은 양초보다 손전등.</b><span class="why">여진·혼란 중 양초는 2차 화재 원인.</span></li>
+        <li><b>엘리베이터 이용 금지.</b></li>
+      </ol>
+    </div>
+    <div class="note">지상망이 장기간 끊기는 상황의 유일한 민간 대안은 위성통신이다 → <b>대비 탭 "위성통신 검토"</b> 참고.</div>
+    <p class="src">출처: 행정안전부·과기정통부(재난 Wi-Fi 개방)·KBS 재난방송 (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 경보 구분 ===== -->
+  <section class="guide" id="g-alarm" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>경보 소리 구분</h2></div>
+    <p class="sm mut">2023년 8월 개편된 민방위 경보 체계 기준. <b>사이렌이 울리면 공습 또는 핵</b> — 둘 다 행동은 같다: 즉시 지하로.</p>
+    <div class="card">
+      <div class="alarm"><span class="tag red">공습경보</span>
+        <div style="min-width:0"><b>파상음 사이렌 1분</b> (5초 상승·3초 하강 ×7회)
+          <span class="sm">공격이 임박했거나 진행 중 → <b>즉시 지하 대피</b></span>
+          <button class="play" data-siren="air">소리 들어보기 (1주기 8초)</button>
+        </div>
+      </div>
+      <div class="alarm"><span class="tag red">핵경보</span>
+        <div style="min-width:0"><b>공습경보와 같은 사이렌 1분</b> + 음성방송
+          <span class="sm">핵 공격 임박·진행 → 지하 깊은 곳으로</span>
+        </div>
+      </div>
+      <div class="alarm"><span class="tag amb">경계경보</span>
+        <div style="min-width:0"><b>사이렌 없음</b> — 음성방송·재난문자로 전파
+          <span class="sm">공격이 예상되는 단계 → 대피 준비, 어린이·노약자 먼저 대피</span>
+        </div>
+      </div>
+      <div class="alarm"><span class="tag amb">화생방</span>
+        <div style="min-width:0"><b>음성방송</b>
+          <span class="sm">화학은 높은 곳으로, 호흡기·피부 보호</span>
+        </div>
+      </div>
+      <div class="alarm"><span class="tag blu">재난경보</span>
+        <div style="min-width:0"><b>짧은 파상음 12초</b> (2초 상승·2초 하강 ×3회)
+          <span class="sm">홍수 등 자연재난 → 이번엔 <b>지상 안전지대</b>로 (공습과 반대)</span>
+          <button class="play" data-siren="dis">소리 들어보기 (12초)</button>
+        </div>
+      </div>
+      <div class="alarm"><span class="tag">경보해제</span>
+        <div style="min-width:0"><b>음성방송</b><span class="sm">공격 징후 소멸 — 정부 안내에 따라 복귀</span></div>
+      </div>
+    </div>
+    <p class="src">출처: 행정안전부 민방위 경보 발령·전달 규정 (2026.11 확인)</p>
+  </section>
+</main>
+
+<!-- ================= 위치 탭 ================= -->
+<main id="tab-loc" hidden>
+  <h2 style="margin-top:14px">내 위치</h2>
+  <p class="sm mut" style="margin-top:0">GPS는 위성 수신 — <b>인터넷·데이터 없이도 작동</b>한다. 하늘이 보이는 곳에서 30초~2분 기다리면 정확해진다.</p>
+  <div class="fix">
+    <span class="eyebrow">국가지점번호 · 119/112 공용 격자주소</span>
+    <div class="big grid-no num" id="loc-grid">— —</div>
+    <div class="kv"><span class="k">위도</span><span class="v num" id="loc-lat">—</span></div>
+    <div class="kv"><span class="k">경도</span><span class="v num" id="loc-lon">—</span></div>
+    <div class="kv"><span class="k">도분초</span><span class="v num" id="loc-dms">—</span></div>
+    <div class="kv"><span class="k">고도</span><span class="v num" id="loc-alt">—</span></div>
+    <div class="kv"><span class="k">측정 시각</span><span class="v num" id="loc-time">—</span></div>
+    <span class="acc-pill good" id="loc-acc" hidden>정확도 —</span>
+    <div class="btnrow" style="margin-top:12px">
+      <button class="btn acc" id="btn-gps">GPS 시작</button>
+      <button class="btn" id="btn-copy-loc">위치 복사</button>
+    </div>
+    <p class="sm mut" id="gps-status" style="margin-bottom:0">아래 버튼을 누르면 위치 권한을 요청합니다.</p>
+  </div>
+  <div class="warn" id="gps-jam" hidden><b>정확도가 낮습니다(±50m 초과).</b> 실내이거나 GPS 전파 교란(북한 교란 등) 가능성이 있습니다. 좌표만 믿지 말고 <b>주변 건물·지형지물을 함께</b> 말하세요.</div>
+  <div class="card">
+    <h3>구조 요청문 (복사해서 문자·신고에 사용)</h3>
+    <textarea class="report-box" id="report" readonly>GPS를 시작하면 신고용 문구가 자동 생성됩니다.</textarea>
+    <div class="btnrow" style="margin-top:8px">
+      <button class="btn acc" id="btn-copy-report">요청문 복사</button>
+      <a class="btn" id="btn-map" href="#" target="_blank" rel="noopener" hidden>지도에서 보기</a>
+    </div>
+    <p class="sm faint" style="margin-bottom:0">복사가 안 되면 문구를 길게 눌러 직접 복사. "지도에서 보기"는 온라인 전용이며 누르는 순간 좌표가 지도 서비스로 전달된다.</p>
+  </div>
+  <div class="card">
+    <h3>국가지점번호란?</h3>
+    <p class="sm mut" style="margin-bottom:0">산·바다·들판처럼 주소가 없는 곳을 10m 단위로 표시하는 국가 공식 격자 주소(문자 2 + 숫자 4+4). 119·112 신고 체계가 그대로 인식한다. 등산로·해안 기둥 표지판의 번호와 같은 체계다.</p>
+  </div>
+</main>
+
+<!-- ================= SOS 탭 ================= -->
+<main id="tab-sos" hidden>
+  <h2 style="margin-top:14px">구조 신호</h2>
+  <p class="sm mut" style="margin-top:0">국제 조난 신호는 <b>"3회 반복"</b> — 호루라기 3번, 빛 3번. 배터리 소모가 크니 구조대가 보이거나 들릴 때 집중 사용.</p>
+  <div class="tool-grid">
+    <button class="tool" id="t-flash">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+      <b>손전등 화면</b><span>화면 전체 흰색 · 최대 밝기로</span>
+    </button>
+    <button class="tool" id="t-sos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-7 4 14 2-7h8"/></svg>
+      <b>SOS 점멸</b><span>모스부호 ···−−−··· 자동 반복</span>
+    </button>
+    <button class="tool" id="t-whistle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h8l1-2h5a4.5 4.5 0 1 1-4.5 6.5L3 13z"/><circle cx="17" cy="12" r="1"/></svg>
+      <b>호루라기 소리</b><span>3.1kHz · 3회씩 반복</span>
+    </button>
+    <button class="tool" id="t-board">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 12h10"/></svg>
+      <b>구조 표지판</b><span>화면에 크게: SOS · 사람 있음</span>
+    </button>
+  </div>
+  <div class="card">
+    <h3>긴급 전화</h3>
+    <div class="tel"><span class="no num">119</span><span class="what">화재 · 구조 · 구급 · 재난 (영상통화 지도 가능)</span></div>
+    <div class="tel"><span class="no num">112</span><span class="what">범죄 · 치안</span></div>
+    <div class="tel"><span class="no num">122</span><span class="what">해양 사고 (해경)</span></div>
+    <div class="tel"><span class="no num">110</span><span class="what">정부 민원 콜센터 (각종 재난 문의)</span></div>
+    <p class="sm mut" style="margin-bottom:0">신고 순서: ① 무슨 일인지 ② 어디인지 — <b>국가지점번호 또는 위경도</b>(위치 탭) ③ 부상자 수. 끊지 말고 상담원 지시를 따른다.</p>
+  </div>
+  <div class="note">음성이 안 터지면 <b>119 문자 신고</b>(위치 탭의 구조 요청문을 그대로 전송)도 접수된다. 사진 첨부 가능.</div>
+</main>
+
+<!-- ================= 대비 탭 ================= -->
+<main id="tab-prep" hidden>
+  <h2 style="margin-top:14px">평시 대비</h2>
+  <p class="sm mut" style="margin-top:0">재난 대응력의 90%는 사건 전에 결정된다. 아래 체크는 이 기기에만 저장된다.</p>
+
+  <div class="card">
+    <h3>생존배낭 체크리스트 <span class="sm mut num" id="kit-count"></span></h3>
+    <div class="progress"><i id="kit-bar"></i></div>
+    <div id="kit-list"></div>
+    <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="kit-reset">체크 초기화</button></div>
+    <p class="sm faint" style="margin-bottom:0">기준: 행정안전부 비상대비 물자 권고 + 美 FEMA(물 1인 1일 약 4L, 최소 3일분)</p>
+  </div>
+
+  <div class="card">
+    <h3>가족 비상 계획</h3>
+    <div class="field"><label for="plan-meet1">1차 집결지 (집 근처)</label><input id="plan-meet1" placeholder="예: ○○아파트 지하주차장 B1 입구"></div>
+    <div class="field"><label for="plan-meet2">2차 집결지 (동네 밖)</label><input id="plan-meet2" placeholder="예: ○○초등학교 운동장"></div>
+    <div class="field"><label for="plan-contact">외부 연락책 (타지역 친척 — 지역망 마비 대비)</label><input id="plan-contact" placeholder="예: 부산 삼촌 010-xxxx-xxxx"></div>
+    <div class="field"><label for="plan-etc">메모 (아이 학교 대피 장소, 상비약, 혈액형 등)</label><textarea id="plan-etc" rows="3" placeholder="예: 윤재 학교 대피장소 = 강당 / 아빠 A형 엄마 O형"></textarea></div>
+    <p class="sm faint" style="margin-bottom:0">자동 저장 · <b>이 기기에만 저장되고 외부로 전송되지 않음.</b> 단, 기기를 분실하면 열람될 수 있으니 전화번호는 뒷자리 등 일부만 적는 방법도 있다 · 종이 백업 권장(배터리 0%가 기본 시나리오)</p>
+  </div>
+
+  <div class="card">
+    <h3>대피소 · 비상급수 미리 확인</h3>
+    <ol class="steps">
+      <li><b>집·회사 근처 민방위 대피소 2곳씩 확인.</b><span class="why">네이버지도·카카오맵·T맵 "대피소" 검색, 안전디딤돌 앱, 국민재난안전포털.</span></li>
+      <li><b>아파트는 지하주차장이 대피소인 경우가 많다 — 걸어서 몇 분인지 재 보기.</b></li>
+      <li><b>비상급수시설(지하수·급수탑) 위치도 같은 앱에서 확인.</b></li>
+    </ol>
+  </div>
+
+  <!-- ===== 위성통신 검토 ===== -->
+  <div class="card" id="starlink">
+    <span class="eyebrow">통신 두절 대비 · 선택 장비</span>
+    <h3 style="margin-top:4px">위성통신(스타링크) 구매 검토</h3>
+    <p class="sm">전쟁·대규모 재난으로 기지국·광케이블이 끊기면 지상 통신은 전부 멈춘다. 저궤도 위성 인터넷은 <b>지상망과 독립적으로 작동하는 유일한 민간 통신 수단</b>이다. 한국은 2025년 12월 4일 정식 서비스를 시작했다(스타링크코리아, 기간통신사업자).</p>
+    <div class="scroll-x"><table class="cmp">
+      <tr><th></th><th>표준 키트 (고정 설치)</th><th>미니 (휴대용)</th></tr>
+      <tr><td>장비 가격</td><td><b>55만 원</b> + 배송 3.2만</td><td><b>약 32만 원</b> (유통가 기준 — 공식가는 구매 페이지 확인)</td></tr>
+      <tr><td>요금(월)</td><td>주거용 <b>8.7만</b> 무제한<br>라이트 6.4만</td><td>로밍 50GB <b>7.2만</b><br>로밍 무제한 14.4만</td></tr>
+      <tr><td>속도</td><td colspan="2">다운 약 135Mbps · 업 40Mbps (국내 실측 기대치)</td></tr>
+      <tr><td>전력</td><td>75~100W — 가정 전원 전제</td><td><b>평균 20~40W</b> · USB-C 100W(PD)로 구동 → 500Wh 파워뱅크로 12~20시간</td></tr>
+      <tr><td>재난 적합성</td><td>집 고정 — 정전 시 별도 전원 필요</td><td>배낭 휴대 · 차량/파워뱅크 운용 — <b>비상용은 미니가 합리적</b></td></tr>
+    </table></div>
+    <p class="sm faint">가격은 2025.12 출시 기준이며 수시 변동(2026년 중 요금 조정 공지 이력 있음). 구매 전 starlink.com/kr에서 확인. 미니 국내 유통가는 커뮤니티 복수 확인 기준으로, 공식 1차 출처는 아님.</p>
+    <details><summary>재난 관점의 한계 — 사기 전에 알아야 할 것</summary><div class="inner">
+      <p>· <b>하늘이 보여야 한다.</b> 실내·지하 대피소 안에서는 안 된다. 지상 개활지·옥상·베란다에서 수신해 Wi-Fi로 공유하는 방식.</p>
+      <p>· <b>전기가 있어야 한다.</b> 정전 대비라면 대용량 파워뱅크(500Wh+)나 차량 인버터가 사실상 세트 구매 품목.</p>
+      <p>· <b>전시 교란 가능성.</b> 우크라이나에서 유효성이 입증됐지만, 동시에 재밍 시도도 상시 존재했다. "확실한 보험"이 아니라 "성공 확률이 가장 높은 예비 회선"으로 본다.</p>
+      <p>· <b>월 요금은 평시에도 나간다.</b> 로밍 요금제는 일시정지-재개 운용이 가능해 비상 대비용은 이 방식이 경제적인지 공식 약관에서 확인할 것.</p>
+    </div></details>
+    <details><summary>더 싼 대안부터 순서대로</summary><div class="inner">
+      <p>① <b>건전지 라디오(1~3만 원)</b> — 수신 전용이지만 정보 단절을 막는 최우선 장비. EMP·전면 정전에도 생존.</p>
+      <p>② <b>대용량 보조배터리/파워뱅크</b> — 어떤 통신 수단이든 전기가 전제.</p>
+      <p>③ <b>위성 메신저(가민 inReach 등, 이리듐망)</b> — 문자 전용, 월 2~7만 원대. 하늘만 보이면 송수신.</p>
+      <p>④ <b>스타링크 미니</b> — 인터넷 전체가 필요할 때. 가족 단위 최상위 옵션.</p>
+    </div></details>
+    <h3 style="margin-top:14px">구매 판단 체크</h3>
+    <div class="chk"><input type="checkbox" id="sl1"><label for="sl1">월 7만 원± 통신 예산을 평시에도 감당할 수 있다</label></div>
+    <div class="chk"><input type="checkbox" id="sl2"><label for="sl2">정전 시 쓸 전원(파워뱅크 500Wh+ 또는 차량 인버터)이 있거나 함께 살 것이다</label></div>
+    <div class="chk"><input type="checkbox" id="sl3"><label for="sl3">옥상·베란다·마당 등 하늘이 트인 수신 위치가 있다</label></div>
+    <div class="verdict" id="sl-verdict">위 3가지를 체크해 보세요. 충족 개수에 따라 판단 기준을 제시합니다.</div>
+  </div>
+
+  <div class="card">
+    <h3>이 앱을 지니는 법 — 형태별 기능 차이</h3>
+    <ol class="steps">
+      <li><b>설치판(권장): 홈 화면 앱 — GPS + 오프라인 전부 작동.</b><span class="why">PWA 배포 패키지를 GitHub Pages에 올리고(가이드 5분) 그 주소를 Chrome으로 연 뒤 "홈 화면에 추가". 한 번 설치하면 인터넷 없이 전 기능이 작동한다. 가족 폰에도 같은 주소로 설치.</span></li>
+      <li><b>링크판: claude.ai 아티팩트 — 열람·공유용.</b><span class="why">온라인 필요. 보안 정책상 이 화면 안에서는 GPS가 차단된다.</span></li>
+      <li><b>파일판: HTML 파일 — 최후의 열람용.</b><span class="why">카카오톡·파일앱 경유(content://)로 열면 브라우저가 위치·저장 기능을 차단한다. 행동요령 열람과 신호 도구는 사용 가능.</span></li>
+      <li><b>가족 공용 수칙(집결지·연락책)은 종이로도 백업.</b><span class="why">폰 배터리 0%가 기본 시나리오.</span></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>개인정보 · 데이터</h3>
+    <p class="sm mut">이 앱은 서버가 없다. 체크리스트·가족 계획·위치 등 모든 데이터는 이 기기 브라우저 안에만 존재하며 어디로도 전송되지 않는다. 기기를 바꾸거나 넘기기 전에는 아래로 지울 것.</p>
+    <button class="btn ghost w" id="wipe-all">입력 데이터 전체 삭제 (체크 · 가족 계획)</button>
+  </div>
+
+  <footer class="app">
+    <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
+    본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다. · 앱 버전 v1.2
+  </footer>
+</main>
+</div>
+
+<!-- tab bar -->
+<nav class="tabs"><div class="row">
+  <a href="#now" id="nav-now" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2.6 18.5A1.7 1.7 0 0 0 4 21h16a1.7 1.7 0 0 0 1.4-2.5L12 2z"/><path d="M12 9v5M12 17.5h.01"/></svg>긴급</a>
+  <a href="#loc" id="nav-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.1-7-11a7 7 0 0 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>내 위치</a>
+  <a href="#sos" id="nav-sos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>SOS</a>
+  <a href="#prep" id="nav-prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M4 7h16l-1.2 12.2A2 2 0 0 1 16.8 21H7.2a2 2 0 0 1-2-1.8L4 7z"/></svg>대비</a>
+</div></nav>
+
+<div id="flash-ov" hidden><div class="hint">탭하면 종료 · 기기 밝기를 최대로 올리세요</div></div>
+<div id="board-ov" hidden><div class="txt" id="board-txt">SOS</div><div class="hint">탭: 문구 변경 (SOS → 사람 있음 → 구조 요청) · 길게 누르면 종료</div></div>
+
+<script>
+'use strict';
+/* ========== util ========== */
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+function copyText(t,btn){
+  const done=()=>{if(btn){const o=btn.textContent;btn.textContent='복사됨 ✓';setTimeout(()=>btn.textContent=o,1400)}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(done).catch(()=>fallback());
+  }else fallback();
+  function fallback(){
+    try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();}catch(e){}
+  }
+}
+/* ========== tabs & guides ========== */
+const TABS=['now','loc','sos','prep'];
+function showTab(name){
+  if(!TABS.includes(name))name='now';
+  TABS.forEach(t=>{$('#tab-'+t).hidden=(t!==name);$('#nav-'+t).classList.toggle('on',t===name)});
+  closeGuide();
+  window.scrollTo(0,0);
+}
+function openGuide(id){
+  $('#sit-home').hidden=true;
+  $$('#tab-now .guide').forEach(g=>g.hidden=(g.id!==id));
+  window.scrollTo(0,0);
+}
+function closeGuide(){
+  $$('#tab-now .guide').forEach(g=>g.hidden=true);
+  $('#sit-home').hidden=false;
+}
+addEventListener('hashchange',()=>showTab(location.hash.replace('#','')));
+showTab(location.hash.replace('#','')||'now');
+$$('button.sit').forEach(b=>b.addEventListener('click',()=>openGuide(b.dataset.g)));
+$$('.back').forEach(b=>b.addEventListener('click',()=>{closeGuide();window.scrollTo(0,0)}));
+
+/* ========== audio ========== */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+let sirenNodes=[];
+function stopSiren(){sirenNodes.forEach(n=>{try{n.stop()}catch(e){}});sirenNodes=[]}
+function playSiren(kind,btn){
+  const c=ac();if(!c)return;stopSiren();
+  const o=c.createOscillator(),g=c.createGain();
+  o.type='sawtooth';g.gain.value=0.12;o.connect(g);g.connect(c.destination);
+  const t0=c.currentTime;let t=t0;
+  const cyc=(up,down)=>{o.frequency.setValueAtTime(380,t);o.frequency.linearRampToValueAtTime(950,t+up);o.frequency.linearRampToValueAtTime(380,t+up+down);t+=up+down};
+  if(kind==='air'){cyc(5,3)}else{cyc(2,2);cyc(2,2);cyc(2,2)}
+  g.gain.setValueAtTime(0.12,t-0.05);g.gain.linearRampToValueAtTime(0,t);
+  o.start(t0);o.stop(t+0.05);sirenNodes=[o];
+  if(btn){const orig=btn.textContent;btn.textContent='재생 중…';o.onended=()=>btn.textContent=orig}
+}
+$$('.play').forEach(b=>b.addEventListener('click',()=>playSiren(b.dataset.siren,b)));
+
+/* whistle: 3 blasts ×1s, pause, repeat */
+let whistleTimer=null,whistleOscs=[];
+function stopWhistle(){if(whistleTimer){clearInterval(whistleTimer);whistleTimer=null}
+  whistleOscs.forEach(n=>{try{n.g.gain.cancelScheduledValues(0);n.g.gain.value=0;n.o.stop()}catch(e){}});whistleOscs=[];
+  const b=$('#t-whistle b');if(b)b.textContent='호루라기 소리';releaseWake()}
+function startWhistle(){
+  const c=ac();if(!c)return;
+  const blastSet=()=>{whistleOscs=whistleOscs.filter(n=>n.o.context.currentTime<n.end);
+  for(let i=0;i<3;i++){
+    const o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.value=3100;
+    g.gain.value=0;o.connect(g);g.connect(c.destination);
+    const s=c.currentTime+i*1.35;
+    g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(0.22,s+0.03);
+    g.gain.setValueAtTime(0.22,s+0.95);g.gain.linearRampToValueAtTime(0,s+1.0);
+    o.start(s);o.stop(s+1.05);whistleOscs.push({o,g,end:s+1.05});
+  }};
+  blastSet();whistleTimer=setInterval(blastSet,6000);
+  $('#t-whistle b').textContent='정지 (울리는 중)';requestWake();
+}
+$('#t-whistle').addEventListener('click',()=>whistleTimer?stopWhistle():startWhistle());
+
+/* CPR metronome 110bpm */
+let metroTimer=null;
+function stopMetro(){if(metroTimer){clearInterval(metroTimer);metroTimer=null}
+  $('#btn-metro').textContent='박자 시작';$('#metro-dot').classList.remove('on');releaseWake()}
+function startMetro(){
+  const c=ac();if(!c)return;
+  const period=60000/110;
+  const beep=()=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=880;
+    g.gain.value=0;o.connect(g);g.connect(c.destination);const s=c.currentTime;
+    g.gain.setValueAtTime(0.3,s);g.gain.exponentialRampToValueAtTime(0.001,s+0.07);o.start(s);o.stop(s+0.08)};
+  beep();metroTimer=setInterval(beep,period);
+  $('#btn-metro').textContent='정지';$('#metro-dot').classList.add('on');requestWake();
+}
+$('#btn-metro').addEventListener('click',()=>metroTimer?stopMetro():startMetro());
+
+/* ========== wake lock ========== */
+let wakeLock=null,wakeCount=0;
+async function requestWake(){wakeCount++;try{if(!wakeLock&&'wakeLock'in navigator){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
+function releaseWake(){wakeCount=Math.max(0,wakeCount-1);if(wakeCount===0&&wakeLock){try{wakeLock.release()}catch(e){}wakeLock=null}}
+/* 화면 복귀 시 wake lock 자동 재획득 (OS가 백그라운드 전환 시 강제 해제함) */
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible'&&wakeCount>0&&!wakeLock){
+    try{wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}catch(e){}
+  }
+});
+
+/* ========== flashlight & SOS flash ========== */
+const flashOv=$('#flash-ov');let sosTimer=null;
+function openFlash(){flashOv.hidden=false;flashOv.style.background='#fff';requestWake()}
+function closeFlash(){flashOv.hidden=true;if(sosTimer){clearTimeout(sosTimer);sosTimer=null}releaseWake()}
+flashOv.addEventListener('click',closeFlash);
+$('#t-flash').addEventListener('click',openFlash);
+$('#t-sos').addEventListener('click',()=>{
+  flashOv.hidden=false;requestWake();
+  // morse SOS: unit 230ms — dot 1u, dash 3u, gap 1u, letter gap 3u, word gap 7u
+  const u=230,seq=[];
+  const push=(on,len)=>seq.push([on,len*u]);
+  const dot=()=>{push(1,1);push(0,1)},dash=()=>{push(1,3);push(0,1)};
+  [dot,dot,dot].forEach(f=>f());push(0,2);
+  [dash,dash,dash].forEach(f=>f());push(0,2);
+  [dot,dot,dot].forEach(f=>f());push(0,7);
+  let i=0;
+  (function step(){
+    if(flashOv.hidden)return;
+    const [on,len]=seq[i];flashOv.style.background=on?'#fff':'#000';
+    i=(i+1)%seq.length;sosTimer=setTimeout(step,len);
+  })();
+});
+
+/* signal board */
+const boardOv=$('#board-ov'),boardTxt=$('#board-txt'),boardMsgs=['SOS','사람 있음','구조 요청'];let boardIdx=0,boardHold=null;
+$('#t-board').addEventListener('click',()=>{boardOv.hidden=false;boardIdx=0;boardTxt.textContent=boardMsgs[0];requestWake()});
+boardOv.addEventListener('click',()=>{boardIdx=(boardIdx+1)%boardMsgs.length;boardTxt.textContent=boardMsgs[boardIdx]});
+boardOv.addEventListener('pointerdown',()=>{boardHold=setTimeout(()=>{boardOv.hidden=true;releaseWake()},650)});
+boardOv.addEventListener('pointerup',()=>clearTimeout(boardHold));
+boardOv.addEventListener('pointercancel',()=>clearTimeout(boardHold));
+
+/* ========== GPS & UTM-K ========== */
+// WGS84 → UTM-K(EPSG:5179) Transverse Mercator (GRS80). 기준 라이브러리(proj4) 대비 오차 < 1cm 검증.
+function utmk(lat,lon){
+  const a=6378137,f=1/298.257222101,e2=f*(2-f),ep2=e2/(1-e2);
+  const k0=0.9996,lat0=38*Math.PI/180,lon0=127.5*Math.PI/180,FE=1000000,FN=2000000;
+  const rl=lat*Math.PI/180,rlon=lon*Math.PI/180;
+  const sl=Math.sin(rl),cl=Math.cos(rl),tl=Math.tan(rl);
+  const Nr=a/Math.sqrt(1-e2*sl*sl),T=tl*tl,C=ep2*cl*cl,A=(rlon-lon0)*cl;
+  const m=phi=>a*((1-e2/4-3*e2*e2/64-5*e2*e2*e2/256)*phi
+    -(3*e2/8+3*e2*e2/32+45*e2*e2*e2/1024)*Math.sin(2*phi)
+    +(15*e2*e2/256+45*e2*e2*e2/1024)*Math.sin(4*phi)
+    -(35*e2*e2*e2/3072)*Math.sin(6*phi));
+  const E=FE+k0*Nr*(A+(1-T+C)*A**3/6+(5-18*T+T*T+72*C-58*ep2)*A**5/120);
+  const N=FN+k0*(m(rl)-m(lat0)+Nr*tl*(A*A/2+(5-T+9*C+4*C*C)*A**4/24+(61-58*T+T*T+600*C-330*ep2)*A**6/720));
+  return [E,N];
+}
+function gridNo(E,N){
+  const ci=Math.floor(E/100000),ri=Math.floor(N/100000);
+  const cols='가나다라마바사',rows='가나다라마바사아';
+  if(ci<7||ci>13||ri<13||ri>20)return null;
+  return cols[ci-7]+rows[ri-13]+' '+String(Math.floor(E%100000/10)).padStart(4,'0')+' '+String(Math.floor(N%100000/10)).padStart(4,'0');
+}
+function toDMS(v,isLat){
+  const h=isLat?(v>=0?'N':'S'):(v>=0?'E':'W');v=Math.abs(v);
+  const d=Math.floor(v),mf=(v-d)*60,mi=Math.floor(mf),s=((mf-mi)*60).toFixed(1);
+  return `${d}°${String(mi).padStart(2,'0')}′${s.padStart(4,'0')}″${h}`;
+}
+let watchId=null,lastFix=null;
+const gpsBtn=$('#btn-gps'),gpsStatus=$('#gps-status');
+function fmtReport(f){
+  const g=gridNo(...utmk(f.lat,f.lon));
+  return `[구조 요청]\n국가지점번호: ${g||'(한반도 격자 범위 밖)'}\n위도 ${f.lat.toFixed(6)} / 경도 ${f.lon.toFixed(6)}\n정확도 ±${Math.round(f.acc)}m · ${f.timeStr}\n상황: (부상자 수·상태를 적으세요)`;
+}
+function renderFix(f){
+  lastFix=f;
+  const g=gridNo(...utmk(f.lat,f.lon));
+  $('#loc-grid').textContent=g||'격자 범위 밖';
+  $('#loc-lat').textContent=f.lat.toFixed(6);
+  $('#loc-lon').textContent=f.lon.toFixed(6);
+  $('#loc-dms').textContent=toDMS(f.lat,true)+' '+toDMS(f.lon,false);
+  $('#loc-alt').textContent=f.alt==null?'—':Math.round(f.alt)+' m';
+  $('#loc-time').textContent=f.timeStr;
+  const pill=$('#loc-acc');pill.hidden=false;
+  pill.textContent='정확도 ±'+Math.round(f.acc)+'m';
+  const bad=f.acc>50;
+  pill.className='acc-pill '+(bad?'bad':'good');
+  $('#gps-jam').hidden=!bad;
+  $('#report').value=fmtReport(f);
+  const map=$('#btn-map');map.hidden=false;
+  map.href=`https://maps.google.com/?q=${f.lat.toFixed(6)},${f.lon.toFixed(6)}`;
+}
+function startGPS(){
+  if(!window.isSecureContext){
+    gpsStatus.innerHTML='<b>이 열기 방식에서는 브라우저 보안 정책이 위치 기능을 차단합니다</b> (카카오톡·파일앱 경유 content:// — 설정을 바꿔도 소용없음). 대비 탭 "이 앱을 지니는 법"의 <b>설치판(홈 화면 앱)</b>으로 열면 GPS가 작동합니다.';
+    return;
+  }
+  if(!('geolocation'in navigator)){gpsStatus.textContent='이 기기는 위치 기능을 지원하지 않습니다.';return}
+  gpsStatus.textContent='위성 수신 중… 하늘이 보이는 곳에서 잠시 기다리세요.';
+  gpsBtn.textContent='GPS 정지';
+  watchId=navigator.geolocation.watchPosition(p=>{
+    const d=new Date(p.timestamp);
+    renderFix({lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy,
+      alt:p.coords.altitude,timeStr:d.toLocaleTimeString('ko-KR',{hour12:false})});
+    gpsStatus.textContent='수신 중 — 수치가 계속 갱신됩니다. 움직이지 않으면 더 정확해집니다.';
+  },e=>{
+    gpsStatus.innerHTML=e.code===1
+      ?'위치 권한이 거부되었습니다. <b>claude.ai 화면 안에서는 위치가 항상 차단</b>되니 설치판(홈 화면 앱)으로 여세요. 일반 브라우저라면 사이트 설정에서 위치를 허용해 주세요.'
+      :'위치를 가져올 수 없습니다. 하늘이 보이는 곳에서 다시 시도하세요.';
+    stopGPS();
+  },{enableHighAccuracy:true,maximumAge:3000,timeout:30000});
+}
+function stopGPS(){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}gpsBtn.textContent='GPS 시작'}
+gpsBtn.addEventListener('click',()=>watchId==null?startGPS():stopGPS());
+$('#btn-copy-loc').addEventListener('click',function(){
+  if(!lastFix)return;const g=gridNo(...utmk(lastFix.lat,lastFix.lon));
+  copyText(`${g||''} (위도 ${lastFix.lat.toFixed(6)}, 경도 ${lastFix.lon.toFixed(6)}, ±${Math.round(lastFix.acc)}m)`,this);
+});
+$('#btn-copy-report').addEventListener('click',function(){copyText($('#report').value,this)});
+
+/* ========== survival kit checklist ========== */
+const KIT=[
+  ['생수','1인 1일 약 4L × 최소 3일 (음용+위생)'],
+  ['비상식량 3일분','즉석밥·통조림·에너지바 — 조리 불필요 위주'],
+  ['손전등 + 여분 건전지','양초 대신. 헤드랜턴이면 양손 자유'],
+  ['휴대용 라디오 (건전지식)','KBS 1라디오 주파수 메모해 붙이기'],
+  ['대용량 보조배터리','20,000mAh 이상 · 평시 80% 유지 충전'],
+  ['상비약 + 개인 처방약','진통제·지사제·소독약·밴드 + 지병약 1주분'],
+  ['KF94 마스크 여러 장','화생방 대체 + 분진'],
+  ['호루라기','매몰 시 체력 소모 없이 구조 신호'],
+  ['물티슈·휴지·손소독제',''],
+  ['비닐봉투·우의','낙진·오염 차단, 방수, 오염의류 밀봉'],
+  ['보온 담요 (은박 포일형)','경량 · 저체온 방지'],
+  ['현금 (잔돈 포함)','정전 시 카드·페이 전부 무용'],
+  ['신분증·통장 사본, 가족사진','실종 확인용 사진 포함'],
+  ['라이터·성냥·멀티툴·장갑',''],
+  ['생리용품·아기용품·반려동물 사료','가족 구성에 맞게'],
+  ['이 앱 저장 + 종이 수칙 1부','폰 배터리 0%를 전제'],
+];
+(function(){
+  const saved=store.get('sv.kit',{});
+  const wrap=$('#kit-list');
+  wrap.innerHTML=KIT.map((k,i)=>`<div class="chk"><input type="checkbox" id="kit${i}" ${saved[i]?'checked':''}><label for="kit${i}">${k[0]}${k[1]?`<span class="sm">${k[1]}</span>`:''}</label></div>`).join('');
+  function update(){
+    const st={};let n=0;
+    KIT.forEach((_,i)=>{const c=$('#kit'+i).checked;st[i]=c;if(c)n++});
+    store.set('sv.kit',st);
+    $('#kit-bar').style.width=(n/KIT.length*100)+'%';
+    $('#kit-count').textContent=`${n}/${KIT.length}`;
+  }
+  wrap.addEventListener('change',update);update();
+  $('#kit-reset').addEventListener('click',()=>{KIT.forEach((_,i)=>$('#kit'+i).checked=false);update()});
+})();
+
+/* family plan autosave */
+['plan-meet1','plan-meet2','plan-contact','plan-etc'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.value=store.get('sv.'+id,'');
+  el.addEventListener('input',()=>store.set('sv.'+id,el.value));
+});
+
+/* starlink decision */
+(function(){
+  const ids=['sl1','sl2','sl3'],v=$('#sl-verdict');
+  const saved=store.get('sv.starlink',{});
+  ids.forEach(id=>{document.getElementById(id).checked=!!saved[id]});
+  function update(){
+    const st={};let n=0;ids.forEach(id=>{const c=document.getElementById(id).checked;st[id]=c;if(c)n++});
+    store.set('sv.starlink',st);
+    v.classList.toggle('go',n===3);
+    v.innerHTML=n===3?'<b>3/3 — 도입 검토 가치 충분.</b> 미니 + 로밍 요금제 + 파워뱅크 조합으로 견적을 내고, 최신 가격·약관은 starlink.com/kr에서 확인하세요.'
+      :n===2?'<b>2/3 — 조건부.</b> 빠진 1개(전원·수신 위치·예산)가 해결 가능한지부터. 그 전까지는 라디오+위성메신저가 비용 대비 효율적입니다.'
+      :n===1?'<b>1/3 — 아직 이릅니다.</b> 건전지 라디오와 대용량 파워뱅크부터 갖추는 편이 생존 기여도가 높습니다.'
+      :'위 3가지를 체크해 보세요. 충족 개수에 따라 판단 기준을 제시합니다.';
+  }
+  ids.forEach(id=>document.getElementById(id).addEventListener('change',update));update();
+})();
+
+/* data wipe — confirm() 미지원 환경 대비 2회 탭 방식 */
+(function(){
+  const btn=$('#wipe-all');if(!btn)return;let armed=null;
+  btn.addEventListener('click',()=>{
+    if(!armed){
+      btn.textContent='한 번 더 누르면 모두 삭제됩니다';btn.style.color='var(--danger)';
+      armed=setTimeout(()=>{armed=null;btn.textContent='입력 데이터 전체 삭제 (체크 · 가족 계획)';btn.style.color=''},3000);
+      return;
+    }
+    clearTimeout(armed);
+    try{Object.keys(localStorage).filter(k=>k.indexOf('sv.')===0).forEach(k=>localStorage.removeItem(k))}catch(e){}
+    location.reload();
+  });
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator && window.isSecureContext){
+  try{navigator.serviceWorker.register('./sw.js').catch(function(){})}catch(e){}
+}
+</script>
+</body>
+</html>
