@@ -406,7 +406,14 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
       </ol>
     </div>
     <div class="warn">전자기펄스(EMP)로 휴대폰·전자기기가 먹통일 수 있다. <b>건전지 라디오</b>가 이 상황의 유일한 정보망이다.</div>
-    <p class="src">출처: 행정안전부 핵공격 국민행동요령 · 美 FEMA Ready.gov Nuclear Explosion (2026.11 확인)</p>
+    <div class="phase"><span class="phase-tag">요오드화칼륨(KI) — 정부 지시가 있을 때만</span>
+      <ol class="steps">
+        <li><b>갑상선을 '채워서' 방사성 요오드 흡수를 막는 약이다. 약 24시간 보호.</b><span class="why">모든 방사선·모든 장기를 막아주는 게 아니다. 갑상선만, 그것도 흡입·섭취된 방사성 요오드에 한함.</span></li>
+        <li><b>복용은 보건당국·정부 지시가 있을 때만. 임의로 미리 먹지 않는다.</b><span class="why">과다·불필요 복용은 위험. 용량은 연령별로 다르니 배포처·당국 안내를 따른다. 어린이·임산부가 우선 대상.</span></li>
+        <li><b>소금·요오드 식품·건강보조제는 대체가 안 된다.</b><span class="why">정식 KI 제품만. 원전 주변 지자체는 사전 배포·비축 제도가 있으니 평소 확인.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 행정안전부 핵공격 국민행동요령 · 美 FEMA Ready.gov · 美 CDC 안정화 요오드(KI) 안내 (2026.11 확인). 복용 전 반드시 당국 지시 확인.</p>
   </section>
 
   <!-- ===== 화생방 ===== -->
@@ -640,6 +647,30 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/><path d="M9.5 13.5l5 5M14.5 13.5l-5 5"/></svg>
         <div><b>대량 출혈·지혈</b><span>압박 → 패킹 → 지혈대</span></div>
       </button>
+      <button class="sit hot" data-g="g-choke">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><path d="M9 11h6l1 5-2 1-2-3-2 3-2-1z"/><path d="M15.5 9.5l2.5-1"/></svg>
+        <div><b>질식·하임리히</b><span>목에 뭔가 걸렸을 때</span></div>
+      </button>
+      <button class="sit" data-g="g-burn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c3.3 0 6-2.2 6-5.5 0-3.5-3-5-3-7.5-2 1.2-2.5 3.3-2.5 3.3s-1-1.3-1-3.3c-2.5 2-4.5 4.4-4.5 7.5C7 18.8 8.7 21 12 21z"/><path d="M2 20h5M17 20h5"/></svg>
+        <div><b>화상</b><span>흐르는 물 20분 · 물집 금지</span></div>
+      </button>
+      <button class="sit" data-g="g-fract">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l3 3-2 2 4 4 2-2 3 3M8 6L5 9M18 18l-3-3"/></svg>
+        <div><b>골절·염좌</b><span>움직이지 말고 고정</span></div>
+      </button>
+      <button class="sit hot" data-g="g-co">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M4 18h16"/></svg>
+        <div><b>일산화탄소 중독</b><span>난방·연소 · 소리없는 독</span></div>
+      </button>
+      <button class="sit" data-g="g-seiz">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h3l2-5 3 10 2-7 2 4h4"/></svg>
+        <div><b>발작·경련</b><span>붙잡지 말고 보호</span></div>
+      </button>
+      <button class="sit" data-g="g-elec">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        <div><b>감전</b><span>먼저 전원 차단</span></div>
+      </button>
       <button class="sit" data-g="g-temp">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v5"/></svg>
         <div><b>저체온·온열질환</b><span>추위·더위로 쓰러졌을 때</span></div>
@@ -705,6 +736,102 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     </div>
     <div class="warn"><b>쇼크 대비:</b> 지혈 후 환자를 눕히고 체온을 유지(담요)한다. 의식·호흡이 없어지면 <b>심폐소생술 탭</b>으로.</div>
     <p class="src">출처: 구로구보건소 응급처치(직접압박·지압점) · 미국 Stop the Bleed 표준(상처 패킹·지혈대) (2026.11 확인). 실제 적용 전 대한적십자사 응급처치 교육 권장.</p>
+  </section>
+
+  <section class="guide" id="g-choke" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>질식·하임리히</h2></div>
+    <div class="do-now"><span class="eyebrow">목을 감싸쥐고 말을 못 하면 완전 폐쇄</span><b>기침을 할 수 있으면 기침하게 두고,<br>소리조차 못 내면 즉시 밀어올린다.</b></div>
+    <div class="phase"><span class="phase-tag">성인·어린이 (의식 있음)</span>
+      <ol class="steps">
+        <li><b>기침이 되면 계속 기침하도록 둔다 — 가장 강한 배출력.</b></li>
+        <li><b>소리·기침·숨이 안 되면 등 두드리기 5회</b>(어깨뼈 사이를 손바닥으로 세게).</li>
+        <li><b>그래도 안 나오면 하임리히 5회.</b><span class="why">뒤에서 안아 주먹을 명치와 배꼽 사이에 대고, 다른 손으로 감싼 뒤 <b>위로 당기듯 강하게</b> 밀어올린다. 등 5회 ↔ 복부 5회 반복.</span></li>
+        <li><b>쓰러져 의식을 잃으면 즉시 심폐소생술.</b><span class="why">압박 때마다 입 안을 확인, 보이는 이물질만 꺼낸다. 안 보이면 손 넣지 말 것.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">1세 미만 영아</span>
+      <ol class="steps">
+        <li><b>머리를 낮게 하여 등 두드리기 5회 → 뒤집어 가슴 압박 5회 반복.</b><span class="why">복부(하임리히)는 영아에게 하지 않는다. 등·가슴만.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">혼자 질식했을 때</span>
+      <ol class="steps">
+        <li><b>의자 등받이·식탁 모서리에 명치를 대고 체중으로 밀어올린다.</b></li>
+      </ol>
+    </div>
+    <p class="src">출처: 대한적십자사·질병관리청 응급처치 표준 (2026.11 확인)</p>
+  </section>
+
+  <section class="guide" id="g-burn" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>화상</h2></div>
+    <div class="do-now"><span class="eyebrow">1초라도 빨리 식히는 것이 전부</span><b>흐르는 상온의 물에<br>최소 20분 식힌다.</b></div>
+    <div class="phase"><span class="phase-tag">바로</span>
+      <ol class="steps">
+        <li><b>흐르는 물(상온~시원)에 20분 이상 식힌다.</b><span class="why">얼음·얼음물은 금지(조직 손상). 수돗물이면 충분.</span></li>
+        <li><b>달라붙지 않은 옷·시계·반지는 붓기 전에 뺀다.</b><span class="why">살에 눌어붙은 것은 떼지 말고 그대로.</span></li>
+        <li><b>식힌 뒤 깨끗한 천·거즈로 느슨하게 덮는다.</b></li>
+      </ol>
+    </div>
+    <div class="warn"><b>절대 금지:</b> 물집 터뜨리기 · 소주·된장·치약·연고·기름 등 민간요법. 감염과 흉터를 키운다. 얼굴·기도·생식기 화상, 넓은 화상, 전기·화학 화상은 즉시 119.</div>
+    <div class="phase"><span class="phase-tag">화학물질 화상</span>
+      <ol class="steps">
+        <li><b>오염된 옷을 벗기고 다량의 흐르는 물로 20분 이상 씻어낸다.</b><span class="why">가루 약품은 먼저 털어낸 뒤 물로. 눈이면 눈을 벌려 바깥쪽으로 흘려보낸다.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 소방청·한국화상학회 화상 응급처치 (2026.11 확인)</p>
+  </section>
+
+  <section class="guide" id="g-fract" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>골절·염좌</h2></div>
+    <div class="do-now"><span class="eyebrow">잘못 움직이면 신경·혈관을 다친다</span><b>맞추려 하지 말고,<br>그 자세 그대로 고정한다.</b></div>
+    <ol class="steps" style="margin-top:6px">
+      <li><b>움직이지 못하게 하고, 틀어진 뼈를 억지로 맞추지 않는다.</b></li>
+      <li><b>부목으로 위·아래 관절까지 함께 고정.</b><span class="why">잡지·우산·판자+천으로. 다친 부위보다 길게 대어 흔들리지 않게.</span></li>
+      <li><b>얼음을 수건에 싸서 대고(부기·통증), 가능하면 심장보다 높이 든다.</b><span class="why">RICE: 안정·냉찜질·압박·거상. 냉찜질은 20분 이내.</span></li>
+      <li><b>개방골절(뼈가 피부 밖으로)은 누르지 말고 깨끗한 천으로 덮고 119.</b><span class="why">출혈이 심하면 '대량 출혈·지혈'을 병행.</span></li>
+      <li><b>고정 후 손·발끝의 감각·온기·색을 확인.</b><span class="why">차갑고 창백·저리면 너무 조인 것 — 느슨하게.</span></li>
+    </ol>
+    <p class="src">출처: 대한적십자사 응급처치(부목·RICE) (2026.11 확인)</p>
+  </section>
+
+  <section class="guide" id="g-co" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>일산화탄소 중독</h2></div>
+    <div class="do-now"><span class="eyebrow">무색·무취 · 정전 시 난방에서 급증</span><b>두통·메스꺼움·어지럼이 여럿이 동시에?<br>즉시 창문 열고 밖으로 나간다.</b></div>
+    <div class="note">연탄·숯·가스난로·발전기·차량 공회전은 밀폐 공간에서 일산화탄소를 뿜는다. 정전 때 난방·취사로 사망사고가 매년 반복된다. <b>냄새가 없어 쓰러질 때까지 모른다.</b></div>
+    <div class="phase"><span class="phase-tag">대응</span>
+      <ol class="steps">
+        <li><b>즉시 문·창문을 열고 환자를 신선한 공기로 옮긴다(구조자도 숨을 참고 신속히).</b></li>
+        <li><b>119. 증상이 가벼워도 반드시 병원(고압산소 치료가 필요할 수 있음).</b><span class="why">회복된 듯해도 뒤늦게 뇌 손상이 올 수 있다.</span></li>
+        <li><b>의식·호흡이 없으면 심폐소생술.</b></li>
+      </ol>
+    </div>
+    <div class="warn"><b>예방:</b> 텐트·차 안·밀폐된 방에서 연소기구·발전기 사용 금지. 눈길 고립 시 배기구를 눈에서 비우고 창을 살짝 연다.</div>
+    <p class="src">출처: 소방청·질병관리청 일산화탄소 중독 예방 (2026.11 확인)</p>
+  </section>
+
+  <section class="guide" id="g-seiz" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>발작·경련</h2></div>
+    <div class="do-now"><span class="eyebrow">대부분 몇 분 내 저절로 멈춘다</span><b>붙잡지 말고, 입에 아무것도 넣지 말고,<br>다치지 않게 주변을 치운다.</b></div>
+    <ol class="steps" style="margin-top:6px">
+      <li><b>주변의 위험물(가구·유리)을 치우고 머리 아래에 부드러운 것을 받친다.</b></li>
+      <li><b>억지로 붙잡거나 멈추려 하지 않는다. 입에 손가락·수저를 넣지 않는다.</b><span class="why">혀를 깨물까봐 넣는 것은 오히려 치아·기도 손상. 잘못된 상식이다.</span></li>
+      <li><b>조이는 옷·넥타이를 풀고 시작 시각을 본다.</b></li>
+      <li><b>경련이 멈추면 옆으로 눕힌다(회복 자세) — 토물로 인한 질식 방지.</b></li>
+      <li><b>5분 이상 지속·반복, 첫 발작, 임산부·당뇨·부상 동반이면 즉시 119.</b></li>
+    </ol>
+    <p class="src">출처: 대한적십자사·대한뇌전증학회 응급처치 (2026.11 확인)</p>
+  </section>
+
+  <section class="guide" id="g-elec" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>감전</h2></div>
+    <div class="do-now"><span class="eyebrow">맨손으로 환자를 만지면 같이 감전된다</span><b>먼저 전원을 차단한다.<br>그 다음에 환자에게 접근한다.</b></div>
+    <ol class="steps" style="margin-top:6px">
+      <li><b>두꺼비집(차단기)을 내리거나 플러그를 뽑아 전원부터 끊는다.</b><span class="why">끊을 수 없으면 마른 나무·플라스틱 등 부도체로 전선을 치운다. 젖은 것·금속 금지.</span></li>
+      <li><b>고압선·변압기 사고는 접근 금지 — 최소 수 m 떨어져 119.</b><span class="why">땅을 타고 전류가 흐른다. 바닥도 위험.</span></li>
+      <li><b>안전해진 뒤 의식·호흡 확인, 없으면 심폐소생술.</b><span class="why">감전은 심장을 멈출 수 있다.</span></li>
+      <li><b>들어간 곳·나온 곳에 화상이 있다 — 화상 처치 병행, 반드시 병원.</b><span class="why">겉은 작아도 속이 심하게 탈 수 있다.</span></li>
+    </ol>
+    <p class="src">출처: 대한적십자사 응급처치 · 한국전기안전공사 (2026.11 확인)</p>
   </section>
 
   <section class="guide" id="g-temp" hidden>
@@ -1000,8 +1127,9 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
 
   <div class="card">
     <h3>이 앱을 지니는 법 — 형태별 기능 차이</h3>
+    <div class="note" id="install-hint" hidden></div>
     <ol class="steps">
-      <li><b>설치판(권장): 홈 화면 앱 — GPS + 오프라인 전부 작동.</b><span class="why">PWA 배포 패키지를 GitHub Pages에 올리고(가이드 5분) 그 주소를 Chrome으로 연 뒤 "홈 화면에 추가". 한 번 설치하면 인터넷 없이 전 기능이 작동한다. 가족 폰에도 같은 주소로 설치.</span></li>
+      <li><b>설치판(권장): 홈 화면 앱 — GPS + 오프라인 전부 작동.</b><span class="why"><b>안드로이드</b>: Chrome에서 주소를 연 뒤 ⋮ → "홈 화면에 추가". <b>아이폰</b>: Safari에서 열고 아래 <b>공유 버튼(↑)</b> → "홈 화면에 추가". 한 번 설치하면 인터넷 없이 전 기능이 작동하고, 가족 폰도 같은 주소로 설치.</span></li>
       <li><b>링크판: claude.ai 아티팩트 — 열람·공유용.</b><span class="why">온라인 필요. 보안 정책상 이 화면 안에서는 GPS가 차단된다.</span></li>
       <li><b>파일판: HTML 파일 — 최후의 열람용.</b><span class="why">카카오톡·파일앱 경유(content://)로 열면 브라우저가 위치·저장 기능을 차단한다. 행동요령 열람과 신호 도구는 사용 가능.</span></li>
       <li><b>가족 공용 수칙(집결지·연락책)은 종이로도 백업.</b><span class="why">폰 배터리 0%가 기본 시나리오.</span></li>
@@ -1015,9 +1143,9 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   </div>
 
   <footer class="app">
-    <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
+    <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 대한적십자사 응급처치, 美 FEMA Ready.gov·CDC. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양.<br><b>콘텐츠 최종 검증: 2026년 11월</b> · 법·주파수·가격·지침은 바뀔 수 있으니 6개월마다 재확인 권장. 의료 항목은 참고용이며 대한적십자사 응급처치 교육 수강을 권합니다.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.1
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.2
   </footer>
 </main>
 </div>
@@ -1352,6 +1480,18 @@ $$('#prep-jump button').forEach(btn=>btn.addEventListener('click',()=>{
   const t=document.getElementById(btn.dataset.j);
   if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
 }));
+
+/* 기기별(안드로이드/아이폰) 설치 안내 자동 분기 */
+(function(){
+  const el=document.getElementById('install-hint');if(!el)return;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  let standalone=false;try{standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){}
+  if(standalone)return; // 이미 설치됨
+  el.hidden=false;
+  el.innerHTML=isIOS
+    ?'<b>아이폰 설치:</b> 이 페이지를 <b>Safari</b>로 열고 → 하단 <b>공유 버튼(↑)</b> → <b>"홈 화면에 추가"</b>. (Chrome·카카오톡 안에서는 추가 메뉴가 안 보입니다.)'
+    :'<b>안드로이드 설치:</b> <b>Chrome</b>에서 열고 → 메뉴 <b>⋮ → "홈 화면에 추가"</b>. (카카오톡에서 열렸다면 ⋮ → "다른 브라우저로 열기" 먼저.)';
+})();
 
 /* ===== 영어 수첩 (외국군·구조대) ===== */
 const PHRASES=[
