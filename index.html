@@ -109,19 +109,32 @@ nav.tabs a.on{color:var(--acc); border-top-color:var(--acc)}
 .btnrow{display:flex; gap:8px; flex-wrap:wrap}
 .btnrow .btn{flex:1 1 130px}
 /* ---------- situation grid ---------- */
-.sit-grid{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px}
+.sit-sec{display:flex; align-items:center; gap:8px; margin:16px 0 7px}
+.sit-sec:first-of-type{margin-top:10px}
+.sit-sec h3{font-size:12px; font-weight:800; letter-spacing:.07em; color:var(--acc); text-transform:uppercase; margin:0; white-space:nowrap}
+.sit-sec .ln{flex:1; height:1px; background:var(--line)}
+.sit-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
 button.sit{
   font:inherit; text-align:left; cursor:pointer;
-  background:var(--card); border:1px solid var(--line); border-radius:14px;
-  padding:13px 13px 12px; color:var(--fg); min-height:92px;
-  display:flex; flex-direction:column; gap:8px;
+  background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:10px 11px; color:var(--fg); min-height:0;
+  display:flex; align-items:flex-start; gap:9px;
 }
 button.sit:active{background:var(--card2)}
-.sit svg{width:26px; height:26px; color:var(--acc)}
-.sit b{font-size:15.5px; line-height:1.3; display:block; letter-spacing:-.01em}
-.sit span{font-size:12px; color:var(--mut); line-height:1.35; display:block; margin-top:2px}
+.sit svg{width:22px; height:22px; flex:none; margin-top:1px; color:var(--acc)}
+.sit b{font-size:14.5px; line-height:1.25; display:block; letter-spacing:-.01em}
+.sit span{font-size:11.5px; color:var(--mut); line-height:1.3; display:block; margin-top:2px}
 .sit.hot{border-color:color-mix(in srgb, var(--danger) 55%, var(--line))}
 .sit.hot svg{color:var(--danger)}
+/* ---------- quick-jump chips (대비 탭) ---------- */
+.jump{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--bg);
+  display:flex; gap:7px; overflow-x:auto; padding:9px 0 10px; margin:2px -2px 0;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none; border-bottom:1px solid var(--line)}
+.jump::-webkit-scrollbar{display:none}
+.jump button{flex:none; font:inherit; font-size:12.5px; font-weight:700; color:var(--mut);
+  background:var(--card2); border:1px solid var(--line); border-radius:99px; padding:7px 13px; cursor:pointer; white-space:nowrap}
+.jump button:active{background:var(--acc); color:var(--acc-ink); border-color:var(--acc)}
+.jump-anchor{scroll-margin-top:calc(60px + env(safe-area-inset-top,0px))}
 /* ---------- guide subview ---------- */
 .guide-head{
   position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
@@ -265,6 +278,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
 <main id="tab-now">
   <div id="sit-home">
     <p class="mut sm" style="margin-top:2px">상황을 선택하세요. 실제 경보 상황에서는 <b>재난문자와 정부 방송 안내가 항상 우선</b>입니다.</p>
+    <div class="sit-sec"><h3>공격 · 전시</h3><span class="ln"></span></div>
     <div class="sit-grid">
       <button class="sit hot" data-g="g-air">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M4.2 7.2l2.8 2.8M19.8 7.2 17 10M12 21a7 7 0 0 0 7-7H5a7 7 0 0 0 7 7z"/></svg>
@@ -278,45 +292,57 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5l-5 8a4 4 0 0 0 3.4 6h7.2A4 4 0 0 0 19 16l-5-8V3"/><path d="M7.5 14h9"/></svg>
         <div><b>화생방 공격</b><span>화학은 높은 곳 · 밀폐 · 끓여먹기</span></div>
       </button>
-      <button class="sit" data-g="g-quake">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 3 12 2.5-8L16 14h5"/></svg>
-        <div><b>지진</b><span>탁자 아래 · 흔들림 멈추면 계단으로</span></div>
-      </button>
-      <button class="sit" data-g="g-fire">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c3.9 0 6.5-2.5 6.5-6 0-4-3.5-6-3.5-9-2.5 1.5-3 4-3 4s-1-1.5-1-3.5C8 8 5.5 10.5 5.5 15c0 3.5 2.6 6 6.5 6z"/><path d="M12 21c-1.8 0-3-1.3-3-3 0-1.8 1.5-2.6 3-4.5 1.5 1.9 3 2.7 3 4.5 0 1.7-1.2 3-3 3z"/></svg>
-        <div><b>아파트·건물 화재</b><span>무조건 뛰지 말고, 살펴서 대피</span></div>
-      </button>
-      <button class="sit" data-g="g-cpr">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.6-9-9c-1.2-2.8.7-6 3.8-6C9 5 10.5 6.5 12 8.5 13.5 6.5 15 5 17.2 5c3.1 0 5 3.2 3.8 6-2 4.4-9 9-9 9z"/><path d="M5 12h4l1.5-3 2 6 1.5-3h5"/></svg>
-        <div><b>심폐소생술</b><span>분당 100–120회 · 박자 도우미</span></div>
-      </button>
-      <button class="sit hot" data-g="g-bleed">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/><path d="M9.5 13.5l5 5M14.5 13.5l-5 5"/></svg>
-        <div><b>대량 출혈·지혈</b><span>압박 → 패킹 → 지혈대 · 3분이 분기점</span></div>
-      </button>
-      <button class="sit" data-g="g-gear">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4h3.4l.5 2.3 2 1.1 2.2-.8 1.7 2.9-1.7 1.6v2.2l1.7 1.6-1.7 2.9-2.2-.8-2 1.1-.5 2.3h-3.4l-.5-2.3-2-1.1-2.2.8L4 15.9l1.7-1.6v-2.2L4 10.5l1.7-2.9 2.2.8 2-1.1z"/><circle cx="12" cy="12" r="2.4"/></svg>
-        <div><b>응급 장비 사용법</b><span>소화기·완강기·차량탈출·가스차단</span></div>
-      </button>
       <button class="sit" data-g="g-violence">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h4v4M20 4l-7 7M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM7 17l-4 4M11 17l3 3"/></svg>
         <div><b>폭력 상황 회피·탈출</b><span>이기지 말고 벗어나라 · 아이 먼저</span></div>
       </button>
-      <button class="sit" data-g="g-water">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M8.5 14a3.5 3.5 0 0 0 3.5 3.5"/></svg>
-        <div><b>물 안전하게 만들기</b><span>끓이기·소독 비율 · 물이 먼저다</span></div>
+    </div>
+
+    <div class="sit-sec"><h3>재난 · 사고</h3><span class="ln"></span></div>
+    <div class="sit-grid">
+      <button class="sit" data-g="g-quake">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 3 12 2.5-8L16 14h5"/></svg>
+        <div><b>지진</b><span>탁자 아래 · 멈추면 계단으로</span></div>
+      </button>
+      <button class="sit" data-g="g-fire">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c3.9 0 6.5-2.5 6.5-6 0-4-3.5-6-3.5-9-2.5 1.5-3 4-3 4s-1-1.5-1-3.5C8 8 5.5 10.5 5.5 15c0 3.5 2.6 6 6.5 6z"/><path d="M12 21c-1.8 0-3-1.3-3-3 0-1.8 1.5-2.6 3-4.5 1.5 1.9 3 2.7 3 4.5 0 1.7-1.2 3-3 3z"/></svg>
+        <div><b>아파트·건물 화재</b><span>뛰지 말고 살펴서 대피</span></div>
+      </button>
+      <button class="sit" data-g="g-black">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+        <div><b>정전·통신두절</b><span>문자 우선 · 라디오 · 절전</span></div>
+      </button>
+    </div>
+
+    <div class="sit-sec"><h3>응급처치</h3><span class="ln"></span></div>
+    <div class="sit-grid">
+      <button class="sit hot" data-g="g-cpr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.6-9-9c-1.2-2.8.7-6 3.8-6C9 5 10.5 6.5 12 8.5 13.5 6.5 15 5 17.2 5c3.1 0 5 3.2 3.8 6-2 4.4-9 9-9 9z"/><path d="M5 12h4l1.5-3 2 6 1.5-3h5"/></svg>
+        <div><b>심폐소생술</b><span>분당 100–120회 · 박자</span></div>
+      </button>
+      <button class="sit hot" data-g="g-bleed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/><path d="M9.5 13.5l5 5M14.5 13.5l-5 5"/></svg>
+        <div><b>대량 출혈·지혈</b><span>압박 → 패킹 → 지혈대</span></div>
       </button>
       <button class="sit" data-g="g-temp">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v5"/></svg>
         <div><b>저체온·온열질환</b><span>추위·더위로 쓰러졌을 때</span></div>
       </button>
-      <button class="sit" data-g="g-black">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
-        <div><b>정전·통신두절</b><span>문자 우선 · 라디오 · 배터리 아끼기</span></div>
+      <button class="sit" data-g="g-water">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M8.5 14a3.5 3.5 0 0 0 3.5 3.5"/></svg>
+        <div><b>물 안전하게 만들기</b><span>끓이기·소독 · 물이 먼저</span></div>
+      </button>
+    </div>
+
+    <div class="sit-sec"><h3>장비 · 신호</h3><span class="ln"></span></div>
+    <div class="sit-grid">
+      <button class="sit" data-g="g-gear">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4h3.4l.5 2.3 2 1.1 2.2-.8 1.7 2.9-1.7 1.6v2.2l1.7 1.6-1.7 2.9-2.2-.8-2 1.1-.5 2.3h-3.4l-.5-2.3-2-1.1-2.2.8L4 15.9l1.7-1.6v-2.2L4 10.5l1.7-2.9 2.2.8 2-1.1z"/><circle cx="12" cy="12" r="2.4"/></svg>
+        <div><b>응급 장비 사용법</b><span>소화기·완강기·차량·가스</span></div>
       </button>
       <button class="sit" data-g="g-alarm">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
-        <div><b>경보 소리 구분</b><span>이 소리가 무슨 경보인지 (듣기)</span></div>
+        <div><b>경보 소리 구분</b><span>무슨 경보인지 (듣기)</span></div>
       </button>
     </div>
     <p class="sm faint" style="margin-top:12px">대피소 위치: 네이버지도·카카오맵·T맵에서 “대피소” 검색, 또는 안전디딤돌 앱 · 국민재난안전포털</p>
@@ -768,9 +794,20 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
 <!-- ================= 대비 탭 ================= -->
 <main id="tab-prep" hidden>
   <h2 style="margin-top:14px">평시 대비</h2>
-  <p class="sm mut" style="margin-top:0">재난 대응력의 90%는 사건 전에 결정된다. 아래 체크는 이 기기에만 저장된다.</p>
+  <p class="sm mut" style="margin-top:0">재난 대응력의 90%는 사건 전에 결정된다. 아래 입력·체크는 이 기기에만 저장된다.</p>
 
-  <div class="card">
+  <nav class="jump" id="prep-jump">
+    <button data-j="p-kit">생존배낭</button>
+    <button data-j="p-plan">가족계획</button>
+    <button data-j="p-region">우리지역</button>
+    <button data-j="p-med">의료카드</button>
+    <button data-j="p-extra">추가준비물</button>
+    <button data-j="p-food">비상식량</button>
+    <button data-j="starlink">위성통신</button>
+    <button data-j="p-data">데이터</button>
+  </nav>
+
+  <div class="card jump-anchor" id="p-kit">
     <h3>생존배낭 체크리스트 <span class="sm mut num" id="kit-count"></span></h3>
     <div class="progress"><i id="kit-bar"></i></div>
     <div id="kit-list"></div>
@@ -778,7 +815,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     <p class="sm faint" style="margin-bottom:0">기준: 행정안전부 비상대비 물자 권고 + 美 FEMA(물 1인 1일 약 4L, 최소 3일분)</p>
   </div>
 
-  <div class="card">
+  <div class="card jump-anchor" id="p-plan">
     <h3>가족 비상 계획</h3>
     <div class="field"><label for="plan-meet1">1차 집결지 (집 근처)</label><input id="plan-meet1" placeholder="예: ○○아파트 지하주차장 B1 입구"></div>
     <div class="field"><label for="plan-meet2">2차 집결지 (동네 밖)</label><input id="plan-meet2" placeholder="예: ○○초등학교 운동장"></div>
@@ -787,7 +824,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     <p class="sm faint" style="margin-bottom:0">자동 저장 · <b>이 기기에만 저장되고 외부로 전송되지 않음.</b> 단, 기기를 분실하면 열람될 수 있으니 전화번호는 뒷자리 등 일부만 적는 방법도 있다 · 종이 백업 권장(배터리 0%가 기본 시나리오)</p>
   </div>
 
-  <div class="card">
+  <div class="card jump-anchor" id="p-region">
     <span class="eyebrow">오프라인에서도 바로 뜨는 우리 집 정보</span>
     <h3 style="margin-top:4px">우리 지역 — 대피소·병원·주유소 등록</h3>
     <p class="sm mut" style="margin-top:0">통신이 끊기면 지도 검색이 안 된다. 평소에 한 번 확인해 적어두면 이 칸은 오프라인에서도 보인다.</p>
@@ -803,7 +840,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     <p class="sm faint" style="margin-bottom:0">조회: 네이버지도·카카오맵·T맵 "대피소" 검색 또는 안전디딤돌 앱. 아파트는 지하주차장이 대피소인 경우가 많다 — 도보 몇 분인지 재 둘 것. 자동 저장 · 외부 전송 없음.</p>
   </div>
 
-  <div class="card">
+  <div class="card jump-anchor" id="p-med">
     <span class="eyebrow">내가 못 말할 때 구조대가 보는 정보</span>
     <h3 style="margin-top:4px">가족 의료 정보 카드</h3>
     <p class="sm mut" style="margin-top:0">의식을 잃으면 혈액형·알레르기·복용약이 생사를 가른다. 적어두면 구급대·의료진에게 보여줄 수 있다.</p>
@@ -823,7 +860,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     </ol>
   </div>
 
-  <div class="card">
+  <div class="card jump-anchor" id="p-extra">
     <h3>상황별 추가 준비물</h3>
     <details><summary>🚗 차량 비상 키트 (겨울 고립 대비)</summary><div class="inner">
       <p>· 연료는 <b>항상 절반 이상</b> — 고립 시 히터가 유일한 난방.</p>
@@ -850,7 +887,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   </div>
 
   <!-- ===== 비상식량 가성비 ===== -->
-  <div class="card">
+  <div class="card jump-anchor" id="p-food">
     <span class="eyebrow">비축 우선순위 · 가성비</span>
     <h3 style="margin-top:4px">비상식량 — 돈·칼로리·보관성 기준</h3>
     <p class="sm">선정 기준 셋: <b>조리 불필요</b>(정전·단수 전제) · <b>원당 칼로리</b>(열량 확보가 1순위) · <b>상온 장기보관</b>. 입맛보다 "불 없이, 싸게, 오래"가 재난식의 원칙이다.</p>
@@ -876,7 +913,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   </div>
 
   <!-- ===== 위성통신 검토 ===== -->
-  <div class="card" id="starlink">
+  <div class="card jump-anchor" id="starlink">
     <span class="eyebrow">통신 두절 대비 · 선택 장비</span>
     <h3 style="margin-top:4px">위성통신(스타링크) 구매 검토</h3>
     <p class="sm">전쟁·대규모 재난으로 기지국·광케이블이 끊기면 지상 통신은 전부 멈춘다. 저궤도 위성 인터넷은 <b>지상망과 독립적으로 작동하는 유일한 민간 통신 수단</b>이다. 한국은 2025년 12월 4일 정식 서비스를 시작했다(스타링크코리아, 기간통신사업자).</p>
@@ -918,7 +955,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     </ol>
   </div>
 
-  <div class="card">
+  <div class="card jump-anchor" id="p-data">
     <h3>개인정보 · 데이터</h3>
     <p class="sm mut">이 앱은 서버가 없다. 체크리스트·가족 계획·위치 등 모든 데이터는 이 기기 브라우저 안에만 존재하며 어디로도 전송되지 않는다. 기기를 바꾸거나 넘기기 전에는 아래로 지울 것.</p>
     <button class="btn ghost w" id="wipe-all">입력 데이터 전체 삭제 (체크·계획·지역·의료)</button>
@@ -927,7 +964,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v1.8
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v1.9
   </footer>
 </main>
 </div>
@@ -1236,6 +1273,12 @@ const KIT=[
     location.reload();
   });
 })();
+
+/* 대비 탭 바로가기 칩 → 해당 카드로 스크롤 */
+$$('#prep-jump button').forEach(btn=>btn.addEventListener('click',()=>{
+  const t=document.getElementById(btn.dataset.j);
+  if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+}));
 </script>
 
 <script>
