@@ -1,0 +1,1926 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; manifest-src 'self'; worker-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="72시간">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>72시간 생존게임</title>
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{
+  /* Layout: 한 화면 모바일 게임 셸 — 상단 상황 HUD · 가운데 SVG 장면 · 하단 결정 시트. 화면은 제자리에서 교체된다.
+     밤·정전·지하 대피소가 무대라 의도적으로 다크 단일 테마. 외부 리소스 0(오프라인 자립). */
+  --night:#0b0f13; --panel:#141a20; --panel2:#1c242c; --line:#29333d; --line2:#36424e;
+  --fg:#e8edf1; --body:#cdd6dd; --mut:#8e9ba7; --faint:#5e6a76;
+  --amber:#ffb224; --amber-ink:#1a1100; --amber-dim:#7a5a1e; --amber-bg:#2a2010;
+  --cd-orange:#f08a24; --cd-blue:#2e6bd6;            /* 국제 민방위 표지: 주황 바탕 + 파란 삼각형 */
+  --exit:#2ccf7c; --exit-ink:#03170b; --exit-bg:#0f2a1d; /* 비상구 녹색 */
+  --alert:#ff5449; --alert-bg:#361613;
+  --info:#5aa8ff; --info-bg:#122437;
+  --wall:#4a5663; --floor:#151c23; --floor2:#192129; --concrete:#20272e; --concrete2:#262e36;
+  --skin:#c9d3dc;
+  --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,"Roboto Mono",Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--night);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere;
+  -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:var(--night)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.ic{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
+#app{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:12px;overflow-x:clip;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 calc(18px + env(safe-area-inset-bottom,0px))}
+#app.shake{animation:shake .55s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes shake{10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(4px,-2px)}30%,50%,70%{transform:translate(-7px,3px)}40%,60%{transform:translate(7px,-3px)}}
+
+/* ---------- 공통 버튼 ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:12px 16px;
+  border-radius:13px;border:1px solid var(--line2);background:var(--panel2);font-weight:750;font-size:16px;cursor:pointer;text-align:center;letter-spacing:-.01em}
+.btn:active{transform:translateY(1px)}
+.btn.pri{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+.btn.go{background:var(--exit);color:var(--exit-ink);border-color:var(--exit)}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:42px;font-size:14px;padding:8px 12px}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.row{display:flex;gap:8px}
+.row>*{flex:1 1 0;min-width:0}
+.stack{display:grid;gap:8px}
+.eyebrow{font:800 12px var(--sans);letter-spacing:.04em;color:var(--amber)}
+.mut{color:var(--mut)} .faint{color:var(--faint)}
+.small{font-size:12.5px}
+
+/* ---------- 타이틀 ---------- */
+.title-art{margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.title-art svg{display:block;width:100%;height:auto}
+.title-block{display:grid;gap:6px;margin-top:-6px}
+.logo-row{display:flex;align-items:center;gap:12px}
+.cd-mark{width:42px;height:42px;flex:none}
+.title-block h1{margin:0;font-size:clamp(52px,17vw,76px);line-height:.95;font-weight:900;letter-spacing:-.05em}
+.title-block h1 span{color:var(--amber)}
+.tagline{font-size:17px;font-weight:700;color:var(--body);text-wrap:balance;margin:0}
+.title-note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:0}
+.sweep{transform-origin:50% 100%;animation:sweep 7s ease-in-out infinite alternate}
+.sweep.b{animation-duration:9s;animation-delay:-3s}
+@keyframes sweep{from{transform:rotate(-28deg)}to{transform:rotate(26deg)}}
+.win-flick{animation:flick 4s steps(1) infinite}
+@keyframes flick{0%,100%{opacity:1}47%{opacity:1}48%{opacity:.25}52%{opacity:1}}
+
+/* ---------- 설정 ---------- */
+.seg{display:grid;gap:6px}
+.seg-label{font-size:12.5px;font-weight:700;color:var(--mut);display:flex;justify-content:space-between;gap:8px}
+.seg-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px}
+.seg-opts button{min-height:56px;border-radius:11px;border:1px solid var(--line2);background:var(--panel);cursor:pointer;
+  padding:8px 6px;display:grid;gap:2px;align-content:center;text-align:center}
+.seg-opts button b{font-size:14.5px}
+.seg-opts button span{font-size:11.5px;color:var(--mut);line-height:1.3}
+.seg-opts button[aria-pressed="true"]{border-color:var(--amber);background:var(--amber-bg);box-shadow:inset 0 0 0 1px var(--amber)}
+.seg-opts button[aria-pressed="true"] b{color:var(--amber)}
+.seg-opts button:disabled{opacity:.4}
+.sync-note{font-size:12.5px;border-radius:10px;padding:9px 11px;background:var(--panel);border:1px dashed var(--line2);color:var(--mut)}
+.sync-note b{color:var(--fg)}
+
+/* ---------- 상단 HUD ---------- */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--night);display:flex;align-items:center;gap:8px;
+  padding-block:10px 9px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.hud{flex-wrap:nowrap}
+.hclk{display:grid;line-height:1.15;min-width:0}
+.hud .clock{font:800 19px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.hud .sub{font-size:11.5px;color:var(--mut);white-space:nowrap}
+.hud .chip{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hud .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;
+  border:1px solid var(--line2);color:var(--mut);white-space:nowrap;background:var(--panel)}
+.chip .ic{width:14px;height:14px}
+.chip.red{color:var(--alert);border-color:color-mix(in srgb,var(--alert) 45%,transparent);background:var(--alert-bg)}
+.chip.amb{color:var(--amber);border-color:var(--amber-dim);background:var(--amber-bg)}
+.chip.grn{color:var(--exit);border-color:color-mix(in srgb,var(--exit) 40%,transparent);background:var(--exit-bg)}
+.iconbtn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line2);background:var(--panel);display:grid;place-items:center;cursor:pointer;flex:none}
+
+/* ---------- 장면 ---------- */
+.scene{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#090c10}
+.scene svg{display:block;width:100%;height:auto}
+.scene .tag{position:absolute;left:10px;top:10px;font:700 11px var(--mono);letter-spacing:.1em;color:var(--fg);
+  background:rgba(8,11,14,.72);border:1px solid var(--line2);border-radius:7px;padding:3px 8px}
+.flick{animation:fl 3.2s infinite}
+@keyframes fl{0%,100%{opacity:.95}91%{opacity:.95}92%{opacity:.3}94%{opacity:.9}95%{opacity:.4}96%{opacity:.95}}
+.exit-glow{animation:eg 2.4s ease-in-out infinite}
+@keyframes eg{0%,100%{opacity:.85}50%{opacity:1}}
+.red-pulse{animation:rp 1.6s ease-in-out infinite}
+.amb-pulse{animation:ap 1.6s ease-in-out infinite}
+@keyframes ap{0%,100%{opacity:.04}50%{opacity:.16}}
+@keyframes rp{0%,100%{opacity:.12}50%{opacity:.5}}
+.breath{animation:br 3.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.018)}}
+
+/* ---------- 가족 · 자원 ---------- */
+.fam{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px}
+.mem{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:grid;gap:5px;min-width:0}
+.mem .top{display:flex;align-items:center;gap:6px;justify-content:space-between}
+.mem b{font-size:13.5px}
+.mem .hp{font:700 12px var(--mono);font-variant-numeric:tabular-nums;color:var(--mut)}
+.bar{height:6px;border-radius:99px;background:var(--panel2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .5s ease}
+.conds{display:flex;gap:4px;flex-wrap:wrap;min-height:18px}
+.cond{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:99px;background:var(--alert-bg);color:var(--alert)}
+.cond.ok{background:var(--exit-bg);color:var(--exit)}
+.cond .ic{width:11px;height:11px}
+.mem.crit{border-color:color-mix(in srgb,var(--alert) 55%,transparent)}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.r{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:7px 9px;display:flex;align-items:center;gap:7px;min-width:0}
+.r .ic{width:18px;height:18px;color:var(--mut)}
+.r div{min-width:0}
+.r b{display:block;font:800 15px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+.r span{display:block;font-size:10.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r.low{border-color:color-mix(in srgb,var(--alert) 50%,transparent)}
+.r.low b{color:var(--alert)}
+.r.bump{animation:bump .6s ease}
+@keyframes bump{30%{transform:scale(1.06)}}
+
+/* ---------- 결정 시트 ---------- */
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;display:grid;gap:11px}
+.sheet h2{margin:0;font-size:19px;line-height:1.32;letter-spacing:-.015em;text-wrap:balance}
+.sheet p{margin:0;color:var(--body)}
+.sheet .lead{display:flex;gap:12px;align-items:flex-start}
+.badge{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;border:1px solid var(--line2);background:var(--panel2);color:var(--amber)}
+.badge .ic{width:28px;height:28px}
+.badge.red{color:var(--alert);background:var(--alert-bg);border-color:color-mix(in srgb,var(--alert) 40%,transparent)}
+.badge.blue{color:var(--info);background:var(--info-bg);border-color:color-mix(in srgb,var(--info) 35%,transparent)}
+.badge.green{color:var(--exit);background:var(--exit-bg);border-color:color-mix(in srgb,var(--exit) 35%,transparent)}
+.choices{display:grid;gap:7px}
+.choice{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;padding:12px 13px;border-radius:12px;
+  border:1px solid var(--line2);background:var(--panel2);cursor:pointer;min-height:54px}
+.choice:active{background:#232d37}
+.choice .k{flex:none;width:25px;height:25px;border-radius:7px;background:var(--night);border:1px solid var(--line2);
+  font:800 12.5px var(--mono);display:grid;place-items:center;color:var(--amber);margin-top:1px}
+.choice .ct{min-width:0}
+.choice b{display:block;font-size:15.5px;line-height:1.38;font-weight:700}
+.choice small{display:block;color:var(--mut);font-size:12.5px;margin-top:2px;line-height:1.4}
+.choice:disabled{opacity:.42;cursor:not-allowed}
+.choice.right{border-color:var(--exit);background:var(--exit-bg)}
+.choice.wrong{border-color:var(--alert);background:var(--alert-bg)}
+.hint{border-left:3px solid var(--info);background:var(--info-bg);padding:8px 11px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--fg)}
+.hint .eyebrow{color:var(--info);display:block;margin-bottom:2px}
+.result{font-size:15px;color:var(--fg);line-height:1.55}
+.lesson{border-radius:12px;padding:10px 12px;font-size:13.5px;display:grid;gap:4px;border:1px solid var(--line2);background:var(--panel2)}
+.lesson.ok{border-color:color-mix(in srgb,var(--exit) 45%,transparent);background:var(--exit-bg)}
+.lesson.no{border-color:color-mix(in srgb,var(--alert) 45%,transparent);background:var(--alert-bg)}
+.lesson .eyebrow{color:inherit}
+.lesson.ok .eyebrow{color:var(--exit)} .lesson.no .eyebrow{color:var(--alert)}
+.lesson .src{font-size:11.5px;color:var(--mut)}
+.fx-list{display:flex;flex-wrap:wrap;gap:5px}
+.fx{font:700 11.5px var(--mono);padding:2px 8px;border-radius:99px;background:var(--panel2);border:1px solid var(--line2);color:var(--mut)}
+.fx.up{color:var(--exit)} .fx.down{color:var(--alert)}
+.timebar{height:7px;border-radius:99px;background:var(--panel2);overflow:hidden;border:1px solid var(--line)}
+.timebar i{display:block;height:100%;width:100%;background:var(--alert);transform-origin:left center}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.act{display:grid;gap:4px;align-content:start;text-align:left;padding:11px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;min-height:84px}
+.act .ic{width:22px;height:22px;color:var(--amber)}
+.act b{font-size:14.5px;line-height:1.25}
+.act small{font-size:11.5px;color:var(--mut);line-height:1.35}
+.act:disabled{opacity:.4;cursor:not-allowed}
+.act.warn .ic{color:var(--alert)}
+
+/* ---------- 휴대폰 재난문자 ---------- */
+.phone{margin:6px auto 0;width:min(100%,330px);border-radius:34px;border:2px solid #2c3640;background:linear-gradient(#0f1823,#06090d);
+  padding:44px 14px 22px;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.phone::before{content:"";position:absolute;top:12px;left:50%;width:84px;height:22px;margin-left:-42px;border-radius:99px;background:#000}
+.ph-time{text-align:center;font:300 58px var(--sans);letter-spacing:-.03em;line-height:1;color:#eef3f7;font-variant-numeric:tabular-nums}
+.ph-date{text-align:center;font-size:14px;color:#aeb9c4;margin:6px 0 16px}
+.cbs{border-radius:18px;background:rgba(40,46,54,.92);padding:11px 13px;display:grid;gap:4px;animation:pop .45s cubic-bezier(.2,1.4,.4,1) both}
+.cbs .h{display:flex;align-items:center;gap:7px;font-size:12px;color:#c9d2da}
+.cbs .h b{color:#ff6a5e;font-weight:800}
+.cbs .h .ic{width:15px;height:15px;color:#ff6a5e}
+.cbs p{margin:0;font-size:13.5px;line-height:1.5;color:#eef3f7}
+@keyframes pop{from{transform:translateY(-14px) scale(.96);opacity:0}}
+
+/* ---------- 60초 탈출 ---------- */
+.grab-top{display:flex;align-items:center;gap:12px;padding-top:10px}
+.ring{position:relative;width:74px;height:74px;flex:none}
+.ring svg{width:74px;height:74px;transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font:800 25px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.ring.danger .val{color:var(--alert)}
+.grab-msg{min-width:0;display:grid;gap:2px}
+.grab-msg b{font-size:16px;line-height:1.3}
+.grab-msg span{font-size:12.5px;color:var(--mut)}
+.plan{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#0d1217;touch-action:manipulation}
+.plan svg{display:block;width:100%;height:auto}
+.plan .room{cursor:pointer}
+.plan .room rect.fl{fill:var(--floor);transition:fill .2s}
+.plan .room.here rect.fl{fill:#24303b}
+.plan .room text{font:700 11px var(--sans);fill:#9fb0bf;letter-spacing:.02em;pointer-events:none}
+.plan .room.here text{fill:var(--amber)}
+.plan .furn{fill:none;stroke:#34414d;stroke-width:1.4;pointer-events:none}
+.plan .wall{fill:none;stroke:var(--wall);stroke-width:5;stroke-linecap:square;pointer-events:none}
+.plan .itm{pointer-events:none;transition:opacity .25s}
+.plan .itm circle{fill:#26313b;stroke:#4b5a68;stroke-width:1}
+.plan .itm.act circle{fill:#2a2412;stroke:var(--amber-dim)}
+.plan .itm use{color:#dfe7ee}
+.plan .itm.gone{opacity:0}
+.plan .tok{transition:transform .6s cubic-bezier(.4,.1,.3,1)}
+.plan .winred{fill:var(--alert)}
+.tray{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tray-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--mut)}
+.tray-h b{color:var(--fg);font-size:15px}
+.it{position:relative;overflow:hidden;display:flex;gap:9px;align-items:center;text-align:left;padding:9px 10px;border-radius:11px;
+  border:1px solid var(--line2);background:var(--panel2);cursor:pointer;min-height:56px}
+.it .ic{width:26px;height:26px;color:#dfe7ee}
+.it div{min-width:0;position:relative;z-index:1}
+.it b{display:block;font-size:13.5px;line-height:1.25}
+.it small{display:block;font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums;line-height:1.35}
+.it.act{border-color:var(--amber-dim)}
+.it.act .ic{color:var(--amber)}
+.it.fam .ic{color:var(--exit)}
+.it:disabled{opacity:.38;cursor:not-allowed}
+.it .prog{position:absolute;inset:0;background:color-mix(in srgb,var(--amber) 22%,transparent);transform-origin:left;transform:scaleX(0)}
+.it.done{opacity:.35}
+.bag{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.slot{aspect-ratio:1;max-width:100%;border-radius:7px;border:1px dashed var(--line2);display:grid;place-items:center;background:var(--panel)}
+.slot.f{border-style:solid;border-color:var(--amber-dim);background:var(--amber-bg)}
+.slot .ic{width:70%;height:70%;color:var(--amber)}
+.bag-h{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--mut);align-items:center}
+.bag-h b{color:var(--fg)}
+.pack-line{font-size:12.5px;color:var(--exit);display:flex;gap:6px;align-items:center}
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(6,8,11,.86);display:grid;place-items:center;
+  padding:max(20px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) max(20px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+.overlay .sheet{max-width:440px;width:100%}
+
+/* ---------- 미니게임 ---------- */
+.mini{display:grid;gap:12px;justify-items:center;text-align:center}
+.pad{width:min(64vw,230px);aspect-ratio:1;border-radius:50%;border:2px solid var(--line2);background:radial-gradient(circle at 50% 40%,#2a333c,#151b21);
+  display:grid;place-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;position:relative}
+.pad svg{width:46%;height:46%}
+.pad.hit{transform:scale(.95);background:radial-gradient(circle at 50% 40%,#3a3220,#1b1610)}
+.pad .halo{position:absolute;inset:-10px;border-radius:50%;border:3px solid var(--amber);opacity:0}
+.pad .halo.on{animation:halo .5s ease-out}
+@keyframes halo{from{opacity:.9;transform:scale(.86)}to{opacity:0;transform:scale(1.08)}}
+.meter{width:100%;max-width:320px;display:grid;gap:4px}
+.meter .bar{height:10px}
+.bpm{font:800 34px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.bpm small{font-size:13px;color:var(--mut);font-weight:600}
+.morse{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;min-height:26px}
+.morse i{display:block;height:12px;border-radius:99px;background:var(--line2)}
+.morse i.d{width:12px} .morse i.l{width:34px}
+.morse i.ok{background:var(--amber)} .morse i.bad{background:var(--alert)}
+.lamp{width:74px;height:74px;border-radius:50%;background:#1b232b;border:2px solid var(--line2);transition:background .08s,box-shadow .08s}
+.lamp.on{background:#fff6d6;box-shadow:0 0 40px 12px rgba(255,214,120,.55)}
+
+/* ---------- 결과 화면 ---------- */
+.end-art{margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));border-bottom:1px solid var(--line);position:relative}
+.end-art svg{display:block;width:100%;height:auto}
+.stamp{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:-34px;width:96px;height:96px;border-radius:50%;
+  border:4px solid var(--amber);color:var(--amber);background:var(--night);display:grid;place-items:center;transform:rotate(-12deg);
+  font:900 50px var(--sans);letter-spacing:-.04em;animation:stamp .5s cubic-bezier(.2,1.5,.4,1) both .2s}
+.stamp.F,.stamp.D{border-color:var(--alert);color:var(--alert)}
+.stamp.S{border-color:var(--exit);color:var(--exit)}
+@keyframes stamp{from{transform:rotate(-30deg) scale(1.8);opacity:0}}
+.end-h{display:grid;gap:4px;padding-right:110px;margin-top:6px}
+.end-h h1{margin:0;font-size:26px;line-height:1.2;letter-spacing:-.03em;text-wrap:balance}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 11px}
+.stat b{display:block;font:800 21px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.stat span{font-size:11.5px;color:var(--mut)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.bdg{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:11px;border:1px solid var(--line);background:var(--panel)}
+.bdg .ic{width:22px;height:22px;color:var(--amber)}
+.bdg b{font-size:13px;display:block;line-height:1.25}
+.bdg small{font-size:11px;color:var(--mut);display:block;line-height:1.3}
+.bdg.off{opacity:.38}
+.bdg.off .ic{color:var(--faint)}
+.bdg.new{border-color:var(--amber-dim);background:var(--amber-bg)}
+.deb{display:grid;gap:7px}
+.deb-i{border-radius:12px;border:1px solid var(--line);background:var(--panel);padding:10px 12px;display:grid;gap:4px}
+.deb-i .h{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:800}
+.deb-i .h.ok{color:var(--exit)} .deb-i .h.no{color:var(--alert)} .deb-i .h.na{color:var(--mut)}
+.deb-i .h .ic{width:15px;height:15px}
+.deb-i b{font-size:14.5px;line-height:1.35}
+.deb-i p{margin:0;font-size:13px;color:var(--body);line-height:1.5}
+.deb-i .src{font-size:11px;color:var(--mut)}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:6px}
+.sec-h h3{margin:0;font-size:15px;letter-spacing:-.01em}
+.link{color:var(--amber);font-weight:700;text-decoration:none}
+.link:active{opacity:.7}
+.foot{font-size:11.5px;color:var(--faint);line-height:1.6;margin:4px 0 0}
+
+/* ---------- 효과 ---------- */
+#fx-flash{position:fixed;inset:0;z-index:90;background:#fff;pointer-events:none;animation:flash 1.8s ease-out forwards}
+@keyframes flash{0%{opacity:1}12%{opacity:1}100%{opacity:0}}
+#fx-vignette{position:fixed;inset:0;z-index:15;pointer-events:none;box-shadow:inset 0 0 120px 30px rgba(255,60,48,.35);animation:rp 1.6s ease-in-out infinite}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;max-width:min(92vw,460px);
+  background:#222b34;border:1px solid var(--line2);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:13.5px;box-shadow:0 14px 30px -12px rgba(0,0,0,.7)}
+.fade-in{animation:fin .32s ease both}
+@keyframes fin{from{opacity:0;transform:translateY(6px)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+  #fx-flash{animation:flash-soft 1.2s ease-out forwards!important;animation-duration:1.2s!important}
+  @keyframes flash-soft{0%{opacity:.75}100%{opacity:0}}
+}
+</style>
+<div id="app" data-app="saengjon-72h"></div>
+<div id="fx-vignette" hidden></div>
+<div id="fx-flash" hidden></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+<symbol id="i-pack" viewBox="0 0 24 24"><path d="M8.5 6V5a3.5 3.5 0 0 1 7 0v1"/><rect x="5" y="6" width="14" height="15" rx="4"/><path d="M8.5 13h7v4.5h-7z"/><path d="M5 11h14"/></symbol>
+<symbol id="i-water" viewBox="0 0 24 24"><path d="M10 2.5h4v2.8l2 3V20a1.8 1.8 0 0 1-1.8 1.8H9.8A1.8 1.8 0 0 1 8 20V8.3l2-3z"/><path d="M8 12.5h8M8 16h8"/></symbol>
+<symbol id="i-water6" viewBox="0 0 24 24"><path d="M4.6 6.5h2.8v1.6l1.4 2V20H3.2v-9.9l1.4-2z"/><path d="M10.6 6.5h2.8v1.6l1.4 2V20H9.2v-9.9l1.4-2z"/><path d="M16.6 6.5h2.8v1.6l1.4 2V20h-5.6v-9.9l1.4-2z"/><path d="M2.5 15h19"/></symbol>
+<symbol id="i-can" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="6" ry="2.4"/><path d="M6 6v12c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V6"/><path d="M6 11c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4"/></symbol>
+<symbol id="i-ramen" viewBox="0 0 24 24"><path d="M5 4h14l-1 16H6z"/><path d="M7.5 10c1.4-1.3 2.8 1.3 4.2 0s2.8 1.3 4.2 0M7.8 14c1.4-1.3 2.8 1.3 4.2 0s2.8 1.3 4 0"/></symbol>
+<symbol id="i-burner" viewBox="0 0 24 24"><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 14v-2h10v2"/><path d="M12 10.5c1.7-1 1.7-3.2 0-5.5-1.7 2.3-1.7 4.5 0 5.5z"/><circle cx="17" cy="17" r="1"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12.5" rx="2"/><path d="M7 8l10-5"/><circle cx="8.5" cy="14.3" r="2.6"/><path d="M14 12.3h4M14 15.3h4M14 18h2.5"/></symbol>
+<symbol id="i-battery" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M12.6 7.5 10 12h4l-2.6 4.5"/></symbol>
+<symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.8" r="2"/><path d="M5.6 16c.6-1.5 1.6-2.3 2.9-2.3s2.3.8 2.9 2.3M14 10h4M14 13h4"/></symbol>
+<symbol id="i-laptop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M2.8 19h18.4l-2-4H4.8z"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></symbol>
+<symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="14.5" r="6"/><path d="M9.6 8.8 8 5h8l-1.6 3.8"/></symbol>
+<symbol id="i-quilt" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M3.5 10h17M3.5 14.2h17M9.2 5.5v13M14.8 5.5v13"/></symbol>
+<symbol id="i-pill" viewBox="0 0 24 24"><rect x="6" y="7.5" width="12" height="13.5" rx="2"/><path d="M7 3h10v4.5H7z"/><path d="M12 11.3v6M9 14.3h6"/></symbol>
+<symbol id="i-teddy" viewBox="0 0 24 24"><circle cx="7.2" cy="5.8" r="2.2"/><circle cx="16.8" cy="5.8" r="2.2"/><circle cx="12" cy="9.5" r="4.8"/><path d="M6.8 21a5.2 5.6 0 0 1 10.4 0z"/><path d="M10.6 11.4c.9.7 1.9.7 2.8 0"/></symbol>
+<symbol id="i-aid" viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="13.5" rx="2"/><path d="M9 6.5V4.2h6v2.3"/><path d="M12 10v6.5M8.8 13.2h6.4"/></symbol>
+<symbol id="i-wipes" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="11" rx="2"/><path d="M8.8 9c0-3.2 6.4-3.2 6.4 0"/><path d="M8 14.5h8"/></symbol>
+<symbol id="i-bleach" viewBox="0 0 24 24"><path d="M9.5 2.8h4v3h1.8L18.5 9v10.2a1.8 1.8 0 0 1-1.8 1.8H8.3a1.8 1.8 0 0 1-1.8-1.8V9l3-3z"/><path d="M9.5 13.5h6"/></symbol>
+<symbol id="i-torch" viewBox="0 0 24 24"><path d="M3 9.5h9l4-3v11l-4-3H3z"/><path d="M19 8l2.2-1.2M19.2 12h2.6M19 16l2.2 1.2"/></symbol>
+<symbol id="i-candle" viewBox="0 0 24 24"><rect x="9" y="10.5" width="6" height="10.5" rx="1"/><path d="M12 10.5V8.6"/><path d="M12 7.2c1.4-.9 1.4-2.7 0-4.2-1.4 1.5-1.4 3.3 0 4.2z"/></symbol>
+<symbol id="i-tool" viewBox="0 0 24 24"><path d="M15 4.2a4.2 4.2 0 0 0-5.2 5.4L3.5 15.9a1.9 1.9 0 0 0 2.7 2.7l6.3-6.3A4.2 4.2 0 0 0 17.9 7l-2.6 2.6-2.4-.5-.5-2.4z"/></symbol>
+<symbol id="i-tape" viewBox="0 0 24 24"><circle cx="10" cy="12" r="7"/><circle cx="10" cy="12" r="2.8"/><path d="M17 12.5h4.5v3"/></symbol>
+<symbol id="i-mask" viewBox="0 0 24 24"><path d="M4 9.5c3-2.2 13-2.2 16 0v3.6c-1 4.2-5 6.4-8 6.4s-7-2.2-8-6.4z"/><path d="M4 10.4 1.6 8.6M20 10.4l2.4-1.8M8 12.4h8M8.6 15.4h6.8"/></symbol>
+<symbol id="i-valve" viewBox="0 0 24 24"><path d="M2.5 15h19"/><path d="M8 15v-3h8v3"/><path d="M12 12V7"/><path d="M6.5 7h11"/></symbol>
+<symbol id="i-breaker" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><rect x="9" y="7" width="6" height="10" rx="1"/><path d="M12 12.5V16"/></symbol>
+<symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="6.5" r="3.2"/><path d="M5.5 21v-3a6.5 6.5 0 0 1 13 0v3"/></symbol>
+<symbol id="i-kid" viewBox="0 0 24 24"><circle cx="12" cy="9" r="2.7"/><path d="M7.8 21v-2.4a4.2 4.2 0 0 1 8.4 0V21"/></symbol>
+<symbol id="i-group" viewBox="0 0 24 24"><circle cx="8.5" cy="7.5" r="2.8"/><circle cx="16.5" cy="9" r="2.2"/><path d="M3 20v-2.2a5.5 5.5 0 0 1 11 0V20"/><path d="M14.5 15.2a4.3 4.3 0 0 1 6.5 3.6V20"/></symbol>
+<symbol id="i-door" viewBox="0 0 24 24"><path d="M5 21V4h10v17"/><path d="M15 4l4 1.6V20l-4 1"/><circle cx="12.6" cy="12.5" r=".9" fill="currentColor" stroke="none"/><path d="M3 21h18"/></symbol>
+<symbol id="i-exit" viewBox="0 0 24 24"><circle cx="13.5" cy="4.5" r="2"/><path d="M9 21l2.5-6 2.5 2.5V21M8 10.5l3-2.5 3.5 1 2 3 3 .5M11.5 15l-1-4.5"/></symbol>
+<symbol id="i-siren" viewBox="0 0 24 24"><path d="M7 18v-6a5 5 0 0 1 10 0v6"/><path d="M5 18h14v3H5z"/><path d="M12 2.5v2M4.4 6l1.5 1.5M19.6 6l-1.5 1.5"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 7.4a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z"/></symbol>
+<symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.6 6 11.1a6 6 0 0 1-12 0C6 9.6 12 3 12 3z"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.6h2"/></symbol>
+<symbol id="i-fire" viewBox="0 0 24 24"><path d="M12 21c3.9 0 6.5-2.5 6.5-6 0-4-3.5-6-3.5-9-2.5 1.5-3 4-3 4s-1-1.5-1-3.5C8 8 5.5 10.5 5.5 15c0 3.5 2.6 6 6.5 6z"/><path d="M12 21c-1.8 0-3-1.3-3-3 0-1.8 1.5-2.6 3-4.5 1.5 1.9 3 2.7 3 4.5 0 1.7-1.2 3-3 3z"/></symbol>
+<symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8"/></symbol>
+<symbol id="i-rad" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.7" fill="currentColor"/><path fill="currentColor" stroke="none" d="M10.5 9.4 7.5 4.2A9 9 0 0 1 16.5 4.2L13.5 9.4A3 3 0 0 0 10.5 9.4ZM15 12H21A9 9 0 0 1 16.5 19.8L13.5 14.6A3 3 0 0 0 15 12ZM10.5 14.6 7.5 19.8A9 9 0 0 1 3 12H9A3 3 0 0 0 10.5 14.6Z"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-5 8a4 4 0 0 0 3.4 6h7.2A4 4 0 0 0 19 16l-5-8V3"/><path d="M7.5 14h9"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+<symbol id="i-food" viewBox="0 0 24 24"><path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8.5 7.5c0-2 2-2 2-4.2M13.5 7.5c0-2 2-2 2-4.2"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+<symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11m0-6.6a1.5 1.5 0 0 1 3 0V11m0-5a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7h-.4A6.6 6.6 0 0 1 4.9 16l-1.4-2.9a1.5 1.5 0 0 1 2.6-1.5L8 13"/></symbol>
+<symbol id="i-whistle" viewBox="0 0 24 24"><path d="M3 12.5a5 5 0 0 0 10 0V9.5h8v4h-3"/><circle cx="8" cy="12.5" r="2"/><path d="M13 9.5v-3"/></symbol>
+<symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 12.6a10 10 0 0 1 14 0M8.5 16.1a5 5 0 0 1 7 0"/><circle cx="12" cy="19.3" r="1" fill="currentColor"/></symbol>
+<symbol id="i-bone" viewBox="0 0 24 24"><path d="M6.7 3.6a2.1 2.1 0 0 0-3 3 2.1 2.1 0 0 0 3 3l7.7 7.7a2.1 2.1 0 0 0 3 3 2.1 2.1 0 0 0 3-3 2.1 2.1 0 0 0-3-3L9.7 6.6a2.1 2.1 0 0 0-3-3z"/></symbol>
+<symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2.5v19M3.8 7.2l16.4 9.6M3.8 16.8l16.4-9.6"/><path d="M9.5 4 12 6l2.5-2M9.5 20l2.5-2 2.5 2"/></symbol>
+<symbol id="i-thermo" viewBox="0 0 24 24"><path d="M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0z"/><path d="M12 9v7"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M3 15.5l2-5.2A2 2 0 0 1 6.9 9h10.2a2 2 0 0 1 1.9 1.3l2 5.2V19H3z"/><circle cx="7" cy="16.5" r="1.4"/><circle cx="17" cy="16.5" r="1.4"/><path d="M6 6.5c.8-.8 1.6-.8 2.4 0s1.6.8 2.4 0"/></symbol>
+<symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5M4.5 9v11h15V9M3 9h18M9.5 20v-6h5v6"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol>
+<symbol id="i-elev" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M12 3v18M7.8 9.5 9.3 7.5l1.5 2M13.2 14.5l1.5 2 1.5-2"/></symbol>
+<symbol id="i-stairs" viewBox="0 0 24 24"><path d="M3 20h5v-5h5v-5h5V5h3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.7" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/></symbol>
+<symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+<symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 21H20v-3"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5a3 3 0 0 0 3.5 4M16 6h3.5a3 3 0 0 1-3.5 4M12 13v4M8.5 21h7M9.5 17h5v4h-5z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></symbol>
+</defs>
+</svg>
+<script>
+"use strict";
+/* ===================== 01 · 유틸 · 저장 · 난수 · 소리 ===================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+/* 저장 가능한 상태를 가진 난수(mulberry32) — 이어하기·재현 테스트용 */
+const RNG={s:1,seed(n){this.s=(n>>>0)||1},next(){let t=(this.s=(this.s+0x6D2B79F5)>>>0);t=Math.imul(t^(t>>>15),1|t);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}};
+const rnd=()=>RNG.next();
+const chance=p=>rnd()<p;
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const ic=(id,cls)=>`<svg class="ic${cls?' '+cls:''}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+function vib(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+/* 한국어 조사: 받침 여부로 이/가, 을/를, 은/는, 과/와 선택 */
+function josa(w,pair){const c=w.charCodeAt(w.length-1);const has=c>=0xAC00&&c<=0xD7A3&&((c-0xAC00)%28)!==0;
+  const m={'이가':['이','가'],'을를':['을','를'],'은는':['은','는'],'과와':['과','와'],'아야':['아','야']}[pair];return w+(has?m[0]:m[1])}
+const fmtL=n=>(Math.round(n*10)/10).toString().replace(/\.0$/,'');
+function toast(msg,ms){const t=$('#toast');t.innerHTML=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>{t.hidden=true},ms||2600)}
+function shake(){const a=$('#app');a.classList.remove('shake');void a.offsetWidth;a.classList.add('shake');setTimeout(()=>a.classList.remove('shake'),650)}
+function flash(){const f=$('#fx-flash');f.hidden=true;void f.offsetWidth;f.hidden=false;clearTimeout(flash._t);flash._t=setTimeout(()=>{f.hidden=true},1900)}
+
+/* ---------- 소리: 전부 Web Audio 합성 (파일 0개) ---------- */
+const SND={
+  on:store.get('sg.snd',true), ctx:null, sirenOsc:null, noiseBuf:null,
+  ac(){if(!this.ctx){try{this.ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+    if(this.ctx&&this.ctx.state==='suspended'){try{this.ctx.resume()}catch(e){}}return this.ctx},
+  tone(f,d,type,vol,when,f2){if(!this.on)return;const c=this.ac();if(!c)return;const t=c.currentTime+(when||0);
+    const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.08,t+.012);g.gain.exponentialRampToValueAtTime(.0008,t+d);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.05)},
+  /* 공습경보: 파상음 — 5초 상승·3초 하강 반복 (행안부 2023.8 개편 기준) */
+  siren(sec){if(!this.on)return;const c=this.ac();if(!c)return;this.stopSiren();
+    const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';g.gain.value=.055;o.connect(g);g.connect(c.destination);
+    let t=c.currentTime;const end=t+sec;o.frequency.setValueAtTime(380,t);
+    while(t<end){o.frequency.linearRampToValueAtTime(950,t+5);o.frequency.linearRampToValueAtTime(380,t+8);t+=8}
+    g.gain.setValueAtTime(.055,end-.3);g.gain.linearRampToValueAtTime(0,end);o.start();o.stop(end+.05);this.sirenOsc=o},
+  stopSiren(){if(this.sirenOsc){try{this.sirenOsc.stop()}catch(e){}this.sirenOsc=null}},
+  cbs(){/* 재난문자 경고음 느낌의 2음 반복 */for(let i=0;i<6;i++){this.tone(i%2?1180:880,.16,'square',.05,i*.19)}},
+  noise(){const c=this.ac();if(!c)return null;if(!this.noiseBuf){const b=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;this.noiseBuf=b}return this.noiseBuf},
+  boom(big){if(!this.on)return;const c=this.ac();if(!c)return;const s=c.createBufferSource();s.buffer=this.noise();
+    const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=big?260:420;const g=c.createGain();const t=c.currentTime;
+    g.gain.setValueAtTime(big?.9:.55,t);g.gain.exponentialRampToValueAtTime(.001,t+(big?2.6:1.4));
+    s.connect(f);f.connect(g);g.connect(c.destination);s.start(t);s.stop(t+(big?2.7:1.5));this.tone(48,big?1.6:.9,'sine',big?.35:.2)},
+  tick(){this.tone(1500,.05,'square',.03)},
+  pick(){this.tone(660,.08,'triangle',.07);this.tone(990,.1,'triangle',.06,.06)},
+  ok(){this.tone(523,.14,'triangle',.08);this.tone(784,.22,'triangle',.08,.11)},
+  bad(){this.tone(220,.3,'sawtooth',.06,0,140)},
+  beat(){this.tone(880,.06,'square',.05)},
+  step(){this.tone(140,.06,'sine',.06)}
+};
+
+/* ===================== 02 · 데이터: 집 구조 · 물건 · 배낭 연동 · 배지 ===================== */
+const HB='https://myjason91.github.io/Survival/'; /* 생존 수첩 설치판 */
+const SCEN={conv:{n:'재래식 미사일 공습',s:'재래식 공습',ic:'siren'},nuke:{n:'핵 공격 · 낙진',s:'핵 공격',ic:'rad'},chem:{n:'화학무기 공격',s:'화학 공격',ic:'flask'}};
+const DIFF={
+  train:{n:'훈련',sec:75,mul:.7,phone:80,hint:'always',d:'수칙 힌트 항상 표시'},
+  real:{n:'실전',sec:60,mul:1,phone:55,hint:'info',d:'라디오·정보가 있어야 힌트'},
+  hard:{n:'극한',sec:45,mul:1.3,phone:30,hint:'radio',d:'45초 · 피해 1.3배'}
+};
+/* 84㎡ 아파트 평면 (viewBox 360×290) */
+const ROOMS={
+  master:{n:'안방',x:8,y:8,w:132,h:112},
+  bath:{n:'욕실',x:140,y:8,w:72,h:70},
+  kid:{n:'아이방',x:212,y:8,w:140,h:112},
+  living:{n:'거실',x:8,y:120,w:196,h:100},
+  kitchen:{n:'주방',x:204,y:120,w:148,h:100},
+  hall:{n:'현관',x:8,y:220,w:110,h:62},
+  util:{n:'다용도실',x:218,y:220,w:134,h:62}
+};
+function roomC(id){const r=ROOMS[id];return{x:r.x+r.w/2,y:r.y+r.h/2}}
+function travelSec(a,b){if(a===b)return 0;const p=roomC(a),q=roomC(b);return Math.max(1,Math.ceil(Math.hypot(p.x-q.x,p.y-q.y)/118))}
+/* 물건: s=배낭 칸, t=챙기는 데 걸리는 초, px/py=평면도 표시 위치 */
+const ITEMS={
+  pack:{n:'생존배낭(미리 꾸린 것)',room:'hall',s:0,t:1,ic:'pack',px:40,py:248,d:'메고 나가면 칸 차지 없음'},
+  breaker:{n:'두꺼비집 내리기',room:'hall',t:2,ic:'breaker',act:1,px:90,py:236,d:'누전·스파크 화재 예방'},
+  water6:{n:'생수 2L×6 묶음',room:'kitchen',s:3,t:3,ic:'water6',px:330,py:140,d:'물 12L'},
+  water1:{n:'생수 2L 한 병',room:'kitchen',s:1,t:1,ic:'water',px:300,py:140,d:'물 2L'},
+  foodbox:{n:'비상식량 상자',room:'kitchen',s:2,t:3,ic:'can',px:330,py:198,d:'통조림·즉석밥 6일분(1인)'},
+  ramen:{n:'라면 묶음',room:'kitchen',s:2,t:2,ic:'ramen',px:300,py:198,d:'끓여야 먹는다'},
+  burner:{n:'휴대용 가스버너',room:'kitchen',s:2,t:2,ic:'burner',px:268,py:198,d:'조리용'},
+  gas:{n:'가스 밸브 잠그기',room:'kitchen',t:2,ic:'valve',act:1,px:232,py:162,d:'귀가 후 가스 사고 예방'},
+  radio:{n:'휴대용 라디오',room:'living',s:1,t:3,ic:'radio',px:66,py:156,d:'건전지식 · 정보'},
+  pbank:{n:'보조배터리',room:'living',s:1,t:1,ic:'battery',px:120,py:200,d:'휴대폰 전력 +60%'},
+  wallet:{n:'지갑·신분증',room:'living',s:1,t:1,ic:'id',px:150,py:150,d:'신원 확인·구호 등록'},
+  laptop:{n:'노트북',room:'living',s:2,t:2,ic:'laptop',px:180,py:200,d:'업무 자료'},
+  charger:{n:'휴대폰 충전기',room:'living',s:1,t:1,ic:'plug',px:60,py:200,d:'콘센트용'},
+  cash:{n:'현금 봉투',room:'master',s:1,t:2,ic:'cash',px:28,py:100,d:'정전 시 카드 불가'},
+  gold:{n:'금붙이·시계',room:'master',s:1,t:2,ic:'ring',px:56,py:100,d:'귀중품'},
+  quilt:{n:'두꺼운 이불',room:'master',s:3,t:2,ic:'quilt',px:84,py:100,d:'보온 · 부피 큼'},
+  meds:{n:'상비약 통',room:'master',s:1,t:2,ic:'pill',px:116,py:100,d:'해열·진통·지사제'},
+  teddy:{n:'아이 애착인형',room:'kid',s:1,t:1,ic:'teddy',px:330,py:100,d:'아이 안정',kid:1},
+  firstaid:{n:'구급상자',room:'bath',s:2,t:2,ic:'aid',px:160,py:58,d:'거즈·붕대·소독약'},
+  wipes:{n:'물티슈·휴지',room:'bath',s:1,t:1,ic:'wipes',px:186,py:58,d:'위생 · 감염 예방'},
+  bleach:{n:'무향 락스',room:'bath',s:1,t:1,ic:'bleach',px:186,py:30,d:'식수 소독용'},
+  torch:{n:'손전등',room:'util',s:1,t:1,ic:'torch',px:250,py:252,d:'건전지 포함'},
+  candle:{n:'양초·라이터',room:'util',s:1,t:1,ic:'candle',px:278,py:252,d:'조명'},
+  tools:{n:'멀티툴·장갑',room:'util',s:1,t:2,ic:'tool',px:306,py:252,d:'공구함'},
+  vinyl:{n:'비닐·우의·테이프',room:'util',s:1,t:2,ic:'tape',px:250,py:272,d:'밀폐·오염 차단'},
+  mask:{n:'KF94 마스크 상자',room:'util',s:1,t:1,ic:'mask',px:278,py:272,d:'호흡기 보호'},
+  wakeSp:{n:'배우자 깨우기',room:'master',t:3,ic:'person',fam:'sp',px:56,py:52,d:'신발·겉옷까지'},
+  wakeKid:{n:'아이 깨워 옷 입히기',room:'kid',t:5,ic:'kid',fam:'kid',px:300,py:52,d:'아이는 시간이 걸린다'}
+};
+/* 생존 수첩 '대비' 탭 생존배낭 체크리스트(sv.kit, 16종) → 현관 배낭 내용물 */
+const KIT_NAMES=['생수','비상식량 3일분','손전등','휴대용 라디오','보조배터리','상비약','KF94 마스크','호루라기','물티슈·손소독제','비닐봉투·우의','보온 담요','현금','신분증·가족사진','라이터·멀티툴·장갑','가족 필수용품','종이 수칙 1부'];
+const KIT_GIVE=[
+  {water:4},{food:6},{inv:{torch:1}},{inv:{radio:1}},{power:60},{meds:3},{inv:{mask:6}},{inv:{whistle:1}},
+  {inv:{wipes:1}},{inv:{vinyl:1}},{inv:{blanket:1}},{inv:{cash:1}},{inv:{wallet:1}},{inv:{tools:1}},{morale:10},{hintCharges:3}
+];
+function readHandbookKit(){
+  /* 같은 주소(github.io)에서 실행될 때만 생존 수첩의 실제 체크 상태가 보인다 */
+  try{const raw=localStorage.getItem('sv.kit');if(raw===null)return null;const o=JSON.parse(raw)||{};
+    const arr=KIT_NAMES.map((_,i)=>!!o[i]);return arr}catch(e){return null}
+}
+/* 배지 */
+const BADGES={
+  bag12:{n:'현관 배낭의 힘',d:'미리 꾸린 배낭 12종 이상으로 시작',ic:'pack'},
+  swift:{n:'60초의 달인',d:'15초 이상 남기고 가족과 탈출',ic:'clock'},
+  nogas:{n:'잠근 밸브',d:'대피 전 가스·전기 모두 차단',ic:'valve'},
+  reflex:{n:'섬광 반사',d:'섬광 1.5초 안에 올바른 자세',ic:'rad'},
+  cpr:{n:'골든 리듬',d:'가슴압박 박자 정확도 80% 이상',ic:'heart'},
+  hold:{n:'10분의 인내',d:'직접압박을 끝까지 유지',ic:'drop'},
+  sos:{n:'··· ─── ···',d:'SOS 신호를 정확히 송신',ic:'torch'},
+  rumor:{n:'유언비어 감별사',d:'소문 대신 공식 채널 확인',ic:'radio'},
+  chemup:{n:'화학은 위로',d:'화생방경보에 고층으로 대피',ic:'flask'},
+  share:{n:'나눈 물 한 병',d:'물을 나누고도 72시간 생존',ic:'water'},
+  clean:{n:'깨끗한 귀환',d:'핵 시나리오 피폭 지수 20 이하',ic:'shield'},
+  perfect:{n:'교과서 같은 72시간',d:'S등급 달성',ic:'trophy'},
+  triple:{n:'세 개의 밤',d:'재래식·핵·화학 모두 생존',ic:'moon'}
+};
+const CONDS={bleed:{n:'출혈',ic:'drop',hp:12},injury:{n:'부상',ic:'bone',hp:3},fracture:{n:'골절',ic:'bone',hp:2},
+  sick:{n:'설사·탈수',ic:'drop',hp:6},cold:{n:'저체온',ic:'snow',hp:7},heat:{n:'열탈진',ic:'thermo',hp:5},
+  contam:{n:'피부 오염',ic:'flask',hp:8},burn:{n:'화상',ic:'fire',hp:4},co:{n:'두통·어지럼',ic:'wind',hp:4}};
+
+/* ===================== 03 · 엔진: 상태 · 효과 · 턴 · 엔딩 ===================== */
+let G=null;            /* 현재 판 */
+let FX=[];             /* 직전 선택의 효과 칩 */
+const LOCN={park:'단지 지하주차장 B2',subway:'지하철역 대합실',bldg:'인근 상가 지하 2층',home:'집 안 욕실',high:'12층 우리 집 (밀폐)',gym:'정부 집결지 · 학교 체육관'};
+const DOW=['일','월','화','수','목','금','토'];
+function seasonOf(m){return [12,1,2].includes(m)?'winter':[6,7,8].includes(m)?'summer':[3,4,10,11].includes(m)?'cool':'mild'}
+const SEASON={winter:{n:'한겨울',t:'바깥 영하 6℃'},cool:{n:'쌀쌀한 환절기',t:'바깥 7℃'},summer:{n:'한여름',t:'바깥 31℃'},mild:{n:'온화한 계절',t:'바깥 18℃'}};
+
+function newGame(o){
+  const seed=(o.seed>>>0)||(((Date.now()&0xffffffff)^Math.floor(Math.random()*1e9))>>>0);
+  RNG.seed(seed);
+  const scen=o.scen==='rand'?pick(['conv','conv','nuke','chem']):o.scen;
+  const d=DIFF[o.diff], now=new Date();
+  const fam=[{id:'me',n:'당신',hp:100,c:[]}];
+  if(o.fam>=2)fam.push({id:'sp',n:'배우자',hp:100,c:[]});
+  if(o.fam>=3)fam.push({id:'kid',n:'아이',hp:100,c:[]});
+  G={v:1,seed,opts:o,diff:o.diff,mul:d.mul,scen,scenKnown:o.scen!=='rand',
+    season:o.season||seasonOf(now.getMonth()+1),date:{m:now.getMonth()+1,d:now.getDate(),w:DOW[now.getDay()]},
+    fam,res:{water:0,food:0,power:d.phone,meds:0},inv:{},morale:62,pol:0,trust:0,hintCharges:0,infoTurns:0,
+    phase:'alert',step:null,turn:0,ration:'base',loc:'park',flags:{},log:[],fired:{},newBadges:[],cur:null,
+    kit:null,kitCount:0,grab:null,moveQ:[],rt:null,over:false,rngS:0};
+  /* 현관 생존배낭 */
+  let kit=null;
+  if(o.bag==='sync'){kit=readHandbookKit()}
+  else if(o.bag==='full'){kit=KIT_NAMES.map(()=>true)}
+  if(kit&&kit.some(Boolean)){G.kit=kit;G.kitCount=kit.filter(Boolean).length}
+  return G;
+}
+function save(){if(!G)return;G.rngS=RNG.s;store.set('sg.save',G)}
+function loadSave(){const s=store.get('sg.save',null);if(!s||s.v!==1||s.phase==='end')return null;return s}
+function clearSave(){store.del('sg.save')}
+
+/* ---------- 효과 헬퍼 (이벤트에서 사용) ---------- */
+const M=id=>G.fam.find(m=>m.id===id);
+const hasKid=()=>!!M('kid');
+function nm(m){return m.n}
+function list(t){if(t==='all')return G.fam;if(typeof t==='string')return [M(t)].filter(Boolean);return Array.isArray(t)?t:[t]}
+function victim(pref){
+  const others=G.fam.filter(m=>m.id!=='me');
+  if(pref==='kid'&&M('kid'))return M('kid');
+  if(pref==='other')return others.length?pick(others):M('me');
+  if(pref==='adult'){const a=G.fam.filter(m=>m.id!=='kid');return pick(a)}
+  return pick(G.fam);
+}
+function push(label,n,unit){FX.push({l:label,n,u:unit||''})}
+function hurt(t,n){list(t).forEach(m=>{const k=(m.id==='kid'?1.15:1)*G.mul;const v=Math.max(1,Math.round(n*k));m.hp=clamp(m.hp-v,0,100);push(m.n,-v)})}
+function heal(t,n){list(t).forEach(m=>{if(m.crit)return;const b=m.hp;m.hp=clamp(m.hp+n,0,100);if(m.hp>b)push(m.n,m.hp-b)})}
+function addC(m,c){if(m&&!m.c.includes(c)){m.c.push(c);push(m.n+' '+CONDS[c].n,null)}}
+function clrC(m,c){if(m)m.c=m.c.filter(x=>x!==c)}
+function res(k,n){const b=G.res[k];G.res[k]=Math.max(0,Math.round((b+n)*100)/100);const d=G.res[k]-b;if(d)push({water:'물',food:'식량',power:'전력',meds:'의약품'}[k],k==='water'?Math.round(d*10)/10:d,{water:'L',power:'%',food:'',meds:''}[k])}
+function mor(n){const b=G.morale;G.morale=clamp(G.morale+n,0,100);if(G.morale!==b)push('사기',G.morale-b)}
+function pol(n){const b=G.pol;G.pol=clamp(G.pol+Math.round(n>0?n*G.mul:n),0,100);if(G.pol!==b)push(G.scen==='chem'?'오염':'피폭',G.pol-b)}
+function trust(n){G.trust+=n;push('이웃 신뢰',n)}
+const has=k=>(G.inv[k]||0)>0;
+function give(k,n){G.inv[k]=(G.inv[k]||0)+(n||1)}
+function warmth(){return has('blanket')||has('quilt')}
+function lightSrc(){return has('torch')?'torch':(G.res.power>=5&&!G.flags.emp)?'phone':null}
+function clockAt(turn){/* T0 = 23:15 */const mins=(23*60+15+turn*360)%1440;return String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0')}
+function dayOf(turn){return Math.floor((turn+0)/4)+1}
+function reveal(){if(!G.scenKnown){G.scenKnown=true;push('상황 파악',null)}}
+
+/* 의사결정 기록 → 디브리핑 */
+function logDecision(ev,choice,ok,extra){
+  const vv=x=>typeof x==='function'?x():x;
+  G.log.push({id:ev.id,title:vv(ev.title),choice:choice?choice.t:(extra||'시간 초과'),ok,
+    lesson:vv(ev.lesson)||null,src:vv(ev.src)||null,guide:ev.guide||'now',best:ok===false?bestChoice(ev):null});
+}
+function bestChoice(ev){const cs=typeof ev.choices==='function'?ev.choices():ev.choices;const b=cs.find(c=>c.ok===true);return b?b.t:null}
+
+/* ---------- 힌트(정보) ---------- */
+function hintSource(){
+  if(G.diff==='train')return{k:'train',l:'훈련 힌트 · 생존 수첩'};
+  if(G.infoTurns>0)return{k:'radio',l:'라디오 · 정부 안내'};
+  if(G.diff!=='hard'&&G.hintCharges>0)return{k:'paper',l:'종이 수칙 1부'};
+  return null;
+}
+function consumeHint(src){if(!src)return;if(src.k==='radio')G.infoTurns--;else if(src.k==='paper')G.hintCharges--}
+
+/* ---------- 탈출 결과 반영 ---------- */
+function applyGrab(gr){
+  G.grab={left:Math.round(gr.left),picked:gr.picked.slice(),late:gr.late,famOk:gr.famOk,gas:gr.gas,breaker:gr.breaker,pack:gr.pack,slotsUsed:gr.used};
+  G.flags.gas=gr.gas;G.flags.breaker=gr.breaker;
+  const E={water6:()=>G.res.water+=12,water1:()=>G.res.water+=2,foodbox:()=>G.res.food+=6,ramen:()=>give('ramen',5),burner:()=>give('burner'),
+    radio:()=>give('radio'),pbank:()=>G.res.power+=60,wallet:()=>give('wallet'),laptop:()=>give('laptop'),charger:()=>give('charger'),
+    cash:()=>give('cash'),gold:()=>give('gold'),quilt:()=>give('quilt'),meds:()=>G.res.meds+=2,teddy:()=>give('teddy'),
+    firstaid:()=>{G.res.meds+=3;give('firstaid')},wipes:()=>give('wipes'),bleach:()=>give('bleach'),torch:()=>give('torch'),
+    candle:()=>give('candle'),tools:()=>give('tools'),vinyl:()=>give('vinyl'),mask:()=>give('mask',10)};
+  gr.picked.forEach(id=>{if(E[id])E[id]()});
+  if(gr.pack&&G.kit){G.kit.forEach((on,i)=>{if(!on)return;const g=KIT_GIVE[i];
+    if(g.water)G.res.water+=g.water;if(g.food)G.res.food+=g.food;if(g.power)G.res.power+=g.power;if(g.meds)G.res.meds+=g.meds;
+    if(g.morale)G.morale+=g.morale;if(g.hintCharges)G.hintCharges+=g.hintCharges;if(g.inv)Object.keys(g.inv).forEach(k=>give(k,g.inv[k]))})}
+  G.homeLeft=Object.keys(ITEMS).filter(k=>!ITEMS[k].act&&!ITEMS[k].fam&&k!=='pack'&&!gr.picked.includes(k));
+  if(gr.late>0){mor(-6)}
+  if(gr.left>=15&&gr.famOk)badge('swift');
+  if(gr.gas&&gr.breaker)badge('nogas');
+  if(gr.pack&&G.kitCount>=12)badge('bag12');
+  G.morale=clamp(G.morale,0,100);
+}
+/* 화생방: 고층 우리 집에 도착하면 두고 온 물자를 쓸 수 있다 */
+function arriveHome(){
+  G.loc='high';G.flags.tap=1;let w=0,f=0;
+  (G.homeLeft||[]).forEach(k=>{if(k==='water6')w+=12;if(k==='water1')w+=2;if(k==='foodbox')f+=6;
+    if(['quilt','torch','vinyl','candle','radio','bleach','wipes','teddy','burner','wallet'].includes(k))give(k);
+    if(k==='mask')give('mask',10);if(k==='meds')G.res.meds+=2;if(k==='firstaid'){G.res.meds+=3;give('firstaid')}});
+  G.homeLeft=[];
+  if(w)res('water',w);if(f)res('food',f);
+  return (w||f)?` 집에 두고 온 물 ${w}L·식량 ${f}일분을 다시 확보했다.`:'';
+}
+
+/* ---------- 이벤트 선택 ---------- */
+const SCHED={
+  conv:{0:'settle',1:'contact',2:'rumor',4:'blackout',6:'gohome',8:'second',10:'relief'},
+  nuke:{0:'decon',1:'emp',2:'ki',3:'outside',5:'reunite',8:'evac'},
+  chem:{0:'settle',1:'chemalert',2:'seal',3:'skin',5:'chemwater',9:'relief'}
+};
+function evOK(e){return(!e.scen||e.scen.includes(G.scen))&&(!e.loc||e.loc.includes(G.loc))&&(!e.cond||e.cond())}
+function pickEvent(){
+  const sid=SCHED[G.scen][G.turn];
+  if(sid&&EV[sid]&&!G.fired[sid]&&evOK(EV[sid]))return sid;
+  const pool=EVENTS.filter(e=>e.pool&&!G.fired[e.id]&&evOK(e));
+  if(!pool.length||chance(.12))return 'quiet';
+  const ws=pool.map(e=>typeof e.w==='function'?e.w():(e.w||1));
+  let r=rnd()*ws.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i].id}
+  return pool[pool.length-1].id;
+}
+
+/* ---------- 행동 ---------- */
+function needsCare(){const order=['bleed','contam','co','cold','heat','sick','burn','fracture','injury'];
+  let best=null,score=-1;G.fam.forEach(m=>{m.c.forEach(c=>{const s=100-order.indexOf(c);if(s>score){score=s;best={m,c}}});
+    if(!m.c.length&&m.hp<65&&!m.crit&&score<1){score=1;best={m,c:null}}});return best}
+const ACTIONS=[
+  {id:'radio',n:'라디오 듣기',ic:'radio',d:()=>'정부 안내 · 다음 2번 힌트',show:()=>true,ok:()=>has('radio'),na:'라디오를 챙기지 못했다'},
+  {id:'phone',n:'재난문자 확인',ic:'phone',d:()=>'힌트 1번 · 전력 −8%',show:()=>!has('radio'),ok:()=>G.res.power>=8&&!G.flags.emp,na:()=>G.flags.emp?'통신망 먹통':'전력 부족'},
+  {id:'treat',n:'응급처치',ic:'aid',d:()=>{const n=needsCare();return n?`${n.m.n}${n.c?' · '+CONDS[n.c].n:' · 체력 회복'}${G.res.meds?' · 약 1':' · 약 없음'}`:'다친 사람 없음'},show:()=>true,ok:()=>!!needsCare(),na:'다친 사람 없음'},
+  {id:'wash',n:'오염 씻어내기',ic:'drop',d:()=>G.flags.tap?'수돗물 사용':'물 3L 사용',show:()=>G.fam.some(m=>m.c.includes('contam')),ok:()=>G.flags.tap||G.res.water>=3},
+  {id:'purify',n:'물 정수',ic:'bleach',d:()=>'수돗물 거르고 락스 · 물 +4L',show:()=>has('bleach')&&G.flags.tap&&G.scen!=='chem',ok:()=>true},
+  {id:'rest',n:'휴식·수면',ic:'moon',d:()=>'전원 체력 +6 · 사기 +2',show:()=>true,ok:()=>true},
+  {id:'care',n:'가족 돌보기',ic:'heart',d:()=>has('teddy')&&hasKid()?'사기 +14 (애착인형)':'사기 +8',show:()=>G.fam.length>1,ok:()=>true},
+  {id:'scout',n:'주변 살피기',ic:'pin',d:()=>(G.scen==='nuke'&&G.turn<4)?'낙진 시간대 — 피폭 위험!':'물자 발견 가능 · 부상 위험',show:()=>G.loc!=='gym',ok:()=>!G.fam.find(m=>m.id==='me').c.includes('fracture'),warn:()=>G.scen==='nuke'&&G.turn<4,na:'골절로 움직일 수 없다'},
+  {id:'help',n:'이웃 돕기',ic:'group',d:()=>'신뢰 +1 · 사기 +4',show:()=>true,ok:()=>true}
+];
+function doAction(id){
+  FX=[];let t='';
+  if(id==='radio'){G.infoTurns=2;if(!(G.scen==='chem'&&!G.flags.chemAlert))reveal();mor(3);
+    const L={conv:'"미사일 공격이 이어지고 있습니다. 경보 해제 때까지 대피소에 머무르십시오."',
+      nuke:G.turn<4?'"낙진 지역 주민은 최소 24시간 실내에 머무르십시오. 외출을 삼가십시오."':'"정부 이동 안내를 기다리십시오. 마스크와 우의를 준비하십시오."',
+      chem:G.flags.chemAlert?'"고층 실내에서 창문과 환풍구를 밀폐하십시오. 오염 의심수는 마시지 마십시오."':'"공격 원인을 확인 중입니다. 지하 대피를 유지하십시오."'};
+    t='KBS 재난방송: '+L[G.scen]}
+  else if(id==='phone'){res('power',-8);G.infoTurns=1;if(G.scen!=='chem'||G.flags.chemAlert)reveal();t='재난문자 3건을 확인했다. 정부 안내를 한 번 더 읽어 두었다.'}
+  else if(id==='treat'){const n=needsCare();if(!n){t='돌볼 부상자가 없다.'}else{const m=n.m;
+    if(G.res.meds>0){res('meds',-1);if(n.c)clrC(m,n.c);heal(m,18);t=`${josa(m.n,'을를')} 처치했다.${n.c?' '+CONDS[n.c].n+' 상태가 나아졌다.':''}`}
+    else{let okp=n.c==='bleed'?.8:n.c==='cold'?(warmth()?1:.5):n.c==='contam'?.4:.6;if(chance(okp)){if(n.c)clrC(m,n.c);heal(m,6);t=`약은 없지만 있는 천과 물로 ${josa(m.n,'을를')} 돌봤다. 고비는 넘겼다.`}else{heal(m,2);t=`약도 도구도 없다. ${m.n}의 상태가 그대로다.`}}}}
+  else if(id==='wash'){if(!G.flags.tap)res('water',-3);G.fam.forEach(m=>clrC(m,'contam'));heal('all',3);t='비누와 흐르는 물로 15분씩 씻었다. 오염된 옷은 비닐에 묶었다.'}
+  else if(id==='purify'){res('water',4);t='천으로 거른 수돗물에 무향 락스를 1L당 4방울, 30분 기다렸다. 희미한 소독약 냄새 — 정상이다.'}
+  else if(id==='rest'){if(!G.flags.dry)heal('all',6);else heal('all',2);mor(2);t=G.flags.dry?'목이 말라 깊이 잠들지 못했다.':'교대로 눈을 붙였다. 몸이 조금 풀렸다.'}
+  else if(id==='care'){mor(8);if(has('teddy')&&hasKid())mor(6);t=hasKid()?(has('teddy')?'애착인형을 안은 아이가 처음으로 웃었다. 끝말잇기를 하며 시간을 보냈다.':'아이와 손바닥 그림자놀이를 했다. 서로의 체온이 위안이 된다.'):'이야기를 나누며 다음 할 일을 함께 정했다.'}
+  else if(id==='help'){trust(1);mor(4);t=pick(['노인의 짐을 옮기고 물을 떠다 드렸다.','관리인을 도와 대피 인원을 셌다.','아이들 화장실 동행을 맡았다.'])}
+  else if(id==='scout'){t=scout()}
+  return t;
+}
+function scout(){
+  const me=M('me');
+  if(G.scen==='nuke'&&G.turn<4){pol(25);if(chance(.5))res('water',4);
+    logDecision({id:'scout-early',title:'낙진 시간대 외출',lesson:'방사선은 첫 수 시간이 가장 강하다. 최소 24시간은 실내에 머문다.',src:'행정안전부 핵공격 국민행동요령 · 美 FEMA',guide:'now',choices:[{t:'실내에 머문다',ok:true}]},{t:'주변 살피러 나감'},false);
+    return '낙진이 가장 강한 시간대에 밖으로 나갔다. 피폭 지수가 크게 올랐다.'}
+  if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear){addC(me,'contam');pol(12);return '복도와 계단에도 작용제가 남아 있었다. 팔이 따끔거린다.'}
+  const r=rnd();
+  if(r<.2){hurt(me,10);addC(me,'injury');return '무너진 진열대에 다리를 부딪쳤다.'}
+  if(r<.62){const f=pick([['water',4,'자판기 옆에 굴러다니던 생수'],['food',2,'주인 없는 상자 속 에너지바'],['meds',1,'관리실 구급함'],['power',20,'버려진 보조배터리']]);res(f[0],f[1]);return `${f[2]}를 찾았다.`}
+  return '둘러봤지만 쓸 만한 것은 없었다.';
+}
+
+/* ---------- 턴 종료 ---------- */
+const RATION={full:{n:'충분히',w:1,f:.375,hp:2,mo:2,d:'1인 하루 4L · 1.5끼니'},base:{n:'기본',w:.5,f:.25,hp:0,mo:0,d:'1인 하루 2L · 1끼니'},save:{n:'절약',w:.25,f:.125,hp:-2,mo:-3,d:'1인 하루 1L · 0.5끼니'}};
+function endTurn(){
+  FX=[];const notes=[];const n=G.fam.length;const R=RATION[G.ration];
+  let wNeed=R.w*n+.25*G.fam.filter(m=>m.c.includes('sick')).length+(G.season==='summer'&&G.loc!=='gym'?.1*n:0);
+  let fNeed=R.f*n;
+  const dry=G.res.water+1e-9<wNeed?1-G.res.water/wNeed:0; res('water',-Math.min(G.res.water,wNeed));
+  const hungry=G.res.food+1e-9<fNeed?1-G.res.food/fNeed:0; res('food',-Math.min(G.res.food,fNeed));
+  G.flags.dry=dry>0;
+  if(dry>0){hurt('all',Math.round(9*dry));mor(-Math.round(5*dry));notes.push('물이 모자라 탈수가 시작됐다.')}
+  else{if(R.hp)G.fam.forEach(m=>{if(R.hp>0)heal(m,R.hp);else hurt(m,-R.hp)});}
+  if(hungry>0){hurt('all',Math.round(3*hungry));mor(-Math.round(4*hungry));notes.push('식량이 바닥나 기력이 떨어진다.')}
+  if(R.mo)mor(R.mo);
+  /* 상태이상 */
+  G.fam.forEach(m=>m.c.forEach(c=>{let d=CONDS[c].hp;if(c==='cold'&&warmth())d=3;hurt(m,d)}));
+  /* 오염·피폭 환경 */
+  if(G.scen==='nuke'){if(G.turn<4){pol(G.loc==='home'?5:G.loc==='bldg'?2:1)}if(G.flags.noDecon&&G.turn<5)pol(3);if(G.loc==='park'&&G.flags.stayed)pol(2)}
+  if(G.scen==='chem'&&G.flags.chemAlert&&G.loc!=='high')pol(10);
+  if(G.pol>=70){hurt('all',6);notes.push((G.scen==='chem'?'오염':'피폭')+' 지수가 위험 수준이다.')}else if(G.pol>=40)hurt('all',3);
+  /* 겨울 지하 냉기 */
+  if((G.season==='winter')&&['park','bldg','subway'].includes(G.loc)&&!warmth())mor(-2);
+  /* 사기 · 회복 · 전력 */
+  mor(-1);
+  if(G.morale<=20){hurt('all',2);notes.push('지친 가족들 사이에 다툼이 잦다.')}
+  if(!dry&&!hungry&&G.morale>=45)G.fam.forEach(m=>{if(!m.c.length)heal(m,2)});
+  if(!G.flags.emp&&G.res.power>0)res('power',G.flags.saver?-1:-2);
+  /* 위독 · 게임오버 */
+  G.fam.forEach(m=>{if(m.id!=='me'&&m.hp<=0&&!m.crit){m.crit=true;m.hp=1;G.morale=clamp(G.morale-15,0,100);notes.push(`${m.n} 위독 — 의식이 흐리다.`)}});
+  if(M('me').hp<=0)G.over=true;
+  G.turnFx=FX.slice();G.turnNotes=notes;
+  return notes;
+}
+function checkOver(){if(M('me').hp<=0){G.over=true;return true}
+  G.fam.forEach(m=>{if(m.id!=='me'&&m.hp<=0&&!m.crit){m.crit=true;m.hp=1}});return false}
+
+/* ---------- 엔딩 ---------- */
+function computeEnding(){
+  const scored=G.log.filter(l=>l.ok===true||l.ok===false);
+  const right=scored.filter(l=>l.ok===true).length;
+  const know=scored.length?Math.round(right/scored.length*100):50;
+  const health=Math.round(G.fam.reduce((a,m)=>a+(m.crit?0:m.hp),0)/G.fam.length);
+  const crit=G.fam.some(m=>m.crit);
+  let score=know*.45+health*.35+G.morale*.1+(100-G.pol)*.1;
+  if(crit)score=Math.min(score,55);
+  if(know<50)score=Math.min(score,58);
+  if(know<85)score=Math.min(score,87.9);
+  if(know<70)score=Math.min(score,75.9);
+  let grade=G.over?'F':score>=88?'S':score>=76?'A':score>=63?'B':score>=50?'C':'D';
+  const T={S:'교과서 같은 72시간',A:'침착한 생존자',B:'무사히 버텼다',C:'상처 입은 생존',D:'운이 좋았다',F:'72시간을 버티지 못했다'};
+  const sub={S:'수칙대로 움직였고, 가족 모두 건강하게 경보 해제를 맞았다.',A:'몇 번의 실수가 있었지만 판단은 대체로 옳았다.',B:'살아남았다. 다만 놓친 수칙이 생존 여유를 깎아 먹었다.',
+    C:crit?'구조는 됐지만 가족 중 위독한 사람이 있어 긴급 이송됐다.':'살아남았지만 부상과 탈진이 깊다.',D:'잘못된 판단이 거듭됐다. 다음엔 운이 따르지 않을 수 있다.',
+    F:'체력이 바닥나 의식을 잃었다. 무엇이 갈랐는지 아래 기록에서 확인하자.'};
+  if(grade==='S')badge('perfect');
+  if(G.scen==='nuke'&&!G.over&&G.pol<=20)badge('clean');
+  if(G.flags.shared&&!G.over)badge('share');
+  return{grade,title:T[grade],sub:sub[grade],know,right,total:scored.length,health,score:Math.round(score),crit};
+}
+function badge(id){const rec=getRec();if(!rec.badges[id]){rec.badges[id]=Date.now();setRec(rec);if(G&&!G.newBadges.includes(id))G.newBadges.push(id)}}
+function getRec(){return store.get('sg.rec',{runs:0,best:{},badges:{},lessons:{},survived:{}})}
+function setRec(r){store.set('sg.rec',r)}
+function recordRun(end){
+  const rec=getRec();rec.runs++;const order='FDCBAS';
+  if(!rec.best[G.scen]||order.indexOf(end.grade)>order.indexOf(rec.best[G.scen]))rec.best[G.scen]=end.grade;
+  G.log.forEach(l=>{if(l.ok!==null&&l.lesson)rec.lessons[l.id]=1});
+  if(!G.over)rec.survived[G.scen]=1;
+  setRec(rec);
+  if(rec.survived.conv&&rec.survived.nuke&&rec.survived.chem)badge('triple');
+}
+
+/* ===================== 04 · 이벤트 (모든 정답 = 생존 수첩 수록 공식 수칙) ===================== */
+const EVENTS=[],EV={};
+function E(o){EVENTS.push(o);EV[o.id]=o;return o}
+const V=()=>M(G.cur&&G.cur.v)||M('me');
+const vn=p=>josa(V().n,p);
+const fam1=()=>G.fam.length===1;
+const SRC={
+  air:'행정안전부 민방공 국민행동요령',alarm:'행정안전부 민방위 경보 체계(2023.8 개편)',nuke:'행정안전부 핵공격 국민행동요령 · 美 FEMA Ready.gov',
+  chem:'행정안전부 화생방 국민행동요령',fire:'소방청 아파트 화재 피난행동요령(2023.11)',cpr:'질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인',
+  bleed:'Stop the Bleed 표준 · 구로구보건소 응급처치',co:'소방청·질병관리청 일산화탄소 중독 예방',water:'美 CDC 비상 식수 소독 가이드 · 생존 수첩 물 안전',
+  aid:'대한적십자사·질병관리청 응급처치 표준',ors:'WHO 경구수액(ORS) 표준',cold:'질병관리청 한랭질환 건강수칙 · 대한적십자사',heat:'질병관리청 폭염 건강수칙 · 대한적십자사',
+  comm:'생존 수첩 정전·통신두절 · 과학기술정보통신부',ki:'美 CDC 안정화 요오드(KI) 안내 · 행정안전부',grid:'행정안전부 국가지점번호 · 생존 수첩 내 위치',
+  gas:'한국가스안전공사 가스 누출 시 행동요령',pfa:'WHO 심리적 응급처치(PFA) 가이드',vio:'생존 수첩 폭력 상황 회피·탈출(전시·교전 지역)'
+};
+
+/* ================= 경계경보 ================= */
+E({id:'alert0',art:'phone',tone:'red',cat:'위급재난문자',title:'경계경보 — 사이렌은 없다',
+  text:()=>`밤 11시 4분. 휴대폰이 요란하게 울린다. ${fam1()?'집 안은 조용하다.':'가족은 잠들어 있다.'} 사이렌은 울리지 않았다. 무엇부터 할까?`,
+  hint:'경계경보는 사이렌 없이 음성방송·재난문자로 온다. 대피를 준비하고 어린이·노약자는 먼저.',
+  choices:()=>[
+    {t:fam1()?'신발·겉옷·배낭을 현관에 모으고 대피를 준비한다':'가족을 깨우고 신발·겉옷·배낭을 현관에 모은다',ok:true,go:()=>{G.flags.prep=1;return '4분 뒤 — 사방에서 사이렌이 울리기 시작했다. '+(fam1()?'당신은 이미 현관에 있다.':'가족은 이미 현관에 모여 있다.')}},
+    {t:'뉴스·SNS로 사실인지부터 확인한다',ok:false,go:()=>{G.hintCharges++;return '검색창을 넘기는 사이 4분이 흘렀다. 그리고 — 사이렌.'}},
+    {t:'짐을 차에 싣고 시외로 출발한다',ok:false,go:()=>{G.flags.car=1;return '트렁크를 열고 짐을 싣기 시작했다. 도로 사정은 아직 모른다.'}},
+    {t:'별일 없겠지, 다시 잔다',ok:false,go:()=>{G.flags.slept=1;return '얼마 뒤, 귀를 찢는 사이렌에 잠이 깼다.'}}
+  ],lesson:'경계경보는 사이렌 없이 음성방송·재난문자로 온다. 공격이 예상되는 단계 — 대피를 준비하고 어린이·노약자는 먼저 대피한다.',src:SRC.alarm});
+
+/* ================= 대피 이동 (시간제한) ================= */
+E({id:'mv_elev',art:'elev',tone:'amber',cat:'대피 이동',timed:7,title:'복도로 나왔다',
+  text:()=>`엘리베이터가 12층에 서 있다. 비상계단은 복도 끝.${fam1()?'':' 가족이 당신을 본다.'}`,
+  hint:'재난 때 엘리베이터는 금지 — 정전되면 밀폐된 채 갇힌다.',
+  choices:[
+    {t:'비상계단으로 내려간다',ok:true,go:()=>'12층에서 B2까지. 계단에는 이미 이웃들이 줄지어 내려가고 있다.'},
+    {t:'엘리베이터를 탄다',s:'빠르니까',ok:false,go:()=>{if(chance(.55)){G.flags.stuck=1;mor(-12);hurt('all',3);return '7층과 6층 사이에서 멈췄다. 정전. 40분 뒤에야 구조됐다.'}mor(-3);return '다행히 내려왔다. 1분 뒤 단지 전체가 정전됐다 — 운이었다.'}}
+  ],timeout:()=>{mor(-4);return '망설이는 사이 계단에 사람이 몰렸다. 떠밀리듯 계단으로 내려갔다.'},
+  lesson:'정전·화재·지진 등 재난 때 엘리베이터는 금지. 정전되면 밀폐 공간에 갇힌다.',src:'행정안전부·소방청 국민행동요령'});
+E({id:'mv_conv',art:'siren',tone:'red',cat:'대피 이동',timed:4,title:'쾅!',
+  text:'단지 어딘가에서 폭발. 계단참 창문이 덜컹거리며 금이 간다.',
+  hint:'유리창·외벽에서 떨어져 엎드리고 머리를 보호한다.',
+  choices:[
+    {t:'창문에서 떨어져 엎드리고 머리를 감싼다',ok:true,go:()=>'두 번째 충격에 창유리가 쏟아졌다. 모두 벽 쪽에 엎드려 있었다.'},
+    {t:'창밖을 내다본다',ok:false,go:()=>{hurt('me',16);addC(M('me'),'bleed');return '창이 터지며 파편이 팔에 박혔다. 피가 흐른다.'}},
+    {t:'그대로 계단을 뛰어 내려간다',ok:false,go:()=>{if(chance(.55)){const v=victim('other');hurt(v,12);addC(v,'injury');return `흔들리는 계단에서 ${josa(v.n,'이가')} 굴렀다.`}return '운 좋게 넘어지지 않았다. 등 뒤로 유리가 쏟아졌다.'}}
+  ],timeout:()=>{hurt('me',8);return '얼어붙은 사이 창유리가 쏟아졌다.'},
+  lesson:'사상 원인의 다수는 비산 유리·낙하물이다. 폭발음이 나면 유리창·외벽에서 떨어져 엎드려 머리를 보호한다.',src:SRC.air});
+E({id:'mv_nuke',art:'rad',tone:'red',cat:'섬광',timed:3,flash:1,title:'하늘이 하얗게 번쩍였다',
+  text:'창으로 태양보다 밝은 빛이 쏟아진다. 아무 소리도 없다.',
+  hint:'섬광을 보지 말고, 그 자리에서 폭발 반대 방향으로 엎드린다.',
+  choices:[
+    {t:'그 자리에 엎드려 눈 감고, 귀 막고, 입은 벌린다',ok:true,go:()=>{reveal();if(G.rt!==null&&G.rt<1500)badge('reflex');return '12초 뒤, 건물 전체가 흔들리며 굉음이 지나갔다. 엎드린 가족 모두 무사하다.'}},
+    {t:'빛이 난 쪽을 쳐다본다',ok:false,go:()=>{reveal();hurt('me',18);addC(M('me'),'injury');mor(-8);return '눈앞이 하얗게 타올랐다. 몇 시간 동안 앞이 흐릿했다.'}},
+    {t:'지하까지 전력으로 뛴다',ok:false,go:()=>{reveal();hurt('all',14);addC(victim(),'injury');return '충격파가 계단실을 덮쳤다. 서 있던 몸이 벽에 부딪혔다.'}}
+  ],timeout:()=>{reveal();hurt('all',10);return '몸이 굳은 사이 충격파가 지나갔다.'},
+  lesson:'섬광을 보지 말 것(실명 위험). 2~3보 이상 움직이지 말고 즉시 엎드린다 — 눈 감고·귀 막고·입 벌리고·배는 바닥에서 띄운다.',src:SRC.nuke});
+E({id:'mv_nuke2',art:'clock',tone:'amber',cat:'낙진 전 10분',timed:8,title:'충격파가 지나갔다',
+  text:'귀가 먹먹하다. 낙진이 내려오기 전, 이동할 수 있는 시간은 약 10분 안팎이다.',
+  hint:'가장 가까운 콘크리트 건물의 지하 또는 중심부로. 차량은 방호가 안 된다.',
+  choices:[
+    {t:'그대로 단지 지하주차장 깊은 곳으로',ok:true,go:()=>{G.loc='park';return '콘크리트 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
+    {t:'집으로 다시 올라가 물을 더 챙긴다',ok:false,go:()=>{G.loc='park';res('water',6);pol(20);return '물은 더 챙겼지만, 내려올 땐 이미 회색 먼지가 날리고 있었다.'}},
+    {t:'차를 몰고 도시를 빠져나간다',ok:false,go:()=>{G.loc='bldg';pol(30);hurt('all',10);return '도로는 정체. 차 안은 방호가 안 된다. 결국 차를 버리고 상가 지하로 피했다.'}}
+  ],timeout:()=>{G.loc='park';mor(-2);return '이웃을 따라 지하주차장으로 내려갔다.'},
+  lesson:'폭풍이 지나면 낙진 도달 전 약 10분 안에 가장 가까운 콘크리트 건물의 지하·중심부로. 차량·조립식 건물은 방호가 안 된다.',src:SRC.nuke});
+E({id:'mv_chem',art:'wind',tone:'amber',cat:'대피 이동',timed:5,title:'둔탁한 폭발음',
+  text:'멀리서 둔탁한 폭발음. 계단 창틈으로 마늘 같은 매캐한 냄새가 스민다.',
+  hint:'원인 모를 냄새·연기엔 코와 입부터 막는다.',
+  choices:[
+    {t:'젖은 수건·마스크로 코와 입을 막고 계속 내려간다',ok:true,go:()=>{G.flags.covered=1;return '모두 소매와 수건으로 얼굴을 가렸다.'}},
+    {t:'1층 밖으로 나가 냄새의 정체를 확인한다',ok:false,go:()=>{hurt('me',14);addC(M('me'),'contam');pol(15);return '눈이 타는 듯 따갑다. 서둘러 돌아왔다.'}},
+    {t:'신경 쓰지 않고 서두른다',ok:false,go:()=>{hurt('all',4);pol(5);return '계단을 내려갈수록 기침이 났다.'}}
+  ],timeout:()=>{hurt('all',4);pol(5);return '머뭇거리는 사이 냄새가 짙어졌다.'},
+  lesson:'원인 모를 냄새·연기는 화학 공격일 수 있다. KF 마스크·젖은 수건으로 코와 입부터 막고 공식 경보(음성방송)를 확인한다.',src:SRC.chem});
+E({id:'mv_loc',art:'pin',tone:'amber',cat:'대피 장소',timed:8,title:'어디로 갈까',
+  text:'1층 현관. 사이렌은 계속된다.',
+  hint:'가장 가까운 지하로 — 지하철역·지하주차장·건물 지하. 아파트는 단지 지하주차장이 지정 대피소인 경우가 많다.',
+  choices:[
+    {t:'단지 지하주차장',s:'가장 가까운 지하 · 1분',ok:true,go:()=>{G.loc='park';return '지하 2층. 형광등 아래 이웃들이 모여 있다.'}},
+    {t:'지하철역',s:'더 깊다 · 걸어서 10분',ok:false,go:()=>{G.loc='subway';if(G.scen==='chem')pol(10);else if(chance(.4)){const v=victim();hurt(v,12);addC(v,'injury');return `10분을 걷는 사이 폭발. ${josa(v.n,'이가')} 파편에 다쳤다. 역 대합실에 겨우 닿았다.`}return '사이렌 속을 10분 걸었다. 다행히 대합실에 닿았다.'}},
+    {t:'집 안 욕실로 돌아간다',s:'창문 없는 곳',ok:false,go:()=>{G.loc='home';mor(-4);return '12층 욕실 문을 닫았다. 폭음이 울릴 때마다 건물이 흔들린다.'}},
+    {t:'아파트 옥상',s:'높고 탁 트인 곳',ok:false,go:()=>{hurt('all',10);mor(-6);G.loc='park';return '탁 트인 옥상은 파편에 그대로 노출된다. 다시 지하로 뛰어 내려갔다.'}}
+  ],timeout:()=>{G.loc='park';mor(-2);return '망설이다 이웃을 따라 지하주차장으로 내려갔다.'},
+  lesson:'공습경보엔 가장 가까운 지하로 — 지하철역·지하주차장·건물 지하. 지하가 없을 때만 낮은 곳·엄폐물 뒤에 엎드린다.',src:SRC.air});
+E({id:'road',art:'car',tone:'red',cat:'도로 위',timed:6,title:'도로 위에서 사이렌',
+  text:'시외로 나가는 길은 이미 꽉 막혔다. 그때 사방에서 사이렌이 울린다. 공습경보다.',
+  hint:'운전 중엔 도로 오른쪽에 정차하고, 키를 꽂아둔 채 가까운 지하로.',
+  choices:[
+    {t:'오른쪽에 정차, 키를 꽂아두고 가까운 상가 지하로',ok:true,go:()=>{G.loc='bldg';return '긴급차량이 옮길 수 있게 키를 꽂아 두고, 배낭만 메고 상가 지하로 뛰었다.'}},
+    {t:'갓길로 계속 달려 빠져나간다',ok:false,go:()=>{G.loc='bldg';hurt('all',12);addC(victim(),'injury');return '갓길에서 추돌. 결국 차를 버리고 뛰어야 했다.'}},
+    {t:'차 안에서 문을 잠그고 기다린다',ok:false,go:()=>{G.loc='bldg';hurt('all',9);mor(-8);return '차량은 방호가 안 된다. 근처 폭발에 유리가 깨지고 나서야 지하로 뛰었다.'}}
+  ],timeout:()=>{G.loc='bldg';hurt('all',5);return '얼어붙은 사이 앞차 사람들이 뛰기 시작했다. 따라서 상가 지하로.'},
+  lesson:'운전 중 공습경보: 도로 오른쪽에 정차하고 키를 꽂아둔 채(긴급차량 이동용) 몸만 가까운 지하로 대피한다.',src:SRC.air});
+
+/* ================= 대피소 · 시나리오 고정 이벤트 ================= */
+E({id:'settle',art:'group',tone:'amber',cat:'자리 잡기',title:()=>G.loc==='home'?'욕실에서 버틸까':'대피소에 도착했다',
+  text:()=>G.loc==='home'?'12층 욕실. 창문은 없지만 폭음이 울릴 때마다 건물이 흔들린다. 사이렌이 잠시 멎었다.':`${LOCN[G.loc]}. 이미 이웃 수십 명이 모여 있다. ${fam1()?'몸을 둘':'가족이 앉을'} 자리를 정해야 한다.`,
+  hint:()=>G.loc==='home'?'지하가 있으면 지하가 우선이다. 실내 안쪽은 지하가 없을 때의 차선책.':'지하에서도 유리·출입구·외벽에서 떨어진 깊은 안쪽이 기준이다.',
+  lesson:()=>G.loc==='home'?'공습엔 가장 가까운 지하가 원칙이다. 집 안 욕실·안쪽 방은 지하가 없을 때만 쓰는 차선책이다.':'지하로 들어간 뒤에도 유리·출입구·외벽에서 떨어진 안쪽이 안전하다. 폭풍과 파편은 수평으로도 온다.',
+  choices:()=>G.loc==='home'?[
+    {t:'멎은 틈에 계단으로 단지 지하주차장까지 내려간다',ok:true,go:()=>{G.loc='park';mor(2);return '계단으로 B2까지. 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
+    {t:'욕실 안에서 버틴다',ok:false,go:()=>{mor(-5);if(chance(.5)){const v=victim();hurt(v,10);addC(v,'injury');return `근처 폭발로 욕실 거울이 깨졌다. ${josa(v.n,'이가')} 파편에 다쳤다.`}return '밤새 건물이 흔들렸다. 아무도 잠들지 못했다.'}}
+  ]:[
+    {t:'출입구에서 가장 먼 깊은 안쪽',s:'기둥·내벽 쪽',ok:true,go:()=>{mor(4);return '폭음이 울릴 때마다 출입구 쪽 사람들이 몸을 숙였다. 안쪽은 비교적 조용했다.'}},
+    {t:'출입구 바로 옆',s:'공기 좋고 나가기 쉽다',ok:false,go:()=>{if(chance(.5)){const v=victim();hurt(v,10);addC(v,'injury');return `근처 폭발의 압력파와 파편이 출입구로 밀려 들어왔다. ${josa(v.n,'이가')} 파편에 긁혔다.`}mor(-4);return '폭음이 출입구를 타고 그대로 들어온다. 아무도 잠들지 못했다.'}},
+    {t:'계단·통로 한가운데',s:'바로 움직일 수 있다',ok:false,go:()=>{mor(-4);return '오가는 사람들에 밀려 밤새 자리를 옮겨야 했다.'}}
+  ],src:SRC.air});
+E({id:'contact',art:'phone',tone:'blue',cat:'통신',cond:()=>!G.flags.emp,title:'전화가 안 된다',
+  text:'본가 부모님께 전화를 거는데 "통화량이 많아 연결할 수 없습니다"만 반복된다.',
+  hint:'통화는 최소화, 안부는 문자로. 회선이 폭주하면 문자가 더 잘 간다.',
+  choices:[
+    {t:'문자로 안부와 대피 위치를 남긴다',ok:true,go:()=>{res('power',-2);mor(8);return '새벽 2시, 답장이 왔다. "우리도 지하에 있다." 모두 숨을 돌렸다.'}},
+    {t:'연결될 때까지 계속 건다',ok:false,go:()=>{res('power',-14);mor(-4);return '배터리만 14% 줄었다. 끝내 연결되지 않았다.'}},
+    {t:'직접 차를 몰고 찾아간다',ok:false,go:()=>{hurt('me',18);addC(M('me'),'injury');mor(-6);return '경보 중 도로로 나갔다가 2차 폭음에 되돌아왔다. 넘어지며 팔을 다쳤다.'}}
+  ],lesson:'음성 회선이 폭주하면 문자(SMS) 성공률이 높다. 통화를 줄이면 구조 통신 회선도 양보하게 된다.',src:SRC.air});
+E({id:'rumor',art:'phone',tone:'blue',cat:'정보',title:'단톡방에 퍼진 소문',
+  text:'"정부가 숨기고 있다, 지금 남쪽으로 피난 가라"는 메시지가 단톡방마다 돈다. 몇몇 가족이 짐을 싼다.',
+  hint:'확인된 정보는 재난문자·KBS 재난방송뿐이라고 전제한다.',
+  choices:[
+    {t:'라디오·재난문자로 공식 안내를 확인한다',ok:true,go:()=>{badge('rumor');if(has('radio')||(G.res.power>=5&&!G.flags.emp)){if(!has('radio'))res('power',-3);if(G.scen==='conv')reveal();mor(5);return '공식 안내: "대피소에 머물고 이동을 자제하십시오." 소문은 거짓이었다.'}mor(1);return '확인할 수단이 없다. 그래도 공식 안내 없이는 움직이지 않기로 했다.'}},
+    {t:'우리도 지금 남쪽으로 출발한다',ok:false,go:()=>{hurt('all',10);mor(-10);return '도로는 이미 마비. 2차 경보에 차를 버리고 터널로 뛰었다가 새벽에 돌아왔다.'}},
+    {t:'소문을 다른 단톡방에도 전달한다',ok:false,go:()=>{mor(-6);trust(-1);return '대피소에 공황이 번졌다. 출입구 쪽에서 몸싸움이 벌어졌다.'}}
+  ],lesson:'유언비어에 동요하지 말 것. 재난문자·KBS 재난방송으로 확인되기 전에는 움직이지 않는다.',src:SRC.air});
+E({id:'blackout',art:'torch',tone:'amber',cat:'정전',title:'불이 꺼졌다',
+  text:()=>`${G.loc==='home'||G.loc==='high'?'단지 전체가 정전됐다.':'대피소 조명이 한꺼번에 나갔다.'} 칠흑 같은 어둠 속에서 ${hasKid()?'아이 울음소리':'누군가의 비명'}와 발소리가 뒤섞인다.`,
+  hint:'조명은 양초보다 손전등. 휴대폰 배터리는 통신용으로 아낀다.',
+  choices:[
+    {t:'손전등을 켠다',need:()=>has('torch'),na:'손전등 없음',ok:true,go:()=>{G.flags.blackout=1;G.flags.light='torch';mor(4);return '작은 불빛 하나에 주변 사람들이 모여들었다. 넘어지는 사람이 줄었다.'}},
+    {t:'양초에 불을 붙인다',need:()=>has('candle'),na:'양초 없음',ok:false,go:()=>{G.flags.blackout=1;G.flags.light='candle';if(chance(.45)){const v=victim();addC(v,'burn');hurt(v,8);return `누군가 발에 걸려 양초가 넘어졌다. ${v.n}의 손등에 화상.`}mor(-2);return '불빛은 생겼지만 사람들이 불안해한다. 밀폐된 지하의 불꽃은 2차 화재 위험이다.'}},
+    {t:'휴대폰 플래시를 켠다',need:()=>G.res.power>=5&&!G.flags.emp,na:'배터리 부족',ok:false,go:()=>{G.flags.blackout=1;G.flags.light='phone';res('power',-12);return '빛은 얻었지만 배터리가 12% 줄었다. 통신이 끊기면 안 되는 상황이다.'}},
+    {t:'어둠 속에서 가만히 기다린다',ok:null,go:()=>{G.flags.blackout=1;mor(-6);return '버틸 수는 있었다. 하지만 화장실을 다녀오던 이웃이 넘어져 다쳤다.'}}
+  ],lesson:'정전 때 조명은 양초보다 손전등이 원칙이다. 혼란 속 양초는 2차 화재 원인이고, 휴대폰 배터리는 재난문자·연락용으로 남긴다.',src:'행정안전부 정전 대비 국민행동요령 · 생존 수첩'});
+E({id:'gohome',art:'fire',tone:'red',cat:'화재',cond:()=>G.loc!=='home',title:'우리 동에 불이 났다',
+  text:()=>`"○동 고층에 불났대!" 우리 동이다. ${fam1()?'당신도 모르게 자리에서 일어섰다. 통장이랑 사진이라도…':'배우자가 "통장이랑 사진이라도 가지러 가자"며 일어선다.'}`,
+  hint:'물건은 대체되지만 몸은 아니다. 엘리베이터 금지, 연기는 계단을 타고 올라간다.',
+  choices:[
+    {t:'올라가지 않는다. 119에 신고하고 대피소를 지킨다',ok:true,go:()=>{if(G.flags.gas&&G.flags.breaker){mor(4);return '불은 2시간 만에 꺼졌다. 가스·전기를 차단해 둔 덕분에 우리 집은 그을음만 입었다.'}G.flags.homeDamaged=1;mor(-3);return '불은 2시간 만에 꺼졌다. 계단으로 올라갔던 몇 명이 연기를 마시고 실려 내려왔다. 우리 집 주방까지 불길이 번졌다고 한다.'}},
+    {t:'빨리 다녀온다 — 엘리베이터로',ok:false,go:()=>{hurt('me',25);addC(M('me'),'co');return '엘리베이터가 연기 찬 층에서 멈췄다. 연기를 들이마시고 겨우 계단으로 빠져나왔다.'}},
+    {t:'계단으로 뛰어 올라간다',ok:false,go:()=>{hurt('me',16);addC(M('me'),'co');return '8층부터 연기가 계단을 타고 내려왔다. 기침을 하며 되돌아왔다.'}}
+  ],lesson:'불난 건물에 물건을 가지러 들어가지 않는다. 엘리베이터는 절대 금지이고, 연기는 계단을 굴뚝 삼아 올라간다.',src:SRC.fire});
+E({id:'second',art:'siren',tone:'red',cat:'2차 공습',cond:()=>G.loc!=='home',title:'잠깐 집에 다녀오자',
+  text:'6시간째 조용하다. "경보 해제 전이라도 잠깐 올라가 약이랑 옷만 가져오자"는 말이 나온다. 경보는 아직 해제되지 않았다.',
+  hint:'조용해진 것은 해제가 아니다. 경보해제 음성방송이 나올 때까지 대피소에서 대기한다.',
+  choices:[
+    {t:'경보가 해제될 때까지 기다린다',ok:true,go:()=>{mor(-2);return '30분 뒤 다시 사이렌. 2차 공습이었다. 올라갔던 사람들은 계단에서 엎드려야 했다.'}},
+    {t:'10분이면 된다, 빨리 다녀온다',ok:false,go:()=>{if(chance(.5)){res('meds',2);give('blanket');return '운 좋게 약과 담요를 챙겨 내려왔다. 하지만 계단에서 2차 사이렌을 들었다.'}hurt('me',20);addC(M('me'),'bleed');return '계단에서 2차 폭발. 깨진 창유리에 다리를 베었다. 피가 멈추지 않는다.'}}
+  ],lesson:'조용해진 것은 해제가 아니다. 재난문자·라디오로 안내를 듣고, 경보해제(음성방송)가 나올 때까지 대피소에서 대기한다.',src:SRC.alarm});
+E({id:'relief',art:'water',tone:'green',cat:'구호',title:'구호품 배부',
+  text:()=>G.loc==='high'?'관리사무소 방송: "1층 로비에서 생수를 나눠 드립니다. 마스크를 쓰고, 세대별 신원을 확인합니다."':'구청 직원들이 생수와 담요를 나눠준다. 세대별로 신원을 확인해 명단에 올린다.',
+  choices:[
+    {t:'신분증을 보여주고 등록한다',need:()=>has('wallet'),na:'신분증 없음',ok:null,go:()=>{const n=G.fam.length;res('water',2*n);give('blanket');mor(5);return `확인은 1분. 생수 ${2*n}L와 은박담요를 받았다. 가족 명단도 올라가 실종 확인 대상에서 빠졌다.`}},
+    {t:'신분증 없이 구두로 설명하고 기다린다',ok:null,go:()=>{res('water',G.fam.length);mor(1);return `확인에 시간이 걸려 맨 뒤로 밀렸다. 생수 ${G.fam.length}L만 남아 있었다.`}},
+    {t:'혼잡한 틈에 한 상자 더 챙긴다',ok:false,go:()=>{res('water',6);trust(-2);mor(-4);return '물은 늘었지만, 지켜본 이웃들의 눈빛이 달라졌다.'}}
+  ],lesson:'신분증·가족사진은 구호 등록과 실종 확인의 열쇠다. 생존배낭에 사본을 넣어 둔다. 공동체의 신뢰도 자원이다.',src:'생존 수첩 생존배낭 체크리스트'});
+
+/* --- 핵 --- */
+E({id:'decon',art:'rad',tone:'red',cat:'제염',title:'회색 먼지',
+  text:'대피소에 들어서자 옷과 머리에 고운 회색 먼지가 묻어 있다. 밖에서 날아온 것이다.',
+  hint:'겉옷을 벗어 비닐에 밀봉하면 방사성 물질을 최대 90%까지 제거한다. 문지르지 않는다.',
+  choices:[
+    {t:'겉옷을 벗어 비닐에 밀봉하고, 젖은 수건으로 피부·머리를 닦는다',ok:true,go:()=>{G.flags.decon=1;if(has('vinyl')){pol(2);return '겉옷을 봉투에 묶어 구석에 두었다. 코를 풀고 눈꺼풀도 닦았다.'}pol(5);return '비닐이 없어 겉옷을 멀리 떨어진 구석에 따로 모아 두었다. 코를 풀고 눈꺼풀을 닦았다.'}},
+    {t:'먼지를 털어내고 그대로 입는다',ok:false,go:()=>{G.flags.noDecon=1;pol(20);return '털어낸 먼지가 대피소 공기 중에 퍼졌다. 옷에 남은 먼지는 계속 피부에 닿는다.'}},
+    {t:'물티슈로 피부를 세게 문질러 닦는다',ok:false,go:()=>{G.flags.decon=1;pol(10);return '문지르는 동안 피부가 붉게 일어났다. 긁힌 피부로 오염이 더 스며들 수 있다.'}}
+  ],lesson:'실내에 들어오면 겉옷을 벗어 비닐에 밀봉하고(최대 90% 제거), 샤워가 어려우면 젖은 수건으로 노출 피부·머리를 닦는다. 문지르거나 긁지 않는다.',src:SRC.nuke});
+E({id:'emp',art:'phone',tone:'blue',cat:'통신 두절',title:'휴대폰이 먹통이다',
+  text:'화면은 켜지는데 신호가 전혀 없다. 대피소 사람들 휴대폰이 전부 같은 상태다.',
+  hint:'전자기펄스(EMP)로 휴대폰·전자기기가 먹통일 수 있다. 건전지 라디오가 유일한 정보망이다.',
+  pre:()=>{G.flags.emp=1},
+  choices:()=>[
+    {t:'건전지 라디오를 켠다',need:()=>has('radio'),na:'라디오 없음',ok:true,go:()=>{G.infoTurns+=2;mor(5);return '잡음 사이로 KBS 재난방송이 들린다. "실내에 머무르십시오. 최소 24시간."'}},
+    ...(has('radio')?[]:[{t:'라디오가 있는 이웃 곁에서 방송을 함께 듣는다',ok:true,go:()=>{G.infoTurns+=1;trust(1);return '옆 가족의 라디오에서 흘러나오는 방송을 함께 들었다. 라디오 한 대가 수십 명의 정보망이었다.'}}]),
+    {t:'휴대폰을 껐다 켜기를 반복한다',ok:false,go:()=>{res('power',-10);return '배터리만 줄었다. 신호는 돌아오지 않았다.'}},
+    {t:'와이파이를 찾아 대피소를 돌아다닌다',ok:false,go:()=>{mor(-3);return '통신 장비 자체가 멈춘 상태였다. 아무것도 잡히지 않았다.'}}
+  ],lesson:'핵폭발의 전자기펄스(EMP)로 휴대폰·전자기기가 먹통일 수 있다. 건전지 라디오가 그 상황의 유일한 정보망이다.',src:'행정안전부 핵공격 국민행동요령'});
+E({id:'ki',art:'pill',tone:'amber',cat:'약',title:'요오드 알약',
+  text:'한 주민이 "방사능 막는 약"이라며 요오드 알약을 나눠준다. 없는 사람은 "소금이라도 먹으라"고 한다.',
+  hint:'요오드화칼륨(KI)은 정부·보건당국 지시가 있을 때만 복용한다. 소금은 대체가 안 된다.',
+  choices:[
+    {t:'정부·보건당국 지시가 있을 때만 먹는다',ok:true,go:()=>{mor(2);return '알약은 받아 두고 기다렸다. 이후 라디오에서 이 지역은 복용 지시 대상이 아니라고 안내했다.'}},
+    {t:'받아서 가족 모두 지금 먹는다',ok:false,go:()=>{hurt('all',6);return '복통과 메스꺼움. KI는 갑상선만, 그것도 방사성 요오드만 막는다. 불필요한 복용은 위험하다.'}},
+    {t:'소금을 한 숟가락씩 먹는다',ok:false,go:()=>{hurt('all',3);res('water',-G.fam.length);return '갈증만 심해졌다. 물이 더 빨리 줄었다.'}}
+  ],lesson:'KI는 갑상선을 채워 방사성 요오드 흡수만 막는 약이다. 당국 지시가 있을 때만 복용하고, 소금·요오드 식품은 대체가 안 된다.',src:SRC.ki});
+E({id:'outside',art:'store',tone:'red',cat:'외출 유혹',title:'편의점에 생수가 있다',
+  text:'폭발 후 약 18시간. 이웃이 "길 건너 편의점 생수 가져오자, 지금 아무도 없다"며 같이 가자고 한다.',
+  hint:'방사선은 처음 몇 시간이 가장 강하고 빠르게 약해진다. 최소 24시간 실내 대기.',
+  choices:[
+    {t:'최소 24시간은 나가지 않는다. 배급을 줄여 버틴다',ok:true,go:()=>{mor(-2);return '나갔던 이웃은 생수를 들고 왔지만, 다음 날부터 심하게 구토했다.'}},
+    {t:'마스크 쓰고 빠르게 다녀온다',ok:false,go:()=>{res('water',8);pol(30);hurt('me',8);return '생수 8L. 하지만 밖에 있던 20분 동안 피폭 지수가 크게 올랐다.'}}
+  ],lesson:'낙진의 방사선은 처음 몇 시간이 가장 강하다. 최소 24시간은 실내에 머물고, 물자 확보는 정부 안내 이후로 미룬다.',src:SRC.nuke});
+E({id:'reunite',art:'car',tone:'amber',cat:'가족',title:'어머니를 모시러 가야 한다',
+  text:()=>fam1()?'시내 요양원에 계신 어머니와 연락이 끊겼다. 지금이라도 차로 가야 할 것 같다.':'배우자가 시내 요양원에 계신 어머니와 연락이 끊겼다며, 지금 차로 가야 한다고 한다.',
+  hint:'가족이 흩어져 있어도 각자 실내 대기가 더 안전하다. 재회는 나중에.',
+  choices:[
+    {t:'각자 실내에 있는 게 더 안전하다. 재회는 나중에',ok:true,go:()=>{mor(-4);return '요양원도 지하로 대피했다는 소식을 이틀 뒤 라디오 안내로 들었다.'}},
+    {t:'지금 차로 출발한다',ok:false,go:()=>{pol(25);hurt('all',8);return '차량은 방호가 안 된다. 낙진 속 막힌 도로에서 2시간을 보내고 되돌아왔다.'}}
+  ],lesson:'핵 공격 후 가족이 흩어져 있어도 각자 실내 대기가 더 안전하다. 재회는 정부 이동 지시 이후로 미룬다.',src:'행정안전부 핵공격 국민행동요령'});
+E({id:'evac',art:'group',tone:'blue',cat:'이동 지시',title:'정부 이동 지시',
+  text:()=>(has('radio')||G.infoTurns>0)?'KBS 재난방송: "○○동 주민은 오전 9시까지 정부 버스로 남부 집결지로 이동하십시오."':'사람들이 웅성거린다. "정부 버스가 온대. 9시까지 집결지로 오래."',
+  hint:'이동 지시가 나오면 비닐·우의로 피부 노출을 최소화하고 지정 경로로 이동한다.',
+  choices:[
+    {t:'우의·비닐과 마스크로 피부를 가리고 지정 경로로 이동한다',ok:true,go:()=>{G.loc='gym';pol(has('vinyl')?2:6);const n=G.fam.length;res('water',2*n);res('meds',2);mor(8);return '버스는 제시간에 왔다. 체육관 집결지에는 물과 의료진이 있었다.'}},
+    {t:'이동하지 않고 여기 남는다',ok:false,go:()=>{G.flags.stayed=1;pol(12);mor(-6);return '남은 사람은 몇 명뿐. 물과 정보가 끊긴 채 이틀을 더 버텨야 했다.'}},
+    {t:'지름길로 우리 차를 타고 따로 간다',ok:false,go:()=>{G.loc='gym';pol(18);hurt('me',6);return '막힌 길을 돌다 버스보다 2시간 늦게, 먼지를 뒤집어쓰고 도착했다.'}}
+  ],lesson:'정부 이동 지시가 나오면 지정된 경로로, 비닐·우의로 피부 노출을 최소화해 이동한다.',src:'행정안전부 핵공격 국민행동요령'});
+
+/* --- 화학 --- */
+E({id:'chemalert',art:'flask',tone:'red',cat:'음성방송',title:'화생방경보',
+  text:()=>G.loc==='home'?'스피커에서 음성방송: "화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다." 지금 당신은 12층 집 욕실에 있다.':'스피커에서 음성방송: "화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다." 지하 경사로 쪽에서 매캐한 냄새가 내려온다.',
+  hint:'화학작용제는 공기보다 무거워 지하·저지대에 고인다. 공습 때와 반대로 높은 곳으로.',
+  pre:()=>{G.flags.chemAlert=1;G.scenKnown=true},
+  choices:()=>G.loc==='home'?[
+    {t:'지하 대피소로 내려가 이웃과 합류한다',ok:false,go:()=>{hurt('all',14);pol(25);const x=arriveHome();return '내려갈수록 냄새가 짙어졌다. 기침이 터져 다시 12층으로 올라왔다.'+x}},
+    {t:'그대로 고층 실내에 머물며 코와 입을 막는다',ok:true,go:()=>{badge('chemup');const x=arriveHome();return '높은 곳에 있는 것이 이번엔 정답이었다.'+x}}
+  ]:[
+    {t:'젖은 수건·마스크로 코와 입을 막고 아파트 고층으로 올라간다',ok:true,go:()=>{badge('chemup');const x=arriveHome();if(has('mask'))return '마스크를 쓰고 비상계단으로 12층까지. 숨이 찼지만 냄새는 점점 옅어졌다.'+x;hurt('all',4);return '젖은 수건으로 코와 입을 막고 계단을 올랐다.'+x}},
+    {t:'더 깊은 지하(B3)로 내려간다',ok:false,go:()=>{hurt('all',18);addC(victim(),'contam');pol(30);const x=arriveHome();return '아래층은 더 심했다. 기침이 터진 뒤에야 사람들과 함께 위층으로 뛰었다.'+x}},
+    {t:'차를 타고 단지를 빠져나간다',ok:false,go:()=>{hurt('me',22);pol(25);const x=arriveHome();return '출구 경사로가 오염 구름 한가운데였다. 차를 버리고 계단으로 올라가야 했다.'+x}}
+  ],lesson:'화학 공격이면 높은 곳·건물 고층으로 대피한다. 화학작용제는 공기보다 무거워 지하에 고인다 — 공습 때의 "지하로"와 반대다.',src:SRC.chem});
+E({id:'seal',art:'tape',tone:'amber',cat:'밀폐',title:'바깥 공기를 막아라',
+  text:'12층 집. 창문 틈으로 바깥 냄새가 희미하게 스며든다. 화장실 환풍기는 돌아가고 있다.',
+  hint:'창문·문·환풍구를 테이프와 비닐로 밀폐하고, 에어컨·환기장치를 끈다.',
+  choices:[
+    {t:'창문·문·환풍구를 비닐과 테이프로 막고 환풍기·에어컨을 끈다',ok:true,go:()=>{G.flags.sealed=1;if(has('vinyl')){pol(-10);mor(6);return '틈을 모두 막자 냄새가 사라졌다.'}pol(-4);return '테이프가 없어 젖은 수건과 랩으로 틈을 막았다. 완벽하진 않다.'}},
+    {t:'답답하니 창문을 조금 열어 환기한다',ok:false,go:()=>{pol(20);hurt('all',8);return '바람을 타고 매캐한 공기가 들어왔다. 눈이 따갑다.'}},
+    {t:'공기청정기를 최대로 켜고 버틴다',ok:false,go:()=>{pol(8);return '필터로는 화학작용제를 막지 못한다. 그사이 환풍기가 바깥 공기를 끌어들였다.'}}
+  ],lesson:'실내에서는 창문·문·환풍구를 테이프와 비닐로 밀폐하고 에어컨·환기장치를 정지한다.',src:SRC.chem});
+E({id:'skin',art:'flask',tone:'red',cat:'오염',title:'팔이 따갑다',
+  pre:()=>{const v=victim('kid');G.cur.v=v.id;addC(v,'contam')},
+  text:()=>`${V().n}의 팔에 붉은 반점이 올라오고 따갑다고 한다. 올라오는 길에 묻은 것 같다.`,
+  hint:'오염된 피부는 비누와 흐르는 물로 15분 이상 씻고, 옷은 비닐에 밀봉한다.',
+  choices:[
+    {t:'옷을 벗겨 비닐에 밀봉하고, 비누와 흐르는 물로 15분 이상 씻긴다',ok:true,go:()=>{clrC(V(),'contam');heal(V(),5);return '다행히 수돗물이 나왔다. 15분을 꽉 채워 씻겼다. 반점이 가라앉기 시작했다.'}},
+    {t:'연고를 바르고 지켜본다',ok:false,go:()=>{hurt(V(),12);return '반점이 번졌다. 피부에 남은 작용제가 계속 스며든다.'}},
+    {t:'물티슈로 닦아낸다',ok:false,go:()=>{hurt(V(),6);if(chance(.5))clrC(V(),'contam');return '닦아낸 물티슈를 다른 손으로 만졌다. 일부만 지워졌다.'}}
+  ],lesson:'피부에 닿았으면 비누와 흐르는 물로 15분 이상 씻고, 오염된 옷은 비닐에 밀봉해 격리한다.',src:SRC.chem});
+E({id:'chemwater',art:'bleach',tone:'amber',cat:'식수',title:'빗물과 락스',
+  pre:()=>{G.flags.tap=0},
+  text:'수돗물이 끊겼다. 베란다 양동이에 받아 둔 빗물이 있다. 누군가 "락스 몇 방울이면 마실 수 있다"고 한다.',
+  hint:'끓이기·소독으로 안 되는 것 — 중금속·화학물질·방사능 오염. 화생방 의심수는 마시지 않는다.',
+  choices:[
+    {t:'오염 의심수는 마시지 않는다. 생수를 아끼며 급수를 기다린다',ok:true,go:()=>{res('water',2*G.fam.length);mor(-2);return '구청 급수차가 다음 날 아침 왔다. 빗물을 마신 집에선 복통 환자가 나왔다.'}},
+    {t:'락스로 소독해서 마신다',ok:false,go:()=>{res('water',6);const v=victim();addC(v,'sick');hurt(v,10);return `물은 늘었지만 ${v.n}에게 구토와 복통. 소독은 세균만 잡는다.`}},
+    {t:'끓여서 마신다',ok:false,go:()=>{res('water',5);const v=victim();addC(v,'sick');hurt(v,10);return `끓여도 화학물질은 그대로다. ${v.n}에게 구토와 복통.`}}
+  ],lesson:'끓이기·락스 소독은 세균·바이러스만 잡는다. 화학물질·중금속·방사능 오염수는 소독해도 마시지 말고 생수·정부 급수에 의존한다.',src:SRC.water});
+
+/* ================= 무작위 풀 ================= */
+E({id:'co_car',pool:1,loc:['park','bldg'],art:'car',tone:'red',cat:'일산화탄소',title:'시동 걸린 차',
+  text:()=>`옆 차 주인이 시동을 걸고 히터를 틀어 휴대폰을 충전한다. ${fam1()?'당신도 차 키를 만지작거린다.':'배우자가 "우리 차도 시동 걸어서 충전하자"고 한다.'}`,
+  hint:'밀폐 공간의 차량 공회전은 일산화탄소를 뿜는다. 무색·무취라 쓰러질 때까지 모른다.',
+  choices:[
+    {t:'시동을 끄도록 설득하고 대피소 관리자에게 알린다',ok:true,go:()=>{trust(1);mor(2);return '몇 사람이 이미 두통을 호소하고 있었다. 시동이 꺼지고 환기 셔터가 열렸다.'}},
+    {t:'우리 차도 시동 걸어 충전한다',ok:false,go:()=>{res('power',40);hurt('all',14);G.fam.forEach(m=>addC(m,'co'));return '배터리는 찼다. 30분 뒤 모두 머리가 깨질 듯 아프고 어지럽다.'}},
+    {t:'창문만 조금 열면 괜찮다',ok:false,go:()=>{hurt('all',7);addC(victim(),'co');return '지하에서는 배기가스가 빠질 곳이 없다. 두통이 시작됐다.'}}
+  ],lesson:'연탄·숯·버너·발전기·차량 공회전은 밀폐 공간에서 일산화탄소를 뿜는다. 여럿이 동시에 두통·어지럼이면 즉시 환기하고 밖으로.',src:SRC.co,guide:'aid'});
+E({id:'burner',pool:1,loc:['park','bldg','subway'],w:()=>has('burner')?3:1,art:'burner',tone:'red',cat:'조리',title:'라면이라도 끓이자',
+  text:()=>has('burner')&&has('ramen')?'챙겨 온 라면과 버너가 있다. 따뜻한 국물 생각에 모두가 쳐다본다.':'옆 가족이 휴대용 버너로 라면을 끓이기 시작한다. 냄새가 퍼지자 너도나도 버너를 꺼낸다.',
+  hint:'밀폐된 공간에서는 연소기구를 쓰지 않는다 — 일산화탄소·화재 위험. 비상식량은 조리가 필요 없는 것 위주로.',
+  choices:[
+    {t:'불은 쓰지 않는다. 조리 없이 먹고, 버너를 끄자고 말한다',ok:true,go:()=>{trust(1);if(has('ramen')){res('food',2);G.inv.ramen=0;return '생라면을 부숴 나눠 먹었다. 버너들도 하나둘 꺼졌다.'}mor(1);return '관리인이 버너 사용을 막았다. 몇 사람이 이미 두통을 호소하고 있었다.'}},
+    {t:'우리도 끓인다',need:()=>has('burner')&&has('ramen'),na:'버너·라면 없음',ok:false,go:()=>{res('food',4);G.inv.ramen=0;mor(6);hurt('all',9);addC(victim(),'co');return '따뜻한 국물에 잠깐 웃었다. 그러나 버너 수십 개가 켜진 지하에서 두통이 번졌다.'}},
+    {t:'환풍구 옆이면 괜찮다며 지켜본다',ok:false,go:()=>{hurt('all',6);return '두통을 호소하는 사람이 늘었다.'}}
+  ],lesson:'밀폐된 지하에서 버너를 켜면 일산화탄소·화재 위험이 커진다. 비상식량은 조리가 필요 없는 것 위주로 챙긴다.',src:SRC.co+' · 생존 수첩 비상식량',guide:'aid'});
+E({id:'cpr',pool:1,cond:()=>G.turn>=1,w:2,art:'heart',tone:'red',cat:'심정지',title:'반응이 없다',
+  text:()=>G.loc==='home'||G.loc==='high'?'복도에서 쿵 소리. 옆집 할아버지가 쓰러져 있다. 불러도 반응이 없고, 숨을 헐떡이듯 몰아쉰다.':'옆 자리 할아버지가 갑자기 쓰러졌다. 불러도 반응이 없고, 숨을 헐떡이듯 몰아쉰다.',
+  hint:'반응이 없고 호흡이 없거나 헐떡임뿐이면 심정지. 119·AED를 지목해 부탁하고 즉시 가슴압박.',
+  choices:[
+    {t:'어깨를 두드려 확인 → "119 신고·AED 가져와 주세요" 지목 → 가슴압박',ok:true,mini:'cpr',go:sc=>{if(sc>=.8)badge('cpr');if(sc>=.65){trust(2);mor(10);return `박자 정확도 ${Math.round(sc*100)}%. 구급대원이 AED를 붙이자 맥박이 돌아왔다. 대피소에 박수가 터졌다.`}trust(1);mor(4);return `박자 정확도 ${Math.round(sc*100)}%. 속도가 들쭉날쭉했다. 교대한 이웃이 압박을 이어 갔고 구급대가 도착했다.`}},
+    {t:'물을 먹여 정신을 차리게 한다',ok:false,go:()=>{mor(-8);return '의식 없는 사람에게 물은 기도로 넘어간다. 소중한 몇 분이 흘렀다.'}},
+    {t:'숨은 쉬고 있으니 눕혀 두고 구급대를 기다린다',ok:false,go:()=>{mor(-8);return '헐떡임은 정상 호흡이 아니었다. 압박이 늦어졌다.'}}
+  ],lesson:'반응이 없고 호흡이 없거나 헐떡임뿐이면 심정지. 사람을 지목해 119·AED를 부탁하고, 분당 100~120회·약 5cm 깊이로 멈추지 않고 누른다.',src:SRC.cpr,guide:'aid'});
+E({id:'bleed',pool:1,w:2,art:'drop',tone:'red',cat:'대량 출혈',title:'피가 멈추지 않는다',
+  text:()=>G.loc==='home'||G.loc==='high'?'윗집 청년이 깨진 유리에 다친 다리를 끌고 내려왔다. 허벅지에서 피가 계속 솟는다.':'깨진 유리에 다친 청년의 허벅지에서 피가 계속 솟는다. 바닥이 금세 붉어진다.',
+  hint:'두꺼운 천을 대고 체중을 실어 최소 10분, 떼지 말고 계속 누른다. 가는 끈은 금지.',
+  choices:[
+    {t:'두꺼운 천을 대고 체중을 실어 세게 누른다',ok:true,mini:'hold',go:sc=>{if(sc>=1){badge('hold');trust(2);mor(6);if(has('firstaid'))res('meds',-1);return '10분을 버티자 출혈이 잦아들었다. 구급대에 인계했다.'}G.cur.next='bleed2';return '손이 미끄러지는 순간 다시 피가 솟는다!'}},
+    {t:'상처를 물로 씻어 내고 상태를 본다',ok:false,go:()=>{res('water',-1);mor(-6);return '씻는 사이에도 피는 계속 났다. 다른 사람이 달려와 눌렀다.'}},
+    {t:'휴대폰 충전 케이블로 상처 위를 꽉 묶는다',ok:false,go:()=>{mor(-5);return '가는 줄은 살을 파고들 뿐 피를 막지 못했다.'}}
+  ],lesson:'거의 모든 출혈은 직접압박으로 멈춘다. 최소 10분, 확인하려고 떼지 말고, 피가 배어 나오면 그 위에 덧댄다.',src:SRC.bleed,guide:'aid'});
+E({id:'bleed2',art:'drop',tone:'red',cat:'지혈대',title:'압박으로 안 멈춘다',
+  text:'출혈이 다시 거세졌다. 손에 허리띠와 볼펜이 있다.',
+  hint:'상처보다 심장 쪽 5~7cm, 관절은 피해서 감고, 피가 멈출 때까지 조인 뒤 감은 시각을 적는다.',
+  choices:[
+    {t:'상처보다 심장 쪽 5~7cm에 감아 피가 멈출 때까지 조이고, 시각을 적는다',ok:true,go:()=>{trust(1);mor(3);return `볼펜으로 이마에 "${clockAt(G.turn)} 지혈대"라고 적었다. 출혈이 멈췄다.`}},
+    {t:'상처 바로 아래(발 쪽)에 감는다',ok:false,go:()=>{mor(-6);return '피는 심장 쪽에서 내려온다. 출혈은 계속됐고 다른 이웃이 다시 감았다.'}},
+    {t:'5분마다 풀어서 상태를 확인한다',ok:false,go:()=>{mor(-4);return '풀 때마다 피가 다시 쏟아졌다.'}}
+  ],lesson:'지혈대는 출혈 부위보다 심장 쪽 5~7cm, 아플 만큼 조이고, 감은 시각을 기록한다. 한번 감으면 임의로 풀지 않는다.',src:SRC.bleed,guide:'aid'});
+E({id:'choke',pool:1,art:'hand',tone:'red',cat:'질식',
+  pre:()=>{G.cur.v=(hasKid()?M('kid'):victim('other')).id},
+  title:()=>V().id==='me'?'목에 걸렸다 — 혼자다':'목에 걸렸다',
+  text:()=>V().id==='me'?'비상식량을 급히 먹다 덩어리가 목에 걸렸다. 기침도, 소리도 나지 않는다. 주변엔 아무도 없다.':`${vn('이가')} 비상식량을 먹다 목을 감싸쥔다. 기침도, 소리도 나지 않는다.`,
+  hint:'기침도 소리도 못 내면 등 두드리기 5회 → 복부 밀어올리기 5회를 반복한다.',
+  choices:()=>V().id==='me'?[
+    {t:'의자 등받이·모서리에 명치를 대고 체중으로 밀어올린다',ok:true,go:()=>{mor(2);return '두 번째에 덩어리가 튀어나왔다. 거친 숨을 몰아쉬었다.'}},
+    {t:'물을 마셔 넘긴다',ok:false,go:()=>{hurt('me',15);return '물은 넘어가지 않았다. 바닥을 구르다 간신히 뱉어냈다.'}}
+  ]:[
+    {t:'등 두드리기 5회, 안 되면 뒤에서 안아 복부 밀어올리기 5회 반복',ok:true,go:()=>{mor(4);return `세 번째 밀어올리기에 덩어리가 튀어나왔다. ${vn('이가')} 크게 숨을 들이쉰다.`}},
+    {t:'물을 마시게 한다',ok:false,go:()=>{hurt(V(),15);mor(-6);return '물은 넘어가지 않았다. 옆 사람이 달려와 등을 두드려 겨우 뱉어냈다.'}},
+    {t:'입에 손가락을 넣어 꺼내려 한다',ok:false,go:()=>{hurt(V(),12);return '보이지 않는 이물질을 손가락이 더 깊이 밀어 넣었다. 간신히 등을 두드려 빼냈다.'}}
+  ],lesson:'기침을 할 수 있으면 기침하게 두고, 소리·기침이 안 되면 등 두드리기 5회 ↔ 복부 밀어올리기 5회. 혼자면 의자 등받이에 명치를 대고 밀어올린다. 보이지 않는 이물질에 손가락을 넣지 않는다.',src:SRC.aid,guide:'aid'});
+E({id:'diarrhea',pool:1,w:()=>G.flags.dirtyWater?4:1,art:'drop',tone:'amber',cat:'탈수',
+  pre:()=>{const v=hasKid()?M('kid'):victim();G.cur.v=v.id;addC(v,'sick')},
+  title:'설사가 멈추지 않는다',
+  text:()=>`${vn('이가')} 밤새 설사를 반복하더니 축 처졌다. 입술이 바싹 말랐다.`,
+  hint:'물만 많이 마시는 것보다 경구수액(ORS): 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술을 조금씩 자주.',
+  choices:[
+    {t:'깨끗한 물 1L에 설탕 6작은술·소금 ½작은술을 타서 조금씩 자주 먹인다',need:()=>G.res.water>=1,na:'물이 1L도 없다',ok:true,go:()=>{res('water',-1);clrC(V(),'sick');heal(V(),8);return `눈물 같은 짠맛. 몇 시간 뒤 ${vn('이가')} 소변을 봤다. 고비를 넘겼다.`}},
+    {t:'맹물을 한꺼번에 많이 마시게 한다',ok:false,go:()=>{res('water',-1.5);hurt(V(),4);return '물을 마셨지만 곧 다시 설사. 빠져나간 전해질은 채워지지 않았다.'}},
+    {t:'설사가 멈출 때까지 아무것도 먹이지 않는다',ok:false,go:()=>{hurt(V(),12);return '탈수가 심해졌다. 아이·노인은 탈수에 특히 취약하다.'}}
+  ],lesson:'설사·탈수엔 경구수액(ORS)이 맹물보다 빠르다. 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술(WHO 비율), 조금씩 자주.',src:SRC.ors+' · 생존 수첩 물 안전',guide:'aid'});
+E({id:'cold',pool:1,cond:()=>['winter','cool'].includes(G.season)&&['park','bldg','subway'].includes(G.loc),w:()=>G.season==='winter'?3:1,art:'snow',tone:'blue',cat:'저체온',
+  pre:()=>{const v=hasKid()?M('kid'):victim();G.cur.v=v.id;addC(v,'cold')},
+  title:'떨림이 멈췄다',
+  text:()=>`콘크리트 바닥 냉기가 올라온다. 심하게 떨던 ${vn('이가')} 어느새 떨지 않고, 말이 어눌하다.`,
+  hint:'떨림이 멈추고 말이 어눌하면 응급이다. 젖은 옷 교체, 담요로 머리까지, 바닥 냉기 차단.',
+  choices:[
+    {t:'마른 옷으로 갈아입히고 담요로 머리까지 감싸 바닥 냉기를 막는다',ok:true,go:()=>{if(warmth()){clrC(V(),'cold');heal(V(),6);return `담요로 머리까지 감싸고 박스를 깔았다. 30분 뒤 ${V().n}의 볼에 혈색이 돌았다.`}if(chance(.5)){clrC(V(),'cold');return '담요가 없어 겉옷과 박스를 덧댔다. 조금씩 나아졌다.'}return '담요가 없다. 겉옷을 덧댔지만 냉기를 다 막지 못했다.'}},
+    {t:'팔다리를 세게 주무르고 뜨거운 물에 손을 담근다',ok:false,go:()=>{hurt(V(),12);return `갑자기 주무르거나 뜨겁게 하면 부정맥 위험이 있다. ${vn('이가')} 더 처졌다.`}},
+    {t:'몸 녹이라고 진한 커피를 마시게 한다',ok:false,go:()=>{hurt(V(),6);return '카페인은 이뇨 작용으로 탈수와 저체온을 악화시킨다.'}}
+  ],lesson:'저체온은 젖은 옷 교체 → 담요로 머리까지 감싸기 → 겨드랑이·목 데우기. 술·카페인은 금지, 거칠게 주무르지 않는다.',src:SRC.cold,guide:'aid'});
+E({id:'heat',pool:1,cond:()=>G.season==='summer'&&['park','bldg','subway'].includes(G.loc),w:3,art:'thermo',tone:'red',cat:'열사병',title:'땀이 멎었다',
+  text:'환기 안 되는 대피소가 30℃를 넘었다. 옆 할머니의 땀이 멎고 피부가 뜨겁고 말랐다. 대답이 어눌하다.',
+  hint:'땀이 멎고 피부가 뜨겁고 건조하면 열사병 — 즉시 119, 계속 식히고, 의식이 흐리면 물을 먹이지 않는다.',
+  choices:[
+    {t:'119·관리자에게 알리고, 서늘한 곳에서 목·겨드랑이·사타구니를 물수건으로 식힌다',ok:true,go:()=>{res('water',-1);trust(2);mor(5);return '의료진이 올 때까지 부채질과 물수건을 멈추지 않았다. 의식이 돌아왔다.'}},
+    {t:'물을 억지로 많이 먹인다',ok:false,go:()=>{mor(-6);return '삼키지 못하고 사레가 들렸다. 의식이 흐릴 땐 물이 기도로 넘어간다.'}},
+    {t:'담요를 덮어 쉬게 한다',ok:false,go:()=>{mor(-8);return '체온이 더 올랐다.'}}
+  ],lesson:'의식 저하·땀이 멎음·뜨겁고 건조한 피부 = 열사병. 즉시 119, 목·겨드랑이·사타구니를 식히고, 의식이 없으면 물을 먹이지 않는다.',src:SRC.heat,guide:'aid'});
+E({id:'panic',pool:1,cond:()=>G.morale<48,w:()=>G.morale<30?5:2,art:'wind',tone:'amber',cat:'공황',
+  pre:()=>{G.cur.v=(G.fam.length>1?victim('adult'):M('me')).id},
+  title:'"여기서 다 죽는다"',
+  text:()=>V().id==='me'?'숨이 가빠지고 손이 떨린다. 여기서 다 죽을 것 같다.':`${vn('이가')} 숨을 몰아쉬며 "여기서 다 죽는다"고 소리친다. 주변 사람들이 술렁인다.`,
+  hint:'심리적 응급처치: 안전한 곳, 차분한 목소리, 지금 할 수 있는 일 하나.',
+  choices:[
+    {t:'조용한 구석에서 함께 천천히 숨 쉬고, 지금 할 일을 하나씩 정한다',ok:true,go:()=>{mor(12);return '4초 들이쉬고 6초 내쉬기. 물 배급 당번을 맡자 표정이 돌아왔다.'}},
+    {t:'정신 차리라고 큰 소리로 다그친다',ok:false,go:()=>{mor(-10);return '다툼이 커졌다.'+(hasKid()?' 아이가 울음을 터뜨렸다.':'')}},
+    {t:'안정제가 있는지 주변에 수소문한다',ok:false,go:()=>{mor(-3);return '처방 없는 약은 위험하다. 찾는 사이 상태는 그대로였다.'}}
+  ],lesson:'심리적 응급처치(PFA)의 기본은 안전한 공간, 차분한 연결, 지금 할 수 있는 구체적 행동 하나다. 처방 없는 약은 쓰지 않는다.',src:SRC.pfa});
+E({id:'share',pool:1,cond:()=>G.res.water>=2,art:'water',tone:'green',cat:'선택',title:'물 한 병만',
+  text:()=>G.loc==='home'||G.loc==='high'?'옆집 젊은 엄마가 현관문을 두드린다. "아기 분유 탈 물이 없어요."':'옆 가족의 젊은 엄마가 "아기 분유 탈 물이 없다"며 생수를 나눠 달라고 한다.',
+  choices:[
+    {t:'물 2L를 나눈다',ok:null,go:()=>{res('water',-2);trust(2);mor(6);G.flags.shared=1;return '아기 엄마가 몇 번이고 고개를 숙였다.'}},
+    {t:'우리도 부족하다며 정중히 거절한다',ok:null,go:()=>{trust(-1);mor(-4);return '돌아서는 뒷모습을 오래 볼 수 없었다.'}},
+    {t:'현금이나 식량과 바꾸자고 한다',ok:null,go:()=>{res('water',-2);res('food',1);trust(-1);return '거래는 성사됐지만 주변 시선이 차가워졌다.'}}
+  ],lesson:'재난 공동체에서 신뢰는 자원이다. 생존배낭의 물은 1인 하루 4L(음용+위생) × 3일이 권장선 — 그 여유가 나눔을 가능하게 한다.',src:'생존 수첩 생존배낭 체크리스트'});
+E({id:'loot',pool:1,scen:['conv'],cond:()=>G.turn>=3&&G.loc!=='home',art:'store',tone:'amber',cat:'선택',title:'셔터가 열린 편의점',
+  text:'대피소 앞 편의점 셔터가 반쯤 열려 있다. 사람들이 물과 컵라면을 들고 뛰어나온다.',
+  hint:'경보 중 외출 자체가 위험하다. 공식 안내 없이 대피소를 벗어나지 않는다.',
+  choices:[
+    {t:'나가지 않는다',ok:true,go:()=>{mor(-1);return '잠시 뒤 다시 폭음. 길 위에 있던 사람들이 엎드렸다.'}},
+    {t:'같이 가서 물과 음식을 챙긴다',ok:false,go:()=>{res('water',6);res('food',3);if(chance(.45)){hurt('me',18);addC(M('me'),'bleed');return '깨진 진열대 유리에 손목을 베었다.'}trust(-1);return '물은 챙겼다. 가게 주인이 사람들 얼굴을 휴대폰으로 찍고 있었다.'}}
+  ],lesson:'경보가 해제되기 전 대피소를 벗어나는 것 자체가 가장 큰 위험이다.',src:SRC.air});
+E({id:'wifi',pool:1,cond:()=>!G.flags.emp&&G.res.power>=5,art:'wifi',tone:'blue',cat:'통신',title:'Public WiFi Emergency',
+  text:'휴대폰에 처음 보는 와이파이가 잡힌다. "Public WiFi Emergency" — 비밀번호가 없다.',
+  hint:'재난 때 통신 3사 와이파이가 무료로 개방된다. 필요한 것만 확인하고 배터리를 아낀다.',
+  choices:[
+    {t:'접속해 정부 안내와 가족 문자만 확인하고 끊는다',ok:true,go:()=>{res('power',-3);G.infoTurns+=1;mor(5);return '가족 단톡에 "전원 무사"가 올라와 있었다.'}},
+    {t:'접속해서 영상 뉴스를 계속 본다',ok:false,go:()=>{res('power',-22);mor(2);return '속보 영상은 불안만 키웠고, 배터리가 22% 사라졌다.'}},
+    {t:'가짜 와이파이일 수 있으니 무시한다',ok:false,go:()=>{mor(-2);return '옆 사람들은 가족 소식을 확인하고 있었다.'}}
+  ],lesson:'재난 때 통신 3사 와이파이가 무료 개방된다(SSID: Public WiFi Emergency). 필요한 확인만 하고 배터리를 아낀다.',src:SRC.comm});
+E({id:'battery',pool:1,cond:()=>!G.flags.emp&&G.res.power<45&&!G.flags.saver,w:3,art:'battery',tone:'amber',cat:'배터리',
+  title:()=>`배터리 ${Math.round(G.res.power)}%`,
+  text:()=>`휴대폰 배터리가 ${Math.round(G.res.power)}%다. 다음 경보와 가족 연락을 받으려면 버텨야 한다.`,
+  hint:'저전력·밝기 최소, 신호가 약하면 비행기모드로 두고 정시에만 확인. 휴대폰을 끄지는 않는다.',
+  choices:[
+    {t:'저전력·밝기 최소, 지하에선 비행기모드로 두고 정시에만 확인한다',ok:true,go:()=>{G.flags.saver=1;return '배터리 소모가 절반으로 줄었다.'}},
+    {t:'불안해서 계속 새로고침한다',ok:false,go:()=>{res('power',-12);return '숫자만 빠르게 줄었다.'}},
+    {t:'아예 전원을 꺼 둔다',ok:false,go:()=>{G.flags.saver=1;mor(-3);return '재난문자는 데이터를 꺼도 수신되지만, 전원을 끄면 받을 수 없다. 대피 안내 문자를 몇 시간 늦게 봤다.'}}
+  ],lesson:'약한 전파 속 기지국 탐색이 배터리 최대 소모원이다. 비행기모드·저전력으로 두되 휴대폰 자체는 끄지 않는다(재난문자 수신).',src:SRC.comm});
+E({id:'tapwater',pool:1,scen:['conv','nuke'],loc:['park','bldg','subway'],cond:()=>G.scen!=='nuke'||G.turn>=4,w:()=>G.res.water<6?4:1,art:'bleach',tone:'amber',cat:'식수',title:'누런 수돗물',
+  pre:()=>{G.flags.tap=1},
+  text:'대피소 화장실 수도에서 누런 물이 나온다. 우리 물은 줄어들고 있다.',
+  hint:'탁하면 먼저 거르고, 무향 락스를 1L당 4방울(맑은 물은 2방울) 넣어 30분 기다린다.',
+  choices:()=>[
+    {t:'천으로 거른 뒤 무향 락스 1L당 4방울, 30분 기다린다',need:()=>has('bleach'),na:'락스 없음',ok:true,go:()=>{res('water',6);return '희미한 수영장 냄새. 6L를 확보했다.'}},
+    {t:'천으로만 걸러 마신다',ok:false,go:()=>{res('water',6);G.flags.dirtyWater=1;if(chance(.6)){const v=hasKid()?M('kid'):victim();addC(v,'sick');return `맛은 괜찮았다. 그러나 다음 날 ${v.n}에게 설사가 시작됐다.`}return '운 좋게 탈은 없었다.'}},
+    {t:'버너로 끓인다',need:()=>has('burner'),na:'버너 없음',ok:false,go:()=>{res('water',4);hurt('all',6);addC(victim(),'co');return '물은 끓였지만 밀폐된 지하에서 두통이 번졌다.'}},
+    ...(has('bleach')?[]:[{t:'마시지 않는다. 화장실·위생용으로만 쓴다',ok:true,go:()=>{mor(-1);return '소독할 수단이 없으니 마시지 않기로 했다. 손 씻기에는 충분했다.'}}])
+  ],lesson:'끓이기가 가장 안전하지만 밀폐된 지하에선 불을 쓸 수 없다. 거른 뒤 무향 락스 1L당 2방울(탁하면 4방울), 30분 기다린다.',src:SRC.water,guide:'aid'});
+E({id:'fracture',pool:1,w:()=>G.flags.blackout&&!G.flags.light?4:1,art:'bone',tone:'red',cat:'골절',
+  pre:()=>{const v=victim('adult');G.cur.v=v.id;addC(v,'fracture');hurt(v,8)},
+  title:'계단에서 넘어졌다',
+  text:()=>`${G.loc==='home'||G.loc==='high'?'정전된 집 안에서':'어두운 계단에서'} ${vn('이가')} 넘어졌다. 발목이 퉁퉁 붓고 이상하게 꺾여 보인다.`,
+  hint:'맞추려 하지 말고 그 자세 그대로, 위·아래 관절까지 부목으로 고정한다.',
+  choices:[
+    {t:'억지로 맞추지 않고 박스·잡지로 위·아래 관절까지 고정한다',ok:true,go:()=>{clrC(V(),'fracture');addC(V(),'injury');return '발목을 고정하자 통증이 줄었다. 발끝의 온기와 색도 확인했다.'}},
+    {t:'뼈를 제자리로 당겨 맞춘다',ok:false,go:()=>{hurt(V(),14);return '비명. 맞추는 동안 신경·혈관이 다칠 수 있다.'}},
+    {t:'괜찮다며 걷게 한다',ok:false,go:()=>{hurt(V(),10);return '몇 걸음 만에 주저앉았다.'}}
+  ],lesson:'골절은 맞추려 하지 말고 그 자세 그대로 위·아래 관절까지 고정한다. 고정 후 손발 끝의 감각·온기·색을 확인한다.',src:'대한적십자사 응급처치(부목)',guide:'aid'});
+const REPORT_CHOICES=[
+  {t:'생존 수첩 "내 위치"의 국가지점번호를 불러준다',s:'예: 다바 6471 6632',ok:true,go:()=>{trust(1);mor(6);return '"다바 6471 6632, 확인했습니다." 구급대가 헤매지 않고 도착했다.'}},
+  {t:'"○○아파트 지하주차장이요"라고만 말한다',ok:false,go:()=>{mor(-4);return '이름이 비슷한 단지가 근처에 두 곳. 구급대가 40분을 헤맸다.'}},
+  {t:'전화를 끊고 직접 업고 병원으로 간다',ok:false,go:()=>{hurt('me',10);pol(G.scen==='nuke'?8:0);mor(-4);return '두 블록 만에 주저앉았다. 결국 다시 119를 불렀다.'}}
+];
+E({id:'report',pool:1,scen:['conv','chem'],cond:()=>G.turn>=5,art:'pin',tone:'blue',cat:'구조 요청',title:'"정확한 위치를 말씀해 주세요"',
+  text:'중상자 이송을 위해 119와 겨우 연결됐다. 상황실 요원이 묻는다. "정확한 위치를 말씀해 주세요."',
+  hint:'생존 수첩 "내 위치" 탭 — GPS는 인터넷 없이 작동하고, 국가지점번호는 119·112가 쓰는 격자 주소다.',
+  choices:REPORT_CHOICES,lesson:'주소가 애매한 곳에선 국가지점번호(가로세로 10m 격자)로 위치를 말한다. 생존 수첩 "내 위치" 탭이 GPS로 바로 계산한다.',src:SRC.grid,guide:'loc'});
+E({id:'sos',pool:1,scen:['conv','chem'],cond:()=>G.turn>=4&&!['high','home'].includes(G.loc),art:'torch',tone:'blue',cat:'구조 신호',title:'구조대 불빛',
+  text:'부상자가 생겼는데 연락이 닿지 않는다. 멀리 지상 출입구 쪽으로 구조대 손전등 불빛이 지나간다.',
+  hint:'구조 신호는 체력을 아끼는 방식으로 — 호루라기, 손전등 SOS(짧게 3·길게 3·짧게 3).',
+  choices:[
+    {t:'손전등으로 SOS를 보낸다  ··· ─── ···',need:()=>!!lightSrc(),na:'불빛이 없다',ok:true,mini:'sos',go:sc=>{if(lightSrc()==='phone')res('power',-3);if(sc>=1){badge('sos');const m=G.fam.slice().sort((a,b)=>a.hp-b.hp)[0];heal(m,20);mor(8);return '불빛이 멈추더니 이쪽으로 다가왔다. 구조대가 부상자를 데려가고 가족도 살펴 줬다.'}mor(1);return '신호가 엉켜 구조대가 지나쳤다. 30분 뒤에야 다시 왔다.'}},
+    {t:'호루라기를 세 번씩 끊어 분다',need:()=>has('whistle'),na:'호루라기 없음',ok:true,go:()=>{const m=G.fam.slice().sort((a,b)=>a.hp-b.hp)[0];heal(m,16);mor(6);return '날카로운 소리가 지하를 울렸다. 힘을 아끼며 구조대를 불렀다.'}},
+    {t:'목이 터져라 소리친다',ok:false,go:()=>{hurt('me',4);mor(-2);return '먼지를 들이마시며 소리쳤지만 닿지 않았다.'}}
+  ],lesson:'구조 신호는 체력을 아끼는 방식으로 보낸다 — 호루라기, 손전등 SOS(짧게 3·길게 3·짧게 3). 소리치기는 체력 소모와 먼지 흡입이 크다.',src:'생존 수첩 SOS 도구 · 국제 조난 신호',guide:'sos'});
+E({id:'checkpoint',pool:1,scen:['conv'],cond:()=>G.turn>=6,art:'hand',tone:'red',cat:'검문',title:'"정지! 손 보이게!"',
+  text:'구호소로 물을 받으러 가는 어두운 길. 무장한 군인이 외친다. "정지! 손 보이게!"',
+  hint:'양손을 보이고 천천히. 민간인임을 분명히 보이고, 신분증을 지닌다. 급한 동작 금지.',
+  choices:[
+    {t:'멈춰서 양손을 보이고, 천천히 신분증을 꺼내겠다고 말한다',ok:true,go:()=>{if(has('wallet')){mor(3);res('water',G.fam.length);return '신분 확인 후 구호소까지 안내받았다.'}mor(-1);return '신분증이 없어 20분간 확인을 거쳤다. 손은 끝까지 보이게 두었다.'}},
+    {t:'놀라서 뒤돌아 뛴다',ok:false,go:()=>{hurt('me',22);addC(M('me'),'injury');return '경고 사격에 엎드리다 콘크리트에 머리를 부딪쳤다.'}},
+    {t:'주머니에 손을 넣어 휴대폰을 꺼내 보여준다',ok:false,go:()=>{hurt('me',10);return '갑작스러운 손동작에 그대로 제압당했다.'}}
+  ],lesson:'군·무장 세력과 마주치면 양손을 보이고 천천히, 신분증을 지닌다. 갑작스러운 동작은 위협으로 오인된다.',src:SRC.vio});
+E({id:'thanks',pool:1,cond:()=>G.trust>=2&&G.fam.some(m=>m.c.length||m.hp<70),w:3,art:'group',tone:'green',cat:'이웃',title:'돌아온 호의',
+  text:'도움을 받았던 옆 가족이 구급약과 핫팩을 건넨다. "그때 정말 고마웠어요."',
+  choices:[{t:'고맙게 받는다',ok:null,go:()=>{res('meds',2);give('blanket');mor(6);return '구급약 2회분과 핫팩을 받았다. 신뢰가 물자가 되어 돌아왔다.'}}]});
+
+/* ================= 마지막 72시간 ================= */
+E({id:'final_conv',art:'siren',tone:'green',cat:'경보 해제',title:'경보 해제',
+  text:()=>G.flags.gas?'음성방송: "경보를 해제합니다." 72시간 만에 집으로 올라간다. 미리 잠가 둔 가스 밸브 덕에 집 안은 조용하다.':`음성방송: "경보를 해제합니다." 72시간 만에 집으로 올라간다.${G.flags.homeDamaged?' 주방 쪽은 불에 그을렸다.':''} 현관문을 열자 — 희미한 가스 냄새가 난다.`,
+  hint:()=>G.flags.gas?null:'가스 냄새가 나면 불·전기 스위치를 건드리지 말고, 환기하고 밸브를 잠근 뒤 밖에서 신고한다.',
+  choices:()=>G.flags.gas?[
+    {t:'창문을 열고 집 상태부터 점검한다',ok:true,go:()=>{mor(5);return '대피 전 1분이 72시간 뒤의 사고를 막았다.'}}
+  ]:[
+    {t:'스위치·불은 건드리지 않고 창문을 열고 밸브를 잠근 뒤 밖에서 신고한다',ok:true,go:()=>{mor(3);return '점검반이 배관 균열을 찾아 막았다. 불꽃 하나 없이 끝났다.'}},
+    {t:'전등을 켜고 냄새 나는 곳을 찾는다',ok:false,go:()=>{hurt('me',30);addC(M('me'),'burn');return '스위치를 켜는 순간 "펑" 소리와 함께 불꽃이 튀었다.'}},
+    {t:'라이터를 켜서 가스레인지 쪽을 비춰 본다',ok:false,go:()=>{hurt('me',40);addC(M('me'),'burn');return '불꽃이 순간 번졌다. 앞머리와 손이 그을렸다.'}}
+  ],lesson:()=>G.flags.gas?'대피 전 여유가 있으면 가스 밸브를 잠그고 전기를 차단한다 — 귀가 후 2차 사고를 막는다.':'가스 냄새가 나면 스위치·라이터 등 불씨를 만들지 말고, 창문을 열어 환기하고 밸브를 잠근 뒤 밖에서 신고한다.',
+  src:()=>G.flags.gas?SRC.air:SRC.gas});
+E({id:'final_nuke',art:'pin',tone:'blue',cat:'구조 요청',title:'"정확한 위치를 말씀해 주세요"',
+  text:()=>G.loc==='gym'?'남부 대피소로 가는 정부 버스가 도중에 멈췄다. 일행 중 노인이 쓰러져 119와 연결됐다. "정확한 위치를 말씀해 주세요."':'구조대가 지역을 수색 중이라는 방송. 겨우 119와 연결됐다. "정확한 위치를 말씀해 주세요."',
+  hint:'생존 수첩 "내 위치" 탭 — GPS는 인터넷 없이 작동하고, 국가지점번호는 119·112가 쓰는 격자 주소다.',
+  choices:REPORT_CHOICES,lesson:'주소가 애매한 곳에선 국가지점번호(가로세로 10m 격자)로 위치를 말한다. 생존 수첩 "내 위치" 탭이 GPS로 바로 계산한다.',src:SRC.grid,guide:'loc'});
+E({id:'final_chem',art:'tape',tone:'green',cat:'경보 해제',title:'제독 완료',
+  text:'"경보를 해제합니다." 정부 제독반이 단지를 물로 씻어 낸다. 현관 앞엔 오염된 옷을 묶어 둔 비닐봉투가 있다.',
+  hint:'오염된 옷은 비닐에 밀봉해 격리하고, 처리는 당국 안내를 따른다.',
+  choices:[
+    {t:'봉투째 밀봉해 두고 제독반 안내대로 넘긴다',ok:true,go:()=>{mor(5);return '제독반이 봉투를 수거해 갔다. 집 안에 오염이 퍼지지 않았다.'}},
+    {t:'세탁기에 돌려 다시 입는다',ok:false,go:()=>{pol(15);hurt('all',6);return '세탁조와 다른 빨래까지 오염됐다.'}},
+    {t:'단지 쓰레기통에 버린다',ok:false,go:()=>{trust(-1);pol(5);return '수거 전 봉투가 터져 이웃들까지 노출됐다.'}}
+  ],lesson:'오염된 옷은 비닐에 밀봉해 격리하고, 처리는 당국 안내를 따른다.',src:SRC.chem});
+const FINAL={conv:'final_conv',nuke:'final_nuke',chem:'final_chem'};
+const QUIET=['멀리서 둔탁한 진동만 간간이 느껴진다.','누군가 낮게 라디오를 켰다가 껐다.','아이들이 박스로 작은 집을 만들었다.','관리인이 대피 인원을 다시 셌다.','형광등 하나가 깜빡이다 꺼졌다.'];
+
+/* ===================== 05 · 그래픽: SVG 일러스트 (외부 파일 0) ===================== */
+/* 장식용 결정적 난수 — 게임 난수와 분리해 그림이 매번 같게 */
+function lcg(s){return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+const C={sky1:'#0a1320',sky2:'#1b2232',glow:'#5a2a14',tower:'#121a23',tower2:'#18222d',win:'#ffb224',winDim:'#3a3220',con:'#20272e',con2:'#2a323b',line:'#36414c',amber:'#ffb224',exit:'#2ccf7c',red:'#ff5449',skin:'#c9d3dc',hz:'#e8c11a'};
+
+/* 국제 민방위 표지 — 주황 바탕 위 파란 정삼각형 (제네바 협약 제1추가의정서 제66조) */
+function cdMark(sz){return `<svg class="cd-mark" viewBox="0 0 42 42" width="${sz||42}" height="${sz||42}" aria-hidden="true"><rect width="42" height="42" rx="10" fill="#f08a24"/><path d="M21 8 34 31H8z" fill="#2e6bd6"/></svg>`}
+
+/* ---------- 도시 야경 (타이틀·엔딩) ---------- */
+function skyline(mode){/* mode: night | dawn | dark */
+  const r=lcg(7);const W=400,H=250;let s='';
+  const sky=mode==='dawn'?['#1b2740','#7a4a3a','#d98a4e']:mode==='dark'?['#07090d','#120d0c','#2a120c']:[C.sky1,C.sky2,'#3a1c14'];
+  s+=`<defs><linearGradient id="sk${mode}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset=".72" stop-color="${sky[1]}"/><stop offset="1" stop-color="${sky[2]}"/></linearGradient>
+  <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#cfe3ff" stop-opacity=".32"/><stop offset="1" stop-color="#cfe3ff" stop-opacity="0"/></linearGradient></defs>`;
+  s+=`<rect width="${W}" height="${H}" fill="url(#sk${mode})"/>`;
+  if(mode==='dawn'){s+=`<circle cx="318" cy="214" r="34" fill="#ffc46b" opacity=".85"/>`}
+  else{for(let i=0;i<34;i++){s+=`<circle cx="${(r()*W).toFixed(1)}" cy="${(r()*120).toFixed(1)}" r="${(r()*1+.3).toFixed(2)}" fill="#dfe8f2" opacity="${(r()*.6+.2).toFixed(2)}"/>`}}
+  if(mode==='night'){s+=`<g class="sweep"><path d="M118 250 L60 -10 L96 -10 Z" fill="url(#beam)"/></g><g class="sweep b"><path d="M300 250 L268 -10 L306 -10 Z" fill="url(#beam)"/></g>`}
+  if(mode==='dark'||mode==='night'){/* 먼 화재의 연기 기둥 */s+=`<path d="M246 205c-6-30 14-44 4-74s10-46 2-70" stroke="#3b2a26" stroke-width="18" fill="none" opacity="${mode==='dark'?.7:.35}" stroke-linecap="round"/>`}
+  /* 먼 산 */
+  s+=`<path d="M0 196 C40 180 70 186 110 176 C150 166 190 182 230 172 C280 160 330 178 400 168 V250 H0Z" fill="#0d141c"/>`;
+  /* 아파트 동: 꼭대기에 동 번호 — 한국 아파트의 표지 */
+  const towers=[[18,62,92,'101'],[92,58,70,'102'],[160,66,104,'103'],[238,60,80,'104'],[312,70,96,'105']];
+  towers.forEach(([x,w,top,no],ti)=>{const y=H-top-70;const h=top+70;
+    s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${ti%2?C.tower2:C.tower}"/>`;
+    s+=`<rect x="${x}" y="${y-4}" width="${w}" height="5" fill="#1d2833"/>`;
+    s+=`<text x="${x+w/2}" y="${y+16}" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="11" fill="#5c6b79" letter-spacing="1">${no}</text>`;
+    for(let fy=y+26;fy<H-8;fy+=9){for(let fx=x+6;fx<x+w-6;fx+=8){const v=r();
+      const lit=mode==='dawn'?v<.05:mode==='dark'?v<.03:v<.16;const fl=lit&&v<.03&&mode==='night';
+      s+=`<rect x="${fx}" y="${fy}" width="4.5" height="4.5" fill="${lit?C.win:C.winDim}" opacity="${lit?(.55+r()*.45).toFixed(2):'.35'}"${fl?' class="win-flick"':''}/>`}}});
+  /* 민방위 사이렌 기둥 */
+  s+=`<g fill="#0a0f14"><rect x="372" y="122" width="4" height="128"/><path d="M362 118h24v8h-24z"/><path d="M360 112l6-6h16l6 6z"/><circle cx="366" cy="122" r="5"/><circle cx="382" cy="122" r="5"/></g>`;
+  s+=`<rect x="0" y="${H-8}" width="${W}" height="8" fill="#080c10"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="밤의 아파트 단지와 탐조등">${s}</svg>`;
+}
+
+/* ---------- 84㎡ 아파트 평면도 ---------- */
+function planSVG(gr){
+  let s=`<defs><pattern id="tile" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M8 0H0V8" fill="none" stroke="#1e2730" stroke-width=".6"/></pattern></defs>`;
+  s+=`<rect x="0" y="0" width="360" height="290" fill="#0d1217"/>`;
+  s+=`<rect x="8" y="8" width="344" height="274" fill="#121920"/>`; /* 복도 바닥 */
+  Object.keys(ROOMS).forEach(id=>{const r=ROOMS[id];
+    s+=`<g class="room${gr.room===id?' here':''}" data-room="${id}"><rect class="fl" x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}"/>${id==='bath'?`<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="url(#tile)" pointer-events="none"/>`:''}<text x="${r.x+8}" y="${r.y+16}">${r.n}</text></g>`});
+  /* 가구 */
+  s+=`<g class="furn">
+    <rect x="22" y="30" width="72" height="58" rx="4"/><path d="M22 44h72"/><rect x="28" y="33" width="26" height="9" rx="3"/><rect x="62" y="33" width="26" height="9" rx="3"/>
+    <rect x="104" y="14" width="30" height="16"/>
+    <rect x="148" y="14" width="56" height="22" rx="8"/><circle cx="160" cy="62" r="6"/>
+    <rect x="292" y="26" width="52" height="38" rx="4"/><path d="M292 38h52"/><rect x="222" y="86" width="44" height="22"/>
+    <rect x="22" y="126" width="80" height="9"/><path d="M20 210v-20h96v20M20 196h96"/><rect x="118" y="146" width="56" height="30" rx="4"/>
+    <path d="M210 126h136v16H210z"/><rect x="236" y="170" width="74" height="24" rx="3"/><rect x="326" y="178" width="20" height="34"/>
+    <rect x="12" y="226" width="14" height="50"/>
+    <circle cx="334" cy="262" r="12"/><circle cx="334" cy="262" r="6"/><path d="M226 228h80"/>
+  </g>`;
+  /* 창문(바깥 벽) — 사이렌 동안 붉게 맥동 */
+  const wins=[[22,6,90,4],[230,6,110,4],[350,140,4,60],[6,140,4,60],[350,232,4,40]];
+  wins.forEach(w=>{s+=`<rect x="${w[0]}" y="${w[1]}" width="${w[2]}" height="${w[3]}" fill="#6f8fb0" opacity=".55"/>`;
+    if(!gr.car)s+=`<rect class="red-pulse winred" x="${w[0]-1}" y="${w[1]-1}" width="${w[2]+2}" height="${w[3]+2}"/>`});
+  /* 벽 */
+  s+=`<rect class="wall" x="8" y="8" width="344" height="274"/>`;
+  const walls=[[140,8,140,88],[140,114,140,120],[8,120,98,120],[130,120,140,120],[140,78,156,78],[192,78,212,78],[212,8,212,84],[212,112,212,120],[212,120,352,120],
+    [204,120,204,136],[204,206,204,220],[8,220,120,220],[180,220,246,220],[290,220,352,220],[218,220,218,282]];
+  s+=`<path class="wall" style="stroke-width:3.5" d="${walls.map(w=>`M${w[0]} ${w[1]}L${w[2]} ${w[3]}`).join('')}"/>`;
+  /* 현관문 */
+  s+=`<rect x="30" y="279" width="42" height="7" fill="#0d1217"/><path d="M30 282 A42 42 0 0 1 72 240" fill="none" stroke="#6b7a88" stroke-width="1.4" stroke-dasharray="3 3"/><path d="M30 282V240" stroke="#c9d3dc" stroke-width="2.5"/>`;
+  s+=`<text x="76" y="276" font-family="system-ui,sans-serif" font-size="9" font-weight="800" fill="${C.exit}">EXIT</text>`;
+  /* 물건 표시 */
+  Object.keys(ITEMS).forEach(id=>{const it=ITEMS[id];if(it.fam||!itemVisible(id,gr))return;
+    s+=`<g class="itm${it.act?' act':''}${gr.picked.includes(id)||(it.act&&gr[id])?' gone':''}" data-it="${id}" transform="translate(${it.px} ${it.py})"><circle r="9.6"/><use href="#i-${it.ic}" x="-6.5" y="-6.5" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>`});
+  /* 가족 토큰 */
+  const famPos=planFamPos(gr);
+  famPos.forEach(f=>{s+=`<g class="tok" id="tok-${f.id}" transform="translate(${f.x} ${f.y})"><circle r="${f.id==='kid'?8:9.5}" fill="${f.ready?'#2a6b4c':'#3a4652'}" stroke="${f.ready?C.exit:'#7d8b98'}" stroke-width="1.5"/><text y="3.6" text-anchor="middle" font-family="system-ui,sans-serif" font-size="${f.id==='kid'?8.5:9.5}" font-weight="800" fill="#e8edf1">${f.id==='sp'?'배':'아'}</text>${f.ready?'':`<text x="9" y="-8" font-family="system-ui,sans-serif" font-size="8" fill="#8e9ba7">z</text>`}</g>`});
+  const me=planMePos(gr.room);
+  s+=`<g class="tok" id="tok-me" transform="translate(${me.x} ${me.y})"><circle r="12" fill="${C.amber}" stroke="#fff3cf" stroke-width="2"/><text y="4.2" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="900" fill="#1a1100">나</text></g>`;
+  return `<svg viewBox="0 0 360 290" role="img" aria-label="우리 집 평면도">${s}</svg>`;
+}
+function planMePos(room){const c=roomC(room);const off={master:[24,10],bath:[0,14],kid:[-30,14],living:[-12,-2],kitchen:[-34,14],hall:[30,8],util:[-40,4]}[room]||[0,0];return{x:c.x+off[0],y:c.y+off[1]}}
+function planFamPos(gr){const out=[];
+  if(M('sp'))out.push(gr.fam.sp?{id:'sp',x:112,y:262,ready:1}:{id:'sp',x:56,y:62,ready:0});
+  if(M('kid'))out.push(gr.fam.kid?{id:'kid',x:136,y:266,ready:1}:{id:'kid',x:318,y:46,ready:0});
+  return out}
+
+/* ---------- 계단실 · 도로 ---------- */
+function stairSVG(floor,ev){
+  if(ev==='road'){let s=`<rect width="360" height="170" fill="#0b1018"/><rect y="100" width="360" height="70" fill="#14191f"/><path d="M0 134h360" stroke="#e8c11a" stroke-width="2" stroke-dasharray="18 14"/>`;
+    s+=`<path d="M0 62h360v10H0z" fill="#1d252e"/><path d="M40 72v28M140 72v28M240 72v28M340 72v28" stroke="#1d252e" stroke-width="8"/>`;
+    for(let i=0;i<6;i++){const x=i*64-10,y=i%2?108:140;s+=`<g transform="translate(${x} ${y})"><path d="M0 18 6 4h34l8 14v10H0z" fill="#232c36"/><circle cx="10" cy="28" r="5" fill="#0b0f13"/><circle cx="38" cy="28" r="5" fill="#0b0f13"/><rect x="-1" y="14" width="5" height="4" fill="#ff3b30" class="red-pulse" style="opacity:.9"/><rect x="45" y="14" width="4" height="4" fill="#ff3b30"/></g>`}
+    s+=`<rect width="360" height="170" fill="#ff3b30" class="amb-pulse"/>`;
+    return `<svg viewBox="0 0 360 170" role="img" aria-label="꽉 막힌 도로">${s}</svg>`}
+  let s=`<defs><linearGradient id="stw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#232b33"/><stop offset="1" stop-color="#171d23"/></linearGradient></defs><rect width="360" height="170" fill="url(#stw)"/>`;
+  /* 계단참 창문 */
+  s+=`<rect x="34" y="46" width="70" height="52" fill="#0d1622" stroke="#3a4652" stroke-width="3"/><path d="M69 46v52M34 72h70" stroke="#3a4652" stroke-width="2"/>`;
+  if(ev==='mv_conv')s+=`<path d="M48 54l14 12-6 10 12 8M80 52l-6 14 10 6" stroke="#9fb0bf" stroke-width="1" fill="none"/>`;
+  if(ev==='mv_nuke')s+=`<rect x="36" y="48" width="66" height="48" fill="#fff6dd"/>`;
+  /* 지그재그 계단 */
+  let p='M150 160';for(let i=0;i<7;i++)p+=` h18 v-12`;s+=`<path d="${p} H360 V170 H150Z" fill="#2a323b"/>`;
+  let q='M150 160';for(let i=0;i<7;i++)q+=` h18 v-12`;s+=`<path d="${q}" stroke="#4a5663" stroke-width="2" fill="none"/>`;
+  s+=`<path d="M156 128 L282 46" stroke="#7d8b98" stroke-width="3"/><path d="M170 138v-18M200 120v-18M230 101v-18M260 82v-18" stroke="#56636f" stroke-width="2"/>`;
+  /* 층 표시 — 한국 아파트 계단실의 큰 층 번호 */
+  s+=`<text x="300" y="132" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="44" fill="#e8c11a" opacity=".9">${floor}</text>`;
+  /* 비상구 유도등 */
+  s+=`<g class="exit-glow"><rect x="250" y="12" width="96" height="30" rx="3" fill="#0f5a34"/><rect x="250" y="12" width="96" height="30" rx="3" fill="none" stroke="${C.exit}" stroke-width="1.5"/>
+    <g transform="translate(256 15) scale(1)" stroke="#e9fff2" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="4.5" r="2" fill="#e9fff2"/><path d="M9 21l2.5-6 2.5 2.5V21M8 10.5l3-2.5 3.5 1 2 3 3 .5M11.5 15l-1-4.5"/></g>
+    <text x="318" y="33" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="13" fill="#e9fff2">비상구</text></g>`;
+  if(ev==='mv_chem')s+=`<path d="M40 112c30-8 50 6 80-2s40-10 70 0" stroke="#a7b36a" stroke-width="14" fill="none" opacity=".18" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 360 170" role="img" aria-label="아파트 비상계단">${s}</svg>`;
+}
+
+/* ---------- 가족 실루엣 ---------- */
+function hpColor(m){return m.crit?C.red:m.hp>60?C.skin:m.hp>30?C.amber:C.red}
+function figure(x,y,sc,col,label,sitting){/* 앉은 사람 */
+  return `<g transform="translate(${x} ${y}) scale(${sc})"><g class="breath"><circle cx="0" cy="-30" r="7.5" fill="${col}"/><path d="M-11 0 C-11 -16 -8 -21 0 -21 C8 -21 11 -16 11 0 Z" fill="${col}"/>${sitting?`<path d="M-11 0h24v5h-24z" fill="${col}" opacity=".8"/>`:''}</g>${label?`<text y="16" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" font-weight="800" fill="#cfd7de">${label}</text>`:''}</g>`}
+function neighbor(x,y,sc,o){return `<g transform="translate(${x} ${y}) scale(${sc})" opacity="${o||.55}"><circle cy="-28" r="7" fill="#3c4855"/><path d="M-10 0C-10-15-7-20 0-20S10-15 10 0Z" fill="#3c4855"/></g>`}
+function famGroup(cx,base){let s='';const n=G.fam.length;const xs=n===1?[cx]:n===2?[cx-20,cx+20]:[cx-38,cx,cx+36];
+  G.fam.forEach((m,i)=>{const sc=m.id==='kid'?.72:.95;s+=figure(xs[i],base-(m.id==='kid'?2:0),sc,hpColor(m),m.n,1);
+    if(m.c.length){s+=`<g transform="translate(${xs[i]+8} ${base-42})"><circle r="6.5" fill="#361613" stroke="${C.red}" stroke-width="1"/><use href="#i-${CONDS[m.c[0]].ic}" x="-4.5" y="-4.5" width="9" height="9" fill="none" stroke="${C.red}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>`}});
+  return s}
+function supplies(x,y){/* 물·식량을 그림으로: 생수병 개수 = 2L 단위 */
+  let s='';const bottles=Math.min(8,Math.ceil(G.res.water/2));
+  for(let i=0;i<bottles;i++){const bx=x+i*7,by=y;s+=`<path d="M${bx+1} ${by-15}h3v2l1.4 2v11h-5.8v-11l1.4-2z" fill="#5aa8ff" opacity=".75"/>`}
+  const cans=Math.min(5,Math.ceil(G.res.food/2));for(let i=0;i<cans;i++){s+=`<rect x="${x+64+(i%3)*8}" y="${y-8-(i>2?8:0)}" width="7" height="8" rx="1.5" fill="#b9874a" opacity=".85"/>`}
+  if(has('radio'))s+=`<g transform="translate(${x+92} ${y-14})"><rect width="20" height="13" rx="2" fill="#3a4652"/><circle cx="6" cy="7" r="3" fill="#1b232b"/><path d="M4 0 14 -6" stroke="#7d8b98" stroke-width="1.2"/></g>`;
+  return s}
+
+/* ---------- 대피소 장면 ---------- */
+function sceneSVG(){
+  const W=360,H=190;let s='';const dark=G.flags.blackout&&G.loc!=='gym'&&G.loc!=='high';
+  if(G.loc==='park'||G.loc==='bldg'||G.loc==='subway'){
+    const isPark=G.loc==='park';
+    s+=`<defs><linearGradient id="cw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#262e36"/><stop offset="1" stop-color="#1a2026"/></linearGradient>
+      <radialGradient id="cone" cx=".5" cy="1" r=".9"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient></defs>`;
+    s+=`<rect width="${W}" height="${H}" fill="url(#cw)"/>`;
+    /* 천장 보 · 형광등 */
+    s+=`<rect width="${W}" height="24" fill="#181e24"/><path d="M0 24H360" stroke="#303a44" stroke-width="2"/>`;
+    for(let i=0;i<4;i++)s+=`<rect x="${20+i*92}" y="0" width="14" height="24" fill="#1f262d"/>`;
+    for(let i=0;i<3;i++)s+=`<rect class="${dark?'':'flick'}" x="${58+i*100}" y="27" width="46" height="4" rx="2" fill="${dark?'#2b333b':'#e9f2f8'}" opacity="${dark?1:.95}"/>`;
+    if(isPark){
+      /* 주차 칸 · 차 실루엣 */
+      s+=`<path d="M0 128H360" stroke="#2c353e" stroke-width="2"/><path d="M40 128l-30 62M140 128l-12 62M240 128l12 62M330 128l30 62" stroke="#e8e2c4" stroke-width="1.5" opacity=".22"/>`;
+      [[78,96],[198,92],[300,98]].forEach(([x,y])=>{s+=`<g transform="translate(${x} ${y})" opacity=".7"><path d="M-30 26 -24 10Q-22 4-15 4H15Q22 4 24 10L30 26V33H-30Z" fill="#2b3540"/><path d="M-18 10h36l4 9h-44z" fill="#151b21"/><circle cx="-18" cy="33" r="5" fill="#0d1115"/><circle cx="18" cy="33" r="5" fill="#0d1115"/></g>`});
+      /* 기둥: 노랑·검정 띠와 번호 — 지하주차장의 표지 */
+      [30,150,270].forEach((x,i)=>{s+=`<rect x="${x}" y="24" width="24" height="120" fill="#2e3740"/><rect x="${x}" y="24" width="24" height="120" fill="none" stroke="#3b4652"/>`;
+        for(let k=0;k<4;k++)s+=`<path d="M${x} ${126+k*5}l24 -8v5l-24 8z" fill="${k%2?'#1a1a1a':C.hz}" opacity=".85"/>`;
+        s+=`<rect x="${x+3}" y="50" width="18" height="26" rx="2" fill="${C.hz}" opacity=".9"/><text x="${x+12}" y="61" text-anchor="middle" font-family="system-ui,sans-serif" font-size="7" font-weight="900" fill="#1a1a1a">B2</text><text x="${x+12}" y="72" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" font-weight="900" fill="#1a1a1a">${14+i}</text>`});
+    }else{
+      /* 지하철 대합실 / 상가 지하: 타일 벽, 표지판 */
+      s+=`<g opacity=".5">${Array.from({length:9},(_,i)=>`<path d="M0 ${36+i*11}H360" stroke="#2c353e"/>`).join('')}${Array.from({length:18},(_,i)=>`<path d="M${i*20} 32V132" stroke="#2c353e"/>`).join('')}</g>`;
+      s+=`<path d="M0 132H360" stroke="#3a4450" stroke-width="2"/>`;
+      if(G.loc==='subway'){s+=`<rect x="120" y="42" width="120" height="26" rx="3" fill="#0f2a4a"/><text x="180" y="60" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="900" fill="#e8f1ff">민방위 대피소</text>`;
+        [70,110,250,290].forEach(x=>{s+=`<path d="M${x} 132v-26h22v26" fill="#2c353e" stroke="#46525e"/><path d="M${x+11} 112l9 6" stroke="#ffb224" stroke-width="2"/>`})}
+      else{s+=`<rect x="110" y="42" width="140" height="26" rx="3" fill="#2a2010"/><text x="180" y="60" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="900" fill="#ffd27a">상가 지하 2층 · 대피 중</text>`;
+        [20,240].forEach(x=>{s+=`<rect x="${x}" y="76" width="100" height="56" fill="#252c33"/>${Array.from({length:12},(_,i)=>`<path d="M${x} ${80+i*4.6}h100" stroke="#323b45" stroke-width="1.6"/>`).join('')}`})}
+    }
+    /* 비상구 유도등 */
+    s+=`<g class="exit-glow" transform="translate(300 34)"><rect width="52" height="17" rx="2" fill="#0f5a34" stroke="${C.exit}"/><text x="26" y="12.5" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9" font-weight="900" fill="#e9fff2">비상구</text></g>`;
+    /* 바닥 · 이웃 · 가족 */
+    s+=`<rect y="146" width="${W}" height="44" fill="#151a1f"/>`;
+    [[22,170,.8],[52,166,.7],[250,168,.75],[290,172,.85],[326,166,.7]].forEach(n=>s+=neighbor(n[0],n[1],n[2]));
+    s+=`<rect x="118" y="168" width="130" height="10" rx="2" fill="#3a3326" opacity=".7"/>`;
+    s+=famGroup(170,170)+supplies(226,182);
+    if(dark){s+=`<rect width="${W}" height="${H}" fill="#020305" opacity="${G.flags.light?'.66':'.86'}"/>`;
+      if(G.flags.light)s+=`<ellipse cx="175" cy="150" rx="115" ry="70" fill="url(#cone)"/>${famGroup(170,170)}`;}
+  }else if(G.loc==='home'||G.loc==='high'){
+    const isHigh=G.loc==='high';const night=['21','22','23','00','01','02','03','04','05'].includes(clockAt(G.turn).slice(0,2));
+    s+=`<rect width="${W}" height="${H}" fill="${isHigh?'#1c2329':'#1b2228'}"/>`;
+    if(isHigh){s+=`<rect x="190" y="22" width="140" height="92" fill="${night?'#0b1322':'#55667a'}"/><path d="M260 22v92M190 68h140" stroke="#3a4652" stroke-width="3"/>`;
+      s+=`<path d="M194 26l132 84M326 26 194 110" stroke="#cfc6a8" stroke-width="5" opacity=".85"/>`; /* 유리창 X 테이프 */
+      if(G.flags.sealed)s+=`<rect x="186" y="18" width="148" height="100" fill="#cfe3ff" opacity=".14" stroke="#9fb0bf" stroke-dasharray="4 3"/>`;
+      if(G.scen==='chem'&&!G.flags.sealed)s+=`<path d="M200 100c20-10 40 6 60-4s30-8 60 0" stroke="#b5c06b" stroke-width="10" fill="none" opacity=".25"/>`;
+      s+=`<rect x="190" y="114" width="140" height="6" fill="#2a333c"/><path d="M24 132h120v-28c0-6-4-10-10-10H34c-6 0-10 4-10 10z" fill="#2a3540"/>`;
+      }
+    else{s+=`<g opacity=".45">${Array.from({length:10},(_,i)=>`<path d="M0 ${20+i*13}H360" stroke="#2f3a44"/>`).join('')}${Array.from({length:19},(_,i)=>`<path d="M${i*20} 0V146" stroke="#2f3a44"/>`).join('')}</g>`;
+      s+=`<rect x="220" y="90" width="120" height="56" rx="14" fill="#cfd7de" opacity=".18"/><rect x="24" y="30" width="44" height="116" fill="#2b343d"/>`}
+    s+=`<rect y="146" width="${W}" height="44" fill="#141a1f"/>`+famGroup(140,170)+supplies(196,182);
+    if(G.flags.blackout&&!G.flags.light)s+=`<rect width="${W}" height="${H}" fill="#020305" opacity=".5"/>`;
+  }else{/* gym */
+    s+=`<rect width="${W}" height="${H}" fill="#1f2328"/><rect y="120" width="${W}" height="70" fill="#5a4630"/>${Array.from({length:12},(_,i)=>`<path d="M${i*32} 120 l-20 70" stroke="#4a3a28" stroke-width="2"/>`).join('')}`;
+    s+=`<path d="M0 150h360" stroke="#e8e2c4" stroke-width="1.5" opacity=".3"/><g transform="translate(300 26)"><rect width="40" height="28" fill="none" stroke="#c9d3dc" stroke-width="2"/><path d="M12 28h16v6" stroke="#ff7a45" stroke-width="2.5" fill="none"/></g>`;
+    s+=`<rect x="60" y="30" width="170" height="24" rx="3" fill="#0f2a4a"/><text x="145" y="46" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="900" fill="#e8f1ff">정부 집결지 · 구호소</text>`;
+    [[30,140],[90,140],[250,140],[310,140]].forEach(([x,y])=>s+=`<rect x="${x-24}" y="${y}" width="48" height="10" rx="3" fill="#3a5a7a" opacity=".8"/>`);
+    [[40,166,.7],[260,168,.75],[316,164,.7]].forEach(n=>s+=neighbor(n[0],n[1],n[2],.6));
+    s+=famGroup(150,172)+supplies(206,184);
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${LOCN[G.loc]}">${s}</svg>`;
+}
+
+/* ===================== 06 · 화면 · 흐름 ===================== */
+const UI={screen:'title',setup:null,timers:[],raf:0};
+const val=x=>typeof x==='function'?x():x;
+function later(fn,ms){const t=setTimeout(fn,ms);UI.timers.push(t);return t}
+function clearTimers(){UI.timers.forEach(clearTimeout);UI.timers=[];cancelAnimationFrame(UI.raf)}
+function setScreen(s){UI.screen=s;render();window.scrollTo(0,0)}
+function render(){
+  clearTimers();const a=$('#app');
+  const v={title:vTitle,setup:vSetup,records:vRecords,alert:vAlert,grab:vGrab,move:vMove,shelter:vShelter,end:vEnd}[UI.screen];
+  a.innerHTML=v?v():'';a.classList.toggle('fade-in',true);setTimeout(()=>a.classList.remove('fade-in'),340);
+  const vg=$('#fx-vignette');if(vg)vg.hidden=!(UI.screen==='grab'&&GR.running&&!GR.car);
+  if(UI.after){const f=UI.after;UI.after=null;f()}
+}
+function sndBtn(){return `<button class="iconbtn" data-a="snd" aria-label="${SND.on?'소리 끄기':'소리 켜기'}">${ic(SND.on?'sound':'mute')}</button>`}
+
+/* ---------- 타이틀 ---------- */
+function vTitle(){
+  const sv=loadSave();const rec=getRec();
+  return `<div class="title-art">${skyline('night')}</div>
+  <div class="title-block">
+    <div class="logo-row">${cdMark(44)}<div><div class="eyebrow">생존 수첩 실전 훈련</div><div class="small mut">어른용 · 한 판 10~15분</div></div><span style="flex:1"></span>${sndBtn()}</div>
+    <h1>72<span>시간</span></h1>
+    <p class="tagline">오늘 밤 11시, 경계경보가 울린다면?</p>
+  </div>
+  <div class="stack">
+    ${sv?`<button class="btn pri" data-a="resume">이어하기 <span class="small" style="font-weight:600">· ${SCEN[sv.scen]&&sv.scenKnown?SCEN[sv.scen].n:'진행 중인 훈련'}</span></button><button class="btn" data-a="setup">새 훈련 시작</button>`
+      :`<button class="btn pri" data-a="setup">훈련 시작</button>`}
+    <button class="btn ghost" data-a="records">${ic('trophy')} 기록·배지 <span class="mut small" style="font-weight:600">${rec.runs?`· ${rec.runs}판`:''}</span></button>
+  </div>
+  <p class="title-note">사이렌 속 60초 안에 집에서 챙기고, 72시간을 버텨라. 모든 정답은 생존 수첩에 실린 공식 수칙(행정안전부·소방청·질병관리청 등)에서 나온다. 실제 상황에서는 재난문자와 정부 방송이 항상 우선이다.</p>`;
+}
+/* ---------- 설정 ---------- */
+function defaultSetup(){const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
+  return store.get('sg.setup',null)||{diff:'real',scen:'rand',fam:3,bag:kc>0?'sync':'none'}}
+function vSetup(){
+  const S=UI.setup||(UI.setup=defaultSetup());const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
+  if(S.bag==='sync'&&!kc)S.bag='none';
+  const seg=(key,opts)=>`<div class="seg-opts">${opts.map(o=>`<button data-a="opt" data-k="${key}" data-v="${o[0]}" aria-pressed="${String(S[key])===String(o[0])}" ${o[3]?'disabled':''}><b>${o[1]}</b><span>${o[2]}</span></button>`).join('')}</div>`;
+  return `<div class="hud"><button class="iconbtn" data-a="home" aria-label="처음으로">${ic('back')}</button><div><div class="eyebrow">훈련 설정</div><div class="sub">한 번 정하면 이 판 동안 바뀌지 않는다</div></div><span class="sp"></span>${sndBtn()}</div>
+  <div class="seg"><div class="seg-label">난이도</div>${seg('diff',[['train','훈련','힌트 항상 · 75초'],['real','실전','정보가 있어야 힌트 · 60초'],['hard','극한','45초 · 피해 1.3배']])}</div>
+  <div class="seg"><div class="seg-label">상황</div>${seg('scen',[['rand','무작위','무엇인지 모른 채 시작'],['conv','재래식 공습','미사일'],['nuke','핵 공격','섬광·낙진'],['chem','화학무기','화생방']])}</div>
+  <div class="seg"><div class="seg-label">가족</div>${seg('fam',[[1,'혼자','1인 가구'],[2,'부부','2인'],[3,'부부+아이','6살 아이와 3인']])}</div>
+  <div class="seg"><div class="seg-label"><span>현관 생존배낭</span><span>${kc?`생존 수첩 체크 ${kc}/16`:''}</span></div>
+    ${seg('bag',[['sync','생존 수첩 연동',kc?`실제 체크한 ${kc}종`:'연동 데이터 없음',!kc],['none','준비 안 함','현실 평균'],['full','완비','16종 전부']])}
+    <div class="sync-note">${kc?`<b>생존 수첩 '대비' 탭</b>에서 체크한 물건이 게임 속 현관 배낭에 그대로 들어간다. 실제 준비가 곧 생존율이다.`:`<b>생존 수첩 설치판</b>(myjason91.github.io/Survival)과 같은 주소에서 실행하면, 그곳 생존배낭 체크리스트가 게임 속 현관 배낭이 된다.`}</div></div>
+  <button class="btn pri" data-a="start">${ic('siren')} 경계경보 시작</button>`;
+}
+/* ---------- 기록 ---------- */
+function vRecords(){
+  const rec=getRec();const grades=Object.keys(SCEN).map(k=>`<div class="stat"><b>${rec.best[k]||'—'}</b><span>${SCEN[k].n} 최고</span></div>`).join('');
+  const learned=Object.keys(rec.lessons).length;const totalL=EVENTS.filter(e=>e.lesson).length;
+  return `<div class="hud"><button class="iconbtn" data-a="home" aria-label="처음으로">${ic('back')}</button><div><div class="eyebrow">기록·배지</div><div class="sub">이 기기에만 저장된다</div></div><span class="sp"></span>${sndBtn()}</div>
+  <div class="stats"><div class="stat"><b>${rec.runs}</b><span>훈련한 판</span></div><div class="stat"><b>${learned}<span class="small mut">/${totalL}</span></b><span>몸에 익힌 수칙</span></div>${grades}</div>
+  <div class="sec-h"><h3>배지</h3><span class="small mut">${Object.keys(rec.badges).length}/${Object.keys(BADGES).length}</span></div>
+  <div class="badges">${Object.keys(BADGES).map(id=>{const b=BADGES[id],on=!!rec.badges[id];return `<div class="bdg${on?'':' off'}">${ic(on?b.ic:'lock')}<div><b>${b.n}</b><small>${b.d}</small></div></div>`}).join('')}</div>
+  <a class="btn ghost" href="${HB}#prep" target="_blank" rel="noopener">${ic('book')} 생존 수첩에서 배낭 체크하기</a>`;
+}
+
+/* ---------- 경계경보 ---------- */
+function vAlert(){
+  const ev=EV.alert0;const d=G.date;
+  return `<div class="hud"><span class="clock">23:04</span><span class="chip amb">${ic('phone')}위급재난문자</span><span class="sp"></span>${sndBtn()}</div>
+  <div class="phone"><div class="ph-time">23:04</div><div class="ph-date">${d.m}월 ${d.d}일 ${d.w}요일</div>
+    <div class="cbs"><div class="h">${ic('siren')}<b>위급재난문자</b><span>· 지금</span></div><p>[경계경보] 적의 공격이 예상됩니다. 대피를 준비하시고, 어린이·노약자는 가까운 대피소로 먼저 대피하십시오. — 게임 속 가상 문자</p></div></div>
+  ${eventCard(ev)}`;
+}
+
+/* ---------- 결정 카드 (공용) ---------- */
+function choicesOf(ev){return val(ev.choices)}
+function eventCard(ev,opt){
+  opt=opt||{};const cs=choicesOf(ev);const toneC={red:'red',blue:'blue',green:'green'}[ev.tone]||'';
+  const hintTxt=val(ev.hint);let hint='';
+  if(hintTxt){const src=G.cur&&G.cur.hs?G.cur.hs:null;if(src)hint=`<div class="hint"><span class="eyebrow">${src.l}</span>${hintTxt}</div>`}
+  return `<div class="sheet fade-in">
+    <div class="lead"><div class="badge ${toneC}">${ic(ev.art||'dot')}</div><div style="min-width:0"><div class="eyebrow">${ev.cat||''}</div><h2>${val(ev.title)}</h2></div></div>
+    <p>${val(ev.text)}</p>${hint}
+    ${ev.timed?`<div class="timebar"><i id="tbar"></i></div>`:''}
+    <div class="choices">${cs.map((c,i)=>{const okNeed=!c.need||c.need();return `<button class="choice" data-a="choose" data-i="${i}" ${okNeed?'':'disabled'}><span class="k">${'ABCD'[i]}</span><span class="ct"><b>${c.t}</b>${c.s||!okNeed?`<small>${okNeed?c.s:val(c.na)||'불가'}</small>`:''}</span></button>`}).join('')}</div>
+  </div>`;
+}
+function fxChips(arr){if(!arr||!arr.length)return '';const seen=[];
+  return `<div class="fx-list">${arr.map(f=>{const l=typeof f.l==='object'?'':f.l;if(f.n===null)return `<span class="fx down">${l}</span>`;
+    const up=f.l==='피폭'||f.l==='오염'?f.n<0:f.n>0;return `<span class="fx ${up?'up':'down'}">${l} ${f.n>0?'+':''}${f.n}${f.u}</span>`}).join('')}</div>`}
+function resultCard(ev,r,btn){
+  const cs=choicesOf(ev);
+  const lesson=val(ev.lesson);
+  const ok=r.ok;const box=lesson?`<div class="lesson ${ok===true?'ok':ok===false?'no':''}"><span class="eyebrow">${ok===true?'수칙대로 했다':ok===false?'실제 수칙':'생각해 볼 점'}</span><div>${lesson}</div>${ev.src?`<span class="src">출처 · ${val(ev.src)}</span>`:''}</div>`:'';
+  return `<div class="sheet fade-in">
+    <div class="lead"><div class="badge ${ok===true?'green':ok===false?'red':''}">${ic(ok===true?'check':ok===false?'x':(ev.art||'dot'))}</div><div style="min-width:0"><div class="eyebrow">${ev.cat||''}</div><h2>${val(ev.title)}</h2></div></div>
+    <div class="choices">${r.i>=0?`<div class="choice ${ok===true?'right':ok===false?'wrong':''}"><span class="k">${'ABCD'[r.i]}</span><span class="ct"><b>${cs[r.i]?cs[r.i].t:''}</b></span></div>`:`<div class="choice wrong"><span class="k">!</span><span class="ct"><b>시간 초과</b></span></div>`}</div>
+    <p class="result">${r.text}</p>${fxChips(r.fx)}${box}
+    <button class="btn pri" data-a="${btn.a}">${btn.t}</button>
+  </div>`;
+}
+
+/* ---------- 이동 단계 ---------- */
+const FLOORS={mv_elev:'12F',mv_conv:'7F',mv_nuke:'7F',mv_chem:'7F',mv_nuke2:'1F',mv_loc:'1F',road:''};
+function vMove(){
+  const step=G.step;let sheet='';const evId=G.cur&&G.cur.ev;
+  if(step==='grabsum')sheet=grabSummaryCard();
+  else if(step==='card')sheet=eventCard(EV[evId]);
+  else if(step==='result')sheet=resultCard(EV[evId],G.cur.r,{a:'move-next',t:G.moveQ.length?'계속 이동':'대피소로'});
+  const fl=step==='grabsum'?'12F':FLOORS[evId]||'B2';
+  return `${hud()}<div class="scene">${stairSVG(fl,evId)}<span class="tag">${evId==='road'?'국도 · 정체':'101동 비상계단'}</span></div>${sheet}`;
+}
+function grabSummaryCard(){
+  const g=G.grab;const items=g.picked.filter(id=>!ITEMS[id].act&&!ITEMS[id].fam);
+  const lines=[];
+  if(g.pack)lines.push(`${ic('pack')} 생존배낭 메고 출발 — 생존 수첩 기준 ${G.kitCount}/16종`);
+  lines.push(`${ic('valve')} 가스 ${g.gas?'잠금':'열린 채'} · 두꺼비집 ${g.breaker?'내림':'그대로'}`);
+  if(g.late>0)lines.push(`${ic('clock')} 가족을 깨우느라 ${g.late}초 늦게 출발했다`);
+  return `<div class="sheet fade-in"><div class="lead"><div class="badge ${g.late?'red':'green'}">${ic('door')}</div><div><div class="eyebrow">${G.flags.car?'출발 준비 끝':'60초 탈출 결과'}</div><h2>${G.flags.car?'차에 짐을 싣고 출발했다':g.left>0?`${g.left}초를 남기고 현관문을 나섰다`:'사이렌이 끝날 때 집을 나섰다'}</h2></div></div>
+    <div class="bag">${Array.from({length:10},(_,i)=>{const id=gSlotsOf(items)[i];return `<div class="slot${id?' f':''}">${id?ic(ITEMS[id].ic):''}</div>`}).join('')}</div>
+    <p class="small mut">${items.length?items.map(id=>ITEMS[id].n).join(' · '):'배낭에 챙긴 것이 없다.'}</p>
+    <div class="stack small">${lines.map(l=>`<div style="display:flex;gap:8px;align-items:center">${l}</div>`).join('')}</div>
+    <button class="btn pri" data-a="move-start">${G.flags.car?'도로로':'계단으로'}</button></div>`;
+}
+function gSlotsOf(ids){const out=[];ids.forEach(id=>{const s=ITEMS[id].s||0;for(let k=0;k<s;k++)out.push(id)});return out}
+
+/* ---------- HUD ---------- */
+function hud(){
+  const ph=G.phase;let clk,sub;
+  if(ph==='shelter'){clk=`T+${G.turn*6}h`;sub=`${clockAt(G.turn)} · ${dayOf(Math.min(G.turn,11))}일차`}
+  else if(ph==='move'){clk='23:09';sub='대피 이동'}else{clk='23:08';sub=''}
+  const scenChip=G.scenKnown?`<span class="chip red">${ic(SCEN[G.scen].ic)}${SCEN[G.scen].s}</span>`:`<span class="chip amb">${ic('siren')}원인 미상</span>`;
+  return `<div class="hud"><div class="hclk"><span class="clock">${clk}</span><span class="sub">${sub}</span></div><span class="sp"></span>${scenChip}${sndBtn()}<button class="iconbtn" data-a="menu" aria-label="메뉴">${ic('menu')}</button></div>`;
+}
+function famStrip(){return `<div class="fam">${G.fam.map(m=>{const c=hpColor(m);return `<div class="mem${m.crit?' crit':''}"><div class="top"><b>${m.n}</b><span class="hp">${m.crit?'위독':m.hp}</span></div><div class="bar"><i style="width:${m.crit?3:m.hp}%;background:${c}"></i></div><div class="conds">${m.c.length?m.c.map(k=>`<span class="cond">${ic(CONDS[k].ic)}${CONDS[k].n}</span>`).join(''):`<span class="cond ok">${ic('check')}이상 없음</span>`}</div></div>`}).join('')}</div>`}
+function resGrid(){
+  const n=G.fam.length;const days=G.res.water/(RATION[G.ration].w*4*n);
+  const cells=[
+    ['water',`${fmtL(G.res.water)}L`,`물 · ${days>=10?'충분':days.toFixed(1)+'일분'}`,G.res.water<n*2],
+    ['can',fmtL(G.res.food),'식량(인·일)',G.res.food<n],
+    ['battery',G.flags.emp?'—':`${Math.round(G.res.power)}%`,G.flags.emp?'통신망 먹통':'휴대폰 전력',!G.flags.emp&&G.res.power<20],
+    ['aid',G.res.meds,'의약품(회)',false],
+    ['heart',G.morale,'사기',G.morale<35],
+    G.scen==='nuke'||G.scen==='chem'?[G.scen==='chem'?'flask':'rad',G.pol,G.scen==='chem'?'오염 지수':'피폭 지수',G.pol>=40]:['shield',G.trust,'이웃 신뢰',false]
+  ];
+  return `<div class="res">${cells.map(c=>`<div class="r${c[3]?' low':''}">${ic(c[0])}<div><b>${c[1]}</b><span>${c[2]}</span></div></div>`).join('')}</div>`;
+}
+
+/* ---------- 대피소 ---------- */
+function vShelter(){
+  let sheet='';const st=G.step;
+  if(st==='ration')sheet=rationCard();
+  else if(st==='event'||st==='final'){sheet=G.cur.ev==='quiet'?quietCard():eventCard(EV[G.cur.ev])}
+  else if(st==='result'||st==='fresult'){const ev=EV[G.cur.ev];const last=st==='fresult';
+    sheet=resultCard(ev,G.cur.r,last?{a:'to-end',t:'72시간 — 결과 보기'}:G.cur.next?{a:'follow',t:'계속'}:{a:'to-action',t:'이 6시간 동안 할 일'})}
+  else if(st==='action')sheet=actionCard();
+  else if(st==='actres')sheet=actResCard();
+  return `${hud()}<div class="scene">${sceneSVG()}<span class="tag">${LOCN[G.loc]}</span></div>${famStrip()}${resGrid()}${sheet}`;
+}
+function quietCard(){return `<div class="sheet fade-in"><div class="lead"><div class="badge">${ic('moon')}</div><div><div class="eyebrow">조용한 시간</div><h2>숨 돌릴 6시간</h2></div></div><p>${G.cur.q}</p><button class="btn pri" data-a="to-action">이 6시간 동안 할 일</button></div>`}
+function rationCard(){
+  const n=G.fam.length;const day=dayOf(G.turn);
+  const est=k=>{const per=RATION[k].w*4*n;const d=G.res.water/per;return d>=10?'충분':`물 ${d.toFixed(1)}일분`};
+  return `<div class="sheet fade-in"><div class="lead"><div class="badge blue">${ic('water')}</div><div><div class="eyebrow">${day}일차 아침 회의</div><h2>오늘 배급을 정하자</h2></div></div>
+  <p>물 ${fmtL(G.res.water)}L · 식량 ${fmtL(G.res.food)}일분 · ${n}명. 구조까지 ${72-G.turn*6}시간 남았다. 사람은 물 없이 3일을 넘기기 어렵고, 음식은 몇 주를 버틴다.</p>
+  <div class="choices">${['full','base','save'].map((k,i)=>`<button class="choice" data-a="ration" data-v="${k}"><span class="k">${'ABC'[i]}</span><span class="ct"><b>${RATION[k].n} — ${RATION[k].d}</b><small>${est(k)} · ${k==='full'?'체력·사기 회복':k==='base'?'최소 음용량 유지':'체력·사기 감소'}</small></span></button>`).join('')}</div></div>`;
+}
+function actionCard(){
+  const acts=ACTIONS.filter(a=>a.show());
+  return `<div class="sheet fade-in"><div class="lead"><div class="badge">${ic('clock')}</div><div><div class="eyebrow">T+${G.turn*6}h ~ T+${G.turn*6+6}h</div><h2>이 6시간 동안 무엇을 할까</h2></div></div>
+  <div class="actions">${acts.map(a=>{const ok=a.ok();return `<button class="act${a.warn&&a.warn()?' warn':''}" data-a="act" data-v="${a.id}" ${ok?'':'disabled'}>${ic(a.ic)}<b>${a.n}</b><small>${ok?a.d():val(a.na)||'지금은 불가'}</small></button>`}).join('')}</div></div>`;
+}
+function actResCard(){
+  const c=G.cur;const notes=G.turnNotes||[];const last=G.turn>=11;
+  return `<div class="sheet fade-in"><div class="lead"><div class="badge">${ic(ACTIONS.find(a=>a.id===c.act).ic)}</div><div><div class="eyebrow">${ACTIONS.find(a=>a.id===c.act).n}</div><h2>${clockAt(G.turn+1)}까지</h2></div></div>
+  <p class="result">${c.at}</p>${fxChips(c.afx)}
+  <div class="lesson"><span class="eyebrow" style="color:var(--mut)">6시간 경과 · 배급 ${RATION[G.ration].n}</span>${notes.length?notes.map(x=>`<div>${x}</div>`).join(''):'<div>큰 일 없이 시간이 흘렀다.</div>'}${fxChips(G.turnFx)}</div>
+  <button class="btn pri" data-a="next-turn">${last?'마지막 밤을 넘긴다':`T+${(G.turn+1)*6}h로`}</button></div>`;
+}
+
+/* ---------- 결과 ---------- */
+function vEnd(){
+  const e=G.end;const scen=SCEN[G.scen].n;const mode=G.over?'dark':e.grade==='S'||e.grade==='A'||e.grade==='B'?'dawn':'night';
+  const scoredLog=G.log.filter(l=>l.lesson);
+  const g=G.grab;
+  return `<div class="end-art">${skyline(mode)}<div class="stamp ${e.grade}">${e.grade}</div></div>
+  <div class="end-h"><div class="eyebrow">${scen} · ${DIFF[G.diff].n} · ${G.fam.length}인</div><h1>${e.title}</h1><p class="small mut" style="margin:0">${e.sub}</p></div>
+  <div class="stats">
+    <div class="stat"><b>${e.know}%</b><span>수칙 정답 ${e.right}/${e.total}</span></div>
+    <div class="stat"><b>${e.health}</b><span>가족 평균 체력${e.crit?' · 위독 있음':''}</span></div>
+    <div class="stat"><b>${G.scen==='conv'?G.trust:G.pol}</b><span>${G.scen==='conv'?'이웃 신뢰':G.scen==='chem'?'오염 지수':'피폭 지수'}</span></div>
+    <div class="stat"><b>${g?g.left+'초':'—'}</b><span>탈출 여유 · 배낭 ${g?g.slotsUsed:0}/10칸</span></div>
+  </div>
+  ${G.newBadges.length?`<div class="sec-h"><h3>새 배지</h3></div><div class="badges">${G.newBadges.map(id=>`<div class="bdg new">${ic(BADGES[id].ic)}<div><b>${BADGES[id].n}</b><small>${BADGES[id].d}</small></div></div>`).join('')}</div>`:''}
+  <div class="row"><button class="btn pri" data-a="again">다시 도전</button><button class="btn" data-a="home">처음으로</button></div>
+  <div class="sec-h"><h3>판단 기록</h3><span class="small mut">틀린 것부터</span></div>
+  <div class="deb">${scoredLog.slice().sort((a,b)=>(a.ok===false?0:a.ok===null?2:1)-(b.ok===false?0:b.ok===null?2:1)).map(l=>`<div class="deb-i">
+    <div class="h ${l.ok===true?'ok':l.ok===false?'no':'na'}">${ic(l.ok===true?'check':l.ok===false?'x':'dot')}${l.ok===true?'수칙대로':l.ok===false?'놓친 수칙':'선택'} · ${l.title}</div>
+    <b>${l.choice}</b>${l.best?`<p>정답: ${l.best}</p>`:''}<p>${l.lesson}</p>${l.src?`<span class="src">출처 · ${l.src}</span>`:''}</div>`).join('')}</div>
+  <a class="btn ghost" href="${HB}#${(scoredLog.find(l=>l.ok===false)||{}).guide||'now'}" target="_blank" rel="noopener">${ic('book')} 생존 수첩에서 실제 수칙 보기</a>
+  <p class="foot">게임 속 수치(체력·피폭 지수 등)는 학습용 단순화이며 실제 의학·방사선 수치가 아니다. 실제 상황에서는 재난문자·KBS 재난방송·119 안내를 따른다.</p>`;
+}
+
+/* ---------- 흐름 ---------- */
+function startGame(){
+  store.set('sg.setup',UI.setup);newGame(UI.setup);G.phase='alert';G.cur={ev:'alert0',hs:hintSource()};save();
+  setScreen('alert');later(()=>{SND.cbs();vib([200,100,200,100,400])},350);
+}
+function chooseOn(ev,i,after){
+  const cs=choicesOf(ev);const c=cs[i];if(!c||(c.need&&!c.need()))return;
+  if(ev.timed&&G.cur.t0)G.rt=performance.now()-G.cur.t0;
+  clearTimers();
+  const finish=sc=>{FX=[];const text=c.go(sc);G.cur.r={i,ok:c.ok,text,fx:FX.slice()};logDecision(ev,c,c.ok);
+    if(c.ok===true)SND.ok();else if(c.ok===false){SND.bad();vib(60)}after()};
+  if(c.mini)startMini(c.mini,finish);else finish();
+}
+function timeoutOn(ev,after){FX=[];const text=ev.timeout();G.cur.r={i:-1,ok:false,text,fx:FX.slice()};logDecision(ev,null,false,'시간 초과');SND.bad();vib(80);after()}
+function armTimed(ev,after){
+  if(!ev.timed)return;G.cur.t0=performance.now();
+  const bar=$('#tbar');if(bar){bar.style.transition='none';bar.style.transform='scaleX(1)';void bar.offsetWidth;bar.style.transition=`transform ${ev.timed}s linear`;bar.style.transform='scaleX(0)'}
+  later(()=>timeoutOn(ev,after),ev.timed*1000);
+  for(let k=1;k<ev.timed;k++)later(()=>SND.tick(),k*1000);
+}
+/* 이동 */
+function moveNext(){
+  if(!G.moveQ.length){toShelter();return}
+  const id=G.moveQ.shift();G.cur={ev:id,hs:hintSource()};consumeHint(G.cur.hs);G.step='card';
+  UI.after=()=>{const ev=EV[id];if(ev.flash){flash();SND.boom(true);vib([400,80,600])}else if(id==='mv_conv'){SND.boom();shake();vib([150,50,250])}else if(id==='road'){SND.siren(10)}
+    armTimed(ev,()=>{G.step='result';save();render()})};
+  render();
+}
+function toShelter(){SND.stopSiren();G.phase='shelter';G.turn=0;G.cur=null;beginTurn();save();setScreen('shelter')}
+function beginTurn(){
+  if(G.turn>=12){const id=FINAL[G.scen];G.cur={ev:id,hs:hintSource()};consumeHint(G.cur.hs);G.step='final';return}
+  if(G.turn%4===0&&!G.flags['r'+G.turn]){G.step='ration';G.cur={};return}
+  enterEvent();
+}
+function enterEvent(){
+  const id=pickEvent();G.cur={ev:id};G.step='event';
+  if(id==='quiet'){G.cur.q=pick(QUIET);return}
+  const ev=EV[id];G.fired[id]=1;if(ev.pre)ev.pre();
+  if(G.scen==='conv'&&G.turn>=3)G.scenKnown=true;
+  G.cur.hs=val(ev.hint)?hintSource():null;consumeHint(G.cur.hs);
+}
+function afterEventResult(){
+  if(checkOver()){toEnd();return}
+  G.step=G.step==='final'?'fresult':'result';save();render();
+}
+function toEnd(){SND.stopSiren();if(!G.end){G.end=computeEnding();G.phase='end';recordRun(G.end);clearSave()}setScreen('end')}
+
+/* ---------- 클릭 처리 ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b||b.disabled)return;
+  const a=b.dataset.a;SND.ac();
+  if(a==='snd'){SND.on=!SND.on;store.set('sg.snd',SND.on);if(!SND.on)SND.stopSiren();b.innerHTML=ic(SND.on?'sound':'mute');return}
+  if(a==='home'){clearTimers();SND.stopSiren();GR.running=false;setScreen('title');return}
+  if(a==='setup'){UI.setup=null;setScreen('setup');return}
+  if(a==='records'){setScreen('records');return}
+  if(a==='opt'){const k=b.dataset.k;let v=b.dataset.v;if(k==='fam')v=+v;UI.setup[k]=v;render();return}
+  if(a==='start'){startGame();return}
+  if(a==='resume'){const sv=loadSave();if(!sv)return;G=sv;RNG.s=sv.rngS||1;
+    if(G.phase==='grab'){startGrab();return}
+    if(G.phase==='alert'){setScreen('alert');return}
+    if(G.phase==='move'){UI.screen='move';if(G.step==='card'){G.moveQ.unshift(G.cur.ev);moveNext();return}setScreen('move');return}
+    setScreen('shelter');return}
+  if(a==='again'){UI.setup=Object.assign({},G.opts);delete UI.setup.seed;startGame();return}
+  if(a==='menu'){menuOverlay();return}
+  if(a==='quit'){$('#ov')&&$('#ov').remove();save();clearTimers();SND.stopSiren();setScreen('title');return}
+  if(a==='close-ov'){$('#ov')&&$('#ov').remove();return}
+  /* 결정 */
+  if(a==='choose'){const i=+b.dataset.i;
+    if(UI.screen==='alert'){chooseOn(EV.alert0,i,()=>{save();$('#app').querySelector('.sheet').outerHTML=resultCard(EV.alert0,G.cur.r,{a:'to-grab',t:G.flags.car?'짐 싣기 (40초)':'사이렌 — 60초 탈출'})});return}
+    if(UI.screen==='move'){chooseOn(EV[G.cur.ev],i,()=>{G.step='result';if(G.cur.ev==='mv_nuke'){later(()=>{SND.boom(true);shake();vib([300,60,500])},400)}save();render()});return}
+    if(UI.screen==='shelter'){chooseOn(EV[G.cur.ev],i,afterEventResult);return}}
+  if(a==='to-grab'){startGrab();return}
+  if(a==='move-start'){moveNext();return}
+  if(a==='move-next'){if(checkOver()){toEnd();return}moveNext();return}
+  if(a==='ration'){G.ration=b.dataset.v;G.flags['r'+G.turn]=1;enterEvent();save();render();return}
+  if(a==='follow'){const nx=G.cur.next;G.cur={ev:nx,hs:hintSource()};consumeHint(G.cur.hs);G.fired[nx]=1;G.step='event';save();render();return}
+  if(a==='to-action'){G.step='action';save();render();return}
+  if(a==='act'){const id=b.dataset.v;const at=doAction(id);const afx=FX.slice();
+    if(checkOver()){toEnd();return}
+    endTurn();G.cur={act:id,at,afx};G.step='actres';if(G.over){save();render();later(toEnd,1600);return}save();render();return}
+  if(a==='next-turn'){if(G.over){toEnd();return}G.turn++;beginTurn();save();render();window.scrollTo(0,0);return}
+  if(a==='to-end'){toEnd();return}
+});
+function menuOverlay(){
+  const d=document.createElement('div');d.className='overlay';d.id='ov';
+  d.innerHTML=`<div class="sheet"><h2>잠깐 멈춤</h2><p class="small mut">진행 상황은 이 기기에 자동 저장된다. 처음 화면에서 "이어하기"로 돌아올 수 있다.</p>
+  <a class="btn ghost" href="${HB}" target="_blank" rel="noopener">${ic('book')} 생존 수첩 열기</a>
+  <div class="row"><button class="btn" data-a="close-ov">계속하기</button><button class="btn" data-a="quit">저장하고 나가기</button></div></div>`;
+  document.body.appendChild(d);
+}
+
+/* ===================== 07 · 60초 탈출(실시간) · 미니게임 ===================== */
+const GR={running:false};
+function itemVisible(id,gr){const it=ITEMS[id];
+  if(id==='pack')return !!(G&&G.kit);
+  if(it.kid&&!M('kid'))return false;
+  if(it.fam){if(!M(it.fam))return false;if(gr.car)return false;return true}
+  return true}
+function startGrab(){
+  const d=DIFF[G.diff];const car=!!G.flags.car;let sec=d.sec;if(G.flags.slept)sec-=5;if(car)sec=Math.min(40,sec-10);
+  Object.assign(GR,{sec,left:sec,end:0,running:false,busy:false,room:G.flags.prep?'hall':G.flags.slept?'master':'living',picked:[],used:0,cap:10,
+    fam:{sp:!M('sp')||!!G.flags.prep||car,kid:!M('kid')||!!G.flags.prep||car},gas:false,breaker:false,pack:false,late:0,done:false,car,famOk:false});
+  G.phase='grab';save();UI.screen='grab';render();grabIntro();
+}
+function famReady(){return GR.fam.sp&&GR.fam.kid}
+function vGrab(){
+  return `<div class="grab-top"><div class="ring" id="ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#1c242c" stroke-width="7"/><circle id="ringArc" cx="37" cy="37" r="32" fill="none" stroke="${GR.car?'#5aa8ff':'#ffb224'}" stroke-width="7" stroke-linecap="round" stroke-dasharray="201.06" stroke-dashoffset="0"/></svg><div class="val" id="ringVal">${GR.sec}</div></div>
+    <div class="grab-msg"><b id="gMsg">${GR.car?'차에 실을 것을 고른다':'공습경보 — 사이렌 1분'}</b><span id="gSub">방 누르면 이동 · 물건 누르면 담기</span></div><span style="flex:1"></span>${sndBtn()}</div>
+  <div class="plan" id="plan">${planSVG(GR)}</div>
+  <div class="tray-h"><b id="trayRoom">${ROOMS[GR.room].n}</b><span id="slotTxt" class="num">배낭 ${GR.used}/${GR.cap}칸</span></div>
+  <div class="tray" id="tray"></div>
+  <div class="bag" id="bag"></div>
+  <div class="pack-line" id="packLine"${GR.pack?'':' hidden'}>${ic('pack')}생존배낭을 멨다 — ${G.kitCount}종</div>
+  <button class="btn go" id="exitBtn" data-g="exit">${ic('door')}현관문 열고 대피</button>`;
+}
+function grabIntro(){
+  const d=document.createElement('div');d.className='overlay';d.id='gintro';
+  const sec=GR.sec;
+  d.innerHTML=`<div class="sheet"><div class="lead"><div class="badge ${GR.car?'blue':'red'}">${ic(GR.car?'car':'siren')}</div><div><div class="eyebrow">${GR.car?'출발 준비':'공습경보 발령'}</div><h2>${GR.car?`${sec}초 안에 차에 실을 짐을 고른다`:`사이렌이 끝나기 전 — ${sec}초`}</h2></div></div>
+  <p>${GR.car?'트렁크가 아니라 배낭 기준이다. 길이 막히면 들고 뛰어야 한다.':'배낭은 10칸. 물은 무겁고, 시간은 흘러간다. '+(famReady()?'가족은 현관에 모여 있다.':'잠든 가족부터 깨워야 현관문이 열린다.')}</p>
+  <div class="stack small mut"><div>${ic('pin')} 방을 눌러 이동 · 거리만큼 시간이 든다</div><div>${ic('pack')} 물건을 누르면 배낭에 · 챙기는 동안 손이 묶인다</div><div>${ic('door')} 현관에서 대피 버튼</div></div>
+  <button class="btn pri" id="gGo">${GR.car?'시작':'시작 — 사이렌이 울린다'}</button></div>`;
+  document.body.appendChild(d);
+  $('#gGo').addEventListener('click',()=>{d.remove();SND.ac();grabBegin()});
+}
+function grabBegin(){
+  GR.running=true;GR.end=performance.now()+GR.sec*1000;GR.lastTick=GR.sec;wake(true);
+  if(!GR.car){SND.siren(GR.sec);vib([300,200,300])}
+  const vg=$('#fx-vignette');if(vg)vg.hidden=GR.car;
+  grabUpdate();loop();
+}
+function loop(){
+  if(!GR.running)return;const now=performance.now();GR.left=Math.max(0,(GR.end-now)/1000);
+  const ringV=$('#ringVal'),arc=$('#ringArc');
+  if(ringV){const s=Math.ceil(GR.left);ringV.textContent=s;$('#ring').classList.toggle('danger',s<=10);
+    arc.setAttribute('stroke-dashoffset',String(201.06*(1-GR.left/GR.sec)));arc.setAttribute('stroke',s<=10?'#ff5449':(GR.car?'#5aa8ff':'#ffb224'));
+    if(s<=10&&s<GR.lastTick){SND.tick();GR.lastTick=s}}
+  if(GR.left<=0){grabFinish(true);return}
+  UI.raf=requestAnimationFrame(loop);
+}
+function trayItems(){return Object.keys(ITEMS).filter(id=>ITEMS[id].room===GR.room&&itemVisible(id,GR)&&!(ITEMS[id].fam&&GR.fam[ITEMS[id].fam]))}
+function grabUpdate(){
+  const tray=$('#tray');if(!tray)return;
+  const ids=trayItems();
+  tray.innerHTML=ids.length?ids.map(id=>{const it=ITEMS[id];const done=GR.picked.includes(id)||(it.act&&GR[id]);
+    const full=!it.act&&!it.fam&&(GR.used+(it.s||0)>GR.cap);
+    return `<button class="it${it.act?' act':''}${it.fam?' fam':''}${done?' done':''}" data-g="pick" data-id="${id}" ${done||full?'disabled':''}><span class="prog"></span>${ic(it.ic)}<div><b>${it.n}</b><small>${done?'완료':full?'칸 부족':`${it.act||it.fam?'행동':(it.s+'칸')} · ${it.t}초 · ${it.d}`}</small></div></button>`}).join('')
+    :`<p class="small mut" style="grid-column:1/-1;margin:4px 0">이 방엔 챙길 것이 없다. 다른 방을 눌러 이동.</p>`;
+  $('#trayRoom').textContent=ROOMS[GR.room].n;$('#slotTxt').textContent=`배낭 ${GR.used}/${GR.cap}칸`;
+  const slots=gSlotsOf(GR.picked.filter(id=>!ITEMS[id].act&&!ITEMS[id].fam));
+  $('#bag').innerHTML=Array.from({length:GR.cap},(_,i)=>`<div class="slot${slots[i]?' f':''}">${slots[i]?ic(ITEMS[slots[i]].ic):''}</div>`).join('');
+  $('#packLine').hidden=!GR.pack;
+  const ex=$('#exitBtn');const atHall=GR.room==='hall';const fr=famReady();
+  ex.disabled=GR.busy;ex.className='btn '+(atHall&&fr?'go':'');
+  ex.innerHTML=GR.car?`${ic('car')}${atHall?'차에 싣고 출발':'현관으로 가서 출발'}`:!fr?`${ic('person')}가족을 깨워야 나갈 수 있다`:atHall?`${ic('door')}현관문 열고 대피`:`${ic('door')}현관으로 이동해 대피`;
+  /* 평면도: 방 강조·물건·가족 */
+  $$('#plan .room').forEach(g=>g.classList.toggle('here',g.dataset.room===GR.room));
+  $$('#plan .itm').forEach(g=>{const id=g.dataset.it;g.classList.toggle('gone',!!(GR.picked.includes(id)||(ITEMS[id].act&&GR[id])))});
+  const me=planMePos(GR.room);const t=$('#tok-me');if(t)t.setAttribute('transform',`translate(${me.x} ${me.y})`);
+  planFamPos(GR).forEach(f=>{const el=$('#tok-'+f.id);if(el){el.setAttribute('transform',`translate(${f.x} ${f.y})`);const c=el.querySelector('circle');c.setAttribute('fill',f.ready?'#2a6b4c':'#3a4652');c.setAttribute('stroke',f.ready?'#2ccf7c':'#7d8b98');const z=el.querySelectorAll('text')[1];if(z&&f.ready)z.remove()}});
+}
+function grabBusy(sec,onDone,btn){
+  GR.busy=true;const p=btn&&btn.querySelector('.prog');
+  if(p){p.style.transition='none';p.style.transform='scaleX(0)';void p.offsetWidth;p.style.transition=`transform ${sec}s linear`;p.style.transform='scaleX(1)'}
+  $('#gSub').textContent=sec>1?`${sec}초 동안 손이 묶였다…`:'…';
+  const ex=$('#exitBtn');if(ex)ex.disabled=true;
+  const tm=setTimeout(()=>{GR.busy=false;if(!GR.running)return;onDone();$('#gSub').textContent='방 누르면 이동 · 물건 누르면 담기';grabUpdate()},sec*1000);
+  UI.timers.push(tm);
+}
+function grabMove(room){
+  if(!GR.running||GR.busy||room===GR.room)return;
+  const sec=travelSec(GR.room,room);GR.room=room;
+  const me=planMePos(room);const t=$('#tok-me');if(t){t.style.transition=`transform ${sec*.9}s cubic-bezier(.4,.1,.3,1)`;t.setAttribute('transform',`translate(${me.x} ${me.y})`)}
+  $$('#plan .room').forEach(g=>g.classList.toggle('here',g.dataset.room===room));
+  $('#trayRoom').textContent=ROOMS[room].n+' — 이동 중';$('#tray').innerHTML='';
+  for(let k=0;k<sec*2;k++)setTimeout(()=>SND.step(),k*480);
+  grabBusy(sec,()=>{});
+}
+function grabPick(id,btn){
+  if(!GR.running||GR.busy)return;const it=ITEMS[id];
+  if(GR.picked.includes(id)||(it.act&&GR[id]))return;
+  if(!it.act&&!it.fam&&GR.used+(it.s||0)>GR.cap){toast('배낭이 꽉 찼다. 칸을 생각해서 골라야 한다.');return}
+  grabBusy(it.t,()=>{
+    if(it.fam){GR.fam[it.fam]=true;GR.picked.push(id);SND.ok();vib(25);return}
+    if(it.act){GR[id]=true;GR.picked.push(id);SND.pick();vib(15);return}
+    GR.picked.push(id);GR.used+=it.s||0;if(id==='pack')GR.pack=true;SND.pick();vib(15);
+  },btn);
+}
+function grabExit(){
+  if(!GR.running||GR.busy)return;
+  if(!famReady()){toast('가족이 아직 자고 있다. 안방·아이방에서 깨워야 한다.');return}
+  if(GR.room!=='hall'){/* 현관까지 걸어간다 */const sec=travelSec(GR.room,'hall');grabMove('hall');setTimeout(()=>{if(GR.running)grabFinish(false)},sec*1000+60);return}
+  grabFinish(false);
+}
+function grabFinish(timeout){
+  if(GR.done)return;GR.done=true;GR.running=false;cancelAnimationFrame(UI.raf);SND.stopSiren();wake(false);
+  const vg=$('#fx-vignette');if(vg)vg.hidden=true;
+  let msg='';
+  if(timeout){
+    if(!famReady()){GR.late=(GR.fam.sp?0:4)+(GR.fam.kid?0:6)+3;GR.fam.sp=GR.fam.kid=true;msg=GR.car?'시간이 다 됐다.':'사이렌이 끝났다. 가족을 흔들어 깨워 맨몸으로 뛰쳐나간다.'}
+    else if(GR.room!=='hall'){GR.late=travelSec(GR.room,'hall');msg=GR.car?'시간이 다 됐다. 들고 있는 것만 챙겨 출발.':'사이렌이 끝났다. 들고 있는 것만 챙겨 현관으로 뛴다.'}
+    else msg=GR.car?'시간이 다 됐다.':'사이렌이 끝났다.';
+    GR.left=0;
+  }
+  GR.famOk=GR.late===0;
+  applyGrab(GR);
+  G.phase='move';G.step='grabsum';
+  G.moveQ=G.flags.car?['road'].concat(G.scen==='nuke'?['mv_nuke']:G.scen==='chem'?['mv_chem']:['mv_conv'])
+    :['mv_elev',G.scen==='conv'?'mv_conv':G.scen==='nuke'?'mv_nuke':'mv_chem',G.scen==='nuke'?'mv_nuke2':'mv_loc'];
+  save();
+  if(msg)toast(msg,2400);
+  setTimeout(()=>setScreen('move'),timeout?900:250);
+}
+document.addEventListener('click',e=>{
+  if(UI.screen!=='grab')return;
+  const room=e.target.closest('#plan .room');if(room){grabMove(room.dataset.room);return}
+  const b=e.target.closest('[data-g]');if(!b||b.disabled)return;
+  if(b.dataset.g==='pick')grabPick(b.dataset.id,b);
+  if(b.dataset.g==='exit')grabExit();
+});
+
+/* ===================== 미니게임 ===================== */
+function startMini(kind,done){
+  const d=document.createElement('div');d.className='overlay';d.id='mini';document.body.appendChild(d);
+  const end=sc=>{clearInterval(d._iv);clearTimeout(d._to);d.remove();done(sc)};
+  if(kind==='cpr')miniCPR(d,end);else if(kind==='hold')miniHold(d,end);else miniSOS(d,end);
+}
+/* 가슴압박: 분당 100~120회 박자로 10초 */
+function miniCPR(d,end){
+  d.innerHTML=`<div class="sheet mini"><div class="eyebrow">가슴압박 · 분당 100~120회</div><h2>가운데를 박자에 맞춰 누른다</h2>
+  <p class="small mut">가슴뼈 아래쪽 절반, 팔꿈치를 펴고 수직으로. 노란 고리가 분당 110회 박자다. 첫 압박부터 10초.</p>
+  <div class="pad" id="pad"><span class="halo" id="halo"></span><svg viewBox="0 0 24 24" fill="none" stroke="#ffb224" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 7.4a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z"/></svg></div>
+  <div class="bpm num" id="bpm">— <small>회/분</small></div>
+  <div class="meter"><div class="bar"><i id="cprBar" style="width:0%;background:var(--amber)"></i></div><span class="small mut" id="cprTxt">누르면 시작</span></div></div>`;
+  const pad=$('#pad',d),halo=$('#halo',d);let taps=[],t0=0,started=false;
+  d._iv=setInterval(()=>{halo.classList.remove('on');void halo.offsetWidth;halo.classList.add('on');SND.beat()},545);
+  const hit=ev=>{ev.preventDefault();const now=performance.now();if(!started){started=true;t0=now;d._to=setTimeout(finish,10000)}
+    taps.push(now);pad.classList.add('hit');setTimeout(()=>pad.classList.remove('hit'),90);vib(12);
+    if(taps.length>2){const iv=taps.slice(-4).reduce((a,v,i,arr)=>i?a+(v-arr[i-1]):a,0)/(Math.min(4,taps.length)-1);const bpm=Math.round(60000/iv);
+      $('#bpm',d).innerHTML=`${bpm} <small>회/분</small>`;$('#bpm',d).style.color=bpm>=100&&bpm<=120?'var(--exit)':'var(--alert)'}
+    $('#cprBar',d).style.width=Math.min(100,(now-t0)/100)+'%';$('#cprTxt',d).textContent='멈추지 말고 계속';};
+  pad.addEventListener('pointerdown',hit);
+  function finish(){const ivs=taps.slice(1).map((v,i)=>v-taps[i]);const good=ivs.filter(x=>x>=500&&x<=600).length;
+    const sc=ivs.length?good/Math.max(ivs.length,15):0;end(Math.min(1,sc))}
+}
+/* 직접압박: 10초(=10분) 동안 손을 떼지 않는다 */
+function miniHold(d,end){
+  d.innerHTML=`<div class="sheet mini"><div class="eyebrow">직접압박 · 최소 10분</div><h2>누른 채로 버틴다</h2>
+  <p class="small mut">가운데를 꾹 누르고 있으면 10분이 흐른다(게임 속 1초 = 1분). 확인하려고 떼면 다시 터진다.</p>
+  <div class="pad" id="pad"><svg viewBox="0 0 24 24" fill="none" stroke="#ff5449" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.6 6 11.1a6 6 0 0 1-12 0C6 9.6 12 3 12 3z"/></svg></div>
+  <div class="bpm num" id="hm">0 <small>분</small></div>
+  <div class="meter"><div class="bar"><i id="hb" style="width:0%;background:var(--alert)"></i></div><span class="small mut" id="ht">누르고 있기</span></div></div>`;
+  const pad=$('#pad',d);let start=0,holding=false,best=0,released=false,iv=0;
+  const tick=()=>{if(!holding)return;const s=(performance.now()-start)/1000;best=Math.max(best,s);
+    $('#hm',d).innerHTML=`${Math.min(10,Math.floor(s))} <small>분</small>`;$('#hb',d).style.width=Math.min(100,s*10)+'%';
+    if(s>=10){holding=false;clearInterval(iv);$('#ht',d).textContent='출혈이 잦아들었다';SND.ok();setTimeout(()=>end(1),500)}};
+  pad.addEventListener('pointerdown',e=>{e.preventDefault();try{pad.setPointerCapture(e.pointerId)}catch(x){}if(released)return;holding=true;start=performance.now();pad.classList.add('hit');vib(20);$('#ht',d).textContent='떼지 말 것';iv=setInterval(tick,100)});
+  const up=()=>{if(!holding)return;holding=false;clearInterval(iv);pad.classList.remove('hit');released=true;SND.bad();vib(80);$('#ht',d).textContent='손을 뗐다!';setTimeout(()=>end(Math.min(.99,best/10)),600)};
+  pad.addEventListener('pointerup',up);pad.addEventListener('pointercancel',up);pad.addEventListener('pointerleave',up);
+  pad.addEventListener('contextmenu',e=>e.preventDefault());
+}
+/* SOS 모스: 짧게 3 · 길게 3 · 짧게 3 */
+function miniSOS(d,end){
+  const pat='...---...';
+  d.innerHTML=`<div class="sheet mini"><div class="eyebrow">구조 신호 · 국제 조난 신호</div><h2>··· ─── ··· 를 불빛으로</h2>
+  <p class="small mut">짧게 톡(점) 세 번, 길게 꾹(약 0.5초 이상) 세 번, 다시 짧게 세 번. 틀리면 처음부터.</p>
+  <div class="lamp" id="lamp"></div>
+  <div class="morse" id="ms">${pat.split('').map(c=>`<i class="${c==='.'?'d':'l'}"></i>`).join('')}</div>
+  <div class="pad" id="pad" style="width:min(52vw,180px)"><svg viewBox="0 0 24 24" fill="none" stroke="#ffb224" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5h9l4-3v11l-4-3H3z"/><path d="M19 8l2.2-1.2M19.2 12h2.6M19 16l2.2 1.2"/></svg></div>
+  <span class="small mut" id="st">시도 3번</span></div>`;
+  const pad=$('#pad',d),lamp=$('#lamp',d),marks=$$('#ms i',d);let pos=0,tries=3,t0=0,down=false;
+  const reset=()=>{pos=0;marks.forEach(m=>m.className=m.className.replace(/ (ok|bad)/g,''))};
+  pad.addEventListener('pointerdown',e=>{e.preventDefault();try{pad.setPointerCapture(e.pointerId)}catch(x){}down=true;t0=performance.now();lamp.classList.add('on');pad.classList.add('hit');SND.tone(740,.6,'sine',.04)});
+  const up=()=>{if(!down)return;down=false;lamp.classList.remove('on');pad.classList.remove('hit');
+    const dur=performance.now()-t0;const sym=dur>=420?'-':'.';
+    if(sym===pat[pos]){marks[pos].className+=' ok';pos++;vib(10);if(pos===pat.length){SND.ok();$('#st',d).textContent='신호 완성';setTimeout(()=>end(1),600)}}
+    else{marks[pos].className+=' bad';tries--;SND.bad();vib(60);$('#st',d).textContent=tries>0?`틀렸다 — 시도 ${tries}번 남음`:'신호가 엉켰다';
+      if(tries<=0){setTimeout(()=>end(0),700)}else setTimeout(reset,500)}};
+  pad.addEventListener('pointerup',up);pad.addEventListener('pointercancel',up);
+  pad.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+/* ===================== 08 · 시작 · 설치판(PWA) ===================== */
+(function boot(){
+  const start=data=>{
+    try{if(data&&data.G&&data.G.v===1&&data.G.phase!=='end'){store.set('sg.save',data.G)}}catch(e){}
+    render();
+  };
+  try{window.claude&&window.claude.hot&&window.claude.hot.snapshot&&window.claude.hot.snapshot(()=>({G:G&&G.phase!=='end'?Object.assign({},G,{rngS:RNG.s}):null}))}catch(e){}
+  if(window.claude&&window.claude.hot&&window.claude.hot.ready)window.claude.hot.ready(start);
+  else start((window.claude&&window.claude.hot&&window.claude.hot.data)||{});
+})();
+/* 화면 꺼짐 방지(가능한 경우만) — 실시간 단계에서 */
+let WL=null;
+async function wake(on){try{if(on&&!WL&&navigator.wakeLock){WL=await navigator.wakeLock.request('screen');WL.addEventListener('release',()=>{WL=null})}else if(!on&&WL){await WL.release();WL=null}}catch(e){WL=null}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&UI.screen==='grab'&&GR.running)wake(true)});
+/* 설치판: 생존 수첩(/Survival/) 아래 /game/ 경로에서만 서비스워커 등록 */
+(function pwa(){
+  if(!('serviceWorker' in navigator)||!window.isSecureContext)return;
+  if(!/\/game\/(index\.html)?$/.test(location.pathname))return;
+  try{navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(function(){})}catch(e){}
+  /* 방어: 구버전 생존 수첩 서비스워커가 이 페이지를 자기 index.html 캐시에 덮어쓴 경우 복구 */
+  (async function repair(){try{
+    if(!('caches' in window))return;const root=new URL('../',location.href);const MARK='data-app="saengjon-72h"';
+    const keys=await caches.keys();
+    for(const k of keys){if(!/^saengjon-v/.test(k))continue;const c=await caches.open(k);
+      for(const p of ['index.html','']){const u=new URL(p,root).href;const hit=await c.match(u);if(!hit)continue;
+        const t=await hit.clone().text();if(t.indexOf(MARK)===-1)continue;
+        const fresh=await fetch(new URL('index.html',root).href,{cache:'no-store'});
+        if(fresh.ok){const ft=await fresh.clone().text();if(ft.indexOf(MARK)===-1)await c.put(u,fresh)}}}
+    const reg=await navigator.serviceWorker.getRegistration(root.href);if(reg&&reg.scope===root.href)reg.update();
+  }catch(e){}})();
+})();
+
+</script>
+</body>
+</html>
