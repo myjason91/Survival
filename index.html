@@ -285,6 +285,14 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.6-9-9c-1.2-2.8.7-6 3.8-6C9 5 10.5 6.5 12 8.5 13.5 6.5 15 5 17.2 5c3.1 0 5 3.2 3.8 6-2 4.4-9 9-9 9z"/><path d="M5 12h4l1.5-3 2 6 1.5-3h5"/></svg>
         <div><b>심폐소생술</b><span>분당 100–120회 · 박자 도우미</span></div>
       </button>
+      <button class="sit hot" data-g="g-bleed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/><path d="M9.5 13.5l5 5M14.5 13.5l-5 5"/></svg>
+        <div><b>대량 출혈·지혈</b><span>압박 → 패킹 → 지혈대 · 3분이 분기점</span></div>
+      </button>
+      <button class="sit" data-g="g-gear">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4h3.4l.5 2.3 2 1.1 2.2-.8 1.7 2.9-1.7 1.6v2.2l1.7 1.6-1.7 2.9-2.2-.8-2 1.1-.5 2.3h-3.4l-.5-2.3-2-1.1-2.2.8L4 15.9l1.7-1.6v-2.2L4 10.5l1.7-2.9 2.2.8 2-1.1z"/><circle cx="12" cy="12" r="2.4"/></svg>
+        <div><b>응급 장비 사용법</b><span>소화기·완강기·차량탈출·가스차단</span></div>
+      </button>
       <button class="sit" data-g="g-black">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
         <div><b>정전·통신두절</b><span>문자 우선 · 라디오 · 배터리 아끼기</span></div>
@@ -447,6 +455,76 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     </div>
     <div class="note">영아(1세 미만): 양손으로 가슴을 감싸 <b>두 엄지</b>로 압박(2025 지침). 깊이는 가슴 두께의 1/3.</div>
     <p class="src">출처: 질병관리청·대한심폐소생협회 「2025 한국 심폐소생술 가이드라인」 (2026.11 확인)</p>
+  </section>
+
+  <!-- ===== 지혈 ===== -->
+  <section class="guide" id="g-bleed" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>대량 출혈·지혈</h2></div>
+    <div class="do-now"><span class="eyebrow">외상 사망 1위 = 막을 수 있는 출혈</span><b>피가 솟구치거나 멈추지 않으면<br>망설이지 말고 세게, 계속 눌러라.</b></div>
+    <div class="note">재난·사고에서 몇 분 안에 생명을 가르는 건 대부분 출혈이다. 순서는 <b>직접압박 → 상처 채우기(패킹) → 지혈대</b>. 겁내서 약하게 누르는 게 가장 흔한 실수다.</div>
+    <div class="phase"><span class="phase-tag">1 · 직접압박 (거의 모든 출혈)</span>
+      <ol class="steps">
+        <li><b>깨끗한 천·거즈를 두껍게 접어 상처에 바로 대고 체중을 실어 누른다.</b><span class="why">거즈가 없으면 수건·옷 아무거나. 손만으로라도 즉시.</span></li>
+        <li><b>최소 10분, 시계로 보며 떼지 말고 계속 누른다.</b><span class="why">중간에 "멈췄나" 확인하려 떼면 다시 터진다. 피가 배어 나오면 천을 걷어내지 말고 그 위에 덧댄다.</span></li>
+        <li><b>가능하면 상처를 심장보다 높이 든다.</b></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">2 · 지압점 압박 (팔·다리 동맥이 솟구칠 때)</span>
+      <ol class="steps">
+        <li><b>팔: 위팔 안쪽 중간을 손아귀로 뼈를 향해 쥐어 누른다.</b><span class="why">직접압박과 <b>동시에</b> 한다.</span></li>
+        <li><b>다리: 사타구니(서혜부) 중앙을 손바닥으로 골반을 향해 체중 실어 누른다.</b><span class="why">대퇴동맥. 큰 힘이 필요하다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">3 · 상처 채우기 (깊은 상처)</span>
+      <ol class="steps">
+        <li><b>깊은 상처는 천·거즈를 상처 속으로 밀어 넣어 꽉 채운다.</b><span class="why">출혈점을 안에서 직접 눌러 막는 원리. 채운 뒤 그 위를 다시 세게 압박.</span></li>
+        <li><b>목·가슴·배의 출혈은 지혈대를 쓸 수 없다 — 채워 넣고 누르며 119.</b></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">4 · 지혈대 (팔·다리에서 압박으로 안 멈출 때 / 생명 위협)</span>
+      <ol class="steps">
+        <li><b>출혈 부위보다 <u>심장 쪽(위쪽)</u> 5~7cm에 감는다. 관절 위는 피한다.</b><span class="why">전용 지혈대가 없으면 넓은 천(허리띠·스카프)과 막대기로. 끈·전선처럼 가는 것은 조직을 자르니 금지.</span></li>
+        <li><b>피가 멈출 때까지 조인다 — 아플 만큼 조여야 효과가 있다.</b><span class="why">덜 조이면 정맥만 막혀 오히려 출혈이 심해진다.</span></li>
+        <li><b>감은 시각을 적어 둔다(이마·팔에 직접 써도 됨).</b><span class="why">구급대가 반드시 묻는다. 예: "14:05 지혈대".</span></li>
+        <li><b>한번 감은 지혈대는 임의로 풀지 않는다. 구급대·의료진에게 넘긴다.</b><span class="why">함부로 풀면 고인 독소·출혈이 한꺼번에 돌아 위험하다.</span></li>
+      </ol>
+    </div>
+    <div class="warn"><b>쇼크 대비:</b> 지혈 후 환자를 눕히고 체온을 유지(담요)한다. 의식·호흡이 없어지면 <b>심폐소생술 탭</b>으로.</div>
+    <p class="src">출처: 구로구보건소 응급처치(직접압박·지압점) · 미국 Stop the Bleed 표준(상처 패킹·지혈대) (2026.11 확인). 실제 적용 전 대한적십자사 응급처치 교육 권장.</p>
+  </section>
+
+  <!-- ===== 응급 장비 ===== -->
+  <section class="guide" id="g-gear" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>응급 장비 사용법</h2></div>
+    <div class="do-now"><span class="eyebrow">평소 1분 숙지가 당일의 전부</span><b>장비는 "있는 것"이 아니라<br>"쓸 줄 아는 것"만 쓸모가 있다.</b></div>
+    <div class="phase"><span class="phase-tag">소화기 — "핀·노즐·손잡이·쓸기"</span>
+      <ol class="steps">
+        <li><b>안전핀을 뽑는다.</b><span class="why">손잡이를 쥔 채로는 안 빠진다. 손을 떼고 핀부터.</span></li>
+        <li><b>노즐(호스)을 잡고 불쪽을 겨눈다 — 불꽃이 아니라 <u>타는 바닥</u>을.</b></li>
+        <li><b>손잡이를 꽉 움켜쥔다.</b></li>
+        <li><b>비로 바닥을 쓸듯 좌우로 뿌린다.</b><span class="why">바람을 등지고. 분사 시간은 약 10~15초뿐이니 초기 불에만. 천장까지 번졌으면 끄지 말고 대피.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">완강기 — 고층 탈출(지지대 있는 집)</span>
+      <ol class="steps">
+        <li><b>지지대 고리에 완강기 고리를 걸고 잠금을 확인.</b></li>
+        <li><b>벨트를 가슴 높이까지 걸고 겨드랑이 아래로 조인다.</b></li>
+        <li><b>줄을 창밖으로 던지고, 벽을 짚으며 두 팔을 벌린 채 천천히 내려간다.</b><span class="why">속도는 자동 조절된다. 한 명 내려가면 다음 사람. 평소 위치와 지지대를 확인해 둘 것.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">차량 침수·충돌 탈출</span>
+      <ol class="steps">
+        <li><b>문이 안 열리면 창문을 깬다 — 유리망치 또는 목받침(헤드레스트) 쇠봉.</b><span class="why">앞유리는 안 깨진다. <b>옆유리 모서리</b>를 노린다. 목받침을 뽑아 쇠봉을 창틈에 끼워 지렛대로.</span></li>
+        <li><b>침수 시: 물이 차오르기 전 창문으로. 안전벨트부터 푼다.</b><span class="why">문은 수압으로 안 열린다. 벨트가 안 풀리면 커터로 자른다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">가스·전기 차단 (지진·대피 전)</span>
+      <ol class="steps">
+        <li><b>가스: 중간밸브와 계량기 밸브를 잠근다(손잡이를 배관과 직각으로).</b></li>
+        <li><b>전기: 두꺼비집(분전함)의 메인 차단기를 내린다.</b><span class="why">누전·가스 누출 상태에서 전기 스파크는 폭발·화재로 이어진다. 대피 여유가 있을 때만.</span></li>
+      </ol>
+    </div>
+    <p class="src">출처: 소방청 소화기·완강기 사용요령, 행정안전부 국민행동요령 (2026.11 확인)</p>
   </section>
 
   <!-- ===== 정전/통신 ===== -->
@@ -619,6 +697,32 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     </ol>
   </div>
 
+  <!-- ===== 비상식량 가성비 ===== -->
+  <div class="card">
+    <span class="eyebrow">비축 우선순위 · 가성비</span>
+    <h3 style="margin-top:4px">비상식량 — 돈·칼로리·보관성 기준</h3>
+    <p class="sm">선정 기준 셋: <b>조리 불필요</b>(정전·단수 전제) · <b>원당 칼로리</b>(열량 확보가 1순위) · <b>상온 장기보관</b>. 입맛보다 "불 없이, 싸게, 오래"가 재난식의 원칙이다.</p>
+    <div class="warn" style="margin-top:4px"><b>0순위는 물이다.</b> 1인 1일 2~3L × 최소 3일, 가능하면 2주분. 식량보다 물이 먼저 사람을 살린다.</div>
+    <div class="scroll-x"><table class="cmp">
+      <tr><th>품목</th><th>강점</th><th>보관</th><th>비고</th></tr>
+      <tr><td><b>쌀·즉석밥</b></td><td>원당 칼로리 최강, 주식</td><td>쌀 수년 / 즉석밥 ~9개월</td><td>즉석밥은 데워야 제맛이나 비상시 그냥도 가능</td></tr>
+      <tr><td><b>라면·국수</b></td><td>싸고 열량 높음</td><td>5~6개월</td><td>물·불 필요가 약점. 생라면도 섭취 가능</td></tr>
+      <tr><td><b>통조림</b> (참치·꽁치·스팸·과일)</td><td>조리 불필요, 단백질+수분</td><td>수년</td><td>따개 필요 없는 이지오픈 위주. 과일캔은 비타민·수분</td></tr>
+      <tr><td><b>미숫가루·선식</b></td><td>물만 타면 끝, 열량·영양 균형</td><td>6개월~1년</td><td>물 적게 쓰고 포만감 큼. 가성비 상위</td></tr>
+      <tr><td><b>건빵·크래커·에너지바</b></td><td>즉시 섭취, 휴대성</td><td>1년 내외</td><td>배낭용. 목 메니 물과 함께</td></tr>
+      <tr><td><b>땅콩버터·견과·꿀</b></td><td>고열량·고지방, 포만감</td><td>꿀 사실상 무한</td><td>적은 양으로 큰 열량. 꿀은 비상 당 공급원</td></tr>
+      <tr><td><b>전투식량(발열형)</b></td><td>전기·물 없이 가열 섭취</td><td>수년</td><td>단가 높음. 이동·극한용 소량</td></tr>
+      <tr><td><b>소금·종합비타민</b></td><td>전해질·결핍 방지</td><td>장기</td><td>장기 비상시 의외의 필수품</td></tr>
+    </table></div>
+    <details><summary>예산대별 1인 3일 구성 예시</summary><div class="inner">
+      <p><b>최저가(약 1~1.5만 원):</b> 생수 + 라면 + 참치캔 + 건빵 + 미숫가루. 열량은 충분, 조리 일부 필요.</p>
+      <p><b>균형(약 3~4만 원):</b> 생수 + 즉석밥 + 통조림 다양 + 미숫가루 + 에너지바 + 견과 + 과일캔. 영양·포만 균형.</p>
+      <p><b>이동·극한 추가:</b> 전투식량 2~3개 + 에너지바 다수. 배낭에 상시.</p>
+      <p class="mut">· 유통기한 관리법: 평소 먹는 것을 넉넉히 사서 오래된 것부터 먹고 다시 채우는 <b>롤링 스톡</b>. 사두고 썩히지 않는 가장 싼 방법.</p>
+    </div></details>
+    <p class="sm faint">기준: 국민재난안전포털(생수·즉석밥 2주~1달분 권고) + 행안부 비상대비 물자 품목. 가격은 추정이며 변동. 열량·보관기간은 대략값 — 제품 라벨 확인.</p>
+  </div>
+
   <!-- ===== 위성통신 검토 ===== -->
   <div class="card" id="starlink">
     <span class="eyebrow">통신 두절 대비 · 선택 장비</span>
@@ -670,7 +774,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
 
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 美 FEMA Ready.gov. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양. 전체 2026년 11월 확인 기준.<br><br>
-    본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다. · 앱 버전 v1.2
+    본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다. · 앱 버전 v1.3
   </footer>
 </main>
 </div>
