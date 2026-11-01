@@ -647,6 +647,18 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/><path d="M9.5 13.5l5 5M14.5 13.5l-5 5"/></svg>
         <div><b>대량 출혈·지혈</b><span>압박 → 패킹 → 지혈대</span></div>
       </button>
+      <button class="sit hot" data-g="g-drown">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c1.5 0 1.5 1.3 3 1.3S10.5 15 12 15s1.5 1.3 3 1.3S19.5 15 21 15"/><path d="M3 19c1.5 0 1.5 1.3 3 1.3S10.5 19 12 19s1.5 1.3 3 1.3S19.5 19 21 19"/><circle cx="12" cy="6" r="2"/><path d="M8 12l2-2 2 1 2-2 2 1"/></svg>
+        <div><b>익수 (물빠짐)</b><span>인공호흡이 핵심</span></div>
+      </button>
+      <button class="sit hot" data-g="g-ana">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6v5l3 3v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4v-4l3-3z"/><path d="M9.5 14l1.5-2 1 1.5 1.5-2.5"/></svg>
+        <div><b>아나필락시스</b><span>중증 알레르기 · 분 단위</span></div>
+      </button>
+      <button class="sit hot" data-g="g-stroke">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2a5 5 0 0 0-3 9 3 3 0 0 0 .5 4.5V20a2 2 0 0 0 2 2h2v-4M15 22h-2"/><path d="M14 4a5 5 0 0 1 3 9 3 3 0 0 1-.5 4.5"/></svg>
+        <div><b>뇌졸중·심장마비</b><span>이웃손발시선 · 골든타임</span></div>
+      </button>
       <button class="sit hot" data-g="g-choke">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><path d="M9 11h6l1 5-2 1-2-3-2 3-2-1z"/><path d="M15.5 9.5l2.5-1"/></svg>
         <div><b>질식·하임리히</b><span>목에 뭔가 걸렸을 때</span></div>
@@ -738,6 +750,65 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
     <p class="src">출처: 구로구보건소 응급처치(직접압박·지압점) · 미국 Stop the Bleed 표준(상처 패킹·지혈대) (2026.11 확인). 실제 적용 전 대한적십자사 응급처치 교육 권장.</p>
   </section>
 
+  <section class="guide" id="g-drown" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>익수 (물빠짐)</h2></div>
+    <div class="do-now"><span class="eyebrow">익수 심정지는 '산소 부족'이 원인</span><b>구조 후 숨이 없으면<br>인공호흡부터 시작한다.</b></div>
+    <div class="phase"><span class="phase-tag">구조 — 물에 들어가지 말 것</span>
+      <ol class="steps">
+        <li><b>뻗어서·던져서 구조한다("내밀고, 던지고, 저어가되 들어가지 않는다").</b><span class="why">긴 막대·옷·튜브·아이스박스·줄을 내민다. 직접 뛰어들면 구조자까지 익수. 119·122(해경).</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">꺼낸 직후</span>
+      <ol class="steps">
+        <li><b>반응·호흡 확인. 없으면 인공호흡 2회 → 가슴압박 30회로 표준 심폐소생술.</b><span class="why">일반 심정지와 달리 익수는 산소 결핍이 핵심이라 <b>인공호흡이 특히 중요</b>(2025 지침). 인공호흡을 못 하거나 꺼려지면 가슴압박만이라도 즉시.</span></li>
+        <li><b>배를 눌러 물을 빼려 하지 않는다.</b><span class="why">위의 물만 나오고 토물이 기도로 넘어가 더 위험. 시간 낭비.</span></li>
+        <li><b>토하면 옆으로 돌려 입을 비우고 다시 압박.</b></li>
+        <li><b>회복해도 반드시 병원.</b><span class="why">물을 조금만 마셔도 몇 시간 뒤 폐 손상(2차 익수)이 올 수 있다.</span></li>
+      </ol>
+    </div>
+    <div class="warn">찬물 익수는 <b>저체온</b>이 동반된다 — 젖은 옷을 벗기고 체온 유지('저체온·온열질환' 참고). 차갑다고 소생을 포기하지 말 것.</div>
+    <p class="src">출처: 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인(익수) (2026.11 확인)</p>
+  </section>
+
+  <section class="guide" id="g-ana" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>아나필락시스 (중증 알레르기)</h2></div>
+    <div class="do-now"><span class="eyebrow">벌·음식·약 노출 후 수 분 내 급변</span><b>전신 두드러기 + 호흡곤란·부종이면<br>망설이지 말고 119. 분 단위다.</b></div>
+    <div class="note">신호: 입술·혀·목의 부종, 쌕쌕거림·호흡곤란, 전신 두드러기·가려움, 어지럼·실신, 구토·복통. 둘 이상이 동시에 빠르게 오면 아나필락시스로 본다.</div>
+    <div class="phase"><span class="phase-tag">대응</span>
+      <ol class="steps">
+        <li><b>에피네프린 자가주사기(에피펜 등)가 있으면 즉시 — 허벅지 바깥쪽에 꾹.</b><span class="why">가장 확실한 치료. 옷 위로도 가능. 쓴 뒤에도 반드시 119.</span></li>
+        <li><b>119. 원인(벌침은 긁어서 제거)과 접촉을 차단한다.</b><span class="why">벌침은 핀셋으로 집지 말고 카드 등으로 밀어 긁어낸다(짜면 독이 더 들어감).</span></li>
+        <li><b>눕히고 다리를 올린다. 단, 숨이 차면 상체를 세워 앉힌다. 토하면 옆으로.</b><span class="why">갑자기 일으켜 세우지 말 것(급사 위험).</span></li>
+        <li><b>5~15분 뒤에도 나아지지 않고 주사기가 더 있으면 2차 투여.</b></li>
+        <li><b>의식·호흡이 없어지면 심폐소생술.</b></li>
+      </ol>
+    </div>
+    <p class="src">출처: 대한천식알레르기학회·대한적십자사 응급처치 (2026.11 확인). 에피네프린은 처방 약이며 평소 알레르기력 있으면 상비 권장.</p>
+  </section>
+
+  <section class="guide" id="g-stroke" hidden>
+    <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>뇌졸중·심장마비 전조</h2></div>
+    <div class="do-now"><span class="eyebrow">치료 시간이 뇌·심장을 살린다</span><b>한 가지라도 갑자기 나타나면<br>지체 없이 119 — 직접 운전 금지.</b></div>
+    <div class="phase"><span class="phase-tag">뇌졸중 — "이웃손발시선"</span>
+      <ol class="steps">
+        <li><b>이~ 하고 웃기:</b> 한쪽 입꼬리가 처진다(얼굴 마비).</li>
+        <li><b>손 들기:</b> 두 팔을 들면 한쪽이 내려온다.</li>
+        <li><b>발음:</b> 말이 어눌하거나 엉뚱하다.</li>
+        <li><b>시선:</b> 눈·시선이 한쪽으로 쏠리거나 한쪽이 안 보인다.</li>
+        <li><b>→ 하나라도 있으면 즉시 119. 증상 <u>시작 시각</u>을 기억한다.</b><span class="why">혈전 치료에 시간 제한이 있다. 토할 때 대비해 옆으로 눕히고, 아무것도 먹이지 않는다.</span></li>
+      </ol>
+    </div>
+    <div class="phase"><span class="phase-tag">심근경색(심장마비 전조)</span>
+      <ol class="steps">
+        <li><b>가슴 중앙을 쥐어짜는·누르는 통증이 수 분 이상, 쉬어도 안 가심.</b><span class="why">왼팔·턱·등으로 뻗치는 통증, 식은땀, 메스꺼움, 호흡곤란 동반.</span></li>
+        <li><b>즉시 119. 안정시키고 조이는 옷을 푼다.</b><span class="why">계단·걷기 금지, 직접 운전 금지.</span></li>
+        <li><b>갑자기 쓰러지고 반응·호흡이 없으면 심폐소생술 + AED.</b></li>
+      </ol>
+    </div>
+    <div class="warn">약(아스피린·니트로 등)의 임의 복용은 권하지 않습니다 — 뇌졸중·심근경색은 초기에 구분이 어렵고, 뇌출혈이면 위험할 수 있습니다. 119 상담원·의료진 지시를 따르세요.</div>
+    <p class="src">출처: 대한뇌졸중학회 '이웃손발시선' 캠페인 · 질병관리청 심뇌혈관 (2026.11 확인)</p>
+  </section>
+
   <section class="guide" id="g-choke" hidden>
     <div class="guide-head"><button class="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2>질식·하임리히</h2></div>
     <div class="do-now"><span class="eyebrow">목을 감싸쥐고 말을 못 하면 완전 폐쇄</span><b>기침을 할 수 있으면 기침하게 두고,<br>소리조차 못 내면 즉시 밀어올린다.</b></div>
@@ -749,6 +820,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
         <li><b>쓰러져 의식을 잃으면 즉시 심폐소생술.</b><span class="why">압박 때마다 입 안을 확인, 보이는 이물질만 꺼낸다. 안 보이면 손 넣지 말 것.</span></li>
       </ol>
     </div>
+    <div class="warn"><b>임산부·고도비만:</b> 배(복부)를 밀 수 없으니 <b>가슴 밀어내기</b>로 — 겨드랑이 아래로 팔을 둘러 가슴뼈 중앙을 뒤로 당기듯 압박한다.</div>
     <div class="phase"><span class="phase-tag">1세 미만 영아</span>
       <ol class="steps">
         <li><b>머리를 낮게 하여 등 두드리기 5회 → 뒤집어 가슴 압박 5회 반복.</b><span class="why">복부(하임리히)는 영아에게 하지 않는다. 등·가슴만.</span></li>
@@ -874,7 +946,14 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
       </ol>
     </div>
     <div class="warn">끓이기·소독으로 <b>안 되는 것</b>: 중금속·화학물질·방사능 오염. 공업지대 침수수·화생방 의심수는 소독해도 마시지 말 것. 이럴 땐 생수·정부 급수에 의존.</div>
-    <p class="src">출처: 美 CDC·메릴랜드주 보건부 비상 식수 소독 가이드(한국어판) (2026.11 확인). 락스 농도·상태에 따라 효과 차이.</p>
+    <div class="phase"><span class="phase-tag">설사·탈수 — 경구수액(ORS) 직접 만들기</span>
+      <ol class="steps">
+        <li><b>재난 때 설사·탈수는 숨은 살인 요인이다. 물만 많이 마시는 것보다 ORS가 빠르게 회복시킨다.</b></li>
+        <li><b>끓였다 식힌 물 1L + 설탕 6작은술 + 소금 1/2작은술, 잘 저어 조금씩 자주.</b><span class="why">WHO 표준 비율. 눈물 같은 짠맛이면 적당(너무 짜면 위험). 가능하면 바나나 등으로 칼륨 보충.</span></li>
+        <li><b>어린이·노인은 탈수에 특히 취약 — 소변이 줄거나 축 처지면 위험 신호, 병원.</b></li>
+      </ol>
+    </div>
+    <p class="src">출처: 美 CDC·메릴랜드주 보건부 비상 식수 소독 가이드 · WHO 경구수액(ORS) 표준 (2026.11 확인). 락스 농도·상태에 따라 효과 차이.</p>
   </section>
 </main>
 
@@ -1145,7 +1224,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 대한적십자사 응급처치, 美 FEMA Ready.gov·CDC. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양.<br><b>콘텐츠 최종 검증: 2026년 11월</b> · 법·주파수·가격·지침은 바뀔 수 있으니 6개월마다 재확인 권장. 의료 항목은 참고용이며 대한적십자사 응급처치 교육 수강을 권합니다.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.2
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.3
   </footer>
 </main>
 </div>
