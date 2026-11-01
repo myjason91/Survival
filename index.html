@@ -84,7 +84,7 @@ nav.tabs{
   padding-right:max(16px, env(safe-area-inset-right,0px));
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-nav.tabs .row{max-width:580px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr)}
+nav.tabs .row{max-width:580px; margin:0 auto; display:grid; grid-template-columns:repeat(6,1fr)}
 nav.tabs a{
   display:flex; flex-direction:column; align-items:center; gap:3px;
   padding:9px 1px 8px; text-decoration:none; color:var(--mut); font-size:11px; font-weight:600;
@@ -1224,8 +1224,45 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <footer class="app">
     <b>출처 및 기준</b> — 행동요령: 행정안전부 국민재난안전포털·민방위 경보 규정(2023.8 개편), 소방청 피난행동요령(2023.11 개정), 질병관리청·대한심폐소생협회 2025 심폐소생술 가이드라인, 대한적십자사 응급처치, 美 FEMA Ready.gov·CDC. 위성통신: 스타링크코리아 출시 보도(2025.12) 및 공개 사양.<br><b>콘텐츠 최종 검증: 2026년 11월</b> · 법·주파수·가격·지침은 바뀔 수 있으니 6개월마다 재확인 권장. 의료 항목은 참고용이며 대한적십자사 응급처치 교육 수강을 권합니다.<br><br>
     본 앱은 공식 요령의 요약 참고본이다. 실제 상황에서는 재난문자·정부 방송 안내가 우선하며, 수치·가격은 변동될 수 있다.<br><br>
-    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.3
+    <span style="color:var(--fg);font-weight:700">만든 사람 · 이강훈</span> &nbsp;|&nbsp; 가족과 이웃의 안전을 위해 &nbsp;|&nbsp; 앱 버전 v2.4
   </footer>
+</main>
+
+<!-- ================= 비축 (구매 체크리스트) ================= -->
+<main id="tab-buy" hidden>
+  <h2 style="margin-top:14px">비축 리스트 — 3인 가족 · 1주</h2>
+  <p class="sm mut" style="margin-top:0">전쟁·재난 대비 실전 구매 목록. <b>체크하면 이 기기에 저장</b>되어 쇼핑하며 지울 수 있다. 품목명은 검증된 카테고리 1위 기준의 예시이며, 동급 대체 가능.</p>
+
+  <div class="warn" style="margin-top:4px"><b>0순위는 물이다.</b> 1인 1일 2~3L × 7일 × 3인 ≈ <b>약 45~60L</b>. 식량보다 물이 먼저 사람을 살린다.</div>
+
+  <div class="card">
+    <h3>구매 진행률 <span class="sm mut num" id="buy-count"></span></h3>
+    <div class="progress"><i id="buy-bar"></i></div>
+    <p class="sm faint" id="buy-total" style="margin:8px 0 0"></p>
+    <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="buy-reset">체크 초기화</button></div>
+  </div>
+
+  <div class="note" style="margin-top:4px">🍜 <b>라면은 전부 순한맛</b> — 매운맛은 탈수·속쓰림을 유발해 물을 더 먹게 한다. 아이·노약자 중심 가정은 순한맛이 유리. <b>물만 붓는 컵라면을 최우선</b>으로, 물 버리는 짜장류는 단수 시 소량만.</div>
+
+  <div id="buy-list"></div>
+
+  <div class="card">
+    <h3>구매처 요령</h3>
+    <ol class="steps">
+      <li><b>쿠팡 로켓배송</b>으로 물·라면·통조림·배터리 한 번에 — 내일 도착.<span class="why">무거운 물·대량 품목은 로켓배송이 가장 빠르고 싸다.</span></li>
+      <li><b>처방약·KI는 약국</b>에서.<span class="why">개인 지병약 1주분은 미리 처방받아 비축. 요오드화칼륨(KI)은 <b>공식 지시(핵사고 경보) 시에만</b> 복용 — 자가 복용 금지, 국내 일반 구매 제한.</span></li>
+      <li><b>정수필터·버너·전투식량</b>은 쿠팡·네이버 아웃도어몰 비교.<span class="why">Sawyer·코베아 등 정품 여부 확인. 가품은 생사와 직결.</span></li>
+      <li><b>분산 보관.</b><span class="why">집·차량·회사에 나눠 둔다. 한 곳이 막혀도 접근 가능하도록.</span></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <span class="eyebrow">검토 품목</span>
+    <h3 style="margin-top:4px">📡 스타링크 미니 (통신 두절 장기화 대비)</h3>
+    <p class="sm">지상망·기지국이 마비돼도 위성으로 인터넷. 장기 고립·대피 시 가족 생존 정보와 구조 요청의 마지막 수단이 될 수 있다. 초기 비용이 크므로 "장기화 시나리오를 얼마나 볼 것인가"로 판단.</p>
+    <div class="btnrow"><a class="btn" href="https://www.starlink.com/kr" target="_blank" rel="noopener">스타링크 코리아</a></div>
+    <p class="sm faint" style="margin-bottom:0">가격·요금제·국내 서비스 조건은 수시 변동 — 구매 전 공식 사이트에서 재확인.</p>
+  </div>
 </main>
 </div>
 
@@ -1236,6 +1273,7 @@ footer.app{margin:26px 0 10px; font-size:12px; color:var(--faint); line-height:1
   <a href="#loc" id="nav-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.1-7-11a7 7 0 0 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>내 위치</a>
   <a href="#sos" id="nav-sos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>SOS</a>
   <a href="#prep" id="nav-prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M4 7h16l-1.2 12.2A2 2 0 0 1 16.8 21H7.2a2 2 0 0 1-2-1.8L4 7z"/></svg>대비</a>
+  <a href="#buy" id="nav-buy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.2l2.1 12.2a1.6 1.6 0 0 0 1.6 1.3h9.1a1.6 1.6 0 0 0 1.6-1.3L21.5 7H6"/></svg>비축</a>
 </div></nav>
 
 <div id="flash-ov" hidden><button class="ov-close" id="flash-close" aria-label="종료">✕</button><div class="hint">화면이나 ✕ 를 누르면 종료 · 기기 밝기를 최대로 올리세요</div></div>
@@ -1277,7 +1315,7 @@ function copyText(t,btn){
   }
 }
 /* ========== tabs & guides ========== */
-const TABS=['now','aid','loc','sos','prep'];
+const TABS=['now','aid','loc','sos','prep','buy'];
 function showTab(name){
   if(!TABS.includes(name))name='now';
   TABS.forEach(t=>{$('#tab-'+t).hidden=(t!==name);$('#nav-'+t).classList.toggle('on',t===name)});
@@ -1510,6 +1548,73 @@ const KIT=[
   }
   wrap.addEventListener('change',update);update();
   $('#kit-reset').addEventListener('click',()=>{KIT.forEach((_,i)=>$('#kit'+i).checked=false);update()});
+})();
+
+/* ===== 비축 구매 체크리스트 (3인·1주) ===== */
+const BUY=[
+  ['💧 물 · 취사 (0순위)',[
+    ['생수 2L — 약 45~60L','1인 2~3L×7일×3인. 로켓배송 대량 묶음 · 쿠팡·마트'],
+    ['휴대용 정수필터','Sawyer Mini(SP128) — 재사용 수천L, 가성비 1위 · 쿠팡·네이버'],
+    ['정수 알약','Aquatabs — 바이러스까지 소독, 소량 장기보관 · 쿠팡'],
+    ['물 소독용 락스','유한락스 무향 — 무향 음용수 소독 가능, 초저가 · 마트'],
+    ['휴대용 가스버너 + 부탄가스','코베아 버너 + 썬연료/대성 12~20개 · 쿠팡'],
+  ]],
+  ['🔋 전원 · 조명 · 통신',[
+    ['대용량 보조배터리','20,000mAh↑ 1~2개, 평시 80% 충전 유지 · 쿠팡'],
+    ['LED 랜턴 + 헤드랜턴','헤드랜턴은 양손 자유 · 쿠팡'],
+    ['여분 건전지 (AA·AAA)','랜턴·라디오용 넉넉히 · 쿠팡'],
+    ['건전지식 휴대 라디오','KBS 1라디오 주파수 메모 — 재난방송 수신 · 쿠팡'],
+  ]],
+  ['🍜 라면 · 즉석면 (전부 순한맛)',[
+    ['컵라면(국물)·최우선','농심 사리곰탕 큰사발/순하군 사발 — 물만, 안 매움 · 쿠팡'],
+    ['봉지 담백국물','농심 사리곰탕면/오뚜기 스낵면 멀티팩 — 단가 최저 · 쿠팡'],
+    ['우동·칼국수','농심 생생우동/멸치칼국수 — 깔끔한 국물 · 쿠팡'],
+    ['아이 전용','풀무원 뽀로로 라면·짜장 — 전혀 안 매움 · 쿠팡·마트'],
+  ]],
+  ['🥫 식량 (조리 최소)',[
+    ['즉석밥','햇반 24~36개 — 원당 칼로리 최강 주식 · 쿠팡'],
+    ['통조림','동원 참치·스팸·과일캔(이지오픈) — 조리 불필요 · 쿠팡·마트'],
+    ['미숫가루·선식','물만 타면 끝, 포만감 큼 · 쿠팡'],
+    ['에너지바·견과·꿀·땅콩버터','고열량·고지방, 적은 양으로 큰 열량 · 쿠팡'],
+    ['전투식량(발열형) 소량','불 없이 데워 먹음 — 이동·단수 시 · 쿠팡'],
+  ]],
+  ['⛑️ 의료 · 보호',[
+    ['구급키트','지혈·소독·밴드·거즈·가위 일체 · 쿠팡'],
+    ['개인 처방약 1주분','지병약은 미리 처방 비축 · 약국'],
+    ['해열·지사·진통제','가족 상비약 · 약국·쿠팡'],
+    ['KF94 마스크 다량','분진·낙진 차단 · 쿠팡'],
+    ['요오드화칼륨(KI) — 주의','공식 지시 시에만 복용, 자가복용 금지 · 국내 구매 제한'],
+  ]],
+  ['🧰 도구 · 보온',[
+    ['멀티툴·라이터·장갑·호루라기','호루라기=체력 소모 없는 구조신호 · 쿠팡'],
+    ['은박 보온담요','경량·저체온 방지 · 쿠팡'],
+    ['핫팩 다량','겨울 고립 난방 보조 · 쿠팡'],
+    ['방수 비닐·우의·덕트테이프','낙진 차단·방수·응급 보수 · 쿠팡'],
+    ['현금 (잔돈 포함)','정전 시 카드·페이 전부 무용 · 필수'],
+  ]],
+];
+(function(){
+  const saved=store.get('sv.buy',{});
+  const wrap=$('#buy-list');
+  let total=0, idx=0;
+  const html=BUY.map(grp=>{
+    const rows=grp[1].map(it=>{
+      const i=idx++;total++;
+      return `<div class="chk"><input type="checkbox" id="buy${i}" ${saved[i]?'checked':''}><label for="buy${i}">${it[0]}${it[1]?`<span class="sm">${it[1]}</span>`:''}</label></div>`;
+    }).join('');
+    return `<div class="card"><h3 style="margin-bottom:8px">${grp[0]}</h3>${rows}</div>`;
+  }).join('');
+  wrap.innerHTML=html;
+  function update(){
+    const st={};let n=0;
+    for(let i=0;i<total;i++){const el=$('#buy'+i);if(!el)continue;st[i]=el.checked;if(el.checked)n++;}
+    store.set('sv.buy',st);
+    $('#buy-bar').style.width=(n/total*100)+'%';
+    $('#buy-count').textContent=`${n}/${total}`;
+    $('#buy-total').textContent=`전체 ${total}개 품목 · 예상 총액 대략 20~40만 원(스타링크 제외, 품목 선택에 따라 변동)`;
+  }
+  wrap.addEventListener('change',update);update();
+  $('#buy-reset').addEventListener('click',()=>{for(let i=0;i<total;i++){const el=$('#buy'+i);if(el)el.checked=false;}update()});
 })();
 
 /* 자동저장 입력란 (가족계획 + 우리지역 + 의료카드) */
