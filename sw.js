@@ -16,7 +16,11 @@ self.addEventListener('fetch',e=>{
     /* 페이지(HTML)는 네트워크 우선 — 온라인이면 항상 최신, 오프라인이면 캐시. 캐시 저장은 생존 수첩 자기 페이지만 */
     const own=OWN_PAGES.includes(url.pathname);
     e.respondWith(
-      fetch(e.request).then(res=>{if(own&&res&&res.ok){const cp=res.clone();caches.open(CACHE).then(c=>c.put('./index.html',cp))}return res;})
+      fetch(e.request).then(res=>{
+        if(res&&res.ok){if(own){const cp=res.clone();caches.open(CACHE).then(c=>c.put('./index.html',cp))}return res;}
+        /* 서버가 404 등으로 답하면(사이트 비공개 전환 뒤) 저장해 둔 사본을 보여 준다 */
+        return caches.match(e.request,{ignoreSearch:true}).then(h=>h||caches.match('./index.html')).then(h=>h||res);
+      })
         .catch(()=>caches.match(e.request,{ignoreSearch:true}).then(h=>h||caches.match('./index.html')))
     );
     return;

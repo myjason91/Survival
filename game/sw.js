@@ -10,7 +10,11 @@ self.addEventListener('fetch',e=>{
   if(url.origin!==self.location.origin||url.pathname.indexOf(SCOPE)!==0)return;
   const isPage=e.request.mode==='navigate'||url.pathname===SCOPE||url.pathname===SCOPE+'index.html';
   if(isPage){
-    e.respondWith(fetch(e.request).then(res=>{if(res&&res.ok){const cp=res.clone();caches.open(CACHE).then(c=>c.put('./index.html',cp))}return res})
+    e.respondWith(fetch(e.request).then(res=>{
+      if(res&&res.ok){const cp=res.clone();caches.open(CACHE).then(c=>c.put('./index.html',cp));return res}
+      /* 서버가 404 등으로 답하면(사이트 비공개 전환 뒤) 저장해 둔 사본을 보여 준다 */
+      return caches.open(CACHE).then(c=>c.match('./index.html')).then(h=>h||res);
+    })
       .catch(()=>caches.open(CACHE).then(c=>c.match('./index.html'))));
     return;
   }
