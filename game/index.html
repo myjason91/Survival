@@ -131,6 +131,7 @@ button{font:inherit;color:inherit}
 
 /* ---------- 가족 · 자원 ---------- */
 .fam{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px}
+.fam[data-n="4"]{grid-template-columns:1fr 1fr}
 .mem{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:grid;gap:5px;min-width:0}
 .mem .top{display:flex;align-items:center;gap:6px;justify-content:space-between}
 .mem b{font-size:13.5px}
@@ -322,7 +323,7 @@ button{font:inherit;color:inherit}
 #fx-flash{position:fixed;inset:0;z-index:90;background:#fff;pointer-events:none;animation:flash 1.8s ease-out forwards}
 @keyframes flash{0%{opacity:1}12%{opacity:1}100%{opacity:0}}
 #fx-vignette{position:fixed;inset:0;z-index:15;pointer-events:none;box-shadow:inset 0 0 120px 30px rgba(255,60,48,.35);animation:rp 1.6s ease-in-out infinite}
-#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;max-width:min(92vw,460px);
+#toast{pointer-events:none;position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;max-width:min(92vw,460px);
   background:#222b34;border:1px solid var(--line2);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:13.5px;box-shadow:0 14px 30px -12px rgba(0,0,0,.7)}
 .fade-in{animation:fin .32s ease both}
 @keyframes fin{from{opacity:0;transform:translateY(6px)}}
@@ -331,10 +332,80 @@ button{font:inherit;color:inherit}
   #fx-flash{animation:flash-soft 1.2s ease-out forwards!important;animation-duration:1.2s!important}
   @keyframes flash-soft{0%{opacity:.75}100%{opacity:0}}
 }
+
+/* ===================== v2.0 · 1인칭 계단 ===================== */
+.ds-scene{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#0a0d11;touch-action:none;user-select:none;-webkit-user-select:none}
+.ds-scene svg{display:block;width:100%;height:auto}
+#dsNum.tick{animation:tick .45s ease}
+@keyframes tick{0%{opacity:.2}60%{opacity:1}}
+.ds-dark{position:absolute;inset:0;pointer-events:none;--x:50%;--y:58%;
+  background:radial-gradient(circle at var(--x) var(--y),rgba(0,0,0,0) 0,rgba(0,0,0,.25) calc(var(--r,30%)*.55),rgba(2,3,5,.96) var(--r,30%))}
+.ds-exitglow{position:absolute;left:41%;top:29.5%;width:18%;height:7.5%;border-radius:3px;pointer-events:none;
+  background:rgba(44,207,124,.55);box-shadow:0 0 24px 10px rgba(44,207,124,.35);mix-blend-mode:screen;animation:eg 2.4s ease-in-out infinite}
+.ds-dust{position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background-image:radial-gradient(1.5px 1.5px at 20% 30%,#bfb6a6 50%,transparent 51%),radial-gradient(1.2px 1.2px at 70% 10%,#bfb6a6 50%,transparent 51%),radial-gradient(1.8px 1.8px at 45% 60%,#bfb6a6 50%,transparent 51%),radial-gradient(1px 1px at 85% 45%,#bfb6a6 50%,transparent 51%),radial-gradient(1.4px 1.4px at 10% 75%,#bfb6a6 50%,transparent 51%);
+  background-size:120px 140px;animation:dust 6s linear infinite}
+@keyframes dust{to{background-position:0 140px}}
+.ds-haze{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(150,170,90,.16),rgba(150,170,90,.04) 70%);animation:haze 7s ease-in-out infinite alternate}
+@keyframes haze{to{opacity:.55}}
+.ds-bubble{position:absolute;left:50%;top:44%;transform:translateX(-50%);background:#f2f4f6;color:#11161b;font-weight:800;font-size:14px;padding:6px 11px;border-radius:12px;white-space:nowrap;box-shadow:0 8px 20px -8px rgba(0,0,0,.8);animation:pop .3s ease both}
+.ds-prompt{position:absolute;inset:auto 10px 10px 10px;background:rgba(14,18,23,.94);border:1px solid var(--line2);border-radius:14px;padding:11px 12px;display:grid;gap:7px;animation:pop .3s cubic-bezier(.2,1.4,.4,1) both}
+.ds-prompt b{font-size:15px;line-height:1.35}
+.ds-pbtns{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ds-pbtns .btn{min-height:46px;font-size:14px;padding:8px 10px}
+.btn.dngr{background:var(--alert);color:#fff;border-color:var(--alert)}
+.ds-stat{display:flex;gap:12px;align-items:center}
+.ds-fl{display:grid;line-height:1;min-width:76px}
+.ds-fl b{font:900 44px var(--sans);letter-spacing:-.04em;color:#e8c11a}
+.ds-fl span{font-size:11.5px;color:var(--mut);margin-top:4px}
+.ds-bars{flex:1;min-width:0;display:grid;gap:4px}
+.ds-lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut)}
+.ds-note{font-size:13.5px;color:var(--body);min-height:20px}
+.ds-pad{width:100%;min-height:104px;border-radius:18px;border:2px solid var(--amber-dim);background:linear-gradient(180deg,#2a2412,#1a160b);color:var(--amber);
+  display:grid;place-items:center;align-content:center;gap:3px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;padding:10px}
+.ds-pad .ic{width:28px;height:28px}
+.ds-pad b{font-size:17px}
+.ds-pad small{font-size:12px;color:var(--mut)}
+.ds-pad.on{background:linear-gradient(180deg,#3d3214,#261f0d);border-color:var(--amber);box-shadow:inset 0 0 0 2px rgba(255,178,36,.35)}
+
+/* ===================== v2.0 · 감각 ===================== */
+.bcast{pointer-events:none;position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:85;width:min(92vw,520px);
+  display:flex;gap:10px;align-items:flex-start;background:rgba(18,36,55,.96);border:1px solid color-mix(in srgb,var(--info) 45%,transparent);border-radius:13px;padding:10px 12px;
+  box-shadow:0 16px 30px -14px rgba(0,0,0,.8);animation:pop .35s ease both}
+.bcast .ic{width:20px;height:20px;color:var(--info);margin-top:1px}
+.bcast div{display:grid;gap:2px;min-width:0}
+.bcast b{font-size:11.5px;color:var(--info);letter-spacing:.02em}
+.bcast span{font-size:14px;line-height:1.45;color:var(--fg)}
+#app.stun{animation:stunfx 4.6s ease-out}
+@keyframes stunfx{0%{filter:blur(5px) brightness(1.8) saturate(.2)}35%{filter:blur(2.5px) brightness(1.15) saturate(.5)}100%{filter:none}}
+.scene .torch{position:absolute;inset:0;pointer-events:none;--x:50%;--y:80%;
+  background:radial-gradient(circle at var(--x) var(--y),rgba(0,0,0,0) 0,rgba(0,0,0,.3) calc(var(--r)*.6),rgba(2,3,5,.95) var(--r))}
+.scene .torch.none{background:rgba(2,3,5,.93)}
+.scene{touch-action:pan-y}
+.scene .tag2{left:auto;right:10px}
+.haze{position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(120,130,140,.38),rgba(120,130,140,.08));animation:haze 5s ease-in-out infinite alternate}
+.sound-note{display:flex;gap:7px;align-items:flex-start}
+.sound-note .ic{width:16px;height:16px;flex:none;margin-top:2px}
+
+/* ===================== v2.0 · 우리 가족 ===================== */
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:8px}
+.in{width:100%;font:inherit;font-size:15px;color:var(--fg);background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;min-height:44px}
+.in:focus{outline:2px solid var(--amber);outline-offset:1px}
+.num-in{width:84px;text-align:center;font-variant-numeric:tabular-nums}
+.frow{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mut)}
+.seg-opts.k4{grid-template-columns:repeat(4,1fr)}
+.seg-opts.k4 button{min-height:44px;padding:6px 4px}
+.seg-opts.k4 button b{font-size:12.5px;line-height:1.25}
+.link{background:none;border:0;padding:0;font:inherit;font-size:12.5px;font-weight:800;color:var(--amber);cursor:pointer}
+@media (max-width:360px){.seg-opts.k4{grid-template-columns:repeat(2,1fr)}}
+
+body[data-screen="descent"] #toast{bottom:auto;top:calc(70px + env(safe-area-inset-top,0px))}
+.scene .tag{z-index:3}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
 <div id="fx-flash" hidden></div>
+<div id="bcast" class="bcast" role="status" aria-live="polite" hidden></div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 <defs>
@@ -425,6 +496,7 @@ function vib(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 /* 한국어 조사: 받침 여부로 이/가, 을/를, 은/는, 과/와 선택 */
 function josa(w,pair){const c=w.charCodeAt(w.length-1);const has=c>=0xAC00&&c<=0xD7A3&&((c-0xAC00)%28)!==0;
   const m={'이가':['이','가'],'을를':['을','를'],'은는':['은','는'],'과와':['과','와'],'아야':['아','야']}[pair];return w+(has?m[0]:m[1])}
+const clean=(s,n)=>String(s==null?'':s).replace(/[<>&"'`\\]/g,'').trim().slice(0,n||40);
 const fmtL=n=>(Math.round(n*10)/10).toString().replace(/\.0$/,'');
 function toast(msg,ms){const t=$('#toast');t.innerHTML=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>{t.hidden=true},ms||2600)}
 function shake(){const a=$('#app');a.classList.remove('shake');void a.offsetWidth;a.classList.add('shake');setTimeout(()=>a.classList.remove('shake'),650)}
@@ -448,10 +520,10 @@ const SND={
   stopSiren(){if(this.sirenOsc){try{this.sirenOsc.stop()}catch(e){}this.sirenOsc=null}},
   cbs(){/* 재난문자 경고음 느낌의 2음 반복 */for(let i=0;i<6;i++){this.tone(i%2?1180:880,.16,'square',.05,i*.19)}},
   noise(){const c=this.ac();if(!c)return null;if(!this.noiseBuf){const b=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;this.noiseBuf=b}return this.noiseBuf},
-  boom(big){if(!this.on)return;const c=this.ac();if(!c)return;const s=c.createBufferSource();s.buffer=this.noise();
-    const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=big?260:420;const g=c.createGain();const t=c.currentTime;
-    g.gain.setValueAtTime(big?.9:.55,t);g.gain.exponentialRampToValueAtTime(.001,t+(big?2.6:1.4));
-    s.connect(f);f.connect(g);g.connect(c.destination);s.start(t);s.stop(t+(big?2.7:1.5));this.tone(48,big?1.6:.9,'sine',big?.35:.2)},
+  boom(big,v){if(!this.on)return;const c=this.ac();if(!c)return;v=v||1;const s=c.createBufferSource();s.buffer=this.noise();
+    const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=big?260:(v<1?220:420);const g=c.createGain();const t=c.currentTime;
+    g.gain.setValueAtTime((big?.9:.55)*v,t);g.gain.exponentialRampToValueAtTime(.001,t+(big?2.6:1.4)+(v<1?1:0));
+    s.connect(f);f.connect(g);g.connect(c.destination);s.start(t);s.stop(t+(big?2.7:2.5));this.tone(48,big?1.6:.9,'sine',(big?.35:.2)*v)},
   tick(){this.tone(1500,.05,'square',.03)},
   pick(){this.tone(660,.08,'triangle',.07);this.tone(990,.1,'triangle',.06,.06)},
   ok(){this.tone(523,.14,'triangle',.08);this.tone(784,.22,'triangle',.08,.11)},
@@ -463,10 +535,23 @@ const SND={
 /* ===================== 02 · 데이터: 집 구조 · 물건 · 배낭 연동 · 배지 ===================== */
 const HB='https://myjason91.github.io/Survival/'; /* 생존 수첩 설치판 */
 const SCEN={conv:{n:'재래식 미사일 공습',s:'재래식 공습',ic:'siren'},nuke:{n:'핵 공격 · 낙진',s:'핵 공격',ic:'rad'},chem:{n:'화학무기 공격',s:'화학 공격',ic:'flask'}};
+/* ---------- 우리 가족·우리 집 (이 기기에만 저장: sg.my) ---------- */
+const SHK={park:{n:'지하주차장',ug:1,loc:'park'},subway:{n:'지하철역',ug:1,loc:'subway'},bldg:{n:'건물 지하',ug:1,loc:'bldg'},ground:{n:'지상 시설·학교',ug:0,loc:'bldg'}};
+const MY_DEFAULT={sp:{on:true,n:''},kids:[{n:''}],eld:{on:false,n:''},floor:12,sh:[{n:'',k:'park',m:1},{n:'',k:'subway',m:10}],meet:''};
+const PRESET_SH=[{n:'단지 지하주차장 B2',k:'park',m:1},{n:'지하철역 대합실',k:'subway',m:10}];
+function getMy(){const m=store.get('sg.my',null);return m?Object.assign(JSON.parse(JSON.stringify(MY_DEFAULT)),m):null}
+function myFamCount(m){return 1+(m.sp.on?1:0)+m.kids.length+(m.eld.on?1:0)}
+/* 생존 수첩 '대비' 탭의 우리 지역·가족계획 칸 → 가져오기 */
+function readHandbookPlaces(){
+  const g=k=>{try{const v=localStorage.getItem('sv.'+k);return v===null?'':String(JSON.parse(v)||'')}catch(e){return ''}};
+  const parse=t=>{if(!t)return null;const mm=t.match(/(\d+)\s*분/);const k=/주차장/.test(t)?'park':/역/.test(t)?'subway':/지하/.test(t)?'bldg':'ground';
+    return{n:t.replace(/\s*[\/·,]?\s*도보\s*\d+\s*분.*$/,'').trim().slice(0,40),k,m:mm?Math.min(60,+mm[1]):3}};
+  return{sh:[parse(g('loc-shelter1')),parse(g('loc-shelter2'))].filter(Boolean),meet:g('plan-meet1').slice(0,40)};
+}
 const DIFF={
-  train:{n:'훈련',sec:75,mul:.7,phone:80,hint:'always',d:'수칙 힌트 항상 표시'},
-  real:{n:'실전',sec:60,mul:1,phone:55,hint:'info',d:'라디오·정보가 있어야 힌트'},
-  hard:{n:'극한',sec:45,mul:1.3,phone:30,hint:'radio',d:'45초 · 피해 1.3배'}
+  train:{n:'훈련',sec:75,mul:.7,phone:80,hint:'always',hide:0,d:'힌트 항상 · 정답 바로 공개'},
+  real:{n:'실전',sec:60,mul:1,phone:55,hint:'info',hide:1,d:'정답은 마지막에 공개'},
+  hard:{n:'극한',sec:45,mul:1.3,phone:30,hint:'radio',hide:1,d:'45초 · 피해 1.3배'}
 };
 /* 84㎡ 아파트 평면 (viewBox 360×290) */
 const ROOMS={
@@ -508,8 +593,10 @@ const ITEMS={
   tools:{n:'멀티툴·장갑',room:'util',s:1,t:2,ic:'tool',px:306,py:252,d:'공구함'},
   vinyl:{n:'비닐·우의·테이프',room:'util',s:1,t:2,ic:'tape',px:250,py:272,d:'밀폐·오염 차단'},
   mask:{n:'KF94 마스크 상자',room:'util',s:1,t:1,ic:'mask',px:278,py:272,d:'호흡기 보호'},
-  wakeSp:{n:'배우자 깨우기',room:'master',t:3,ic:'person',fam:'sp',px:56,py:52,d:'신발·겉옷까지'},
-  wakeKid:{n:'아이 깨워 옷 입히기',room:'kid',t:5,ic:'kid',fam:'kid',px:300,py:52,d:'아이는 시간이 걸린다'}
+  wake_sp:{n:'배우자 깨우기',room:'master',t:3,ic:'person',fam:'sp',d:'신발·겉옷까지'},
+  wake_kid:{n:'아이 깨워 옷 입히기',room:'kid',t:5,ic:'kid',fam:'kid',d:'아이는 시간이 걸린다'},
+  wake_kid2:{n:'둘째 깨워 옷 입히기',room:'kid',t:4,ic:'kid',fam:'kid2',d:'한 방이라 같이 깨운다'},
+  wake_eld:{n:'어르신 깨워 부축하기',room:'living',t:4,ic:'person',fam:'eld',d:'계단은 천천히'}
 };
 /* 생존 수첩 '대비' 탭 생존배낭 체크리스트(sv.kit, 16종) → 현관 배낭 내용물 */
 const KIT_NAMES=['생수','비상식량 3일분','손전등','휴대용 라디오','보조배터리','상비약','KF94 마스크','호루라기','물티슈·손소독제','비닐봉투·우의','보온 담요','현금','신분증·가족사진','라이터·멀티툴·장갑','가족 필수용품','종이 수칙 1부'];
@@ -530,6 +617,7 @@ const BADGES={
   reflex:{n:'섬광 반사',d:'섬광 1.5초 안에 올바른 자세',ic:'rad'},
   cpr:{n:'골든 리듬',d:'가슴압박 박자 정확도 80% 이상',ic:'heart'},
   hold:{n:'10분의 인내',d:'직접압박을 끝까지 유지',ic:'drop'},
+  flow:{n:'흐름을 읽는 사람',d:'계단 대피에서 한 번도 밀거나 넘어지지 않음',ic:'stairs'},
   sos:{n:'··· ─── ···',d:'SOS 신호를 정확히 송신',ic:'torch'},
   rumor:{n:'유언비어 감별사',d:'소문 대신 공식 채널 확인',ic:'radio'},
   chemup:{n:'화학은 위로',d:'화생방경보에 고층으로 대피',ic:'flask'},
@@ -545,7 +633,10 @@ const CONDS={bleed:{n:'출혈',ic:'drop',hp:12},injury:{n:'부상',ic:'bone',hp:
 /* ===================== 03 · 엔진: 상태 · 효과 · 턴 · 엔딩 ===================== */
 let G=null;            /* 현재 판 */
 let FX=[];             /* 직전 선택의 효과 칩 */
-const LOCN={park:'단지 지하주차장 B2',subway:'지하철역 대합실',bldg:'인근 상가 지하 2층',home:'집 안 욕실',high:'12층 우리 집 (밀폐)',gym:'정부 집결지 · 학교 체육관'};
+const LOCN={park:'단지 지하주차장 B2',subway:'지하철역 대합실',bldg:'인근 상가 지하 2층',home:'집 안 욕실',high:'우리 집 (밀폐)',gym:'정부 집결지 · 학교 체육관'};
+function locName(l){l=l||G.loc;if(l==='high')return HF()>=5?`${HF()}층 우리 집 (밀폐)`:'고층 이웃집 (밀폐)';
+  if(l==='home')return `${HF()}층 우리 집 욕실`;if(G.locName&&['park','subway','bldg'].includes(l))return G.locName;return LOCN[l]}
+const HF=()=>(G&&G.home&&G.home.floor)||12;
 const DOW=['일','월','화','수','목','금','토'];
 function seasonOf(m){return [12,1,2].includes(m)?'winter':[6,7,8].includes(m)?'summer':[3,4,10,11].includes(m)?'cool':'mild'}
 const SEASON={winter:{n:'한겨울',t:'바깥 영하 6℃'},cool:{n:'쌀쌀한 환절기',t:'바깥 7℃'},summer:{n:'한여름',t:'바깥 31℃'},mild:{n:'온화한 계절',t:'바깥 18℃'}};
@@ -555,10 +646,20 @@ function newGame(o){
   RNG.seed(seed);
   const scen=o.scen==='rand'?pick(['conv','conv','nuke','chem']):o.scen;
   const d=DIFF[o.diff], now=new Date();
-  const fam=[{id:'me',n:'당신',hp:100,c:[]}];
-  if(o.fam>=2)fam.push({id:'sp',n:'배우자',hp:100,c:[]});
-  if(o.fam>=3)fam.push({id:'kid',n:'아이',hp:100,c:[]});
-  G={v:1,seed,opts:o,diff:o.diff,mul:d.mul,scen,scenKnown:o.scen!=='rand',
+  const fam=[{id:'me',n:'당신',k:'me',hp:100,c:[]}];
+  let home={floor:12,sh:PRESET_SH.map(x=>Object.assign({},x)),meet:''};
+  const my=o.fam==='my'?getMy():null;
+  if(my){
+    if(my.sp.on)fam.push({id:'sp',n:(my.sp.n||'배우자').slice(0,8),k:'adult',hp:100,c:[]});
+    my.kids.slice(0,2).forEach((x,i)=>fam.push({id:i?'kid2':'kid',n:(x.n||(my.kids.length>1?(i?'둘째':'첫째'):'아이')).slice(0,8),k:'kid',hp:100,c:[]}));
+    if(my.eld.on)fam.push({id:'eld',n:(my.eld.n||'어르신').slice(0,8),k:'eld',hp:100,c:[]});
+    const sh=(my.sh||[]).filter(x=>x&&x.n).map(x=>({n:String(x.n).slice(0,40),k:SHK[x.k]?x.k:'ground',m:clamp(+x.m||1,1,60)}));
+    home={floor:clamp(Math.round(+my.floor||12),1,60),sh:sh.length?sh:home.sh,meet:(my.meet||'').slice(0,40)};
+  }else{
+    if(o.fam>=2)fam.push({id:'sp',n:'배우자',k:'adult',hp:100,c:[]});
+    if(o.fam>=3)fam.push({id:'kid',n:'아이',k:'kid',hp:100,c:[]});
+  }
+  G={v:2,seed,home,hide:!!d.hide,delayed:[],locName:null,opts:o,diff:o.diff,mul:d.mul,scen,scenKnown:o.scen!=='rand',
     season:o.season||seasonOf(now.getMonth()+1),date:{m:now.getMonth()+1,d:now.getDate(),w:DOW[now.getDay()]},
     fam,res:{water:0,food:0,power:d.phone,meds:0},inv:{},morale:62,pol:0,trust:0,hintCharges:0,infoTurns:0,
     phase:'alert',step:null,turn:0,ration:'base',loc:'park',flags:{},log:[],fired:{},newBadges:[],cur:null,
@@ -571,23 +672,29 @@ function newGame(o){
   return G;
 }
 function save(){if(!G)return;G.rngS=RNG.s;store.set('sg.save',G)}
-function loadSave(){const s=store.get('sg.save',null);if(!s||s.v!==1||s.phase==='end')return null;return s}
+function loadSave(){const s=store.get('sg.save',null);if(!s||s.v!==2||s.phase==='end')return null;return s}
 function clearSave(){store.del('sg.save')}
 
 /* ---------- 효과 헬퍼 (이벤트에서 사용) ---------- */
 const M=id=>G.fam.find(m=>m.id===id);
 const hasKid=()=>!!M('kid');
+const kidM=()=>M('kid');
+const kidN=p=>p?josa(M('kid').n,p):M('kid').n;
+const spN=p=>M('sp')?(p?josa(M('sp').n,p):M('sp').n):'';
+const others=()=>G.fam.filter(m=>m.id!=='me');
+/* 추위·더위·탈수에 약한 사람: 아이 → 어르신 → 무작위 */
+function vulnerable(){return M('kid')||M('eld')||victim()}
 function nm(m){return m.n}
 function list(t){if(t==='all')return G.fam;if(typeof t==='string')return [M(t)].filter(Boolean);return Array.isArray(t)?t:[t]}
 function victim(pref){
   const others=G.fam.filter(m=>m.id!=='me');
   if(pref==='kid'&&M('kid'))return M('kid');
   if(pref==='other')return others.length?pick(others):M('me');
-  if(pref==='adult'){const a=G.fam.filter(m=>m.id!=='kid');return pick(a)}
+  if(pref==='adult'){const a=G.fam.filter(m=>m.k!=='kid');return pick(a)}
   return pick(G.fam);
 }
 function push(label,n,unit){FX.push({l:label,n,u:unit||''})}
-function hurt(t,n){list(t).forEach(m=>{const k=(m.id==='kid'?1.15:1)*G.mul;const v=Math.max(1,Math.round(n*k));m.hp=clamp(m.hp-v,0,100);push(m.n,-v)})}
+function hurt(t,n){list(t).forEach(m=>{const k=(m.k==='kid'||m.k==='eld'?1.15:1)*G.mul;const v=Math.max(1,Math.round(n*k));m.hp=clamp(m.hp-v,0,100);push(m.n,-v)})}
 function heal(t,n){list(t).forEach(m=>{if(m.crit)return;const b=m.hp;m.hp=clamp(m.hp+n,0,100);if(m.hp>b)push(m.n,m.hp-b)})}
 function addC(m,c){if(m&&!m.c.includes(c)){m.c.push(c);push(m.n+' '+CONDS[c].n,null)}}
 function clrC(m,c){if(m)m.c=m.c.filter(x=>x!==c)}
@@ -606,10 +713,10 @@ function reveal(){if(!G.scenKnown){G.scenKnown=true;push('상황 파악',null)}}
 /* 의사결정 기록 → 디브리핑 */
 function logDecision(ev,choice,ok,extra){
   const vv=x=>typeof x==='function'?x():x;
-  G.log.push({id:ev.id,title:vv(ev.title),choice:choice?choice.t:(extra||'시간 초과'),ok,
+  G.log.push({id:ev.id,title:vv(ev.title),choice:choice?vv(choice.t):(extra||'시간 초과'),ok,
     lesson:vv(ev.lesson)||null,src:vv(ev.src)||null,guide:ev.guide||'now',best:ok===false?bestChoice(ev):null});
 }
-function bestChoice(ev){const cs=typeof ev.choices==='function'?ev.choices():ev.choices;const b=cs.find(c=>c.ok===true);return b?b.t:null}
+function bestChoice(ev){const cs=typeof ev.choices==='function'?ev.choices():ev.choices;const b=cs.find(c=>c.ok===true);return b?(typeof b.t==='function'?b.t():b.t):null}
 
 /* ---------- 힌트(정보) ---------- */
 function hintSource(){
@@ -643,6 +750,7 @@ function applyGrab(gr){
 /* 화생방: 고층 우리 집에 도착하면 두고 온 물자를 쓸 수 있다 */
 function arriveHome(){
   G.loc='high';G.flags.tap=1;let w=0,f=0;
+  if(HF()<5){G.homeLeft=[];return ' 우리 집은 저층이라, 위층 이웃집 문을 두드려 함께 머물기로 했다.'}
   (G.homeLeft||[]).forEach(k=>{if(k==='water6')w+=12;if(k==='water1')w+=2;if(k==='foodbox')f+=6;
     if(['quilt','torch','vinyl','candle','radio','bleach','wipes','teddy','burner','wallet'].includes(k))give(k);
     if(k==='mask')give('mask',10);if(k==='meds')G.res.meds+=2;if(k==='firstaid'){G.res.meds+=3;give('firstaid')}});
@@ -715,7 +823,7 @@ function doAction(id){
     else{res('water',-3);const m=G.fam.find(x=>x.c.includes('contam'));if(m&&chance(.6)){clrC(m,'contam');t=`수돗물이 없어 생수 3L로 ${m.n}의 오염 부위만 씻어냈다. 다행히 반점이 가라앉았다.`}else t='생수 3L로는 15분을 흘려 씻기에 턱없이 모자랐다. 오염이 남아 있다.'}}
   else if(id==='purify'){res('water',4);t='천으로 거른 수돗물에 무향 락스를 1L당 4방울, 30분 기다렸다. 희미한 소독약 냄새 — 정상이다.'}
   else if(id==='rest'){if(!G.flags.dry)heal('all',6);else heal('all',2);mor(2);t=G.flags.dry?'목이 말라 깊이 잠들지 못했다.':'교대로 눈을 붙였다. 몸이 조금 풀렸다.'}
-  else if(id==='care'){mor(8);if(has('teddy')&&hasKid())mor(6);t=hasKid()?(has('teddy')?'애착인형을 안은 아이가 처음으로 웃었다. 끝말잇기를 하며 시간을 보냈다.':'아이와 손바닥 그림자놀이를 했다. 서로의 체온이 위안이 된다.'):'이야기를 나누며 다음 할 일을 함께 정했다.'}
+  else if(id==='care'){mor(8);if(has('teddy')&&hasKid())mor(6);t=hasKid()?(has('teddy')?`애착인형을 안은 ${kidN('이가')} 처음으로 웃었다. 끝말잇기를 하며 시간을 보냈다.`:`${kidN('과와')} 손바닥 그림자놀이를 했다. 서로의 체온이 위안이 된다.`):M('eld')?`${josa(M('eld').n,'과와')} 옛날이야기를 나눴다. 전쟁을 겪어 본 사람의 침착함이 위안이 된다.`:'이야기를 나누며 다음 할 일을 함께 정했다.'}
   else if(id==='help'){trust(1);mor(4);t=pick(['노인의 짐을 옮기고 물을 떠다 드렸다.','관리인을 도와 대피 인원을 셌다.','아이들 화장실 동행을 맡았다.'])}
   else if(id==='scout'){t=scout()}
   return t;
@@ -732,10 +840,25 @@ function scout(){
   return '둘러봤지만 쓸 만한 것은 없었다.';
 }
 
+/* ---------- 늦게 드러나는 결과 ---------- */
+const DELAY={
+  sickWater:{f:v=>{const m=M(v)||vulnerable();addC(m,'sick');hurt(m,6);return `${josa(m.n,'이가')} 밤새 설사를 했다. 걸러만 마신 물 때문일까.`}},
+  chemSick:{f:v=>{const m=M(v)||victim();addC(m,'sick');hurt(m,10);return `${m.n}에게 복통과 구토가 시작됐다. 끓이거나 소독해도 화학물질은 남는다.`}},
+  radNausea:{f:()=>{hurt('all',8);mor(-6);return '메스꺼움과 구토가 시작됐다. 낙진 속에서 보낸 시간 때문일까.'}},
+  coHead:{f:()=>{const m=vulnerable();addC(m,'co');hurt(m,8);return `${josa(m.n,'이가')} 머리가 깨질 듯 아프다며 토했다. 환기 안 되는 지하의 배기가스 때문이었다.`}},
+  lateAlert:{f:()=>{mor(-5);hurt('me',3);return '비행기모드에 두는 사이 대피 안내 재난문자를 놓쳤다는 걸 뒤늦게 알았다.'}},
+  distrust:{f:()=>{G.trust-=1;push('이웃 신뢰',-1);mor(-3);return '물을 더 챙긴 걸 본 이웃들이 우리 가족을 피한다.'}},
+  rumorFall:{f:()=>{mor(-4);return '퍼뜨린 소문을 믿고 나갔던 이웃 몇이 다쳐서 돌아왔다. 시선이 따갑다.'}}
+};
+function delay(n,key,v){G.delayed.push({at:G.turn+n,key,v:v||null})}
+function processDelayed(notes){const due=G.delayed.filter(d=>d.at<=G.turn);G.delayed=G.delayed.filter(d=>d.at>G.turn);
+  due.forEach(d=>{const t=DELAY[d.key].f(d.v);if(t)notes.push(t)})}
+
 /* ---------- 턴 종료 ---------- */
 const RATION={full:{n:'충분히',w:1,f:.375,hp:2,mo:2,d:'1인 하루 4L · 1.5끼니'},base:{n:'기본',w:.5,f:.25,hp:0,mo:0,d:'1인 하루 2L · 1끼니'},save:{n:'절약',w:.25,f:.125,hp:-2,mo:-3,d:'1인 하루 1L · 0.5끼니'},lean:{n:'식량만 절약',w:.5,f:.125,hp:-1,mo:-2,d:'물 2L는 지키고 0.5끼니'}};
 function endTurn(){
   FX=[];const notes=[];const n=G.fam.length;const R=RATION[G.ration];
+  processDelayed(notes);
   let wNeed=R.w*n+.25*G.fam.filter(m=>m.c.includes('sick')).length+(G.season==='summer'&&G.loc!=='gym'?.1*n:0);
   let fNeed=R.f*n;
   const dry=G.res.water+1e-9<wNeed?1-G.res.water/wNeed:0; res('water',-Math.min(G.res.water,wNeed));
@@ -780,6 +903,7 @@ function computeEnding(){
   if(know<85)score=Math.min(score,87.9);
   if(know<70)score=Math.min(score,75.9);
   let grade=G.over?'F':score>=88?'S':score>=76?'A':score>=63?'B':score>=50?'C':'D';
+  if(G.flags.flowClean)badge('flow');
   const T={S:'교과서 같은 72시간',A:'침착한 생존자',B:'무사히 버텼다',C:'상처 입은 생존',D:'운이 좋았다',F:'72시간을 버티지 못했다'};
   const sub={S:'수칙대로 움직였고, 가족 모두 건강하게 경보 해제를 맞았다.',A:'몇 번의 실수가 있었지만 판단은 대체로 옳았다.',B:'살아남았다. 다만 놓친 수칙이 생존 여유를 깎아 먹었다.',
     C:crit?'구조는 됐지만 가족 중 위독한 사람이 있어 긴급 이송됐다.':'살아남았지만 부상과 탈진이 깊다.',D:'잘못된 판단이 거듭됐다. 다음엔 운이 따르지 않을 수 있다.',
@@ -813,7 +937,7 @@ const SRC={
   bleed:'Stop the Bleed 표준 · 구로구보건소 응급처치',co:'소방청·질병관리청 일산화탄소 중독 예방',water:'美 CDC 비상 식수 소독 가이드 · 생존 수첩 물 안전',
   aid:'대한적십자사·질병관리청 응급처치 표준',ors:'WHO 경구수액(ORS) 표준',cold:'질병관리청 한랭질환 건강수칙 · 대한적십자사',heat:'질병관리청 폭염 건강수칙 · 대한적십자사',
   comm:'생존 수첩 정전·통신두절 · 과학기술정보통신부',ki:'美 CDC 안정화 요오드(KI) 안내 · 행정안전부',grid:'행정안전부 국가지점번호 · 생존 수첩 내 위치',
-  gas:'한국가스안전공사 가스 누출 시 행동요령',pfa:'WHO 심리적 응급처치(PFA) 가이드',vio:'생존 수첩 폭력 상황 회피·탈출(전시·교전 지역)'
+  gas:'한국가스안전공사 가스 누출 시 행동요령',crowd:'행정안전부 대규모 모임·인파사고 대비 국민행동요령(2025.10)',pfa:'WHO 심리적 응급처치(PFA) 가이드',vio:'생존 수첩 폭력 상황 회피·탈출(전시·교전 지역)'
 };
 
 /* ================= 경계경보 ================= */
@@ -828,12 +952,19 @@ E({id:'alert0',art:'phone',tone:'red',cat:'위급재난문자',title:'경계경�
   ],lesson:'경계경보는 사이렌 없이 음성방송·재난문자로 온다. 공격이 예상되는 단계 — 대피를 준비하고 어린이·노약자는 먼저 대피한다.',src:SRC.alarm});
 
 /* ================= 대피 이동 (시간제한) ================= */
+/* 대피소 선택 도우미: 등록한 대피소 중 '가장 가까운 지하'가 정답 */
+function bestUG(){const ug=G.home.sh.filter(s=>SHK[s.k].ug);return ug.length?ug.slice().sort((a,b)=>a.m-b.m)[0]:null}
+function setShelter(s,fallback){if(s){G.loc=SHK[s.k].loc;G.locName=s.n;G.shUG=!!SHK[s.k].ug}else{G.loc=fallback||'bldg';G.locName=null;G.shUG=true}}
+function goShelter(s){setShelter(s);const ug=SHK[s.k].ug;let t=`${s.n}까지 도보 ${s.m}분.`;
+  if(!ug){mor(-4);if(G.scen!=='chem'&&chance(.45)){const v=victim();hurt(v,10);addC(v,'injury');return t+` 지상 건물이라 폭음이 날 때마다 유리창이 흔들렸다. ${josa(v.n,'이가')} 깨진 유리에 다쳤다.`}return t+' 지상 건물이라 폭음이 날 때마다 유리창이 흔들린다.'}
+  if(s.m>3){if(G.scen==='chem')pol(Math.min(15,s.m));else if(chance(Math.min(.6,.05*s.m))){const v=victim();hurt(v,12);addC(v,'injury');return t+` 걷는 사이 근처에서 폭발. ${josa(v.n,'이가')} 파편에 다쳤다.`}return t+' 사이렌 속을 걸어 겨우 닿았다.'}
+  return t+' 형광등 아래 이웃들이 모여 있다.'}
 E({id:'mv_elev',art:'elev',tone:'amber',cat:'대피 이동',timed:7,title:'복도로 나왔다',
-  text:()=>`엘리베이터가 12층에 서 있다. 비상계단은 복도 끝.${fam1()?'':' 가족이 당신을 본다.'}`,
+  text:()=>`엘리베이터가 ${HF()}층에 서 있다. 비상계단은 복도 끝.${fam1()?'':' 가족이 당신을 본다.'}`,
   hint:'재난 때 엘리베이터는 금지 — 정전되면 밀폐된 채 갇힌다.',
   choices:[
-    {t:'비상계단으로 내려간다',ok:true,go:()=>'12층에서 B2까지. 계단에는 이미 이웃들이 줄지어 내려가고 있다.'},
-    {t:'엘리베이터를 탄다',s:'빠르니까',ok:false,go:()=>{if(chance(.55)){G.flags.stuck=1;mor(-12);hurt('all',3);return '7층과 6층 사이에서 멈췄다. 정전. 40분 뒤에야 구조됐다.'}mor(-3);return '다행히 내려왔다. 1분 뒤 단지 전체가 정전됐다 — 운이었다.'}}
+    {t:'비상계단으로 내려간다',ok:true,go:()=>`${HF()}층에서 지하까지. 계단에는 이미 이웃들이 줄지어 내려가고 있다.`},
+    {t:'엘리베이터를 탄다',s:'빠르니까',ok:false,go:()=>{G.flags.elev=1;const mid=Math.max(2,Math.round(HF()/2));if(chance(.55)){G.flags.stuck=1;mor(-12);hurt('all',3);return `${mid}층과 ${mid-1}층 사이에서 멈췄다. 정전. 40분 뒤에야 구조됐다.`}mor(-3);return '다행히 내려왔다. 1분 뒤 단지 전체가 정전됐다 — 운이었다.'}}
   ],timeout:()=>{mor(-4);return '망설이는 사이 계단에 사람이 몰렸다. 떠밀리듯 계단으로 내려갔다.'},
   lesson:'정전·화재·지진 등 재난 때 엘리베이터는 금지. 정전되면 밀폐 공간에 갇힌다.',src:'행정안전부·소방청 국민행동요령'});
 E({id:'mv_conv',art:'siren',tone:'red',cat:'대피 이동',timed:4,title:'쾅!',
@@ -857,11 +988,12 @@ E({id:'mv_nuke',art:'rad',tone:'red',cat:'섬광',timed:3,flash:1,title:'하늘�
 E({id:'mv_nuke2',art:'clock',tone:'amber',cat:'낙진 전 10분',timed:8,title:'충격파가 지나갔다',
   text:'귀가 먹먹하다. 낙진이 내려오기 전, 이동할 수 있는 시간은 약 10분 안팎이다.',
   hint:'가장 가까운 콘크리트 건물의 지하 또는 중심부로. 차량은 방호가 안 된다.',
-  choices:[
-    {t:'그대로 단지 지하주차장 깊은 곳으로',ok:true,go:()=>{G.loc='park';return '콘크리트 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
-    {t:'집으로 다시 올라가 물을 더 챙긴다',ok:false,go:()=>{G.loc='park';res('water',6);pol(20);return '물은 더 챙겼지만, 내려올 땐 이미 회색 먼지가 날리고 있었다.'}},
-    {t:'차를 몰고 도시를 빠져나간다',ok:false,go:()=>{G.loc='bldg';pol(30);hurt('all',10);return '도로는 정체. 차 안은 방호가 안 된다. 결국 차를 버리고 상가 지하로 피했다.'}}
-  ],timeout:()=>{G.loc='park';mor(-2);return '이웃을 따라 지하주차장으로 내려갔다.'},
+  choices:()=>{const b=bestUG();const near=b&&b.m<=8;return [
+    {t:near?`${b.n} 깊은 안쪽으로`:'가장 가까운 콘크리트 건물의 지하·중심부로',s:near?`${SHK[b.k].n} · 도보 ${b.m}분`:'등록한 지하 대피소가 멀다',ok:true,go:()=>{setShelter(near?b:null,'bldg');if(near&&b.m>3)pol(b.m);return '콘크리트 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
+    {t:'집으로 다시 올라가 물을 더 챙긴다',ok:false,go:()=>{setShelter(b,'bldg');res('water',6);pol(20);return '물은 더 챙겼지만, 내려올 땐 이미 회색 먼지가 날리고 있었다.'}},
+    {t:'차를 몰고 도시를 빠져나간다',ok:false,go:()=>{setShelter(null,'bldg');pol(30);hurt('all',10);return '도로는 정체. 차 안은 방호가 안 된다. 결국 차를 버리고 상가 지하로 피했다.'}}
+  ]},
+  timeout:()=>{setShelter(bestUG(),'bldg');mor(-2);return '이웃을 따라 가장 가까운 지하로 내려갔다.'},
   lesson:'폭풍이 지나면 낙진 도달 전 약 10분 안에 가장 가까운 콘크리트 건물의 지하·중심부로. 차량·조립식 건물은 방호가 안 된다.',src:SRC.nuke});
 E({id:'mv_chem',art:'wind',tone:'amber',cat:'대피 이동',timed:5,title:'둔탁한 폭발음',
   text:'멀리서 둔탁한 폭발음. 계단 창틈으로 매캐한 연기 냄새가 스민다.',
@@ -872,15 +1004,15 @@ E({id:'mv_chem',art:'wind',tone:'amber',cat:'대피 이동',timed:5,title:'둔�
     {t:'신경 쓰지 않고 서두른다',ok:false,go:()=>{hurt('all',4);pol(5);return '계단을 내려갈수록 기침이 났다.'}}
   ],timeout:()=>{hurt('all',4);pol(5);return '머뭇거리는 사이 냄새가 짙어졌다.'},
   lesson:'원인 모를 연기·냄새엔 KF 마스크·젖은 수건으로 코와 입부터 막는다. 화생방경보(음성방송)가 나오면 그때는 지하가 아니라 높은 곳으로 간다.',src:SRC.chem});
-E({id:'mv_loc',art:'pin',tone:'amber',cat:'대피 장소',timed:8,title:'어디로 갈까',
-  text:'1층 현관. 사이렌은 계속된다.',
+E({id:'mv_loc',art:'pin',tone:'amber',cat:'대피 장소',timed:9,title:'어디로 갈까',
+  text:()=>`1층 현관. 사이렌은 계속된다.${G.home.meet?` 가족과 정해 둔 집결지는 '${G.home.meet}'.`:''}`,
   hint:'가장 가까운 지하로 — 지하철역·지하주차장·건물 지하. 아파트는 단지 지하주차장이 지정 대피소인 경우가 많다.',
-  choices:[
-    {t:'단지 지하주차장',s:'가장 가까운 지하 · 1분',ok:true,go:()=>{G.loc='park';return '지하 2층. 형광등 아래 이웃들이 모여 있다.'}},
-    {t:'지하철역',s:'더 깊다 · 걸어서 10분',ok:false,go:()=>{G.loc='subway';if(G.scen==='chem')pol(10);else if(chance(.4)){const v=victim();hurt(v,12);addC(v,'injury');return `10분을 걷는 사이 폭발. ${josa(v.n,'이가')} 파편에 다쳤다. 역 대합실에 겨우 닿았다.`}return '사이렌 속을 10분 걸었다. 다행히 대합실에 닿았다.'}},
-    {t:'집 안 욕실로 돌아간다',s:'창문 없는 곳',ok:false,go:()=>{G.loc='home';mor(-4);return '12층 욕실 문을 닫았다. 폭음이 울릴 때마다 건물이 흔들린다.'}},
-    {t:'아파트 옥상',s:'높고 탁 트인 곳',ok:false,go:()=>{hurt('all',10);mor(-6);G.loc='park';return '탁 트인 옥상은 파편에 그대로 노출된다. 다시 지하로 뛰어 내려갔다.'}}
-  ],timeout:()=>{G.loc='park';mor(-2);return '망설이다 이웃을 따라 지하주차장으로 내려갔다.'},
+  choices:()=>{const b=bestUG();const cs=G.home.sh.slice(0,2).map(s=>({t:s.n,s:`${SHK[s.k].n} · 도보 ${s.m}분`,ok:s===b,go:()=>goShelter(s)}));
+    if(!b)cs.push({t:'가장 가까운 건물 지하로 뛰어든다',s:'등록한 대피소에 지하가 없다',ok:true,go:()=>{setShelter(null,'bldg');return '길 건너 상가 지하 2층으로 뛰어들었다.'}});
+    cs.push({t:'집 안 욕실로 돌아간다',s:'창문 없는 곳',ok:false,go:()=>{G.loc='home';G.locName=null;mor(-4);return `${HF()}층 욕실 문을 닫았다. 폭음이 울릴 때마다 건물이 흔들린다.`}});
+    if(cs.length<4)cs.push({t:'아파트 옥상',s:'높고 탁 트인 곳',ok:false,go:()=>{hurt('all',10);mor(-6);setShelter(b,'bldg');return '탁 트인 옥상은 파편에 그대로 노출된다. 다시 지하로 뛰어 내려갔다.'}});
+    return cs.slice(0,4)},
+  timeout:()=>{setShelter(bestUG()||G.home.sh[0],'bldg');mor(-2);return '망설이다 이웃을 따라 가장 가까운 지하로 내려갔다.'},
   lesson:'공습경보엔 가장 가까운 지하로 — 지하철역·지하주차장·건물 지하. 지하가 없을 때만 낮은 곳·엄폐물 뒤에 엎드린다.',src:SRC.air});
 E({id:'road',art:'car',tone:'red',cat:'도로 위',timed:6,title:'도로 위에서 사이렌',
   text:'시외로 나가는 길은 이미 꽉 막혔다. 그때 사방에서 사이렌이 울린다. 공습경보다.',
@@ -894,11 +1026,11 @@ E({id:'road',art:'car',tone:'red',cat:'도로 위',timed:6,title:'도로 위에�
 
 /* ================= 대피소 · 시나리오 고정 이벤트 ================= */
 E({id:'settle',art:'group',tone:'amber',cat:'자리 잡기',title:()=>G.loc==='home'?'욕실에서 버틸까':'대피소에 도착했다',
-  text:()=>G.loc==='home'?'12층 욕실. 창문은 없지만 폭음이 울릴 때마다 건물이 흔들린다. 사이렌이 잠시 멎었다.':`${LOCN[G.loc]}. 이미 이웃 수십 명이 모여 있다. ${fam1()?'몸을 둘':'가족이 앉을'} 자리를 정해야 한다.`,
+  text:()=>G.loc==='home'?`${HF()}층 욕실. 창문은 없지만 폭음이 울릴 때마다 건물이 흔들린다. 사이렌이 잠시 멎었다.`:`${locName()}. 이미 이웃 수십 명이 모여 있다. ${fam1()?'몸을 둘':'가족이 앉을'} 자리를 정해야 한다.`,
   hint:()=>G.loc==='home'?'지하가 있으면 지하가 우선이다. 실내 안쪽은 지하가 없을 때의 차선책.':'지하에서도 유리·출입구·외벽에서 떨어진 깊은 안쪽이 기준이다.',
   lesson:()=>G.loc==='home'?'공습엔 가장 가까운 지하가 원칙이다. 집 안 욕실·안쪽 방은 지하가 없을 때만 쓰는 차선책이다.':'지하로 들어간 뒤에도 유리·출입구·외벽에서 떨어진 안쪽이 안전하다. 폭풍과 파편은 수평으로도 온다.',
   choices:()=>G.loc==='home'?[
-    {t:'멎은 건 해제가 아니다. 지금 계단으로 단지 지하주차장까지 내려간다',ok:true,go:()=>{G.loc='park';mor(2);return '계단으로 B2까지. 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
+    {t:()=>`멎은 건 해제가 아니다. 지금 계단으로 ${(bestUG()||{n:'가장 가까운 지하'}).n}까지 내려간다`,ok:true,go:()=>{setShelter(bestUG(),'bldg');mor(2);return '계단으로 지하까지. 기둥 사이 깊은 안쪽에 자리를 잡았다.'}},
     {t:'욕실 안에서 버틴다',s:'지하가 없을 때의 차선책',ok:null,go:()=>{mor(-5);if(chance(.5)){const v=victim();hurt(v,10);addC(v,'injury');return `근처 폭발로 욕실 거울이 깨졌다. ${josa(v.n,'이가')} 파편에 다쳤다.`}return '밤새 건물이 흔들렸다. 아무도 잠들지 못했다.'}}
   ]:[
     {t:'출입구에서 가장 먼 깊은 안쪽',s:'기둥·내벽 쪽',ok:true,go:()=>{mor(4);return '폭음이 울릴 때마다 출입구 쪽 사람들이 몸을 숙였다. 안쪽은 비교적 조용했다.'}},
@@ -909,7 +1041,7 @@ E({id:'contact',art:'phone',tone:'blue',cat:'통신',cond:()=>!G.flags.emp,title
   text:'본가 부모님께 전화를 거는데 "통화량이 많아 연결할 수 없습니다"만 반복된다.',
   hint:'통화는 최소화, 안부는 문자로. 회선이 폭주하면 문자가 더 잘 간다.',
   choices:[
-    {t:'문자로 안부와 대피 위치를 남긴다',ok:true,go:()=>{res('power',-2);mor(8);return '새벽 2시, 답장이 왔다. "우리도 지하에 있다." 모두 숨을 돌렸다.'}},
+    {t:()=>`문자로 안부와 대피 위치를 남긴다${G.home.meet?` (집결지: ${G.home.meet})`:''}`,ok:true,go:()=>{res('power',-2);mor(8);return '새벽 2시, 답장이 왔다. "우리도 지하에 있다." 모두 숨을 돌렸다.'}},
     {t:'연결될 때까지 계속 건다',ok:false,go:()=>{res('power',-14);mor(-4);return '배터리만 14% 줄었다. 끝내 연결되지 않았다.'}},
     {t:'직접 차를 몰고 찾아간다',ok:false,go:()=>{hurt('me',18);addC(M('me'),'injury');mor(-6);return '경보 중 도로로 나갔다가 2차 폭음에 되돌아왔다. 넘어지며 팔을 다쳤다.'}}
   ],lesson:'음성 회선이 폭주하면 문자(SMS) 성공률이 높다. 통화를 줄이면 구조 통신 회선도 양보하게 된다.',src:SRC.air});
@@ -919,10 +1051,10 @@ E({id:'rumor',art:'phone',tone:'blue',cat:'정보',title:'단톡방에 퍼진 �
   choices:[
     {t:'라디오·재난문자로 공식 안내를 확인한다',ok:true,go:()=>{badge('rumor');if(has('radio')||(G.res.power>=5&&!G.flags.emp)){if(!has('radio'))res('power',-3);if(G.scen==='conv')reveal();mor(5);return '공식 안내: "대피소에 머물고 이동을 자제하십시오." 소문은 거짓이었다.'}mor(1);return '확인할 수단이 없다. 그래도 공식 안내 없이는 움직이지 않기로 했다.'}},
     {t:'우리도 지금 남쪽으로 출발한다',ok:false,go:()=>{hurt('all',10);mor(-10);return '도로는 이미 마비. 2차 경보에 차를 버리고 터널로 뛰었다가 새벽에 돌아왔다.'}},
-    {t:'소문을 다른 단톡방에도 전달한다',ok:false,go:()=>{mor(-6);trust(-1);return '대피소에 공황이 번졌다. 출입구 쪽에서 몸싸움이 벌어졌다.'}}
+    {t:'소문을 다른 단톡방에도 전달한다',ok:false,go:()=>{mor(-2);delay(1,'rumorFall');return '몇 사람이 짐을 싸서 대피소를 나갔다.'}}
   ],lesson:'유언비어에 동요하지 말 것. 재난문자·KBS 재난방송으로 확인되기 전에는 움직이지 않는다.',src:SRC.air});
 E({id:'blackout',art:'torch',tone:'amber',cat:'정전',title:'불이 꺼졌다',
-  text:()=>`${G.loc==='home'||G.loc==='high'?'단지 전체가 정전됐다.':'대피소 조명이 한꺼번에 나갔다.'} 칠흑 같은 어둠 속에서 ${hasKid()?'아이 울음소리':'누군가의 비명'}와 발소리가 뒤섞인다.`,
+  text:()=>`${G.loc==='home'||G.loc==='high'?'단지 전체가 정전됐다.':'대피소 조명이 한꺼번에 나갔다.'} 칠흑 같은 어둠 속에서 ${hasKid()?kidN()+'의 울음소리':'누군가의 비명'}와 발소리가 뒤섞인다.`,
   hint:'조명은 양초보다 손전등. 휴대폰 배터리는 통신용으로 아낀다.',
   choices:[
     {t:'손전등을 켠다',need:()=>has('torch'),na:'손전등 없음',ok:true,go:()=>{G.flags.blackout=1;G.flags.light='torch';mor(4);return '작은 불빛 하나에 주변 사람들이 모여들었다. 넘어지는 사람이 줄었다.'}},
@@ -931,7 +1063,7 @@ E({id:'blackout',art:'torch',tone:'amber',cat:'정전',title:'불이 꺼졌다',
     {t:'어둠 속에서 가만히 기다린다',ok:null,go:()=>{G.flags.blackout=1;mor(-6);return '버틸 수는 있었다. 하지만 화장실을 다녀오던 이웃이 넘어져 다쳤다.'}}
   ],lesson:'정전 때 조명은 양초보다 손전등이 원칙이다. 혼란 속 양초는 2차 화재 원인이고, 휴대폰 배터리는 재난문자·연락용으로 남긴다.',src:'행정안전부 정전 대비 국민행동요령 · 생존 수첩'});
 E({id:'gohome',art:'fire',tone:'red',cat:'화재',cond:()=>G.loc!=='home',title:'우리 동에 불이 났다',
-  text:()=>`"○동 고층에 불났대!" 우리 동이다. ${fam1()?'당신도 모르게 자리에서 일어섰다. 통장이랑 사진이라도…':'배우자가 "통장이랑 사진이라도 가지러 가자"며 일어선다.'}`,
+  text:()=>`"○동 고층에 불났대!" 우리 동이다. ${M('sp')?spN('이가')+' "통장이랑 사진이라도 가지러 가자"며 일어선다.':'당신도 모르게 자리에서 일어섰다. 통장이랑 사진이라도…'}`,
   hint:'물건은 대체되지만 몸은 아니다. 엘리베이터 금지, 연기는 계단을 타고 올라간다.',
   choices:[
     {t:'올라가지 않는다. 119에 신고하고 대피소를 지킨다',ok:true,go:()=>{if(G.flags.gas&&G.flags.breaker){mor(4);return '불은 2시간 만에 꺼졌다. 가스·전기를 차단해 둔 덕분에 우리 집은 그을음만 입었다.'}G.flags.homeDamaged=1;mor(-3);return '불은 2시간 만에 꺼졌다. 계단으로 올라갔던 몇 명이 연기를 마시고 실려 내려왔다. 우리 집 주방까지 불길이 번졌다고 한다.'}},
@@ -950,7 +1082,7 @@ E({id:'relief',art:'water',tone:'green',cat:'구호',title:'구호품 배부',
   choices:[
     {t:'신분증을 보여주고 등록한다',need:()=>has('wallet'),na:'신분증 없음',ok:null,go:()=>{const n=G.fam.length;res('water',2*n);give('blanket');mor(5);return `확인은 1분. 생수 ${2*n}L와 은박담요를 받았다. 가족 명단도 올라가 실종 확인 대상에서 빠졌다.`}},
     {t:'신분증 없이 구두로 설명하고 기다린다',ok:null,go:()=>{res('water',G.fam.length);mor(1);return `확인에 시간이 걸려 맨 뒤로 밀렸다. 생수 ${G.fam.length}L만 남아 있었다.`}},
-    {t:'혼잡한 틈에 한 상자 더 챙긴다',ok:false,go:()=>{res('water',6);trust(-2);mor(-4);return '물은 늘었지만, 지켜본 이웃들의 눈빛이 달라졌다.'}}
+    {t:'혼잡한 틈에 한 상자 더 챙긴다',ok:false,go:()=>{res('water',6);delay(1,'distrust');return '물 6L가 늘었다. 아무도 뭐라 하지 않았다.'}}
   ],lesson:'신분증·가족사진은 구호 등록과 실종 확인의 열쇠다. 생존배낭에 사본을 넣어 둔다. 공동체의 신뢰도 자원이다.',src:'생존 수첩 생존배낭 체크리스트'});
 
 /* --- 핵 --- */
@@ -959,7 +1091,7 @@ E({id:'decon',art:'rad',tone:'red',cat:'제염',title:'회색 먼지',
   hint:'겉옷을 벗어 비닐에 밀봉하면 방사성 물질을 최대 90%까지 제거한다. 문지르지 않는다.',
   choices:[
     {t:'겉옷을 벗어 비닐에 밀봉하고, 젖은 수건으로 피부·머리를 닦는다',ok:true,go:()=>{G.flags.decon=1;if(has('vinyl')){pol(2);return '겉옷을 봉투에 묶어 구석에 두었다. 코를 풀고 눈꺼풀도 닦았다.'}pol(5);return '비닐이 없어 겉옷을 멀리 떨어진 구석에 따로 모아 두었다. 코를 풀고 눈꺼풀을 닦았다.'}},
-    {t:'먼지를 털어내고 그대로 입는다',ok:false,go:()=>{G.flags.noDecon=1;pol(20);return '털어낸 먼지가 대피소 공기 중에 퍼졌다. 옷에 남은 먼지는 계속 피부에 닿는다.'}},
+    {t:'먼지를 털어내고 그대로 입는다',ok:false,go:()=>{G.flags.noDecon=1;pol(20);delay(3,'radNausea');return '먼지를 털어냈다. 겉으로는 깨끗해 보인다.'}},
     {t:'물티슈로 피부를 세게 문질러 닦는다',ok:false,go:()=>{G.flags.decon=1;pol(10);return '문지르는 동안 피부가 붉게 일어났다. 긁힌 피부로 오염이 더 스며들 수 있다.'}}
   ],lesson:'실내에 들어오면 겉옷을 벗어 비닐에 밀봉하고(최대 90% 제거), 샤워가 어려우면 젖은 수건으로 노출 피부·머리를 닦는다. 문지르거나 긁지 않는다.',src:SRC.nuke});
 E({id:'emp',art:'phone',tone:'blue',cat:'통신 두절',title:'휴대폰이 먹통이다',
@@ -985,10 +1117,10 @@ E({id:'outside',art:'store',tone:'red',cat:'외출 유혹',title:'편의점에 �
   hint:'방사선은 처음 몇 시간이 가장 강하고 빠르게 약해진다. 최소 24시간 실내 대기.',
   choices:[
     {t:'최소 24시간은 나가지 않는다. 물은 필요한 만큼 마시고, 활동과 식량을 줄인다',ok:true,go:()=>{mor(-2);return '나갔던 이웃은 생수를 들고 왔지만, 다음 날부터 심하게 구토했다.'}},
-    {t:'마스크 쓰고 빠르게 다녀온다',ok:false,go:()=>{res('water',8);pol(30);hurt('me',8);return '생수 8L. 하지만 밖에 있던 20분 동안 피폭 지수가 크게 올랐다.'}}
+    {t:'마스크 쓰고 빠르게 다녀온다',ok:false,go:()=>{res('water',8);pol(30);delay(2,'radNausea');return '생수 8L를 들고 무사히 돌아왔다. 밖은 이상할 만큼 고요했다.'}}
   ],lesson:'낙진의 방사선은 처음 몇 시간이 가장 강하다. 최소 24시간은 실내에 머물고, 물자 확보는 정부 안내 이후로 미룬다. 당국 지시가 없으면 마실 물은 줄이지 않는다.',src:SRC.nuke+' · Ready.gov 식수 관리'});
 E({id:'reunite',art:'car',tone:'amber',cat:'가족',title:'어머니를 모시러 가야 한다',
-  text:()=>fam1()?'시내 요양원에 계신 어머니와 연락이 끊겼다. 지금이라도 차로 가야 할 것 같다.':'배우자가 시내 요양원에 계신 어머니와 연락이 끊겼다며, 지금 차로 가야 한다고 한다.',
+  text:()=>M('sp')?`${spN('이가')} 시내 요양원에 계신 어머니와 연락이 끊겼다며, 지금 차로 가야 한다고 한다.`:'시내 요양원에 계신 어머니와 연락이 끊겼다. 지금이라도 차로 가야 할 것 같다.',
   hint:'가족이 흩어져 있어도 각자 실내 대기가 더 안전하다. 재회는 나중에.',
   choices:[
     {t:'각자 실내에 있는 게 더 안전하다. 재회는 나중에',ok:true,go:()=>{mor(-4);return '요양원도 지하로 대피했다는 소식을 이틀 뒤 라디오 안내로 들었다.'}},
@@ -1005,19 +1137,19 @@ E({id:'evac',art:'group',tone:'blue',cat:'이동 지시',title:'정부 이동 �
 
 /* --- 화학 --- */
 E({id:'chemalert',art:'flask',tone:'red',cat:'음성방송',title:'화생방경보',
-  text:()=>G.loc==='home'?'스피커에서 음성방송: "화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다." 지금 당신은 12층 집 욕실에 있다.':'스피커에서 음성방송: "화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다." 지하 경사로 쪽에서 매캐한 냄새가 내려온다.',
+  text:()=>G.loc==='home'?'스피커에서 음성방송: "화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다." 지금 당신은 '+HF()+'층 집 욕실에 있다.':'스피커에서 음성방송: "화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다." 지하 경사로 쪽에서 매캐한 냄새가 내려온다.',
   hint:'화학작용제는 공기보다 무거워 지하·저지대에 고인다. 공습 때와 반대로 높은 곳으로.',
   pre:()=>{G.flags.chemAlert=1;G.scenKnown=true},
   choices:()=>G.loc==='home'?[
-    {t:'지하 대피소로 내려가 이웃과 합류한다',ok:false,go:()=>{hurt('all',14);pol(25);const x=arriveHome();return '내려갈수록 냄새가 짙어졌다. 기침이 터져 다시 12층으로 올라왔다.'+x}},
+    {t:'지하 대피소로 내려가 이웃과 합류한다',ok:false,go:()=>{hurt('all',14);pol(25);const x=arriveHome();return '내려갈수록 냄새가 짙어졌다. 기침이 터져 다시 위층으로 올라왔다.'+x}},
     {t:'그대로 고층 실내에 머물며 코와 입을 막는다',ok:true,go:()=>{badge('chemup');const x=arriveHome();return '높은 곳에 있는 것이 이번엔 정답이었다.'+x}}
   ]:[
-    {t:'젖은 수건·마스크로 코와 입을 막고 아파트 고층으로 올라간다',ok:true,go:()=>{badge('chemup');const x=arriveHome();if(has('mask'))return '마스크를 쓰고 비상계단으로 12층까지. 숨이 찼지만 냄새는 점점 옅어졌다.'+x;hurt('all',4);return '젖은 수건으로 코와 입을 막고 계단을 올랐다.'+x}},
+    {t:'젖은 수건·마스크로 코와 입을 막고 아파트 고층으로 올라간다',ok:true,go:()=>{badge('chemup');const x=arriveHome();if(has('mask'))return '마스크를 쓰고 비상계단으로 '+(HF()>=5?HF()+'층':'위층')+'까지. 숨이 찼지만 냄새는 점점 옅어졌다.'+x;hurt('all',4);return '젖은 수건으로 코와 입을 막고 계단을 올랐다.'+x}},
     {t:'더 깊은 지하(B3)로 내려간다',ok:false,go:()=>{hurt('all',18);addC(victim(),'contam');pol(30);const x=arriveHome();return '아래층은 더 심했다. 기침이 터진 뒤에야 사람들과 함께 위층으로 뛰었다.'+x}},
     {t:'차를 타고 단지를 빠져나간다',ok:false,go:()=>{hurt('me',22);pol(25);const x=arriveHome();return '출구 경사로가 오염 구름 한가운데였다. 차를 버리고 계단으로 올라가야 했다.'+x}}
   ],lesson:'화학 공격이면 높은 곳·건물 고층으로 대피한다. 화학작용제는 공기보다 무거워 지하에 고인다 — 공습 때의 "지하로"와 반대다.',src:SRC.chem});
 E({id:'seal',art:'tape',tone:'amber',cat:'밀폐',title:'바깥 공기를 막아라',
-  text:'12층 집. 창문 틈으로 바깥 냄새가 희미하게 스며든다. 화장실 환풍기는 돌아가고 있다.',
+  text:()=>`${HF()>=5?HF()+'층 집':'위층 이웃집'}. 창문 틈으로 바깥 냄새가 희미하게 스며든다. 화장실 환풍기는 돌아가고 있다.`,
   hint:'창문·문·환풍구를 테이프와 비닐로 밀폐하고, 에어컨·환기장치를 끈다.',
   choices:[
     {t:'창문·문·환풍구를 비닐과 테이프로 막고 환풍기·에어컨을 끈다',ok:true,go:()=>{G.flags.sealed=1;if(has('vinyl')){pol(-10);mor(6);return '틈을 모두 막자 냄새가 사라졌다.'}pol(-4);return '테이프가 없어 젖은 수건과 랩으로 틈을 막았다. 완벽하진 않다.'}},
@@ -1039,18 +1171,18 @@ E({id:'chemwater',art:'bleach',tone:'amber',cat:'식수',title:'빗물과 락스
   hint:'끓이기·소독으로 안 되는 것 — 중금속·화학물질·방사능 오염. 화생방 의심수는 마시지 않는다.',
   choices:[
     {t:'오염 의심수는 마시지 않는다. 남은 생수를 마시며 급수를 기다린다',ok:true,go:()=>{res('water',2*G.fam.length);mor(-2);return '구청 급수차가 다음 날 아침 왔다. 빗물을 마신 집에선 복통 환자가 나왔다.'}},
-    {t:'락스로 소독해서 마신다',ok:false,go:()=>{res('water',6);const v=victim();addC(v,'sick');hurt(v,10);return `물은 늘었지만 ${v.n}에게 구토와 복통. 소독은 세균만 잡는다.`}},
-    {t:'끓여서 마신다',ok:false,go:()=>{res('water',5);const v=victim();addC(v,'sick');hurt(v,10);return `끓여도 화학물질은 그대로다. ${v.n}에게 구토와 복통.`}}
+    {t:'락스로 소독해서 마신다',ok:false,go:()=>{res('water',6);delay(1,'chemSick',victim().id);return '물이 늘었다. 냄새도 맛도 이상하지 않다.'}},
+    {t:'끓여서 마신다',ok:false,go:()=>{res('water',5);delay(1,'chemSick',victim().id);return '펄펄 끓인 물을 식혀 마셨다. 이제 안심이다 — 그렇게 믿었다.'}}
   ],lesson:'끓이기·락스 소독은 세균·바이러스만 잡는다. 화학물질·중금속·방사능 오염수는 소독해도 마시지 말고 생수·정부 급수에 의존한다.',src:SRC.water});
 
 /* ================= 무작위 풀 ================= */
 E({id:'co_car',pool:1,loc:['park','bldg'],art:'car',tone:'red',cat:'일산화탄소',title:'시동 걸린 차',
-  text:()=>`옆 차 주인이 시동을 걸고 히터를 틀어 휴대폰을 충전한다. ${fam1()?'당신도 차 키를 만지작거린다.':'배우자가 "우리 차도 시동 걸어서 충전하자"고 한다.'}`,
+  text:()=>`옆 차 주인이 시동을 걸고 히터를 틀어 휴대폰을 충전한다. ${M('sp')?spN('이가')+' "우리 차도 시동 걸어서 충전하자"고 한다.':'당신도 차 키를 만지작거린다.'}`,
   hint:'밀폐 공간의 차량 공회전은 일산화탄소를 뿜는다. 무색·무취라 쓰러질 때까지 모른다.',
   choices:[
     {t:'시동을 끄도록 설득하고 대피소 관리자에게 알린다',ok:true,go:()=>{trust(1);mor(2);return '몇 사람이 이미 두통을 호소하고 있었다. 시동이 꺼지고 환기 셔터가 열렸다.'}},
     {t:'우리 차도 시동 걸어 충전한다',ok:false,go:()=>{res('power',40);hurt('all',14);G.fam.forEach(m=>addC(m,'co'));return '배터리는 찼다. 30분 뒤 모두 머리가 깨질 듯 아프고 어지럽다.'}},
-    {t:'창문만 조금 열면 괜찮다',ok:false,go:()=>{hurt('all',7);addC(victim(),'co');return '지하에서는 배기가스가 빠질 곳이 없다. 두통이 시작됐다.'}}
+    {t:'창문만 조금 열면 괜찮다',ok:false,go:()=>{delay(1,'coHead');return '차 창문을 조금 열었다. 당장은 괜찮은 것 같다.'}}
   ],lesson:'연탄·숯·버너·발전기·차량 공회전은 밀폐 공간에서 일산화탄소를 뿜는다. 여럿이 동시에 두통·어지럼이면 즉시 환기하고 밖으로.',src:SRC.co,guide:'aid'});
 E({id:'burner',pool:1,loc:['park','bldg','subway'],w:()=>has('burner')?3:1,art:'burner',tone:'red',cat:'조리',title:'라면이라도 끓이자',
   text:()=>has('burner')&&has('ramen')?'챙겨 온 라면과 버너가 있다. 따뜻한 국물 생각에 모두가 쳐다본다.':'옆 가족이 휴대용 버너로 라면을 끓이기 시작한다. 냄새가 퍼지자 너도나도 버너를 꺼낸다.',
@@ -1085,7 +1217,7 @@ E({id:'bleed2',art:'drop',tone:'red',cat:'지혈대',title:'압박으로 안 멈
     {t:'5분마다 풀어서 상태를 확인한다',ok:false,go:()=>{mor(-4);return '풀 때마다 피가 다시 쏟아졌다.'}}
   ],lesson:'지혈대는 출혈 부위보다 심장 쪽 5~7cm에 넓은 띠를 감고 막대를 돌려 아플 만큼 조인 뒤, 감은 시각을 기록한다. 끈·전선처럼 가는 것은 금지, 한번 감으면 임의로 풀지 않는다.',src:SRC.bleed,guide:'aid'});
 E({id:'choke',pool:1,art:'hand',tone:'red',cat:'질식',
-  pre:()=>{G.cur.v=(hasKid()?M('kid'):victim('other')).id},
+  pre:()=>{G.cur.v=(M('kid')||M('eld')||victim('other')).id},
   title:()=>V().id==='me'?'목에 걸렸다 — 혼자다':'목에 걸렸다',
   text:()=>V().id==='me'?'비상식량을 급히 먹다 덩어리가 목에 걸렸다. 기침도, 소리도 나지 않는다. 주변엔 아무도 없다.':`${vn('이가')} 비상식량을 먹다 목을 감싸쥔다. 기침도, 소리도 나지 않는다.`,
   hint:'기침도 소리도 못 내면 등 두드리기 5회 → 복부 밀어올리기 5회를 반복한다.',
@@ -1098,7 +1230,7 @@ E({id:'choke',pool:1,art:'hand',tone:'red',cat:'질식',
     {t:'입에 손가락을 넣어 꺼내려 한다',ok:false,go:()=>{hurt(V(),12);return '보이지 않는 이물질을 손가락이 더 깊이 밀어 넣었다. 간신히 등을 두드려 빼냈다.'}}
   ],lesson:'기침을 할 수 있으면 기침하게 두고, 소리·기침이 안 되면 등 두드리기 5회 ↔ 복부 밀어올리기 5회(1세 미만 영아는 등 5회 ↔ 가슴 5회). 혼자면 의자 등받이에 윗배를 대고 밀어올린다. 보이지 않는 이물질에 손가락을 넣지 않는다.',src:SRC.aid,guide:'aid'});
 E({id:'diarrhea',pool:1,w:()=>G.flags.dirtyWater?4:1,art:'drop',tone:'amber',cat:'탈수',
-  pre:()=>{const v=hasKid()?M('kid'):victim();G.cur.v=v.id;addC(v,'sick')},
+  pre:()=>{const v=vulnerable();G.cur.v=v.id;addC(v,'sick')},
   title:'설사가 멈추지 않는다',
   text:()=>`${vn('이가')} 밤새 설사를 반복하더니 축 처졌다. 입술이 바싹 말랐다.`,
   hint:'물만 많이 마시는 것보다 경구수액(ORS): 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술을 조금씩 자주.',
@@ -1108,7 +1240,7 @@ E({id:'diarrhea',pool:1,w:()=>G.flags.dirtyWater?4:1,art:'drop',tone:'amber',cat
     {t:'설사가 멈출 때까지 아무것도 먹이지 않는다',ok:false,go:()=>{hurt(V(),12);return '탈수가 심해졌다. 아이·노인은 탈수에 특히 취약하다.'}}
   ],lesson:'설사·탈수엔 경구수액(ORS)이 맹물보다 빠르다. 깨끗한 물 1L + 설탕 6작은술 + 소금 ½작은술(WHO 비율), 조금씩 자주. 축 처지거나 소변이 줄면 위험 신호 — 의료진·119에 알린다.',src:SRC.ors+' · 생존 수첩 물 안전',guide:'aid'});
 E({id:'cold',pool:1,cond:()=>['winter','cool'].includes(G.season)&&['park','bldg','subway'].includes(G.loc),w:()=>G.season==='winter'?3:1,art:'snow',tone:'blue',cat:'저체온',
-  pre:()=>{const v=hasKid()?M('kid'):victim();G.cur.v=v.id;addC(v,'cold')},
+  pre:()=>{const v=vulnerable();G.cur.v=v.id;addC(v,'cold')},
   title:'떨림이 멈췄다',
   text:()=>`콘크리트 바닥 냉기가 올라온다. 심하게 떨던 ${vn('이가')} 어느새 떨지 않고, 말이 어눌하다.`,
   hint:'떨림이 멈추고 말이 어눌하면 응급이다. 젖은 옷 교체, 담요로 머리까지, 바닥 냉기 차단.',
@@ -1132,7 +1264,7 @@ E({id:'panic',pool:1,cond:()=>G.morale<48,w:()=>G.morale<30?5:2,art:'wind',tone:
   hint:'심리적 응급처치: 안전한 곳, 차분한 목소리, 지금 할 수 있는 일 하나.',
   choices:[
     {t:'조용한 구석에서 함께 천천히 숨 쉬고, 지금 할 일을 하나씩 정한다',ok:true,go:()=>{mor(12);return '4초 들이쉬고 6초 내쉬기. 물 배급 당번을 맡자 표정이 돌아왔다.'}},
-    {t:'정신 차리라고 큰 소리로 다그친다',ok:false,go:()=>{mor(-10);return '다툼이 커졌다.'+(hasKid()?' 아이가 울음을 터뜨렸다.':'')}},
+    {t:'정신 차리라고 큰 소리로 다그친다',ok:false,go:()=>{mor(-10);return '다툼이 커졌다.'+(hasKid()?` ${kidN('이가')} 울음을 터뜨렸다.`:'')}},
     {t:'안정제가 있는지 주변에 수소문한다',ok:false,go:()=>{mor(-3);return '처방 없는 약은 위험하다. 찾는 사이 상태는 그대로였다.'}}
   ],lesson:'심리적 응급처치(PFA)의 기본은 안전한 공간, 차분한 연결, 지금 할 수 있는 구체적 행동 하나다. 처방 없는 약은 쓰지 않는다.',src:SRC.pfa});
 E({id:'share',pool:1,cond:()=>G.res.water>=2,art:'water',tone:'green',cat:'선택',title:'물 한 병만',
@@ -1163,7 +1295,7 @@ E({id:'battery',pool:1,cond:()=>!G.flags.emp&&G.res.power<45&&!G.flags.saver,w:3
   hint:'저전력·밝기 최소·안 쓰는 앱 종료. 비행기모드와 전원 끄기는 재난문자 수신까지 막는다.',
   choices:[
     {t:'저전력 모드·밝기 최소, 안 쓰는 앱을 끄고 휴대폰은 켜 둔다',ok:true,go:()=>{G.flags.saver=1;return '배터리 소모가 절반으로 줄었다. 재난문자는 계속 받는다.'}},
-    {t:'비행기모드로 바꿔 배터리를 아낀다',ok:false,go:()=>{G.flags.saver=1;mor(-3);return '배터리는 아꼈지만, 비행기모드에선 재난문자도 오지 않는다. 대피 안내를 몇 시간 늦게 봤다.'}},
+    {t:'비행기모드로 바꿔 배터리를 아낀다',ok:false,go:()=>{G.flags.saver=1;delay(1,'lateAlert');return '배터리가 거의 줄지 않는다. 화면도 조용하다.'}},
     {t:'불안해서 계속 새로고침한다',ok:false,go:()=>{res('power',-12);return '숫자만 빠르게 줄었다.'}},
     {t:'아예 전원을 꺼 둔다',ok:false,go:()=>{G.flags.saver=1;mor(-3);return '재난문자는 데이터를 꺼도 수신되지만, 전원을 끄면 받을 수 없다. 대피 안내 문자를 몇 시간 늦게 봤다.'}}
   ],lesson:'경보가 이어지는 동안엔 저전력·밝기 최소로 버티고 휴대폰을 켜 둔다. 비행기모드와 전원 끄기는 재난문자(셀 방송) 수신까지 막는다.',src:SRC.comm});
@@ -1173,7 +1305,7 @@ E({id:'tapwater',pool:1,scen:['conv'],loc:['park','bldg','subway'],w:()=>G.res.w
   hint:'탁하면 먼저 거르고, 무향 락스를 1L당 4방울(맑은 물은 2방울) 넣어 30분 기다린다.',
   choices:()=>[
     {t:'천으로 거른 뒤 무향 락스 1L당 4방울, 30분 기다린다',need:()=>has('bleach'),na:'락스 없음',ok:true,go:()=>{res('water',6);return '희미한 수영장 냄새. 6L를 확보했다.'}},
-    {t:'천으로만 걸러 마신다',ok:false,go:()=>{res('water',6);G.flags.dirtyWater=1;if(chance(.6)){const v=hasKid()?M('kid'):victim();addC(v,'sick');return `맛은 괜찮았다. 그러나 다음 날 ${v.n}에게 설사가 시작됐다.`}return '운 좋게 탈은 없었다.'}},
+    {t:'천으로만 걸러 마신다',ok:false,go:()=>{res('water',6);G.flags.dirtyWater=1;if(chance(.65))delay(1,'sickWater',vulnerable().id);return '맛은 괜찮았다. 목마름이 가셨다.'}},
     {t:'버너로 끓인다',need:()=>has('burner'),na:'버너 없음',ok:false,go:()=>{res('water',4);hurt('all',6);addC(victim(),'co');return '물은 끓였지만 밀폐된 지하에서 두통이 번졌다.'}},
     ...(has('bleach')?[]:[{t:'마시지 않는다. 화장실·위생용으로만 쓴다',ok:true,go:()=>{mor(-1);return '소독할 수단이 없으니 마시지 않기로 했다. 손 씻기에는 충분했다.'}}])
   ],lesson:'끓이기가 가장 안전하지만 밀폐된 지하에선 불을 쓸 수 없다. 거른 뒤 무향 락스 1L당 2방울(탁하면 4방울), 30분 기다린다.',src:SRC.water,guide:'aid'});
@@ -1250,6 +1382,16 @@ E({id:'final_chem',art:'tape',tone:'green',cat:'경보 해제',title:'제독 완
 const FINAL={conv:'final_conv',nuke:'final_nuke',chem:'final_chem'};
 const QUIET=['멀리서 둔탁한 진동만 간간이 느껴진다.','누군가 낮게 라디오를 켰다가 껐다.','아이들이 박스로 작은 집을 만들었다.','관리인이 대피 인원을 다시 셌다.','형광등 하나가 깜빡이다 꺼졌다.'];
 
+/* ================= 1인칭 계단 대피에서의 판단 (기록 전용) ================= */
+E({id:'d_flow',art:'stairs',cat:'계단 대피',title:'혼잡한 계단',choices:[{t:'앞사람 흐름에 맞춰 걸었다',ok:true},{t:'앞이 막혀도 밀고 내려갔다',ok:false}],
+  lesson:'사람이 몰린 좁은 길·계단은 사고 위험이 높다. 주변 흐름을 살피며 걷고, 갑자기 멈추거나 앞사람을 밀지 않는다.',src:SRC.crowd});
+E({id:'d_drop',art:'water',cat:'계단 대피',title:'굴러떨어진 물병',choices:[{t:'두고 간다',ok:true},{t:'허리를 숙여 줍는다',ok:false}],
+  lesson:'인파 속에서는 소지품이 떨어져도 허리를 숙여 줍지 않는다. 숙이는 순간 뒤에서 밀려 넘어진다.',src:SRC.crowd});
+E({id:'d_fall',art:'person',cat:'계단 대피',title:'넘어졌다',choices:[{t:'두 팔로 머리를 감싸고 웅크렸다',ok:true},{t:'바로 일어나려 버둥댔다',ok:false}],
+  lesson:'넘어져 일어날 수 없다면 두 팔로 머리를 감싸고, 다리를 몸 쪽으로 당겨 공처럼 웅크린다.',src:SRC.crowd});
+E({id:'d_kid',art:'kid',cat:'계단 대피',title:'인파 속 아이',choices:[{t:'아이를 안아 올렸다',ok:true},{t:'손만 잡고 걸었다',ok:false}],
+  lesson:'인파 속에서 아이와 함께라면 안거나 목마를 태워 보호한다.',src:SRC.crowd});
+
 /* ===================== 05 · 그래픽: SVG 일러스트 (외부 파일 0) ===================== */
 /* 장식용 결정적 난수 — 게임 난수와 분리해 그림이 매번 같게 */
 function lcg(s){return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
@@ -1321,16 +1463,17 @@ function planSVG(gr){
     s+=`<g class="itm${it.act?' act':''}${gr.picked.includes(id)||(it.act&&gr[id])?' gone':''}" data-it="${id}" transform="translate(${it.px} ${it.py})"><circle r="9.6"/><use href="#i-${it.ic}" x="-6.5" y="-6.5" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>`});
   /* 가족 토큰 */
   const famPos=planFamPos(gr);
-  famPos.forEach(f=>{s+=`<g class="tok" id="tok-${f.id}" transform="translate(${f.x} ${f.y})"><circle r="${f.id==='kid'?8:9.5}" fill="${f.ready?'#2a6b4c':'#3a4652'}" stroke="${f.ready?C.exit:'#7d8b98'}" stroke-width="1.5"/><text y="3.6" text-anchor="middle" font-family="system-ui,sans-serif" font-size="${f.id==='kid'?8.5:9.5}" font-weight="800" fill="#e8edf1">${f.id==='sp'?'배':'아'}</text>${f.ready?'':`<text x="9" y="-8" font-family="system-ui,sans-serif" font-size="8" fill="#8e9ba7">z</text>`}</g>`});
+  famPos.forEach(f=>{s+=`<g class="tok" id="tok-${f.id}" transform="translate(${f.x} ${f.y})"><circle r="${f.small?8:9.5}" fill="${f.ready?'#2a6b4c':'#3a4652'}" stroke="${f.ready?C.exit:'#7d8b98'}" stroke-width="1.5"/><text y="3.6" text-anchor="middle" font-family="system-ui,sans-serif" font-size="${f.small?8.5:9.5}" font-weight="800" fill="#e8edf1">${f.ch}</text>${f.ready?'':`<text x="9" y="-8" font-family="system-ui,sans-serif" font-size="8" fill="#8e9ba7">z</text>`}</g>`});
   const me=planMePos(gr.room);
   s+=`<g class="tok" id="tok-me" transform="translate(${me.x} ${me.y})"><circle r="12" fill="${C.amber}" stroke="#fff3cf" stroke-width="2"/><text y="4.2" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="900" fill="#1a1100">나</text></g>`;
   return `<svg viewBox="0 0 360 290" role="img" aria-label="우리 집 평면도">${s}</svg>`;
 }
 function planMePos(room){const c=roomC(room);const off={master:[24,10],bath:[0,14],kid:[-30,14],living:[-12,-2],kitchen:[-34,14],hall:[30,8],util:[-40,4]}[room]||[0,0];return{x:c.x+off[0],y:c.y+off[1]}}
-function planFamPos(gr){const out=[];
-  if(M('sp'))out.push(gr.fam.sp?{id:'sp',x:112,y:262,ready:1}:{id:'sp',x:56,y:62,ready:0});
-  if(M('kid'))out.push(gr.fam.kid?{id:'kid',x:136,y:266,ready:1}:{id:'kid',x:318,y:46,ready:0});
-  return out}
+/* 가족 토큰: 잠든 자리 → 깨우면 현관 */
+const BED={sp:[56,62],kid:[318,46],kid2:[300,92],eld:[60,186]};
+const DOOR={sp:[112,262],kid:[136,266],kid2:[158,266],eld:[180,262]};
+function planFamPos(gr){return G.fam.filter(m=>m.id!=='me').map(m=>{const r=!!gr.fam[m.id];const p=r?DOOR[m.id]:BED[m.id];
+  return{id:m.id,x:p[0],y:p[1],ready:r?1:0,small:m.k==='kid',ch:m.n.charAt(0)}})}
 
 /* ---------- 계단실 · 도로 ---------- */
 function stairSVG(floor,ev){
@@ -1363,10 +1506,11 @@ function hpColor(m){return m.crit?C.red:m.hp>60?C.skin:m.hp>30?C.amber:C.red}
 function figure(x,y,sc,col,label,sitting){/* 앉은 사람 */
   return `<g transform="translate(${x} ${y}) scale(${sc})"><g class="breath"><circle cx="0" cy="-30" r="7.5" fill="${col}"/><path d="M-11 0 C-11 -16 -8 -21 0 -21 C8 -21 11 -16 11 0 Z" fill="${col}"/>${sitting?`<path d="M-11 0h24v5h-24z" fill="${col}" opacity=".8"/>`:''}</g>${label?`<text y="16" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" font-weight="800" fill="#cfd7de">${label}</text>`:''}</g>`}
 function neighbor(x,y,sc,o){return `<g transform="translate(${x} ${y}) scale(${sc})" opacity="${o||.55}"><circle cy="-28" r="7" fill="#3c4855"/><path d="M-10 0C-10-15-7-20 0-20S10-15 10 0Z" fill="#3c4855"/></g>`}
-function famGroup(cx,base){let s='';const n=G.fam.length;const xs=n===1?[cx]:n===2?[cx-20,cx+20]:[cx-38,cx,cx+36];
-  G.fam.forEach((m,i)=>{const sc=m.id==='kid'?.72:.95;s+=figure(xs[i],base-(m.id==='kid'?2:0),sc,hpColor(m),m.n,1);
+function famGroup(cx,base){let s='';const n=G.fam.length;const gap=n>=4?30:n===3?37:40;const xs=G.fam.map((_,i)=>Math.round(cx+(i-(n-1)/2)*gap));
+  G.fam.forEach((m,i)=>{const sc=m.k==='kid'?.72:m.k==='eld'?.9:.95;s+=figure(xs[i],base-(m.k==='kid'?2:0),sc,hpColor(m),m.n,1);
     if(m.c.length){s+=`<g transform="translate(${xs[i]+8} ${base-42})"><circle r="6.5" fill="#361613" stroke="${C.red}" stroke-width="1"/><use href="#i-${CONDS[m.c[0]].ic}" x="-4.5" y="-4.5" width="9" height="9" fill="none" stroke="${C.red}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>`}});
   return s}
+function supX(cx){const n=G.fam.length;const gap=n>=4?30:n===3?37:40;return Math.round(cx+(n-1)/2*gap+34)}
 function supplies(x,y){/* 물·식량을 그림으로: 생수병 개수 = 2L 단위 */
   let s='';const bottles=Math.min(8,Math.ceil(G.res.water/2));
   for(let i=0;i<bottles;i++){const bx=x+i*7,by=y;s+=`<path d="M${bx+1} ${by-15}h3v2l1.4 2v11h-5.8v-11l1.4-2z" fill="#5aa8ff" opacity=".75"/>`}
@@ -1409,9 +1553,8 @@ function sceneSVG(){
     s+=`<rect y="146" width="${W}" height="44" fill="#151a1f"/>`;
     [[22,170,.8],[52,166,.7],[250,168,.75],[290,172,.85],[326,166,.7]].forEach(n=>s+=neighbor(n[0],n[1],n[2]));
     s+=`<rect x="118" y="168" width="130" height="10" rx="2" fill="#3a3326" opacity=".7"/>`;
-    s+=famGroup(170,170)+supplies(226,182);
-    if(dark){s+=`<rect width="${W}" height="${H}" fill="#020305" opacity="${G.flags.light?'.66':'.86'}"/>`;
-      if(G.flags.light)s+=`<ellipse cx="175" cy="150" rx="115" ry="70" fill="url(#cone)"/>${famGroup(170,170)}`;}
+    s+=famGroup(170,170)+supplies(supX(170),182);
+    if(dark)s+=`<rect width="${W}" height="${H}" fill="#020305" opacity=".2"/>`;
   }else if(G.loc==='home'||G.loc==='high'){
     const isHigh=G.loc==='high';const night=['21','22','23','00','01','02','03','04','05'].includes(clockAt(G.turn).slice(0,2));
     s+=`<rect width="${W}" height="${H}" fill="${isHigh?'#1c2329':'#1b2228'}"/>`;
@@ -1423,17 +1566,17 @@ function sceneSVG(){
       }
     else{s+=`<g opacity=".45">${Array.from({length:10},(_,i)=>`<path d="M0 ${20+i*13}H360" stroke="#2f3a44"/>`).join('')}${Array.from({length:19},(_,i)=>`<path d="M${i*20} 0V146" stroke="#2f3a44"/>`).join('')}</g>`;
       s+=`<rect x="220" y="90" width="120" height="56" rx="14" fill="#cfd7de" opacity=".18"/><rect x="24" y="30" width="44" height="116" fill="#2b343d"/>`}
-    s+=`<rect y="146" width="${W}" height="44" fill="#141a1f"/>`+famGroup(140,170)+supplies(196,182);
-    if(G.flags.blackout&&!G.flags.light)s+=`<rect width="${W}" height="${H}" fill="#020305" opacity=".5"/>`;
+    s+=`<rect y="146" width="${W}" height="44" fill="#141a1f"/>`+famGroup(140,170)+supplies(supX(140),182);
+
   }else{/* gym */
     s+=`<rect width="${W}" height="${H}" fill="#1f2328"/><rect y="120" width="${W}" height="70" fill="#5a4630"/>${Array.from({length:12},(_,i)=>`<path d="M${i*32} 120 l-20 70" stroke="#4a3a28" stroke-width="2"/>`).join('')}`;
     s+=`<path d="M0 150h360" stroke="#e8e2c4" stroke-width="1.5" opacity=".3"/><g transform="translate(300 26)"><rect width="40" height="28" fill="none" stroke="#c9d3dc" stroke-width="2"/><path d="M12 28h16v6" stroke="#ff7a45" stroke-width="2.5" fill="none"/></g>`;
     s+=`<rect x="60" y="30" width="170" height="24" rx="3" fill="#0f2a4a"/><text x="145" y="46" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="900" fill="#e8f1ff">정부 집결지 · 구호소</text>`;
     [[30,140],[90,140],[250,140],[310,140]].forEach(([x,y])=>s+=`<rect x="${x-24}" y="${y}" width="48" height="10" rx="3" fill="#3a5a7a" opacity=".8"/>`);
     [[40,166,.7],[260,168,.75],[316,164,.7]].forEach(n=>s+=neighbor(n[0],n[1],n[2],.6));
-    s+=famGroup(150,172)+supplies(206,184);
+    s+=famGroup(150,172)+supplies(supX(150),184);
   }
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${LOCN[G.loc]}">${s}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${locName()}">${s}</svg>`;
 }
 
 /* ===================== 06 · 화면 · 흐름 ===================== */
@@ -1444,11 +1587,21 @@ function clearTimers(){UI.timers.forEach(clearTimeout);UI.timers=[];cancelAnimat
 function setScreen(s){UI.screen=s;render();window.scrollTo(0,0)}
 function render(){
   clearTimers();const a=$('#app');
-  const v={title:vTitle,setup:vSetup,records:vRecords,alert:vAlert,grab:vGrab,move:vMove,shelter:vShelter,end:vEnd}[UI.screen];
-  a.innerHTML=v?v():'';a.classList.toggle('fade-in',true);setTimeout(()=>a.classList.remove('fade-in'),340);
+  const v={title:vTitle,setup:vSetup,family:vFamily,records:vRecords,alert:vAlert,grab:vGrab,move:vMove,descent:vDescent,shelter:vShelter,end:vEnd}[UI.screen];
+  a.innerHTML=v?v():'';document.body.dataset.screen=UI.screen;a.classList.toggle('fade-in',true);setTimeout(()=>a.classList.remove('fade-in'),340);
   const vg=$('#fx-vignette');if(vg)vg.hidden=!(UI.screen==='grab'&&GR.running&&!GR.car);
   if(UI.after){const f=UI.after;UI.after=null;f()}
+  try{senseAfterRender()}catch(e){}
+  if(UI.screen==='shelter'&&G&&G.cur&&(G.step==='event'||G.step==='final')&&BCAST[G.cur.ev]&&!G.cur.bc){const b=BCAST[G.cur.ev];if(!b.need||b.need()){G.cur.bc=1;later(()=>broadcast(b.l,b.t,{say:b.say}),600)}}
 }
+/* 장면별 음성 방송 (게임 속 가상 방송) */
+const BCAST={
+  chemalert:{l:'민방위 음성방송 · 게임 속 가상 방송',t:'화생방경보. 화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다. 방독면이나 마스크를 착용하고 대피하십시오.',say:'화생방경보. 화생방경보. 이 지역에 화학작용제 살포가 확인되었습니다. 방독면이나 마스크를 착용하고 대피하십시오.'},
+  evac:{l:'KBS 재난방송 · 게임 속 가상 방송',t:'○○동 주민은 오전 9시까지 정부 버스로 남부 집결지로 이동하십시오.',say:'이 지역 주민은 오전 아홉 시까지 정부 버스로 남부 집결지로 이동하십시오.',need:()=>has('radio')||G.infoTurns>0},
+  relief:{l:'관리사무소 안내방송 · 게임 속 가상 방송',t:'구호품을 나눠 드립니다. 세대별로 신분증을 확인하니 준비해 주십시오.'},
+  final_conv:{l:'민방위 음성방송 · 게임 속 가상 방송',t:'경보를 해제합니다. 경보를 해제합니다.'},
+  final_chem:{l:'민방위 음성방송 · 게임 속 가상 방송',t:'경보를 해제합니다. 제독 작업이 진행 중이니 안내에 따라 주십시오.'}
+};
 function sndBtn(){return `<button class="iconbtn" data-a="snd" aria-label="${SND.on?'소리 끄기':'소리 켜기'}">${ic(SND.on?'sound':'mute')}</button>`}
 
 /* ---------- 타이틀 ---------- */
@@ -1463,21 +1616,24 @@ function vTitle(){
   <div class="stack">
     ${sv?`<button class="btn pri" data-a="resume">이어하기 <span class="small" style="font-weight:600">· ${SCEN[sv.scen]&&sv.scenKnown?SCEN[sv.scen].n:'진행 중인 훈련'}</span></button><button class="btn" data-a="setup">새 훈련 시작</button>`
       :`<button class="btn pri" data-a="setup">훈련 시작</button>`}
-    <button class="btn ghost" data-a="records">${ic('trophy')} 기록·배지 <span class="mut small" style="font-weight:600">${rec.runs?`· ${rec.runs}판`:''}</span></button>
+    <div class="row"><button class="btn ghost" data-a="family">${ic('group')} 우리 가족·집</button><button class="btn ghost" data-a="records">${ic('trophy')} 기록·배지${rec.runs?` <span class="mut small" style="font-weight:600">· ${rec.runs}판</span>`:''}</button></div>
   </div>
+  <p class="title-note sound-note">${ic('sound')} 실제 경보음·음성 방송과 비슷한 소리가 난다. 주변에 사람이 있으면 이어폰을 쓰자.</p>
   <p class="title-note">사이렌 속 60초 안에 집에서 챙기고, 72시간을 버텨라. 모든 정답은 생존 수첩에 실린 공식 수칙(행정안전부·소방청·질병관리청 등)에서 나온다. 실제 상황에서는 재난문자와 정부 방송이 항상 우선이다.</p>`;
 }
 /* ---------- 설정 ---------- */
 function defaultSetup(){const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
-  return store.get('sg.setup',null)||{diff:'real',scen:'rand',fam:3,bag:kc>0?'sync':'none'}}
+  return store.get('sg.setup',null)||{diff:'real',scen:'rand',fam:getMy()?'my':3,bag:kc>0?'sync':'none'}}
 function vSetup(){
   const S=UI.setup||(UI.setup=defaultSetup());const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
   if(S.bag==='sync'&&!kc)S.bag='none';
+  const my=getMy();if(S.fam==='my'&&!my)S.fam=3;
+  const myS=my?`${myFamCount(my)}인 · ${my.floor}층`:'눌러서 설정';
   const seg=(key,opts)=>`<div class="seg-opts">${opts.map(o=>`<button data-a="opt" data-k="${key}" data-v="${o[0]}" aria-pressed="${String(S[key])===String(o[0])}" ${o[3]?'disabled':''}><b>${o[1]}</b><span>${o[2]}</span></button>`).join('')}</div>`;
   return `<div class="hud"><button class="iconbtn" data-a="home" aria-label="처음으로">${ic('back')}</button><div><div class="eyebrow">훈련 설정</div><div class="sub">한 번 정하면 이 판 동안 바뀌지 않는다</div></div><span class="sp"></span>${sndBtn()}</div>
-  <div class="seg"><div class="seg-label">난이도</div>${seg('diff',[['train','훈련','힌트 항상 · 75초'],['real','실전','정보가 있어야 힌트 · 60초'],['hard','극한','45초 · 피해 1.3배']])}</div>
+  <div class="seg"><div class="seg-label">난이도</div>${seg('diff',[['train','훈련','힌트·정답 바로 · 75초'],['real','실전','정답은 끝에 · 60초'],['hard','극한','45초 · 피해 1.3배']])}</div>
   <div class="seg"><div class="seg-label">상황</div>${seg('scen',[['rand','무작위','무엇인지 모른 채 시작'],['conv','재래식 공습','미사일'],['nuke','핵 공격','섬광·낙진'],['chem','화학무기','화생방']])}</div>
-  <div class="seg"><div class="seg-label">가족</div>${seg('fam',[[1,'혼자','1인 가구'],[2,'부부','2인'],[3,'부부+아이','6살 아이와 3인']])}</div>
+  <div class="seg"><div class="seg-label"><span>가족</span>${S.fam==='my'?`<button class="link" data-a="family">수정</button>`:''}</div>${seg('fam',[['my','우리 가족',myS],[1,'혼자','1인 가구'],[2,'부부','2인'],[3,'부부+아이','6살 아이와 3인']])}</div>
   <div class="seg"><div class="seg-label"><span>현관 생존배낭</span><span>${kc?`생존 수첩 체크 ${kc}/16`:''}</span></div>
     ${seg('bag',[['sync','생존 수첩 연동',kc?`실제 체크한 ${kc}종`:'연동 데이터 없음',!kc],['none','준비 안 함','현실 평균'],['full','완비','16종 전부']])}
     <div class="sync-note">${kc?`<b>생존 수첩 '대비' 탭</b>에서 체크한 물건이 게임 속 현관 배낭에 그대로 들어간다. 실제 준비가 곧 생존율이다.`:`<b>생존 수첩 설치판</b>(myjason91.github.io/Survival)과 같은 주소에서 실행하면, 그곳 생존배낭 체크리스트가 게임 속 현관 배낭이 된다.`}</div></div>
@@ -1505,6 +1661,8 @@ function vAlert(){
 
 /* ---------- 결정 카드 (공용) ---------- */
 function choicesOf(ev){return val(ev.choices)}
+/* 선택지 순서를 매번 섞는다 — 정답 위치로 맞히지 못하게 */
+function permFor(n){if(!G||!G.cur)return [...Array(n).keys()];if(!G.cur.perm||G.cur.perm.length!==n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}G.cur.perm=a}return G.cur.perm}
 function eventCard(ev,opt){
   opt=opt||{};const cs=choicesOf(ev);const toneC={red:'red',blue:'blue',green:'green'}[ev.tone]||'';
   const hintTxt=val(ev.hint);let hint='';
@@ -1513,7 +1671,7 @@ function eventCard(ev,opt){
     <div class="lead"><div class="badge ${toneC}">${ic(ev.art||'dot')}</div><div style="min-width:0"><div class="eyebrow">${ev.cat||''}</div><h2>${val(ev.title)}</h2></div></div>
     <p>${val(ev.text)}</p>${hint}
     ${ev.timed?`<div class="timebar"><i id="tbar"></i></div>`:''}
-    <div class="choices">${cs.map((c,i)=>{const okNeed=!c.need||c.need();return `<button class="choice" data-a="choose" data-i="${i}" ${okNeed?'':'disabled'}><span class="k">${'ABCD'[i]}</span><span class="ct"><b>${c.t}</b>${c.s||!okNeed?`<small>${okNeed?c.s:val(c.na)||'불가'}</small>`:''}</span></button>`}).join('')}</div>
+    <div class="choices">${permFor(cs.length).map((i,pos)=>{const c=cs[i];const okNeed=!c.need||c.need();return `<button class="choice" data-a="choose" data-i="${i}" ${okNeed?'':'disabled'}><span class="k">${'ABCD'[pos]}</span><span class="ct"><b>${val(c.t)}</b>${c.s||!okNeed?`<small>${okNeed?c.s:val(c.na)||'불가'}</small>`:''}</span></button>`}).join('')}</div>
   </div>`;
 }
 function fxChips(arr){if(!arr||!arr.length)return '';const seen=[];
@@ -1521,25 +1679,25 @@ function fxChips(arr){if(!arr||!arr.length)return '';const seen=[];
     const up=f.l==='피폭'||f.l==='오염'?f.n<0:f.n>0;return `<span class="fx ${up?'up':'down'}">${l} ${f.n>0?'+':''}${f.n}${f.u}</span>`}).join('')}</div>`}
 function resultCard(ev,r,btn){
   const cs=choicesOf(ev);
-  const lesson=val(ev.lesson);
-  const ok=r.ok;const box=lesson?`<div class="lesson ${ok===true?'ok':ok===false?'no':''}"><span class="eyebrow">${ok===true?'수칙대로 했다':ok===false?'실제 수칙':'생각해 볼 점'}</span><div>${lesson}</div>${ev.src?`<span class="src">출처 · ${val(ev.src)}</span>`:''}</div>`:'';
+  const hide=G.hide;const lesson=hide?null:val(ev.lesson);
+  const ok=hide?null:r.ok;const L=r.i>=0&&G.cur&&G.cur.perm?'ABCD'[G.cur.perm.indexOf(r.i)]:'ABCD'[r.i];const box=lesson?`<div class="lesson ${ok===true?'ok':ok===false?'no':''}"><span class="eyebrow">${ok===true?'수칙대로 했다':ok===false?'실제 수칙':'생각해 볼 점'}</span><div>${lesson}</div>${ev.src?`<span class="src">출처 · ${val(ev.src)}</span>`:''}</div>`:'';
   return `<div class="sheet fade-in">
     <div class="lead"><div class="badge ${ok===true?'green':ok===false?'red':''}">${ic(ok===true?'check':ok===false?'x':(ev.art||'dot'))}</div><div style="min-width:0"><div class="eyebrow">${ev.cat||''}</div><h2>${val(ev.title)}</h2></div></div>
-    <div class="choices">${r.i>=0?`<div class="choice ${ok===true?'right':ok===false?'wrong':''}"><span class="k">${'ABCD'[r.i]}</span><span class="ct"><b>${cs[r.i]?cs[r.i].t:''}</b></span></div>`:`<div class="choice wrong"><span class="k">!</span><span class="ct"><b>시간 초과</b></span></div>`}</div>
-    <p class="result">${r.text}</p>${fxChips(r.fx)}${box}
+    <div class="choices">${r.i>=0?`<div class="choice ${ok===true?'right':ok===false?'wrong':''}"><span class="k">${L}</span><span class="ct"><b>${cs[r.i]?val(cs[r.i].t):''}</b></span></div>`:`<div class="choice${hide?'':' wrong'}"><span class="k">!</span><span class="ct"><b>시간 초과 — 몸이 먼저 움직였다</b></span></div>`}</div>
+    <p class="result">${r.text}</p>${fxChips(r.fx)}${box}${hide&&val(ev.lesson)?`<p class="small faint" style="margin:0">옳은 판단이었는지는 72시간이 끝난 뒤 판단 기록에서 공개된다.</p>`:''}
     <button class="btn pri" data-a="${btn.a}">${btn.t}</button>
   </div>`;
 }
 
 /* ---------- 이동 단계 ---------- */
-const FLOORS={mv_elev:'12F',mv_conv:'7F',mv_nuke:'7F',mv_chem:'7F',mv_nuke2:'1F',mv_loc:'1F',road:''};
+function moveFloor(ev){if(ev==='mv_elev'||!ev)return HF()+'F';if(['mv_conv','mv_nuke','mv_chem'].includes(ev))return (G.flags.elev?1:(G.dmid||1))+'F';if(ev==='road')return '';return '1F'}
 function vMove(){
   const step=G.step;let sheet='';const evId=G.cur&&G.cur.ev;
   if(step==='grabsum')sheet=grabSummaryCard();
   else if(step==='card')sheet=eventCard(EV[evId]);
   else if(step==='result')sheet=resultCard(EV[evId],G.cur.r,{a:'move-next',t:G.moveQ.length?'계속 이동':'대피소로'});
-  const fl=step==='grabsum'?'12F':FLOORS[evId]||'B2';
-  return `${hud()}<div class="scene">${stairSVG(fl,evId)}<span class="tag">${evId==='road'?'국도 · 정체':'101동 비상계단'}</span></div>${sheet}`;
+  const fl=step==='grabsum'?HF()+'F':moveFloor(evId);
+  return `${hud()}<div class="scene">${stairSVG(fl,evId)}<span class="tag">${evId==='road'?'국도 · 정체':G.flags.elev&&['mv_conv','mv_nuke','mv_chem'].includes(evId)?'1층 로비':'비상계단'}</span></div>${sheet}`;
 }
 function grabSummaryCard(){
   const g=G.grab;const items=g.picked.filter(id=>!ITEMS[id].act&&!ITEMS[id].fam);
@@ -1559,11 +1717,11 @@ function gSlotsOf(ids){const out=[];ids.forEach(id=>{const s=ITEMS[id].s||0;for(
 function hud(){
   const ph=G.phase;let clk,sub;
   if(ph==='shelter'){clk=`T+${G.turn*6}h`;sub=`${clockAt(G.turn)} · ${dayOf(Math.min(G.turn,11))}일차`}
-  else if(ph==='move'){clk='23:09';sub='대피 이동'}else{clk='23:08';sub=''}
+  else if(ph==='move'){clk=simClock(G.simT||60);sub='대피 이동'}else{clk='23:08';sub=''}
   const scenChip=G.scenKnown?`<span class="chip red">${ic(SCEN[G.scen].ic)}${SCEN[G.scen].s}</span>`:`<span class="chip amb">${ic('siren')}원인 미상</span>`;
   return `<div class="hud"><div class="hclk"><span class="clock">${clk}</span><span class="sub">${sub}</span></div><span class="sp"></span>${scenChip}${sndBtn()}<button class="iconbtn" data-a="menu" aria-label="메뉴">${ic('menu')}</button></div>`;
 }
-function famStrip(){return `<div class="fam">${G.fam.map(m=>{const c=hpColor(m);return `<div class="mem${m.crit?' crit':''}"><div class="top"><b>${m.n}</b><span class="hp">${m.crit?'위독':m.hp}</span></div><div class="bar"><i style="width:${m.crit?3:m.hp}%;background:${c}"></i></div><div class="conds">${m.c.length?m.c.map(k=>`<span class="cond">${ic(CONDS[k].ic)}${CONDS[k].n}</span>`).join(''):`<span class="cond ok">${ic('check')}이상 없음</span>`}</div></div>`}).join('')}</div>`}
+function famStrip(){return `<div class="fam" data-n="${G.fam.length}">${G.fam.map(m=>{const c=hpColor(m);return `<div class="mem${m.crit?' crit':''}"><div class="top"><b>${m.n}</b><span class="hp">${m.crit?'위독':m.hp}</span></div><div class="bar"><i style="width:${m.crit?3:m.hp}%;background:${c}"></i></div><div class="conds">${m.c.length?m.c.map(k=>`<span class="cond">${ic(CONDS[k].ic)}${CONDS[k].n}</span>`).join(''):`<span class="cond ok">${ic('check')}이상 없음</span>`}</div></div>`}).join('')}</div>`}
 function resGrid(){
   const n=G.fam.length;const days=G.res.water/(RATION[G.ration].w*4*n);
   const cells=[
@@ -1586,7 +1744,7 @@ function vShelter(){
     sheet=resultCard(ev,G.cur.r,last?{a:'to-end',t:'72시간 — 결과 보기'}:G.cur.next?{a:'follow',t:'계속'}:{a:'to-action',t:'이 6시간 동안 할 일'})}
   else if(st==='action')sheet=actionCard();
   else if(st==='actres')sheet=actResCard();
-  return `${hud()}<div class="scene">${sceneSVG()}<span class="tag">${LOCN[G.loc]}</span></div>${famStrip()}${resGrid()}${sheet}`;
+  return `${hud()}<div class="scene">${sceneSVG()}<span class="tag">${locName()}</span></div>${famStrip()}${resGrid()}${sheet}`;
 }
 function quietCard(){return `<div class="sheet fade-in"><div class="lead"><div class="badge">${ic('moon')}</div><div><div class="eyebrow">조용한 시간</div><h2>숨 돌릴 6시간</h2></div></div><p>${G.cur.q}</p><button class="btn pri" data-a="to-action">이 6시간 동안 할 일</button></div>`}
 function rationCard(){
@@ -1636,16 +1794,17 @@ function vEnd(){
 function startGame(){
   store.set('sg.setup',UI.setup);newGame(UI.setup);G.phase='alert';G.cur={ev:'alert0',hs:hintSource()};save();
   setScreen('alert');later(()=>{SND.cbs();vib([200,100,200,100,400])},350);
+  later(()=>broadcast('민방위 음성방송 · 게임 속 가상 방송','경계경보. 경계경보. 적의 공격이 예상됩니다. 주민 여러분은 대피를 준비하시고, 어린이와 노약자는 가까운 대피소로 먼저 대피하십시오.'),1900);
 }
 function chooseOn(ev,i,after){
   const cs=choicesOf(ev);const c=cs[i];if(!c||(c.need&&!c.need()))return;
   if(ev.timed&&G.cur.t0)G.rt=performance.now()-G.cur.t0;
   clearTimers();
   const finish=sc=>{FX=[];const text=c.go(sc);G.cur.r={i,ok:c.ok,text,fx:FX.slice()};logDecision(ev,c,c.ok);
-    if(c.ok===true)SND.ok();else if(c.ok===false){SND.bad();vib(60)}after()};
+    if(G.hide)SND.pick();else if(c.ok===true)SND.ok();else if(c.ok===false){SND.bad();vib(60)}after()};
   if(c.mini)startMini(c.mini,finish);else finish();
 }
-function timeoutOn(ev,after){FX=[];const text=ev.timeout();G.cur.r={i:-1,ok:false,text,fx:FX.slice()};logDecision(ev,null,false,'시간 초과');SND.bad();vib(80);after()}
+function timeoutOn(ev,after){FX=[];const text=ev.timeout();G.cur.r={i:-1,ok:false,text,fx:FX.slice()};logDecision(ev,null,false,'시간 초과');if(G.hide)SND.pick();else SND.bad();vib(80);after()}
 function armTimed(ev,after){
   if(!ev.timed)return;G.cur.t0=performance.now();
   const bar=$('#tbar');if(bar){bar.style.transition='none';bar.style.transform='scaleX(1)';void bar.offsetWidth;bar.style.transition=`transform ${ev.timed}s linear`;bar.style.transform='scaleX(0)'}
@@ -1655,8 +1814,16 @@ function armTimed(ev,after){
 /* 이동 */
 function moveNext(){
   if(!G.moveQ.length){toShelter();return}
-  const id=G.moveQ.shift();G.cur={ev:id,hs:hintSource()};consumeHint(G.cur.hs);G.step='card';
-  UI.after=()=>{const ev=EV[id];if(ev.flash){flash();SND.boom(true);vib([400,80,600])}else if(id==='mv_conv'){SND.boom();shake();vib([150,50,250])}else if(id==='road'){SND.siren(10)}
+  const id=G.moveQ.shift();
+  if(id.indexOf('D:')===0){
+    if(id!=='D:B'&&G.flags.elev){moveNext();return}
+    if(id==='D:B'&&(!G.shUG||G.loc==='home')){moveNext();return}
+    startDescent(id);return}
+  UI.screen='move';G.cur={ev:id,hs:hintSource()};consumeHint(G.cur.hs);G.step='card';
+  if(id==='mv_conv')G.flags.stairDark=chance(.5)?1:0;
+  if(id==='mv_nuke')G.flags.stairDark=chance(.6)?1:0;
+  if(id==='mv_chem')G.flags.chemSmell=1;
+  UI.after=()=>{const ev=EV[id];if(ev.flash){flash();SND.boom(true);vib([400,80,600]);stun()}else if(id==='mv_conv'){SND.boom();shake();vib([150,50,250])}else if(id==='road'){SND.siren(10)}
     armTimed(ev,()=>{G.step='result';save();render()})};
   render();
 }
@@ -1684,19 +1851,24 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b||b.disabled)return;
   const a=b.dataset.a;SND.ac();
   if(a==='snd'){SND.on=!SND.on;store.set('sg.snd',SND.on);if(!SND.on)SND.stopSiren();b.innerHTML=ic(SND.on?'sound':'mute');return}
-  if(a==='home'){clearTimers();SND.stopSiren();GR.running=false;setScreen('title');return}
+  if(a==='home'){clearTimers();SND.stopSiren();GR.running=false;DS.on=false;if(DS.prompt){clearTimeout(DS.prompt.to);DS.prompt=null}hush();setScreen('title');return}
+  if(a==='family'){UI.my=null;UI.famBack=UI.screen==='setup'?'setup':'title';setScreen('family');return}
+  if(a==='my-opt'){myOpt(b.dataset.k,b.dataset.v);render();return}
+  if(a==='my-import'){myImport();render();toast('생존 수첩에 적어 둔 대피소·집결지를 불러왔다.');return}
+  if(a==='my-save'){mySave();return}
+  if(a==='my-back'){setScreen(UI.famBack||'title');return}
   if(a==='setup'){UI.setup=null;setScreen('setup');return}
   if(a==='records'){setScreen('records');return}
-  if(a==='opt'){const k=b.dataset.k;let v=b.dataset.v;if(k==='fam')v=+v;UI.setup[k]=v;render();return}
+  if(a==='opt'){const k=b.dataset.k;let v=b.dataset.v;if(k==='fam'){if(v==='my'){if(!getMy()){UI.my=null;UI.famBack='setup';setScreen('family');return}}else v=+v}UI.setup[k]=v;render();return}
   if(a==='start'){startGame();return}
   if(a==='resume'){const sv=loadSave();if(!sv)return;G=sv;RNG.s=sv.rngS||1;
     if(G.phase==='grab'){startGrab();return}
     if(G.phase==='alert'){setScreen('alert');return}
-    if(G.phase==='move'){UI.screen='move';if(G.step==='card'){G.moveQ.unshift(G.cur.ev);moveNext();return}setScreen('move');return}
+    if(G.phase==='move'){UI.screen='move';if(G.step==='descent'){G.moveQ.unshift(G.dsId);moveNext();return}if(G.step==='card'){G.moveQ.unshift(G.cur.ev);moveNext();return}setScreen('move');return}
     setScreen('shelter');return}
   if(a==='again'){UI.setup=Object.assign({},G.opts);delete UI.setup.seed;startGame();return}
   if(a==='menu'){menuOverlay();return}
-  if(a==='quit'){$('#ov')&&$('#ov').remove();save();clearTimers();SND.stopSiren();setScreen('title');return}
+  if(a==='quit'){$('#ov')&&$('#ov').remove();if(UI.screen==='descent'){DS.on=false;if(DS.prompt){clearTimeout(DS.prompt.to);DS.prompt=null}}save();clearTimers();SND.stopSiren();hush();setScreen('title');return}
   if(a==='close-ov'){$('#ov')&&$('#ov').remove();return}
   /* 결정 */
   if(a==='choose'){const i=+b.dataset.i;
@@ -1710,6 +1882,7 @@ document.addEventListener('click',e=>{
   if(a==='follow'){const nx=G.cur.next;G.cur={ev:nx,hs:hintSource()};consumeHint(G.cur.hs);G.fired[nx]=1;G.step='event';save();render();return}
   if(a==='to-action'){G.step='action';save();render();return}
   if(a==='act'){const id=b.dataset.v;const at=doAction(id);const afx=FX.slice();
+    if(id==='radio'){const q=(at.match(/"([^"]+)"/)||[])[1];if(q)later(()=>broadcast('KBS 재난방송 · 게임 속 가상 방송',q),400)}
     if(checkOver()){toEnd();return}
     endTurn();G.cur={act:id,at,afx};G.step='actres';if(G.over){save();render();later(toEnd,1600);return}save();render();return}
   if(a==='next-turn'){if(G.over){toEnd();return}G.turn++;beginTurn();save();render();window.scrollTo(0,0);return}
@@ -1723,6 +1896,39 @@ function menuOverlay(){
   document.body.appendChild(d);
 }
 
+/* ---------- 우리 가족·우리 집 ---------- */
+function myDraft(){return UI.my||(UI.my=getMy()||JSON.parse(JSON.stringify(MY_DEFAULT)))}
+function vFamily(){
+  const m=myDraft();const hb=readHandbookPlaces();const canImp=hb.sh.length||hb.meet;
+  const tg=(k,v,l,sub,on)=>`<button data-a="my-opt" data-k="${k}" data-v="${v}" aria-pressed="${on}"><b>${l}</b>${sub?`<span>${sub}</span>`:''}</button>`;
+  const inp=(id,path,v,ph,num)=>`<input class="in${num?' num-in':''}" id="${id}" data-my="${path}" value="${clean(v)}" placeholder="${ph}"${num?' type="number" inputmode="numeric" min="1" max="60"':' maxlength="20"'}>`;
+  const shCard=i=>{const s=m.sh[i]||(m.sh[i]={n:'',k:'park',m:3});return `<div class="fcard"><div class="seg-label">집 근처 대피소 ${'①②'[i]}</div>
+    ${inp('my-sh'+i,'sh.'+i+'.n',s.n,i?'예: ○○초등학교 지하 / 지하철역':'예: 단지 지하주차장 B2')}
+    <div class="seg-opts k4">${Object.keys(SHK).map(k=>tg('sh'+i+'k',k,SHK[k].n,'',s.k===k)).join('')}</div>
+    <label class="frow" for="my-shm${i}"><span>걸어서</span>${inp('my-shm'+i,'sh.'+i+'.m',s.m,'분',1)}<span>분</span></label></div>`};
+  return `<div class="hud"><button class="iconbtn" data-a="my-back" aria-label="뒤로">${ic('back')}</button><div class="hclk"><div class="eyebrow">우리 가족·우리 집</div><div class="sub">이 폰에만 저장된다</div></div><span class="sp"></span></div>
+  <p class="small mut" style="margin:0">게임 속 가족 이름·층수·대피소가 실제 우리 집처럼 바뀐다. 입력한 내용은 이 폰에만 남고, 게임 코드나 공개 저장소에는 올라가지 않는다.</p>
+  <div class="fcard"><div class="seg-label">배우자</div><div class="seg-opts">${tg('sp','1','함께 산다','',m.sp.on)}${tg('sp','0','없음','',!m.sp.on)}</div>${m.sp.on?inp('my-sp','sp.n',m.sp.n,'부를 이름 (예: 여보)'):''}</div>
+  <div class="fcard"><div class="seg-label">아이</div><div class="seg-opts">${[0,1,2].map(n=>tg('kids',n,n?n+'명':'없음','',m.kids.length===n)).join('')}</div>${m.kids.map((k,i)=>inp('my-kid'+i,'kids.'+i+'.n',k.n,m.kids.length>1?(i?'둘째 이름':'첫째 이름'):'아이 이름')).join('')}</div>
+  <div class="fcard"><div class="seg-label">어르신 (함께 사는 부모님)</div><div class="seg-opts">${tg('eld','0','없음','',!m.eld.on)}${tg('eld','1','함께 산다','계단이 느리다',m.eld.on)}</div>${m.eld.on?inp('my-eld','eld.n',m.eld.n,'부를 이름 (예: 어머니)'):''}</div>
+  <div class="fcard"><label class="frow" for="my-floor"><span class="seg-label" style="flex:1">우리 집 층수</span>${inp('my-floor','floor',m.floor,'층',1)}<span>층</span></label><span class="small faint">계단으로 내려갈 층 수가 된다.</span></div>
+  ${shCard(0)}${shCard(1)}
+  <div class="fcard"><div class="seg-label">가족 1차 집결지</div>${inp('my-meet','meet',m.meet,'예: 단지 놀이터 앞')}</div>
+  ${canImp?`<button class="btn ghost" data-a="my-import">${ic('book')} 생존 수첩에 적은 대피소·집결지 불러오기</button>`:''}
+  <button class="btn pri" data-a="my-save">${ic('check')} 저장하고 훈련 설정으로</button>`;
+}
+function myOpt(k,v){const m=myDraft();
+  if(k==='sp')m.sp.on=v==='1';else if(k==='eld')m.eld.on=v==='1';
+  else if(k==='kids'){const n=+v;while(m.kids.length<n)m.kids.push({n:''});m.kids.length=n}
+  else if(k==='sh0k'||k==='sh1k'){const i=+k[2];(m.sh[i]||(m.sh[i]={n:'',k:'park',m:3})).k=v}}
+function myImport(){const m=myDraft();const hb=readHandbookPlaces();hb.sh.forEach((s,i)=>{m.sh[i]={n:clean(s.n),k:s.k,m:s.m}});if(hb.meet)m.meet=clean(hb.meet)}
+function mySave(){const m=myDraft();
+  m.sp.n=clean(m.sp.n,8);m.eld.n=clean(m.eld.n,8);m.kids.forEach(k=>k.n=clean(k.n,8));m.meet=clean(m.meet,40);
+  m.floor=clamp(Math.round(+m.floor||1),1,60);m.sh=m.sh.slice(0,2).map(s=>({n:clean(s.n,40),k:SHK[s.k]?s.k:'ground',m:clamp(Math.round(+s.m||1),1,60)}));
+  store.set('sg.my',m);UI.setup=UI.setup||defaultSetup();UI.setup.fam='my';store.set('sg.setup',UI.setup);toast('저장했다. 다음 훈련부터 우리 가족으로 시작한다.');setScreen('setup')}
+document.addEventListener('input',e=>{const el=e.target.closest('[data-my]');if(!el||UI.screen!=='family')return;const m=myDraft();
+  const p=el.dataset.my.split('.');let o=m;for(let i=0;i<p.length-1;i++){o=o[p[i]]}o[p[p.length-1]]=el.type==='number'?el.value:el.value});
+
 /* ===================== 07 · 60초 탈출(실시간) · 미니게임 ===================== */
 const GR={running:false};
 function itemVisible(id,gr){const it=ITEMS[id];
@@ -1733,10 +1939,13 @@ function itemVisible(id,gr){const it=ITEMS[id];
 function startGrab(){
   const d=DIFF[G.diff];const car=!!G.flags.car;let sec=d.sec;if(G.flags.slept)sec-=5;if(car)sec=Math.min(40,sec-10);
   Object.assign(GR,{sec,left:sec,end:0,running:false,busy:false,room:G.flags.prep?'hall':G.flags.slept?'master':'living',picked:[],used:0,cap:10,
-    fam:{sp:!M('sp')||!!G.flags.prep||car,kid:!M('kid')||!!G.flags.prep||car},gas:false,breaker:false,pack:false,late:0,done:false,car,famOk:false});
+    fam:Object.fromEntries(others().map(m=>[m.id,!!G.flags.prep||car])),gas:false,breaker:false,pack:false,late:0,done:false,car,famOk:false});
   G.phase='grab';save();UI.screen='grab';render();grabIntro();
 }
-function famReady(){return GR.fam.sp&&GR.fam.kid}
+function famReady(){return Object.values(GR.fam).every(Boolean)}
+/* 물건 이름: 가족 깨우기·애착인형은 우리 가족 이름으로 */
+function itemName(id){const it=ITEMS[id];if(it.fam){const m=M(it.fam);return m?`${josa(m.n,'을를')} ${m.k==='kid'?'깨워 옷 입히기':m.k==='eld'?'깨워 부축하기':'깨우기'}`:it.n}
+  if(id==='teddy'&&M('kid'))return `${M('kid').n} 애착인형`;return it.n}
 function vGrab(){
   return `<div class="grab-top"><div class="ring" id="ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#1c242c" stroke-width="7"/><circle id="ringArc" cx="37" cy="37" r="32" fill="none" stroke="${GR.car?'#5aa8ff':'#ffb224'}" stroke-width="7" stroke-linecap="round" stroke-dasharray="201.06" stroke-dashoffset="0"/></svg><div class="val" id="ringVal">${GR.sec}</div></div>
     <div class="grab-msg"><b id="gMsg">${GR.car?'차에 실을 것을 고른다':'공습경보 — 사이렌 1분'}</b><span id="gSub">방 누르면 이동 · 물건 누르면 담기</span></div><span style="flex:1"></span>${sndBtn()}</div>
@@ -1778,7 +1987,7 @@ function grabUpdate(){
   const ids=trayItems();
   tray.innerHTML=ids.length?ids.map(id=>{const it=ITEMS[id];const done=GR.picked.includes(id)||(it.act&&GR[id]);
     const full=!it.act&&!it.fam&&(GR.used+(it.s||0)>GR.cap);
-    return `<button class="it${it.act?' act':''}${it.fam?' fam':''}${done?' done':''}" data-g="pick" data-id="${id}" ${done||full?'disabled':''}><span class="prog"></span>${ic(it.ic)}<div><b>${it.n}</b><small>${done?'완료':full?'칸 부족':`${it.act||it.fam?'행동':(it.s+'칸')} · ${it.t}초 · ${it.d}`}</small></div></button>`}).join('')
+    return `<button class="it${it.act?' act':''}${it.fam?' fam':''}${done?' done':''}" data-g="pick" data-id="${id}" ${done||full?'disabled':''}><span class="prog"></span>${ic(it.ic)}<div><b>${itemName(id)}</b><small>${done?'완료':full?'칸 부족':`${it.act||it.fam?'행동':(it.s+'칸')} · ${it.t}초 · ${it.d}`}</small></div></button>`}).join('')
     :`<p class="small mut" style="grid-column:1/-1;margin:4px 0">이 방엔 챙길 것이 없다. 다른 방을 눌러 이동.</p>`;
   $('#trayRoom').textContent=ROOMS[GR.room].n;$('#slotTxt').textContent=`배낭 ${GR.used}/${GR.cap}칸`;
   const slots=gSlotsOf(GR.picked.filter(id=>!ITEMS[id].act&&!ITEMS[id].fam));
@@ -1822,7 +2031,7 @@ function grabPick(id,btn){
 }
 function grabExit(){
   if(!GR.running||GR.busy)return;
-  if(!famReady()){toast('가족이 아직 자고 있다. 안방·아이방에서 깨워야 한다.');return}
+  if(!famReady()){const w=others().filter(m=>!GR.fam[m.id]).map(m=>m.n).join('·');toast(`${w} — 아직 자고 있다. 깨워야 함께 나갈 수 있다.`);return}
   if(GR.room!=='hall'){/* 현관까지 걸어간다 */const sec=travelSec(GR.room,'hall');grabMove('hall');setTimeout(()=>{if(GR.running)grabFinish(false)},sec*1000+60);return}
   grabFinish(false);
 }
@@ -1831,7 +2040,7 @@ function grabFinish(timeout){
   const vg=$('#fx-vignette');if(vg)vg.hidden=true;
   let msg='';
   if(timeout){
-    if(!famReady()){GR.late=(GR.fam.sp?0:4)+(GR.fam.kid?0:6)+3;GR.fam.sp=GR.fam.kid=true;msg=GR.car?'시간이 다 됐다.':'사이렌이 끝났다. 가족을 흔들어 깨워 맨몸으로 뛰쳐나간다.'}
+    if(!famReady()){GR.late=3+others().reduce((a,m)=>a+(GR.fam[m.id]?0:(m.k==='kid'?6:m.k==='eld'?6:4)),0);others().forEach(m=>GR.fam[m.id]=true);msg=GR.car?'시간이 다 됐다.':'사이렌이 끝났다. 가족을 흔들어 깨워 맨몸으로 뛰쳐나간다.'}
     else if(GR.room!=='hall'){GR.late=travelSec(GR.room,'hall');msg=GR.car?'시간이 다 됐다. 들고 있는 것만 챙겨 출발.':'사이렌이 끝났다. 들고 있는 것만 챙겨 현관으로 뛴다.'}
     else msg=GR.car?'시간이 다 됐다.':'사이렌이 끝났다.';
     GR.left=0;
@@ -1839,8 +2048,9 @@ function grabFinish(timeout){
   GR.famOk=GR.late===0;
   applyGrab(GR);
   G.phase='move';G.step='grabsum';
-  G.moveQ=G.flags.car?['road'].concat(G.scen==='nuke'?['mv_nuke']:G.scen==='chem'?['mv_chem']:['mv_conv'])
-    :['mv_elev',G.scen==='conv'?'mv_conv':G.scen==='nuke'?'mv_nuke':'mv_chem',G.scen==='nuke'?'mv_nuke2':'mv_loc'];
+  const mid=G.scen==='conv'?'mv_conv':G.scen==='nuke'?'mv_nuke':'mv_chem',loc=G.scen==='nuke'?'mv_nuke2':'mv_loc';
+  G.dmid=Math.max(2,Math.round(HF()*.55));G.simT=60;
+  G.moveQ=G.flags.car?['road',mid]:HF()>=2?['mv_elev','D:A1',mid,'D:A2',loc,'D:B']:[mid,loc,'D:B'];
   save();
   if(msg)toast(msg,2400);
   setTimeout(()=>setScreen('move'),timeout?900:250);
@@ -1912,6 +2122,262 @@ function miniSOS(d,end){
       if(tries<=0){setTimeout(()=>end(0),700)}else setTimeout(reset,500)}};
   pad.addEventListener('pointerup',up);pad.addEventListener('pointercancel',up);
   pad.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+/* ===================== 09 · 1인칭 계단 대피 (실시간) ===================== */
+/* 층 번호: 12…1 = 지상층, 0 = B1, -1 = B2. 누르고 있으면 내려가고, 손을 떼면 멈춘다. */
+const DS={on:false};
+const flName=f=>f>=1?`${f}층`:`지하 ${1-f}층`;
+const flTag=f=>f>=1?String(f):'B'+(1-f);
+function simClock(sec){const t=23*3600+8*60+Math.round(sec);const h=Math.floor(t/3600)%24,m=Math.floor(t/60)%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')}
+
+function startDescent(id){
+  const f=HF(),mid=G.dmid||Math.max(2,Math.round(f*.55));
+  let from,to;
+  if(id==='D:A1'){from=f;to=mid}else if(id==='D:A2'){from=mid;to=1}else{from=1;to=-1}
+  if(from<=to){moveNext();return}
+  const kid=M('kid'),eld=M('eld');
+  const dark=id==='D:A2'&&!!G.flags.stairDark;
+  const light=dark?(has('torch')?'torch':(G.res.power>=5&&!G.flags.emp)?'phone':null):'on';
+  Object.assign(DS,{on:true,id,from,to,pos:from,hold:false,stam:100,carry:!!G.flags.carry,jam:null,
+    nextJam:from-(id==='D:A1'?2.2:1.2)-rnd()*1.2,density:id==='D:A1'?.35:id==='D:A2'?.7:.5,
+    bumps:0,t:0,last:0,stepAcc:0,beatAcc:0,lastFl:Math.ceil(from),prompt:null,dark,light,
+    dropAt:(id==='D:A2'&&!G.flags.dropDone&&G.res.water>=2)?to+(from-to)*(.35+rnd()*.3):null,
+    kidAt:(id==='D:A2'&&kid&&!G.flags.kidAsked&&!G.flags.carry)?to+(from-to)*(.15+rnd()*.25):null,
+    slow:eld?.34:kid?.42:.52,dust:id==='D:A2'&&G.scen==='nuke',haze:G.scen==='chem'&&!!G.flags.chemSmell});
+  G.dsId=id;G.phase='move';G.step='descent';save();
+  UI.screen='descent';render();
+  DS.last=performance.now();UI.raf=requestAnimationFrame(dsLoop);
+  wake(true);AMB.start('stair');
+  if(dark)toast(DS.light==='torch'?'계단 조명이 나갔다. 손전등을 켰다 — 화면을 끌면 비추는 곳이 바뀐다.':DS.light==='phone'?'계단 조명이 나갔다. 휴대폰 불빛뿐이다.':'계단 조명이 나갔다. 비상구 유도등만 희미하다.',3000);
+}
+
+/* ---------- 화면 ---------- */
+function vDescent(){
+  const kid=M('kid');
+  return `${hud()}
+  <div class="ds-scene${DS.dark?' dark':''}" id="dsScene">${descentSVG()}
+    ${DS.dust?'<div class="ds-dust"></div>':''}${DS.haze?'<div class="ds-haze"></div>':''}
+    <div class="ds-dark" id="dsDark" style="--r:${DS.light==='torch'?'40%':DS.light==='phone'?'27%':'13%'}"${DS.dark?'':' hidden'}></div><div class="ds-exitglow"${DS.dark?'':' hidden'}></div>
+    <div class="ds-bubble" id="dsBubble" hidden></div>
+    <div class="ds-prompt" id="dsPrompt" hidden></div>
+  </div>
+  <div class="ds-stat">
+    <div class="ds-fl"><b id="dsFl" class="num">${flTag(Math.ceil(DS.pos))}</b><span>${flName(DS.to)}까지</span></div>
+    <div class="ds-bars"><div class="ds-lbl"><span>내려온 층</span><span id="dsProg" class="num">0/${DS.from-DS.to}</span></div><div class="bar"><i id="dsProgBar" style="width:0%;background:var(--amber)"></i></div>
+      <div class="ds-lbl"><span>체력</span><span id="dsStamT" class="num">100</span></div><div class="bar"><i id="dsStam" style="width:100%;background:var(--exit)"></i></div></div>
+  </div>
+  <div class="ds-note" id="dsNote">${DS.id==='D:B'?'지하로 내려간다.':'앞사람 흐름에 맞춰 내려간다. 앞이 막히면 손을 뗀다.'}</div>
+  ${kid?`<button class="btn sm ghost" id="dsCarry">${ic('kid')}<span>${DS.carry?`${kidN('을를')} 내려놓기 (체력 회복)`:`${kidN('을를')} 안아 올리기`}</span></button>`:''}
+  <button class="ds-pad" id="dsPad" aria-label="누르고 있으면 내려간다">${ic('stairs')}<b>누르고 있으면 내려간다</b><small>손을 떼면 멈춘다</small></button>`;
+}
+function descentSVG(){
+  const W=360,H=260;let s='';
+  s+=`<defs><linearGradient id="dsWallL" x1="0" x2="1"><stop offset="0" stop-color="#1b2229"/><stop offset="1" stop-color="#2a333c"/></linearGradient>
+    <linearGradient id="dsWallR" x1="1" x2="0"><stop offset="0" stop-color="#1e252c"/><stop offset="1" stop-color="#2d3640"/></linearGradient>
+    <linearGradient id="dsFloor" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3a434c"/><stop offset="1" stop-color="#262d34"/></linearGradient></defs>`;
+  s+=`<g id="dsCam">`;
+  s+=`<polygon points="0,0 360,0 252,72 108,72" fill="#151a20"/>`;
+  s+=`<polygon points="0,0 108,72 108,176 0,${H}" fill="url(#dsWallL)"/>`;
+  s+=`<polygon points="360,0 252,72 252,176 360,${H}" fill="url(#dsWallR)"/>`;
+  s+=`<rect x="108" y="72" width="144" height="104" fill="#2f3842"/>`;
+  /* 비상등 */
+  s+=`<rect x="34" y="40" width="30" height="12" rx="2" fill="#d9e2ea" class="${DS.dark?'':'flick'}" opacity="${DS.dark?.15:.85}" transform="skewY(33)"/>`;
+  /* 비상구 유도등 (뒷벽) */
+  s+=`<g class="exit-glow"><rect x="148" y="78" width="64" height="18" rx="2" fill="#0f5a34" stroke="#2ccf7c"/><text x="186" y="91.5" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" font-weight="900" fill="#e9fff2">비상구</text><g transform="translate(152 80) scale(.62)" stroke="#e9fff2" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="4.5" r="2" fill="#e9fff2"/><path d="M9 21l2.5-6 2.5 2.5V21M8 10.5l3-2.5 3.5 1 2 3 3 .5M11.5 15l-1-4.5"/></g></g>`;
+  /* 층 번호 — 한국 아파트 계단실 벽의 큰 페인트 숫자 */
+  s+=`<text id="dsNum" x="180" y="152" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="52" fill="#e8c11a" letter-spacing="-2">${flTag(Math.ceil(DS.pos))}</text>`;
+  s+=`<text x="180" y="168" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="9" fill="#9a8a3a" letter-spacing="2">FLOOR</text>`;
+  /* 계단 바닥 + 디딤판 선 */
+  s+=`<polygon points="0,${H} 360,${H} 252,176 108,176" fill="url(#dsFloor)"/>`;
+  s+=`<g id="dsSteps" stroke="#56616c" stroke-width="2">${Array.from({length:9},()=>'<line/>').join('')}</g>`;
+  /* 난간 */
+  s+=`<path d="M360 196 L252 136" stroke="#9aa6b1" stroke-width="4" stroke-linecap="round"/><path d="M330 180v52M300 163v40M276 149v30" stroke="#5b6772" stroke-width="2.5"/>`;
+  /* 앞사람들 */
+  s+=`<g id="dsCrowd">${[[150,0],[178,6],[206,2],[232,8],[126,10]].map((p,i)=>`<g class="pp" data-i="${i}"><circle cx="${p[0]}" cy="${188+p[1]}" r="7.5" fill="#0c1015" stroke="#3a4652"/><path d="M${p[0]-13} ${214+p[1]}C${p[0]-13} ${200+p[1]} ${p[0]-8} ${196+p[1]} ${p[0]} ${196+p[1]}S${p[0]+13} ${200+p[1]} ${p[0]+13} ${214+p[1]}Z" fill="#0c1015" stroke="#3a4652"/></g>`).join('')}</g>`;
+  /* 함께 걷는 아이 (손 잡음) */
+  if(M('kid'))s+=`<g id="dsKid" opacity="${DS.carry?0:1}"><circle cx="54" cy="226" r="11" fill="#1a2129" stroke="#56616c"/><path d="M36 262c0-16 8-24 18-24s18 8 18 24z" fill="#1a2129" stroke="#56616c"/><path d="M72 246 q14 -2 22 6" stroke="#8d99a5" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
+  s+=`</g>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${flName(Math.ceil(DS.pos))} 비상계단">${s}</svg>`;
+}
+
+/* ---------- 루프 ---------- */
+function dsLoop(now){
+  if(!DS.on)return;
+  const dt=Math.min(.05,(now-DS.last)/1000);DS.last=now;DS.t+=dt;
+  const J=DS.jam;
+  /* 정체 진행 */
+  if(J){J.age+=dt;
+    if(J.stage==='warn'&&J.age>=J.warn){J.stage='stop';J.age=0;dsNote('앞이 멈췄다 — 손을 떼고 기다린다.');SND.tone(220,.12,'square',.03)}
+    else if(J.stage==='stop'){
+      if(DS.hold&&J.age>.35&&!J.bumped){J.bumped=1;dsBump()}
+      if(J.age>=J.len){DS.jam=null;dsNote('앞이 다시 움직인다.');DS.nextJam=DS.pos-(1.1+rnd()*1.6)/Math.max(.4,DS.density)}}}
+  else if(!DS.prompt&&DS.pos<=DS.nextJam&&DS.pos>DS.to+.3){DS.jam={stage:'warn',age:0,warn:DS.dark&&DS.light!=='torch'?.35:.75,len:1.6+rnd()*1.4,bumped:0};dsNote('앞사람이 느려진다…')}
+  /* 이동 */
+  let moving=false;
+  if(DS.hold&&!DS.prompt&&!(DS.jam&&DS.jam.stage==='stop')){
+    let sp=DS.carry?.5:DS.slow;
+    if(DS.dark&&DS.light!=='torch')sp*=DS.light==='phone'?.78:.6;
+    if(DS.stam<25)sp*=.6;
+    if(DS.jam&&DS.jam.stage==='warn')sp*=.55;
+    DS.pos-=sp*dt;moving=true;
+    DS.stam=clamp(DS.stam-(DS.carry?7.5:2.6)*dt,0,100);
+    G.simT=(G.simT||60)+dt*42;
+  }else{DS.stam=clamp(DS.stam+9*dt,0,100);G.simT=(G.simT||60)+dt*6}
+  /* 발소리 · 심장 */
+  if(moving){DS.stepAcc+=dt;if(DS.stepAcc>.34){DS.stepAcc=0;SND.tone(110+Math.random()*30,.07,'sine',.07)}}
+  if(DS.stam<30){DS.beatAcc+=dt;if(DS.beatAcc>.75){DS.beatAcc=0;SND.heart()}}
+  /* 층 넘김 */
+  const fl=Math.ceil(DS.pos);
+  if(fl<DS.lastFl){DS.lastFl=fl;const n=$('#dsNum');if(n){n.textContent=flTag(fl);n.classList.remove('tick');void n.getBoundingClientRect();n.classList.add('tick')}
+    if(DS.dark&&DS.light==='phone')res('power',-1);vib(8)}
+  /* 끼어드는 상황 */
+  if(!DS.prompt){
+    if(DS.dropAt!==null&&DS.pos<=DS.dropAt){DS.dropAt=null;dsPromptDrop()}
+    else if(DS.kidAt!==null&&DS.pos<=DS.kidAt){DS.kidAt=null;dsPromptKid()}
+  }
+  dsDraw(moving);
+  if(DS.pos<=DS.to){dsArrive();return}
+  UI.raf=requestAnimationFrame(dsLoop);
+}
+function dsDraw(moving){
+  /* 디딤판: 원근으로 다가오는 선 */
+  const ph=(DS.from-DS.pos)*9%1;const lines=$$('#dsSteps line');
+  lines.forEach((l,k)=>{const u=(k+ph)/9;const y=176+84*Math.pow(u,1.55);const dx=(y-176)*(108/84);
+    l.setAttribute('x1',(108-dx).toFixed(1));l.setAttribute('x2',(252+dx).toFixed(1));l.setAttribute('y1',y.toFixed(1));l.setAttribute('y2',y.toFixed(1));l.setAttribute('opacity',(.35+u*.65).toFixed(2))});
+  const cam=$('#dsCam');if(cam){const b=moving?Math.sin(DS.t*11)*2.2:0;cam.setAttribute('transform',`translate(0 ${b.toFixed(2)})`)}
+  /* 앞사람: 밀도·정체에 따라 가까워진다 */
+  const J=DS.jam;const near=J?(J.stage==='stop'?1:.55):0;const cnt=Math.round(2+DS.density*3);
+  $$('#dsCrowd .pp').forEach((g,i)=>{const show=i<cnt;g.setAttribute('opacity',show?1:0);
+    const sc=1+near*.38+(i%2)*.04;g.setAttribute('transform',`translate(${(180*(1-sc)).toFixed(1)} ${(200*(1-sc)+near*22).toFixed(1)}) scale(${sc.toFixed(3)})`)});
+  const k=$('#dsKid');if(k)k.setAttribute('opacity',DS.carry?0:1);
+  const fl=$('#dsFl');if(fl)fl.textContent=flTag(Math.ceil(DS.pos));
+  const done=clamp(DS.from-DS.pos,0,DS.from-DS.to);
+  const p=$('#dsProg');if(p)p.textContent=`${Math.floor(done)}/${DS.from-DS.to}`;
+  const pb=$('#dsProgBar');if(pb)pb.style.width=(done/(DS.from-DS.to)*100)+'%';
+  const st=$('#dsStam');if(st){st.style.width=DS.stam+'%';st.style.background=DS.stam<30?'var(--alert)':DS.stam<60?'var(--amber)':'var(--exit)'}
+  const stt=$('#dsStamT');if(stt)stt.textContent=Math.round(DS.stam);
+  const pad=$('#dsPad');if(pad)pad.classList.toggle('on',DS.hold&&!DS.prompt);
+  const ck=$('.hud .clock');if(ck)ck.textContent=simClock(G.simT||60);
+}
+function dsNote(t){const n=$('#dsNote');if(n)n.textContent=t}
+function dsBubble(t){const b=$('#dsBubble');if(!b)return;b.textContent=t;b.hidden=false;clearTimeout(dsBubble._t);dsBubble._t=setTimeout(()=>{b.hidden=true},1600)}
+
+/* ---------- 부딪힘 · 넘어짐 ---------- */
+function dsBump(){
+  DS.bumps++;G.flags.bumps=(G.flags.bumps||0)+1;shake();vib([60,40,90]);SND.tone(160,.18,'square',.05);
+  dsBubble(pick(['밀지 마세요!','천천히요!','아이 있어요!','앞에 멈췄어요!']));
+  if(chance(.45)){dsPromptFall();return}
+  mor(-2);G.simT+=8;dsNote('앞사람과 부딪혔다. 누군가 비틀거린다.');
+}
+function dsPromptFall(){
+  const first=!G.fired.d_fall;
+  dsPrompt(`<div class="eyebrow" style="color:var(--alert)">넘어졌다</div><b>뒤에서 사람들이 밀려온다!</b>
+    <div class="ds-pbtns"><button class="btn dngr" data-ds="curl">${ic('shield')}머리 감싸고 웅크리기</button><button class="btn" data-ds="up">바로 일어선다</button></div><div class="timebar"><i id="dsTb"></i></div>`,1.8,
+    k=>{const me=M('me');
+      if(k==='curl'){hurt(me,4);if(first)logD('d_fall',0);dsNote('두 팔로 머리를 감싸고 웅크렸다. 사람들이 지나간 뒤 일어섰다.');}
+      else{hurt(me,14);addC(me,'injury');if(first)logD('d_fall',1);dsNote(k==='up'?'일어서려다 다시 밟혔다. 옆구리와 손이 욱신거린다.':'굳어 버린 사이 발에 밟혔다.')}
+      G.fired.d_fall=1;G.simT+=15;});
+}
+function dsPromptDrop(){
+  G.flags.dropDone=1;
+  dsPrompt(`<div class="eyebrow">소지품</div><b>물병 하나가 계단 아래로 굴러떨어졌다!</b>
+    <div class="ds-pbtns"><button class="btn" data-ds="leave">두고 간다</button><button class="btn" data-ds="pick">허리 숙여 줍는다</button></div><div class="timebar"><i id="dsTb"></i></div>`,3.5,
+    k=>{if(k==='pick'){logD('d_drop',1);if(chance(.55)){dsNote('허리를 숙이는 순간 뒤에서 밀렸다.');setTimeout(()=>{if(DS.on&&!DS.prompt)dsPromptFall()},350)}else dsNote('물병을 주웠다. 뒤에서 짜증 섞인 소리가 났다.')}
+      else{res('water',-2);logD('d_drop',0);dsNote('물 2L를 잃었다. 흐름을 멈추지 않았다.')}});
+}
+function dsPromptKid(){
+  G.flags.kidAsked=1;
+  dsPrompt(`<div class="eyebrow">인파</div><b>아래층에서 사람들이 밀려든다. ${kidN('이가')} 인파에 끼일 것 같다.</b>
+    <div class="ds-pbtns"><button class="btn" data-ds="carry">${ic('kid')}안아 올린다</button><button class="btn" data-ds="hand">손만 꼭 잡는다</button></div><div class="timebar"><i id="dsTb"></i></div>`,4,
+    k=>{if(k==='carry'){DS.carry=true;G.flags.carry=1;logD('d_kid',0);dsNote(`${kidN('을를')} 안아 올렸다. 숨이 차지만 아이는 안전하다.`);dsCarryBtn()}
+      else{logD('d_kid',1);if(chance(.45)){const kd=kidM();hurt(kd,8);addC(kd,'injury');dsNote(`인파에 밀려 ${kidN('이가')} 난간에 부딪혔다.`)}else dsNote(`${kidM().n}의 손을 꼭 쥐었다. 손이 몇 번이나 빠질 뻔했다.`)}});
+}
+/* 판단 기록 (정답 index 0) */
+function logD(id,i){const ev=EV[id];const c=ev.choices[i];logDecision(ev,c,c.ok);G.fired[id]=1}
+function dsPrompt(html,sec,done){
+  DS.prompt={done};const p=$('#dsPrompt');if(!p)return;p.innerHTML=html;p.hidden=false;vib([80,40,80]);SND.tone(880,.1,'square',.04);
+  const tb=$('#dsTb');if(tb){tb.style.transition='none';tb.style.transform='scaleX(1)';void tb.offsetWidth;tb.style.transition=`transform ${sec}s linear`;tb.style.transform='scaleX(0)'}
+  DS.prompt.to=setTimeout(()=>dsResolve('timeout'),sec*1000);
+}
+function dsResolve(k){const pr=DS.prompt;if(!pr)return;if(UI.screen!=='descent'){clearTimeout(pr.to);DS.prompt=null;return}clearTimeout(pr.to);DS.prompt=null;const p=$('#dsPrompt');if(p)p.hidden=true;
+  FX=[];pr.done(k);const fx=FX.slice();if(fx.length)toast(fx.map(f=>typeof f.l==='string'?`${f.l}${f.n===null?'':' '+(f.n>0?'+':'')+f.n+f.u}`:'').join(' · '),2200);
+  if(M('me').hp<=0){DS.on=false;save();later(toEnd,900)}}
+function dsCarryBtn(){const b=$('#dsCarry span');if(b)b.textContent=DS.carry?`${kidN('을를')} 내려놓기 (체력 회복)`:`${kidN('을를')} 안아 올리기`}
+
+/* ---------- 도착 ---------- */
+function dsArrive(){
+  DS.on=false;DS.hold=false;cancelAnimationFrame(UI.raf);wake(false);
+  if(DS.id==='D:A2'){const b=G.flags.bumps||0;logD('d_flow',b?1:0);if(!b&&!G.log.some(l=>l.id==='d_fall'||(l.id==='d_drop'&&l.ok===false)))G.flags.flowClean=1}
+  dsNote(DS.to>=1?`${flName(DS.to)} 도착.`:'지하 2층 도착.');SND.tone(523,.12,'triangle',.06);
+  save();later(()=>{UI.screen='move';moveNext()},700);
+}
+
+/* ---------- 입력 ---------- */
+document.addEventListener('pointerdown',e=>{if(e.target.closest('#dsPad')&&UI.screen==='descent'&&DS.on){e.preventDefault();DS.hold=true;SND.ac()}});
+document.addEventListener('pointerup',()=>{DS.hold=false});
+document.addEventListener('pointercancel',()=>{DS.hold=false});
+document.addEventListener('keydown',e=>{if(UI.screen==='descent'&&(e.code==='Space'||e.code==='ArrowDown')){e.preventDefault();DS.hold=true}});
+document.addEventListener('keyup',e=>{if(e.code==='Space'||e.code==='ArrowDown')DS.hold=false});
+document.addEventListener('click',e=>{
+  if(UI.screen!=='descent')return;
+  const b=e.target.closest('[data-ds]');if(b){dsResolve(b.dataset.ds);return}
+  if(e.target.closest('#dsCarry')){DS.carry=!DS.carry;G.flags.carry=DS.carry?1:0;dsCarryBtn();SND.pick()}
+});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('#dsPad'))e.preventDefault()});
+/* 어둠 속 손전등: 화면을 끌면 비추는 곳이 바뀐다 */
+document.addEventListener('pointermove',e=>{const sc=e.target.closest('#dsScene,.scene');if(!sc)return;const d=sc.querySelector('.ds-dark,.torch');if(!d||d.hidden)return;
+  const r=sc.getBoundingClientRect();d.style.setProperty('--x',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');d.style.setProperty('--y',((e.clientY-r.top)/r.height*100).toFixed(1)+'%')});
+
+/* ===================== 10 · 감각 연출: 음성 방송 · 환경음 · 이명 · 손전등 ===================== */
+/* 음성 방송: 기기의 한국어 음성(TTS). 소리를 꺼도 자막은 나온다. 모두 게임 속 가상 방송. */
+function koVoice(){try{const vs=speechSynthesis.getVoices();return vs.find(v=>/^ko/i.test(v.lang)&&/natural|neural|google|premium|enhanced/i.test(v.name))||vs.find(v=>/^ko/i.test(v.lang))||null}catch(e){return null}}
+try{if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
+function broadcast(label,text,opt){
+  opt=opt||{};const b=$('#bcast');
+  if(b){b.innerHTML=`${ic('sound')}<div><b>${label}</b><span>${text}</span></div>`;b.hidden=false;clearTimeout(broadcast._t);
+    broadcast._t=setTimeout(()=>{b.hidden=true},Math.max(4500,text.length*170))}
+  if(!SND.on||!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(opt.say||text);u.lang='ko-KR';const v=koVoice();if(v)u.voice=v;
+    u.rate=opt.rate||.92;u.pitch=opt.pitch||.9;u.volume=1;AMB.level(.35);u.onend=()=>AMB.level(1);speechSynthesis.speak(u)}catch(e){}
+}
+function hush(){try{speechSynthesis.cancel()}catch(e){}const b=$('#bcast');if(b)b.hidden=true}
+
+/* 환경음: 웅성거림(필터 노이즈) · 형광등 험(120Hz) · 먼 폭음 */
+const AMB={n:null,kind:null,iv:0,
+  start(kind){if(this.kind===kind&&this.n)return;this.stop();if(!SND.on)return;const c=SND.ac();if(!c)return;this.kind=kind;
+    const src=c.createBufferSource();src.buffer=SND.noise();src.loop=true;
+    const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=kind==='stair'?380:520;bp.Q.value=.8;
+    const g=c.createGain();g.gain.value=0;const lfo=c.createOscillator();lfo.frequency.value=.17;const lg=c.createGain();
+    const base=kind==='shelter'?.026:kind==='stair'?.02:.006;lg.gain.value=base*.45;lfo.connect(lg);lg.connect(g.gain);
+    src.connect(bp);bp.connect(g);g.connect(c.destination);g.gain.setTargetAtTime(base,c.currentTime,1.2);src.start();lfo.start();
+    let hum=null;if(kind==='shelter'&&!G.flags.blackout&&!['high','home'].includes(G.loc)){hum=c.createOscillator();hum.frequency.value=120;const hg=c.createGain();hg.gain.value=.0035;hum.connect(hg);hg.connect(c.destination);hum.start()}
+    this.n={src,lfo,g,hum,base};
+    this.iv=setInterval(()=>{if(!this.n||!SND.on)return;
+      const far=(G&&G.phase==='shelter'&&((G.scen==='conv'&&G.turn<9)||(G.scen==='chem'&&G.turn<2)))||(G&&G.phase==='move'&&G.scen!=='nuke');
+      if(far&&Math.random()<.45){SND.boom(false,.22);vib(30)}},16000)},
+  level(x){if(!this.n||!SND.ctx)return;this.n.g.gain.setTargetAtTime(this.n.base*x,SND.ctx.currentTime,.35)},
+  stop(){clearInterval(this.iv);if(this.n){try{this.n.src.stop();this.n.lfo.stop();if(this.n.hum)this.n.hum.stop()}catch(e){}}this.n=null;this.kind=null}
+};
+SND.heart=function(){this.tone(58,.12,'sine',.22);this.tone(52,.14,'sine',.16,.16)};
+/* 섬광 뒤: 귀울림 + 시야 번짐 */
+function stun(){SND.tone(4200,7,'sine',.035);AMB.level(.15);setTimeout(()=>AMB.level(1),5000);
+  const a=$('#app');a.classList.remove('stun');void a.offsetWidth;a.classList.add('stun');setTimeout(()=>a.classList.remove('stun'),4800)}
+
+/* 화면별 연출 연결 (render 뒤 호출) */
+function senseAfterRender(){
+  const s=UI.screen;
+  if(s==='shelter')AMB.start('shelter');else if(s==='descent'||s==='move')AMB.start('stair');else if(s==='grab'||s==='alert')AMB.start('home');else AMB.stop();
+  if(s==='title'||s==='end'||s==='setup'||s==='records'||s==='family')hush();
+  /* 대피소 정전: 손전등 시야 */
+  const sc=$('.scene');
+  if(s==='shelter'&&sc&&G&&G.flags.blackout&&!['gym'].includes(G.loc)){
+    const src=G.flags.light==='torch'||has('torch')?'torch':G.flags.light==='phone'?'phone':G.flags.light==='candle'?'candle':null;
+    const r=src==='torch'?'44%':src==='candle'?'34%':src==='phone'?'28%':'11%';
+    const d=document.createElement('div');d.className='torch'+(src?'':' none');d.style.setProperty('--r',r);d.style.setProperty('--x','50%');d.style.setProperty('--y','80%');sc.appendChild(d);
+    if(!sc.querySelector('.tag2')){const t=document.createElement('span');t.className='tag tag2';t.textContent=src?'정전 · 화면을 끌어 비추기':'정전 · 불빛 없음';sc.appendChild(t)}
+  }
+  if(s==='shelter'&&sc&&G&&G.cur&&['co_car','burner'].includes(G.cur.ev)){const h=document.createElement('div');h.className='haze';sc.appendChild(h)}
 }
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
