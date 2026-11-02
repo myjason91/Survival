@@ -1,4 +1,4 @@
-const CACHE='saengjon-v2.5';
+const CACHE='saengjon-v2.6';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SCOPE=new URL('./',self.location).pathname;            /* 예: /Survival/ */
 const OWN_PAGES=[SCOPE,SCOPE+'index.html'];
