@@ -12639,18 +12639,21 @@ function kpaGeo(){if(KPA_G.ok)return KPA_G;KPA_G.ok=1;KPA_G.dome=new T.SphereGeo
   KPA_G.mRig=mat(KPA_LOOK.canvas,{r:.97});KPA_G.mRigD=mat(KPA_LOOK.canvasD,{r:.97});KPA_G.mStrap=mat(KPA_LOOK.strap,{r:.95});KPA_G.mBlk=mat('#1c1c1a',{r:.9});return KPA_G}
 /* 머리 뼈 로컬(x=위, y=앞, z=옆) ← 장구 좌표(x=옆, y=위, z=앞) */
 const KPA_HQ=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3(0,0,1),new T.Vector3(1,0,0),new T.Vector3(0,1,0)));
-function kpaHead(h,kind){const G=kpaGeo();const g=new T.Group();g.quaternion.copy(KPA_HQ);if(kind!=='cap')g.quaternion.multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-.26));g.position.set(.07,-.004,0);h.b.head.add(g);
-  if(kind==='cap'){MM(G.cap,G.mCap,0,.12,.004,{p:g,cast:true});MM(G.capTop,G.mCap,0,.19,.004,{p:g,cast:false});const br=MM(GG.box(.22,.013,.09,.006),G.mCap,0,.066,.13,{p:g,cast:false});br.rotation.x=.18;
-    const st=MM(GG.cyl(.018,.018,.006,5),G.mStar,0,.125,.151,{p:g,cast:false});st.rotation.x=Math.PI/2}
-  else{const dm=MM(G.dome,kind==='sf'?G.mHs:G.mH,0,.03,-.006,{p:g,cast:true});dm.scale.set(1,1.04,1.1);const rm=MM(G.rim,kind==='sf'?G.mHs:G.mH,0,.022,-.01,{p:g,cast:false});rm.scale.set(1,1,1.1);
-    /* 턱끈 */for(const s of [-1,1])MM(GG.box(.008,.11,.012),G.mBlk,s*.142,-.035,.02,{p:g,cast:false})}
+/* 장구는 모양이 모두 같으므로 한 번 합친 형상을 재질별로 공유한다(병사 한 명당 그리기 호출 2~4번) */
+function kpaMerge(parts){const gs=parts.map(([g,x,y,z,rx,ry,rz,sx,sy,sz])=>{let q=g.index?g.toNonIndexed():g.clone();const m=new T.Matrix4().compose(new T.Vector3(x,y,z),new T.Quaternion().setFromEuler(new T.Euler(rx||0,ry||0,rz||0)),new T.Vector3(sx||1,sy||1,sz||1));q.applyMatrix4(m);
+    for(const k of Object.keys(q.attributes))if(!['position','normal','uv'].includes(k))q.deleteAttribute(k);if(!q.attributes.uv)q.setAttribute('uv',new T.Float32BufferAttribute(new Float32Array(q.attributes.position.count*2),2));return q});
+  let mg=null;try{mg=T.mergeGeometries(gs,false)}catch(e){mg=null}gs.forEach(g=>{if(g!==mg)g.dispose()});if(mg)mg.computeBoundingSphere();return mg}
+function kpaShapes(){const G=kpaGeo();if(G.shp)return G.shp;const S={};
+  S.helm=kpaMerge([[G.dome,0,.03,-.006,0,0,0,1,1.04,1.1],[G.rim,0,.022,-.01,0,0,0,1,1,1.1]]);S.strap=kpaMerge([[GG.box(.008,.11,.012),-.142,-.035,.02],[GG.box(.008,.11,.012),.142,-.035,.02]]);
+  S.cap=kpaMerge([[G.cap,0,.12,.004],[G.capTop,0,.19,.004],[GG.box(.22,.013,.09,.006),0,.066,.13,.18]]);S.star=kpaMerge([[GG.cyl(.018,.018,.006,5),0,.125,.151,Math.PI/2]]);
+  const rig=[[GG.box(.32,.2,.03,.01),0,0,0]];for(const x of [-.085,0,.085])rig.push([GG.box(.074,.15,.05,.012),x,-.012,.03]);for(const x of [-.142,.142])rig.push([GG.box(.05,.06,.045,.01),x,.06,.022]);S.rig=kpaMerge(rig);
+  const st=[];for(const x of [-.085,0,.085])st.push([GG.box(.078,.035,.056,.008),x,.058,.032]);for(const x of [-.11,.11])st.push([GG.box(.035,.26,.012),x,.2,-.045,-.5]);S.rigS=kpaMerge(st);return G.shp=S}
+function kpaHead(h,kind){const G=kpaGeo(),S=kpaShapes();const g=new T.Group();g.quaternion.copy(KPA_HQ);if(kind!=='cap')g.quaternion.multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-.26));g.position.set(.07,-.004,0);h.b.head.add(g);
+  if(kind==='cap'){MM(S.cap,G.mCap,0,0,0,{p:g,cast:true});MM(S.star,G.mStar,0,0,0,{p:g,cast:false})}
+  else{MM(S.helm,kind==='sf'?G.mHs:G.mH,0,0,0,{p:g,cast:true});MM(S.strap,G.mBlk,0,0,0,{p:g,cast:false})}
   h.kpaHead=g;return g}
-function kpaRig(h,dark){const G=kpaGeo();const g=new T.Group();g.quaternion.copy(h.offQ);g.position.set(0,-.07,.145).applyQuaternion(h.offQ);h.b.chest.add(g);const m=dark?G.mRigD:G.mRig;
-  MM(GG.box(.32,.2,.03,.01),m,0,0,0,{p:g,cast:true});
-  for(const x of [-.085,0,.085]){MM(GG.box(.074,.15,.05,.012),m,x,-.012,.03,{p:g,cast:false});MM(GG.box(.078,.035,.056,.008),G.mStrap,x,.058,.032,{p:g,cast:false})}
-  for(const x of [-.142,.142])MM(GG.box(.05,.06,.045,.01),m,x,.06,.022,{p:g,cast:false});
-  /* 어깨끈: 가슴판 위 → 어깨 너머 뒤로 */for(const x of [-.11,.11]){const s=MM(GG.box(.035,.26,.012),G.mStrap,x,.2,-.045,{p:g,cast:false});s.rotation.x=-.5}
-  h.kpaRig=g;return g}
+function kpaRig(h,dark){const G=kpaGeo(),S=kpaShapes();const g=new T.Group();g.quaternion.copy(h.offQ);g.position.set(0,-.07,.145).applyQuaternion(h.offQ);h.b.chest.add(g);
+  MM(S.rig,dark?G.mRigD:G.mRig,0,0,0,{p:g,cast:true});MM(S.rigS,G.mStrap,0,0,0,{p:g,cast:false});h.kpaRig=g;return g}
 (function(){const base=makeSoldierRBX;window.makeSoldierRBX=function(sp){const h=base(sp);if(!h||!sp||(sp.camo!=='kpa'&&sp.camo!=='ksf'))return h;
   try{const sf=sp.camo==='ksf';kpaHead(h,sp.head==='kpaCap'?'cap':sf?'sf':'h');if(sp.vest!==null)kpaRig(h,sf)}catch(e){console.error(e)}return h}})();
 /* m7 강하조는 특수작전군 차림(어두운 위장·복면) */
@@ -12784,6 +12787,123 @@ function brFinish(){const k=BR.end,a=BR.a,Me=BR.me;const el=$('#brUI');if(el)el.
     if(ch){ch.t='맨손으로 맞선다 — 직접 싸운다(복싱)';ch.s='쇠파이프를 든 쪽은 뒤에 있다 · 한 명과 맨손 격투';ch.go=()=>{go=true;return '주먹을 쥐고 자세를 낮췄다. 한 명이 앞으로 나선다.'}}
     E.after=function(){const a=OUT.npcs.find(x=>x.kind==='loot'&&x.st==='enc');if(go&&a){setTimeout(()=>brStart(a),120);return}if(af)af()}}return base(E)}})();
 /* 격투 중엔 나가기·지도 등 다른 조작을 막는다 */(function(){const base=outReturn;window.outReturn=function(why){if(BR.on){const el=$('#brUI');if(el)el.remove();if(SV3.el)SV3.el.classList.remove('br-on');BR.on=false;FP3.noWalk=false;OUT.busy=false}return base(why)}})();
+
+/* ===================== 33 · 전쟁 변수 팩 — 정치·여론·질서·생활 기반이 흔들리는 상황들 ===================== */
+/* 모든 인물·정당은 가상이다(실존 정치인 없음). 대북정책 논쟁은 양쪽 주장을 같은 무게로 보여 주고, 판단 기준은 '공식 행동요령·사실 확인'이다.
+   선동·성난 군중 장면은 특정 국적·지역·집단을 겨냥하지 않는다 — 마녀사냥·사적 제재가 왜 위험한지를 다룬다 */
+/* 낙진·오염 시나리오 초반(밖에 나가면 안 되는 시간)에는 바깥 활동 사건을 미룬다 */
+const WV={out:()=>G.scen==='conv'||G.turn>=6};
+E({id:'wv_debate',pool:1,cond:()=>G.turn>=2&&!G.flags.wvDebate,w:2,art:'radio',tone:'blue',cat:'정치 · 대북정책',title:'라디오 긴급 토론 — 여야가 맞붙었다',
+  text:()=>'라디오에서 긴급 토론이 흘러나온다. 여당 국방위원 한상우 의원(가상): "도발에는 즉각·비례 대응해야 다음 도발을 막는다. 대화는 힘이 뒷받침될 때 가능하다." 야당 대표 윤서진(가상): "확전부터 막아야 한다. 군 통신선과 외교 채널을 열어 오판을 줄여야 한다." 대피소 안에서도 목소리가 커진다.',
+  hint:'위기 때 정치 논쟁은 끝이 없다. 내 가족이 지금 할 일은 정부 재난방송·재난문자의 행동요령이다.',
+  choices:[{t:'양쪽 말을 다 듣고, 재난방송의 행동요령만 가족과 다시 확인한다',ok:true,go:()=>{G.flags.wvDebate=1;mor(1);return '"지금 우리는 물·약·대피 경로만 챙기자." 아내가 고개를 끄덕였다.'}},
+    {t:'한쪽 편을 들어 옆자리 사람과 언성을 높인다',ok:false,go:()=>{G.flags.wvDebate=1;trust(-2);mor(-2);return '말다툼이 번져 주변 자리까지 싸늘해졌다. 아이가 귀를 막았다.'}},
+    {t:'라디오를 끄고 쉰다',ok:null,go:()=>{G.flags.wvDebate=1;return '조용해졌다. 대신 새 소식도 못 듣는다.'}}],
+  lesson:'정책 논쟁과 별개로, 전시 국민 행동은 정부 공식 발표(재난방송·재난문자·안전디딤돌 앱)를 따른다. 대피소 안 정치 언쟁은 공동체 갈등만 키운다.',src:'행정안전부 민방위 국민행동요령 · 생존 수첩 정보',guide:'comm'});
+E({id:'wv_vip',pool:1,cond:()=>G.turn>=2&&!G.flags.wvVip,w:1.6,art:'group',tone:'amber',cat:'정치인 · 피난',title:'정치인 일행이 대피소에 들어왔다',
+  text:()=>'시의원 박태호(가상)와 보좌진 넷이 들어온다. 보좌관이 "의원님 방송 연결이 있어 넓은 자리가 필요하다"며 노인·아이들이 자리 잡은 벽 쪽을 가리킨다. 한편 반대편에선 다른 당 의원 최민아(가상)가 줄을 서서 배급을 받고 있다.',
+  hint:'대피소 자리는 도착 순서와 노약자·환자 우선이 원칙이다. 신분과 상관없다.',
+  choices:[{t:'관리요원에게 "자리는 도착 순·취약계층 우선" 원칙 확인을 요청한다',ok:true,go:()=>{G.flags.wvVip=1;trust(2);mor(2);return '관리요원이 원칙을 공지했다. 박 의원은 머쓱하게 구석에 앉았다. 최 의원이 그 옆에 물병을 내려놓았다.'}},
+    {t:'큰 소리로 항의하며 보좌관을 밀친다',ok:false,go:()=>{G.flags.wvVip=1;trust(-1);hurt('me',4);return '몸싸움이 났다. 결국 관리요원이 둘 다 떼어 놓았다. 손목이 시큰하다.'}},
+    {t:'괜히 엮이기 싫다 — 그냥 비켜 준다',ok:null,go:()=>{G.flags.wvVip=1;mor(-1);return '노인 한 분이 짐을 끌고 통로 쪽으로 밀려났다.'}}],
+  lesson:'대피소 공간은 도착 순서·취약계층(노인·장애인·임산부·영유아) 우선으로 배분한다. 이견은 관리요원을 통해 해결하고 직접 충돌은 피한다.',src:'행정안전부 민방위 대피시설 운영 · 생존 수첩 대피소',guide:'now'});
+E({id:'wv_mob',pool:1,cond:()=>G.turn>=3&&!G.flags.wvMob,w:1.5,art:'siren',tone:'red',cat:'선동 · 성난 군중',title:'"간첩이 있다!" — 확성기와 몰려드는 사람들',
+  text:()=>'확성기를 든 남자가 외친다. "이 대피소에 간첩이 숨어 있다! 무전기 가진 놈을 찾아라!" 순식간에 스무 명쯤이 무전기를 만지던 노인(아마추어 무선사)을 둘러싼다. 누군가 노인의 가방을 낚아챈다.',
+  hint:'의심이 들면 112(경찰)·111(간첩 신고)에 알린다. 사람을 직접 붙잡거나 때리는 사적 제재는 범죄이고, 대개 무고한 사람이 다친다.',
+  choices:[{t:'"신고는 111로 하면 됩니다!" — 군중을 말리고 관리요원·경찰을 부른다',ok:true,go:()=>{G.flags.wvMob=1;trust(3);mor(1);return '관리요원과 경찰이 와서 무선 자격증을 확인했다. 노인은 떨리는 손으로 당신 손을 잡았다. 확성기 남자는 슬그머니 사라졌다.'}},
+    {t:'분위기에 휩쓸려 같이 노인을 몰아세운다',ok:false,go:()=>{G.flags.wvMob=1;trust(-3);mor(-4);return '경찰이 와서 무고한 사람이라고 확인했다. 노인의 이마에 멍이 들었다. 대피소에 무거운 침묵이 내려앉았다.'}},
+    {t:'아이를 데리고 그 자리를 피한다',ok:null,go:()=>{G.flags.wvMob=1;return '등 뒤로 고함이 이어졌다. 한참 뒤 경찰 호루라기 소리가 났다.'}}],
+  lesson:'전시엔 공포를 이용한 선동과 유언비어가 퍼진다. 수상한 행동은 112·111(국가정보원 간첩 신고)로 알리고, 군중에 휩쓸린 사적 제재·폭력에는 가담하지 않는다.',src:'국가정보원 간첩 신고(111) · 경찰청 · 생존 수첩 유언비어',guide:'comm'});
+E({id:'wv_fake',pool:1,cond:()=>G.turn>=1&&!G.flags.wvFake,w:2,art:'phone',tone:'red',cat:'가짜 정보 · 딥페이크',title:'"대통령 항복 선언" 영상이 돈다',
+  text:()=>'단체방에 영상이 올라왔다. 대통령이 "더 이상의 저항은 무의미하다"고 말하는 듯한 영상. 이어서 "○○시 30분 뒤 핵 공격"이라는 문자 캡처도 돈다. 몇 사람이 짐을 싸기 시작한다.',
+  hint:'딥페이크·가짜 재난문자는 전시 심리전의 단골이다. 재난문자 발신 형식·정부 공식 채널·주요 방송을 교차 확인한다.',
+  choices:[{t:'재난방송·정부 공식 채널로 확인하고, 단체방에 "확인 전 공유 금지"를 남긴다',ok:true,go:()=>{G.flags.wvFake=1;mor(2);trust(1);return '모든 방송사가 "조작 영상"이라고 경고했다. 짐을 싸던 가족들이 다시 자리에 앉았다.'}},
+    {t:'일단 가족·친척 단체방에 퍼 나른다',ok:false,go:()=>{G.flags.wvFake=1;mor(-3);return '고향의 부모님이 울면서 전화했다. 한참을 달래야 했다.'}},
+    {t:'당장 짐을 싸서 다른 곳으로 피난한다',ok:false,go:()=>{G.flags.wvFake=1;mor(-4);hurt('me',3);return '밖은 혼란이었다. 한 시간 만에 지쳐 돌아왔다. 영상은 가짜였다.'}}],
+  lesson:'전시 심리전은 조작 영상·가짜 문자로 공황과 이탈을 노린다. 재난문자는 공식 발신 형식인지, 정부·방송사가 같은 내용을 내는지 교차 확인하고, 확인 전에는 공유하지 않는다.',src:'방송통신위원회 허위조작정보 대응 · 행정안전부 재난문자 · 생존 수첩 정보',guide:'comm'});
+E({id:'wv_panicbuy',pool:1,cond:()=>WV.out()&&G.turn>=2&&!G.flags.wvBuy,w:1.6,art:'store',tone:'amber',cat:'사재기 · 물가',title:'생수 한 병 1만 원',
+  text:()=>'근처 편의점 소식이 들어온다. 생수 한 병 1만 원, 라면은 한 사람당 두 개. 줄에서 몸싸움이 났고, 누군가는 차 트렁크 가득 실어 갔다.',
+  hint:'사재기는 모두를 더 위험하게 만든다. 필요한 만큼만, 배급과 급수 안내를 기다리고 이웃과 나눈다.',
+  choices:[{t:'꼭 필요한 만큼만 사고, 남는 건 옆 가족과 나눈다',ok:true,go:()=>{G.flags.wvBuy=1;res('water',2);trust(2);return '생수 두 병을 샀다. 옆집 할머니께 한 병을 드렸다.'}},
+    {t:'웃돈을 주고 왕창 사 온다',ok:null,go:()=>{G.flags.wvBuy=1;res('water',6);trust(-1);return '물 6L를 들고 오는 내내 따가운 눈총을 받았다.'}},
+    {t:'새치기하고 밀치며 앞으로 간다',ok:false,go:()=>{G.flags.wvBuy=1;res('water',2);hurt('me',6);trust(-2);return '물은 샀지만 넘어진 사람 손을 밟았다. 손등이 긁혔다.'}}],
+  lesson:'재난 시 사재기는 물가 폭등과 공급 붕괴를 부른다. 필요한 양만 구입하고, 정부 배급·급수 안내를 따른다. 폭리는 신고할 수 있다.',src:'공정거래위원회 · 행정안전부 재난 생필품 · 생존 수첩 물자',guide:'now'});
+E({id:'wv_bank',pool:1,cond:()=>WV.out()&&G.turn>=3&&!G.flags.wvBank,w:1.3,art:'cash',tone:'amber',cat:'사이버 공격 · 금융',title:'카드도 ATM도 먹통이다',
+  text:()=>'"사이버 공격으로 전국 결제망 장애" — 휴대폰 뉴스가 겨우 열린다. 편의점은 현금만 받고, ATM 앞엔 줄만 길다.',
+  hint:'비상 현금(소액권)은 생존배낭 필수품이다. 결제망이 끊기면 현금·물물교환이 통한다.',
+  choices:[{t:()=>has('cash')?'배낭의 비상 현금(소액권)으로 산다':'현금이 없다 — 물물교환을 제안한다(건전지·라면)',ok:true,go:()=>{G.flags.wvBank=1;if(has('cash')){res('food',1);mor(2);return '천 원짜리로 즉석밥 두 개를 샀다. 비상금이 이렇게 쓰일 줄이야.'}mor(1);return '건전지 두 개를 주고 생수 한 병을 받았다.'}},
+    {t:'ATM 줄에 몇 시간 서 본다',ok:null,go:()=>{G.flags.wvBank=1;mor(-2);return '세 시간을 서 있었지만 기계는 끝내 켜지지 않았다.'}}],
+  lesson:'전시 사이버 공격은 결제·통신망을 노린다. 생존배낭에 소액권 비상 현금을 넣어 두고, 망 장애 시 현금·물물교환으로 필수품을 구한다.',src:'금융위원회 · 행정안전부 비상대비 · 생존 수첩 생존배낭',guide:'now'});
+E({id:'wv_curfew',pool:1,cond:()=>G.turn>=4&&!G.flags.wvCurfew,w:1.4,art:'lock',tone:'amber',cat:'계엄 · 통행금지',title:'비상계엄 · 야간 통행금지',
+  text:()=>'확성기 차가 지나간다. "비상계엄 선포 — 22시부터 05시까지 통행금지. 검문 시 신분증을 제시하십시오. 통금 중 이동은 제지됩니다."',
+  hint:'통행금지·검문은 따른다. 신분증을 늘 지니고, 밤에 꼭 움직여야 하면 관리요원·군에 먼저 알린다.',
+  choices:[{t:'가족 신분증을 챙기고, 밤 외출 계획을 접는다',ok:true,go:()=>{G.flags.wvCurfew=1;mor(1);return '가족 신분증을 지퍼백에 넣어 목에 걸었다.'}},
+    {t:'밤에 몰래 나가 물을 구해 온다',ok:false,go:()=>{G.flags.wvCurfew=1;if(rnd()<.5){hurt('me',6);mor(-3);return '검문에 걸려 한참을 붙잡혀 있었다. 물은커녕 손목에 멍만 들었다.'}res('water',2);mor(-1);return '운 좋게 물 2L를 구해 왔다. 하지만 총구가 겨눠진 순간을 잊을 수 없다.'}}],
+  lesson:'계엄·통행금지 중 이동은 제지·체포 대상이다. 신분증을 늘 지니고 검문에 협조하며, 응급 상황은 관리요원·군경에 먼저 알린다.',src:'계엄법 · 행정안전부 민방위 국민행동요령',guide:'now'});
+E({id:'wv_bridge',pool:1,cond:()=>WV.out()&&G.turn>=3&&!G.flags.wvBridge,w:1.2,art:'car',tone:'red',cat:'피난 · 교통 통제',title:'곡교천 다리가 통제됐다',
+  text:()=>'"곡교천 다리 군 통제 — 민간 차량 회차." 피난 차량 행렬이 몇 km째 멈춰 있다. 누군가 "논두렁 길로 돌아가면 된다"고 말한다.',
+  hint:'통제된 다리·도로는 군 작전로일 수 있다. 공식 피난 경로 안내를 기다리고, 통제를 피해 우회하지 않는다.',
+  choices:[{t:'대피소에 머물며 공식 피난 경로 안내를 기다린다',ok:true,go:()=>{G.flags.wvBridge=1;mor(1);return '저녁 방송에서 "다리는 군 수송로, 민간 피난은 내일 08시 버스 운행"이 나왔다.'}},
+    {t:'논두렁 우회로로 차를 몰아 본다',ok:false,go:()=>{G.flags.wvBridge=1;hurt('me',5);mor(-3);return '진흙에 바퀴가 빠졌다. 밤길을 걸어 돌아왔다.'}}],
+  lesson:'전시 교량·도로 통제는 군 작전·수송로 확보를 위한 것이다. 통제를 피한 우회는 위험하고 작전을 방해할 수 있다. 지자체·정부의 피난 경로 안내를 따른다.',src:'행정안전부 주민 대피 · 생존 수첩 피난',guide:'now'});
+E({id:'wv_blood',pool:1,cond:()=>WV.out()&&G.turn>=2&&!G.flags.wvBlood,w:1.3,art:'heart',tone:'blue',cat:'헌혈 · 의료',title:'"헌혈해 주실 분 계십니까"',
+  text:()=>'적십자 조끼를 입은 사람이 대피소를 돈다. "근처 병원에 부상자가 몰려 피가 모자랍니다. 건강한 성인 분들 헌혈 부탁드립니다."',
+  hint:'헌혈 뒤엔 물을 충분히 마시고 몇 시간 무리하지 않는다. 몸이 아프거나 약을 먹는 중이면 사양한다.',
+  choices:[{t:()=>M('me').hp>=70?'헌혈하고, 물을 한 컵 더 마신 뒤 쉰다':'몸이 좋지 않다 — 정중히 사양하고 다른 사람을 안내한다',ok:true,go:()=>{G.flags.wvBlood=1;if(M('me').hp>=70){hurt('me',4);trust(3);mor(3);res('water',-.5);return '팔에 반창고를 붙이고 누웠다. "덕분에 한 사람 더 삽니다."'}trust(1);return '대신 대피소 사람들에게 헌혈 장소를 알려 주었다.'}},
+    {t:'못 들은 척한다',ok:null,go:()=>{G.flags.wvBlood=1;return '적십자 직원이 다음 줄로 넘어갔다.'}}],
+  lesson:'재난·전시엔 혈액 수급이 급격히 부족해진다. 건강한 성인은 헌혈에 참여할 수 있고, 헌혈 후엔 수분 보충과 휴식을 취한다.',src:'대한적십자사 혈액관리본부 · 생존 수첩 응급',guide:'aid'});
+E({id:'wv_triage',pool:1,cond:()=>G.turn>=3&&!G.flags.wvTriage,w:1.3,art:'pill',tone:'red',cat:'의료 붕괴 · 분류',title:'응급실 포화 — "경상자는 돌아가 주십시오"',
+  text:()=>'근처 병원에 다녀온 사람이 말한다. "복도까지 들것이 깔렸어요. 의사들이 노란 띠·빨간 띠를 붙이면서 걸을 수 있는 사람은 대피소로 돌려보내요."',
+  hint:'대량 사상자 상황에선 중증 순으로 치료한다(중증도 분류). 가벼운 상처는 대피소에서 직접 처치하고, 악화 신호(고열·출혈 지속·의식 저하)가 있으면 다시 간다.',
+  choices:[{t:'가족 상처는 구급함으로 소독·붕대하고, 악화 신호를 메모해 둔다',ok:true,go:()=>{G.flags.wvTriage=1;mor(2);if(G.res.meds>0)G.res.meds=Math.max(0,G.res.meds-1);return '상처를 식염수로 씻고 붕대를 감았다. "열이 나면 바로 간다"를 종이에 적었다.'}},
+    {t:'작은 상처라도 병원 줄에 무작정 선다',ok:false,go:()=>{G.flags.wvTriage=1;mor(-3);return '다섯 시간을 기다리다 돌아왔다. 그 사이 대피소 자리를 잃을 뻔했다.'}}],
+  lesson:'대량 사상자 발생 시 병원은 중증도 분류(트리아지)로 중증부터 치료한다. 경상은 응급처치로 대응하고, 악화 신호가 보이면 다시 의료기관을 찾는다.',src:'보건복지부 재난응급의료 · 소방청 중증도 분류 · 생존 수첩 응급처치',guide:'aid'});
+E({id:'wv_neighbor',pool:1,cond:()=>G.turn>=1&&!G.flags.wvNb,w:1.4,art:'person',tone:'blue',cat:'이웃 · 언어 장벽',title:'안내 방송을 못 알아듣는 옆 가족',
+  text:()=>'옆자리 가족이 불안한 얼굴로 휴대폰만 본다. 한국어 안내 방송을 거의 못 알아듣는 듯하다. 아이가 "물 어디서 받아요?"를 서툰 말로 묻는다.',
+  hint:'외국인·언어 소통이 어려운 이웃에게는 번역 앱·몸짓·그림으로 핵심(대피 장소·급수 시간·경보 뜻)을 알려 주고, 관리요원에게 다국어 안내를 요청한다.',
+  choices:[{t:'번역 앱으로 급수 시간·경보 뜻을 알려 주고, 다국어 안내를 요청한다',ok:true,go:()=>{G.flags.wvNb=1;trust(3);mor(2);return '아이 엄마가 몇 번이고 고개를 숙였다. 관리요원이 다국어 안내문을 붙였다.'}},
+    {t:'우리 가족 챙기기도 바쁘다 — 모른 척한다',ok:null,go:()=>{G.flags.wvNb=1;mor(-1);return '그 가족은 급수 시간을 놓쳤다.'}}],
+  lesson:'재난 정보 접근이 어려운 사람(외국인·노인·장애인)을 도우면 대피소 전체가 안전해진다. 정부·지자체는 다국어 재난 안내를 제공한다 — 관리요원에게 요청한다.',src:'행정안전부 외국인 재난 안전 안내 · 생존 수첩 이웃',guide:'now'});
+E({id:'wv_rally',pool:1,cond:()=>G.turn>=4&&!G.flags.wvRally,w:1.2,art:'group',tone:'red',cat:'성난 군중',title:'"책임자 나와!" — 대피소 앞 고함',
+  text:()=>'대피소 입구에 사람들이 몰렸다. "경보가 왜 늦었어! 책임자 나와!" 관리요원 두 명이 막아서자 누군가 물병을 던진다. 입구가 막혀 들어오려던 노인이 넘어졌다.',
+  hint:'성난 군중 곁에서는 거리를 두고 아이·노약자를 먼저 안쪽으로. 출입구를 막지 않도록 질서 유지에 협조한다.',
+  choices:[{t:'넘어진 노인을 일으켜 안쪽으로 모시고, 입구를 비우자고 외친다',ok:true,go:()=>{G.flags.wvRally=1;trust(2);mor(1);return '몇 사람이 따라 외쳤다. 입구가 트이고 고함이 잦아들었다.'}},
+    {t:'같이 고함을 치며 합류한다',ok:false,go:()=>{G.flags.wvRally=1;trust(-2);mor(-3);hurt('me',3);return '밀려드는 사람들에 끼어 갈비뼈가 결린다. 아무것도 바뀌지 않았다.'}},
+    {t:'멀찍이서 휴대폰으로 찍기만 한다',ok:null,go:()=>{G.flags.wvRally=1;return '영상은 금세 퍼졌다. 넘어진 노인 얼굴도 그대로 찍혔다.'}}],
+  lesson:'군중 밀집·충돌은 압사 위험을 부른다. 출입구·통로를 비우고, 노약자를 먼저 보호하며, 불만은 질서 있게 전달한다.',src:'행정안전부 인파 사고 예방 · 생존 수첩 대피소',guide:'now'});
+
+/* ===================== 34 · 밖 탐색(실제 지도): 확성기 집회·성난 군중 · 고위 인사 차량 행렬 ===================== */
+/* 재래식 3턴(T+18h) 이후: 마을 쉼터에 확성기를 든 남자와 성난 사람들이 모인다(손팻말). 다가가면 선택 카드 — 사실 확인·거리 두기가 정답.
+   4턴 이후: 이순신대로 북쪽 차로로 경광등을 켠 검은 승용차 행렬(경찰 선도차 포함)이 서쪽으로 지나간다. 인물은 모두 가상, 특정 집단을 겨냥하지 않는다 */
+const CROWD={snd:null};
+(function(){const base=tjPopulate;window.tjPopulate=function(sc){base(sc);if(!G||G.scen!=='conv')return;const P=TJ_DATA.POI;
+  if(G.turn>=3&&P.vgreen){const c=P.vgreen;const cx=c[0]+6,cz=c[1]+4;const done=G.outDone||(G.outDone={});
+    const ag=civHuman(61,'angry','civ');ag.root.position.set(cx,.45,cz);sc.add(ag.root);MM(GG.box(.9,.45,.7),mat('#6a5a44',{r:.9}),cx,.22,cz,{p:sc});OUT.npcs.push({h:ag,kind:'crowd',ag:1});
+    const mg=MM(GG.cyl(.06,.13,.3,10,true),mat('#e2e0d8',{r:.5,side:T.DoubleSide}),0,0,0,{cast:false});mg.rotation.z=Math.PI/2;if(ag.b&&ag.b.handR){ag.b.handR.add(mg);mg.position.set(.08,.02,.06)}
+    const poses=['angry','talk','cheer','angry','listen','angry','cheer'];
+    for(let i=0;i<13;i++){const a=i/13*Math.PI*2+.4;const R=3.0+(i%3)*.95;const h=civHuman(70+i,poses[i%poses.length],i%6===5?'eldM':'civ');h.root.position.set(cx+Math.cos(a)*R,0,cz+Math.sin(a)*R);lifeFace(h,cx,cz);sc.add(h.root);OUT.npcs.push({h,kind:'crowd'})}
+    /* 손팻말(특정 정당·집단 없이 생활 불만) */const signs=['배급 명단 공개하라','경보 왜 늦었나','대피소 늘려라'];signs.forEach((t,i)=>{const a=i/3*Math.PI*2+1.1,R=4.3;const g=PK.sign(t,'#f2efe6','#222',1.3,sc,{y:2.3,fs:34});g.position.set(cx+Math.cos(a)*R,0,cz+Math.sin(a)*R);g.rotation.y=Math.atan2(cx-g.position.x,cz-g.position.z)+Math.PI});
+    if(!done['mob:'+G.turn])OUT.spots.push({id:'mob',k:'mob',x:cx+5.6,z:cz+1.2,r:2.4,g:'!',n:'확성기 집회에 다가가기',s:'선동 · 성난 군중',h:0,warn:1});CROWD.c=[cx,cz]}
+  else CROWD.c=null;
+  /* 고위 인사 차량 행렬: 북쪽 차로 서쪽 방향 */if(G.turn>=4&&typeof tjRoadLine==='function'){const Y=tjRoadLine();const blk=['#121316','#17181c','#101114'];CROWD.cv=[];
+    for(let i=0;i<4;i++){const pol=i===0;const c=PK.car(pol?'#e8eaec':blk[i%3],sc);c.userData.dyn=1;const ls=[];for(const [sx,col] of pol?[[-.35,'#3a6aff'],[.35,'#ff3a3a']]:[[-.5,'#3a6aff'],[.5,'#3a6aff']]){const sp=PK.sprite(glowTex(),col,1.1,c,{add:1});sp.position.set(sx,pol?1.55:1.05,pol?0:1.9);ls.push(sp)}
+      TOWN.cars.push({obj:c,v:15.5,lane:1.65,s:Y.len-60-i*11-(pol?0:6),dir:-1,vip:ls,ph:i*.7})}CROWD.vipT=0}}})();
+/* 경광등 깜빡임 · 군중 웅성거림 · 행렬 알림 */
+(function(){const base=outStep;window.outStep=function(dt){base(dt);if(!OUT.on)return;const t=(CROWD.t=(CROWD.t||0)+dt);
+  (TOWN.cars||[]).forEach(c=>{if(!c.vip)return;const on=Math.floor((t+c.ph)*6)%2===0;c.vip[0].visible=on;if(c.vip[1])c.vip[1].visible=!on;
+    if(!CROWD.vipSaid&&c.obj&&Math.hypot(c.obj.position.x-FP3.pos.x,c.obj.position.z-FP3.pos.z)<45){CROWD.vipSaid=G.turn;outNote('<b>경광등을 켠 검은 승용차 행렬</b><div>경찰차를 앞세운 차들이 서쪽으로 빠르게 지나간다. 길가 사람들이 웅성거린다 — "높은 사람들 먼저 빼 가는 거야?"</div>',5200)}});
+  if(CROWD.c){const d=Math.hypot(CROWD.c[0]-FP3.pos.x,CROWD.c[1]-FP3.pos.z);crowdSound(d<60?clamp(.09-(d/60)*.09,0,.09):0)}else crowdSound(0)}})();
+function crowdSound(v){try{if(!SND.on)return;const c=SND.ac();if(!c)return;if(!CROWD.snd&&v>0){const s=c.createBufferSource();s.buffer=SND.noise();s.loop=true;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=520;f.Q.value=.7;const g=c.createGain();g.gain.value=0;s.connect(f);f.connect(g);g.connect(c.destination);s.start();CROWD.snd={s,g,c}}
+  if(CROWD.snd){CROWD.snd.g.gain.setTargetAtTime(v*(.75+.25*Math.sin((CROWD.t||0)*2.3)),CROWD.snd.c.currentTime,.3);if(v<=0&&!OUT.on){try{CROWD.snd.s.stop()}catch(e){}CROWD.snd=null}}}catch(e){}}
+(function(){const base=outReturn;window.outReturn=function(why){if(CROWD.snd){try{CROWD.snd.g.gain.value=0;CROWD.snd.s.stop()}catch(e){}CROWD.snd=null}return base(why)}})();
+/* 집회 카드 */
+(function(){const base=outDo;window.outDo=function(c){if(!c||c.k!=='mob'||OUT.busy||OUT.enc)return base(c);const done=G.outDone||(G.outDone={});
+  outEncShow({id:'out-mob',cat:'밖 · 선동 집회',art:'siren',tone:'red',title:'확성기를 든 남자가 군중을 부추긴다',text:'"정부가 거짓말을 한다! 배급은 빼돌려지고 있다! 우리끼리 무기를 들고 대피소 창고를 열자!" 스무 명 남짓이 주먹을 흔든다. 누군가 당신 팔을 잡아끈다. "같이 가요!"',
+    lesson:'전시 선동은 분노를 이용해 질서를 무너뜨린다. 주장은 공식 발표·여러 출처로 확인하고, 집단 폭력·약탈에는 가담하지 않는다. 위험하면 거리를 두고 112에 신고한다.',src:'경찰청 집회·치안 · 행정안전부 민방위 국민행동요령 · 생존 수첩 유언비어',guide:'comm',
+    choices:[{t:'"배급 명단은 주민센터 게시판에 있다"고 말하고 팔을 빼 거리를 둔다',ok:true,go:()=>{done['mob:'+G.turn]=1;trust(1);mor(1);return '몇 사람이 머뭇거리다 흩어졌다. 확성기 남자가 당신을 노려봤다.'}},
+      {t:'분노에 동조해 같이 창고로 향한다',ok:false,go:()=>{done['mob:'+G.turn]=1;trust(-3);mor(-3);if(rnd()<.6){hurt('me',10);return '창고 앞에서 경찰 저지선과 부딪혔다. 밀려 넘어져 팔꿈치가 찢어졌다.'}res('food',1);return '창고 문은 이미 열려 있었다. 즉석밥 한 개를 집었지만, 노인 한 분이 짓밟히는 걸 봤다.'}},
+      {t:'휴대폰으로 찍기만 하고 지켜본다',ok:null,go:()=>{done['mob:'+G.turn]=1;return '영상 속 확성기 남자의 말은 금세 퍼졌다. 사실 확인은 없었다.'}}],
+    after:()=>{OUT.spots=OUT.spots.filter(s=>s.id!=='mob');OUT.sig=''}})}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
