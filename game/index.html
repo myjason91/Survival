@@ -735,6 +735,26 @@ body.fps{overflow:hidden}
 .drv-nav canvas{width:96px;height:96px;border-radius:10px;border:1px solid rgba(255,255,255,.15)}
 .drv-arrow{font-size:26px;line-height:1;color:var(--amber);text-shadow:0 1px 4px #000;transition:transform .15s linear}
 .drv-dest{font-size:11px;font-weight:800;color:#e8edf1;text-shadow:0 1px 3px #000}
+
+/* ===== 3D 화면 카드: 오른쪽 세로 패널 대신 화면 위쪽 가로 띠(아래 절반은 조작용으로 비워 둔다) ===== */
+.sv3-panel.sv3-deck{left:0;right:0;top:42px;bottom:auto;width:auto;max-height:calc(100% - 42px - 29%);padding:4px 10px 10px;background:linear-gradient(180deg,rgba(6,8,11,.88) 0%,rgba(6,8,11,.8) 75%,rgba(6,8,11,0) 100%);overflow-y:auto}
+.sv3-deck .sv3-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;align-items:stretch;margin:0 0 5px}.sv3-deck .sv3-strip::-webkit-scrollbar{display:none}
+.sv3-deck .sv3-strip .fam{display:flex;flex:none;gap:4px}.sv3-deck .sv3-strip .fam .mem{padding:2px 7px;gap:0 6px;border-radius:8px;min-width:0;display:flex;align-items:center;flex-wrap:wrap}.sv3-deck .mem .top{gap:4px}.sv3-deck .mem b{font-size:11px}.sv3-deck .mem .hp{font-size:10px}.sv3-deck .mem .bar{width:26px;height:3px;flex:none}.sv3-deck .mem .conds{display:none}.sv3-deck .mem.crit .conds,.sv3-deck .mem:not(:has(.cond.ok)) .conds{display:flex;gap:3px;flex-basis:100%}.sv3-deck .mem .cond{font-size:9px;padding:0 4px}
+.sv3-deck .sv3-strip .res{display:flex;flex:none;gap:4px}.sv3-deck .sv3-strip .res .r{padding:2px 7px;border-radius:8px;display:flex;gap:4px;align-items:center}.sv3-deck .res .r>div{display:flex;gap:4px;align-items:baseline}.sv3-deck .res .r b{font-size:11.5px}.sv3-deck .res .r span{font-size:9.5px;white-space:nowrap}.sv3-deck .res .r svg{width:12px;height:12px}
+.sv3-deck .sheet{background:transparent;border:0;padding:0;gap:6px;border-radius:0}
+.sv3-deck .sheet .lead{gap:8px;align-items:center}.sv3-deck .lead .badge{width:28px;height:28px;border-radius:8px}.sv3-deck .lead .badge svg{width:15px;height:15px}.sv3-deck .eyebrow{font-size:10.5px}.sv3-deck h2{font-size:15px;line-height:1.25}
+.sv3-deck .sheet>p,.sv3-deck .sheet .result{font-size:12.5px;line-height:1.4;max-height:4.3em;overflow-y:auto;padding-right:4px}
+.sv3-deck .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.sv3-deck .choice{padding:7px 9px;gap:8px;border-radius:10px;align-items:center}.sv3-deck .choice .k{width:22px;height:22px;font-size:12px;border-radius:6px}.sv3-deck .choice b{font-size:12.5px;line-height:1.25;display:block}.sv3-deck .choice small{font-size:10.5px;line-height:1.25}
+.sv3-deck .lesson{padding:7px 10px;font-size:11.5px;gap:2px;max-height:5.2em;overflow-y:auto}.sv3-deck .lesson .src{font-size:10px}
+.sv3-deck .actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sv3-deck .act{min-height:0;padding:7px 9px;gap:2px}.sv3-deck .act b{font-size:12.5px}.sv3-deck .act small{font-size:10.5px}.sv3-deck .act svg{width:16px;height:16px}
+.sv3-deck .btn{padding:8px 12px;font-size:13px;min-height:0;justify-self:start}.sv3-deck .sheet>.btn,.sv3-deck .sheet .row{justify-self:end}
+.sv3-deck .tbar-wrap,.sv3-deck .tbar{margin:0}
+.sv3-deck .chips,.sv3-deck .fxchips{gap:4px}.sv3-deck .chip{font-size:10.5px;padding:2px 7px}
+.sv3-deck .hint{font-size:11.5px;padding:5px 9px;max-height:3.4em;overflow-y:auto}.sv3-deck .fx-list{gap:4px}.sv3-deck .fx{font-size:10.5px;padding:1px 7px}.sv3-deck .timebar{height:4px}
+/* 카드 본문과 선택지를 가로로: 넓은 화면에서는 왼쪽 글·오른쪽 선택지 */
+@media (min-width:760px){.sv3-deck .sheet{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:min-content minmax(0,1fr) auto;grid-auto-rows:auto;grid-auto-flow:dense;align-items:start;column-gap:12px}.sv3-deck .sheet .lead{grid-column:1}.sv3-deck .sheet>p,.sv3-deck .sheet .hint,.sv3-deck .sheet .timebar,.sv3-deck .sheet .result,.sv3-deck .sheet .fx-list,.sv3-deck .sheet .lesson,.sv3-deck .sheet .small{grid-column:1}.sv3-deck .choices,.sv3-deck .actions{grid-column:2;grid-row:1/span 2}.sv3-deck .sheet>.btn,.sv3-deck .sheet>.row{grid-column:2;grid-row:3;align-self:start;justify-self:end}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:6.5em}.sv3-deck .choices{grid-template-columns:1fr;gap:5px}.sv3-deck .choice{padding:4px 9px;min-height:0}.sv3-deck .choice .ct{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;min-width:0}.sv3-deck .choice b{display:inline;font-size:12.5px}.sv3-deck .choice small{display:inline;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.sv3-deck .actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-height:420px){.sv3-panel.sv3-deck{top:40px;max-height:calc(100% - 40px - 27%)}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:4.6em}.sv3-deck .lesson{max-height:3.6em}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -6662,11 +6682,10 @@ function vTitle(){
   <div class="stack">
     ${sv?`<button class="btn pri" data-a="resume">이어하기 <span class="small" style="font-weight:600">· ${SCEN[sv.scen]&&sv.scenKnown?SCEN[sv.scen].n:'진행 중인 훈련'}</span></button><button class="btn" data-a="setup">새 훈련 시작</button>`
       :`<button class="btn pri" data-a="setup">훈련 시작</button>`}
-    <button class="btn b-entry" data-a="b-hub">${ic('shield')}<span><b>전투 모드</b><small>국군 분대 · 6개 작전 · 장갑차 보스전 · 무한 방어전</small></span></button>
     <div class="row"><button class="btn ghost" data-a="family">${ic('group')} 우리 가족·집</button><button class="btn ghost" data-a="records">${ic('trophy')} 기록·배지${rec.runs?` <span class="mut small" style="font-weight:600">· ${rec.runs}판</span>`:''}</button></div>
   </div>
   <p class="title-note sound-note">${ic('sound')} 실제 경보음·음성 방송과 비슷한 소리가 난다. 주변에 사람이 있으면 이어폰을 쓰자.</p>
-  <p class="title-note">사이렌 속 60초 안에 집에서 챙기고, 72시간을 버텨라. 모든 정답은 생존 수첩에 실린 공식 수칙(행정안전부·소방청·질병관리청 등)에서 나온다. 실제 상황에서는 재난문자와 정부 방송이 항상 우선이다.</p>`;
+  <p class="title-note">사이렌 속 60초 안에 집에서 챙기고, 72시간을 버텨라. 대피소에서 예비군 소집이 오면 분대와 함께 실시간 교전(FPS)에 나설 수도 있다 — 그 결과도 가족의 72시간에 그대로 남는다. 모든 정답은 생존 수첩에 실린 공식 수칙(행정안전부·소방청·질병관리청 등)에서 나온다. 실제 상황에서는 재난문자와 정부 방송이 항상 우선이다.</p>`;
 }
 /* ---------- 설정 ---------- */
 function defaultSetup(){const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
@@ -10649,7 +10668,7 @@ function vMove3(){
   if(step==='grabsum')sheet=grabSummaryCard();else if(step==='card')sheet=eventCard(EV[evId]);else if(step==='result')sheet=resultCard(EV[evId],G.cur.r,{a:'move-next',t:G.moveQ.length?'계속 이동':'대피소로'});
   const kind=evId==='road'?'road':(evId==='mv_loc'||(G.flags.elev&&['mv_conv','mv_nuke','mv_chem'].includes(evId)))?'lobby':'stairs';
   const fl=step==='grabsum'?HF():(evId==='mv_elev'||!evId)?HF():['mv_conv','mv_nuke','mv_chem'].includes(evId)?(G.flags.elev?1:(G.dmid||1)):1;
-  const html=`${hud()}<div class="sv3-panel" id="sv3Panel">${sheet}</div><span class="tag sv3-tag">${kind==='road'?'국도 · 정체':kind==='lobby'?'1층 로비':flName(fl)+' 비상계단'}</span><div class="sv3-flash" id="sv3Flash"></div>`;
+  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel">${sheet}</div><span class="tag sv3-tag">${kind==='road'?'국도 · 정체':kind==='lobby'?'1층 로비':flName(fl)+' 비상계단'}</span><div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('move',html);FP3.detach();
   sv3MoveScene(kind,fl,evId,step);
   return '';
@@ -10705,7 +10724,7 @@ function vShelter3(){
   else if(st==='result'||st==='fresult'){const ev=EV[G.cur.ev];const last=st==='fresult';sheet=resultCard(ev,G.cur.r,last?{a:'to-end',t:'72시간 — 결과 보기'}:G.cur.next?{a:'follow',t:'계속'}:{a:'to-action',t:'이 6시간 동안 할 일'})}
   else if(st==='action')sheet=actionCard();else if(st==='actres')sheet=actResCard();
   const roam=RBX.ok&&G.loc!=='home';
-  const html=`${hud()}<div class="sv3-panel" id="sv3Panel"><div class="sv3-strip">${famStrip()}${resGrid()}</div>${sheet}</div><span class="tag sv3-tag">${locName()}</span>${roam?SV3_JOY+'<div class="sv3-hint" id="sv3Hint">왼쪽 드래그 이동 · 오른쪽 드래그 둘러보기</div>':''}<div class="sv3-flash" id="sv3Flash"></div>`;
+  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel"><div class="sv3-strip">${famStrip()}${resGrid()}</div>${sheet}</div><span class="tag sv3-tag">${locName()}</span>${roam?SV3_JOY+'<div class="sv3-hint" id="sv3Hint">왼쪽 드래그 이동 · 오른쪽 드래그 둘러보기</div>':''}<div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('shelter',html);
   const dark=!!(G.flags.blackout&&G.loc!=='gym'&&G.loc!=='high');const key=G.loc+'_'+(dark?1:0)+'_'+(G.flags.light||'')+'_'+Math.floor(G.turn/2);
   if(SH3.key!==key||!SH3.scene){SH3.key=key;sv3ShelterScene(G.loc,dark)}
@@ -11163,6 +11182,83 @@ function vStreet3(){const sc=buildTown3();townTraffic(sc,{peds:12});SV3.scene=sc
 /* 2) 걸어가는 대피소(지하철역·상가·학교): 'D:B' 전에 거리 구간 */
 (function(){const base=moveNext;window.moveNext=function(){if(SV3.on()&&RBX.ok&&G.moveQ.length&&G.moveQ[0]==='D:B'&&['subway','bldg','gym'].includes(G.loc)&&!G.flags.street){STR.resume=()=>{base()};UI.screen='street';render();return}return base()}})();
 SV3.screens.push('street');SV3.views=Object.assign(SV3.views||{},{street:vStreet3});
+
+/* ===================== 22 · 통합 플레이: 생존 모드가 바탕, 전투는 그 안의 '예비군 동원' 구간으로 들어온다 ===================== */
+/* 흐름: 대피소 턴 이벤트 카드(예비군 소집) → 응소 → 브리핑 → 실시간 교전(기존 전투 엔진, 주인공=예비역 '당신') → 결과 → 대피소 복귀 카드(체력·사기·물자·신뢰에 반영).
+   3D를 못 쓰는 기기는 같은 카드를 글로만 풀어낸다. 전투 허브(별도 모드)는 첫 화면에서 빠진다 */
+const INTEG={on:false,mid:null,ev:null,turn:0,lastT:''};
+const integ3D=()=>HAS3D&&store.get('sg.3d',true)&&!!R3.init();
+/* 턴 스케줄에 끼워 넣기: 재래식 3턴(T+18h)·화학 4턴·핵 10턴(낙진이 가라앉은 뒤) — 단지 탈환(m3). 재래식 7턴 — 국도 장갑차(m6, 첫 교전에서 이긴 뒤) */
+SCHED.conv[3]='resv';SCHED.chem[4]='resv';SCHED.nuke[10]='resv';SCHED.conv[7]='resv2';
+const INTEG_MIS={m3:{n:'단지 탈환 지원',win:'분대와 함께 단지 입구에서 지하주차장 입구까지 확보했다.',lose:'단지 입구 화단에서 총상을 입었다. 의무병이 지혈대를 감고 대피소까지 끌어다 줬다.'},
+  m6:{n:'국도 장갑차 저지',win:'국도에서 적 장갑차를 멈춰 세웠다. 하차 보병도 물러났다.',lose:'장갑차 기관총에 쓸려 방호벽 뒤로 쓰러졌다. 분대가 후퇴하며 당신을 끌어냈다.'},
+  m5:{n:'옥상 무인기 격추',win:'옥상 초소에서 무인기를 떨어뜨리고 유도 침투조를 막았다.',lose:'무인기가 떨어뜨린 폭탄 파편에 맞았다. 옥상 계단실로 끌려 내려왔다.'}};
+/* ---------- 카드 ---------- */
+E({id:'resv',art:'shield',tone:'amber',cat:'예비군 동원',cond:()=>G.loc!=='roof'&&!G.flags.noResv&&!G.flags.resvDone,title:'예비군 소집 — 단지 탈환 지원',
+  text:()=>`소대장 ${LT.n} ${LT.rank}가 대피소를 돌며 예비역을 찾는다. "적 침투조가 단지 안에 들어왔습니다. 주민이 아직 집에 남아 있어 포격은 못 합니다. 단지 입구부터 지하주차장 입구까지 확보하는 데 분대 인원이 모자랍니다. 소총·방탄복·헬멧은 지급합니다. 30분이면 끝납니다." ${M('sp')?spN('이가')+' 당신 팔을 잡는다.':'아이가 당신 옷자락을 쥔다.'}`,
+  hint:'동원 소집은 응할 의무가 있지만, 떠나기 전 가족의 물·약·연락 수단을 먼저 챙겨 둔다. 교전 중에는 분대장 지시를 따르고, 주민·투항자에게는 절대 쏘지 않는다.',
+  choices:[
+    {t:'응소한다 — 분대와 함께 단지 입구에서 지하주차장 입구까지',ok:true,go:()=>{G.flags.resvGo=1;if(integ3D()){G.cur.next='__battle:m3';return `방탄복을 조이고 K2를 받아 들었다. 가족에게 "30분"이라고 말했다. ${M('sp')?spN('은는')+' 고개만 끄덕였다.':''} — '계속'을 누르면 분대와 함께 출동한다 (가로 전체화면 · 실시간 교전).`}return integAbstract('m3')}},
+    {t:'가족 곁에 남는다 — 소집에 응하지 않는다',ok:null,go:()=>{G.flags.noResv=1;mor(-2);return `중위는 더 묻지 않고 다음 집 문을 두드렸다. ${M('sp')?spN('이가')+' 안도의 숨을 쉰다.':'가족은 안도했다.'} 하지만 군 배급 우선 명단에서 우리 이름은 빠졌고, 단지 쪽 총성은 밤새 이어졌다.`}}
+  ],lesson:'동원 예비군은 소집에 응할 의무가 있다(예비군법). 응소하든 남든, 가족의 물·약·연락 방법을 먼저 정해 두는 것이 생존 수첩의 순서다. 교전규칙은 전시에도 같다 — 무장 위협에만 사격, 투항자·주민 보호.',src:'예비군법(동원·응소 의무) · 생존 수첩 교전규칙'});
+E({id:'resv2',art:'shield',tone:'amber',cat:'예비군 동원',cond:()=>!!G.flags.resvWin&&!G.flags.resv2Done,title:'검문소 지원 — 국도에 장갑차',
+  text:()=>`무전기 너머 소대장 목소리. "${INTEG_MIS.m3.n} 때 고마웠습니다. 국도로 적 장갑차 한 대가 내려옵니다. 판저파우스트3 두 발과 미군 대전차 사수가 붙습니다. 한 번 더 부탁드립니다."`,
+  hint:'소총탄은 장갑을 뚫지 못한다. 장갑차가 멈출 때 대전차 화기로, 쏠 때는 뒤쪽 후폭풍 구역을 비운다.',
+  choices:[
+    {t:'응소한다 — 국도 방호벽으로',ok:true,go:()=>{if(integ3D()){G.cur.next='__battle:m6';return `판저파우스트3를 어깨에 멨다. 가족에게 "이번이 마지막"이라고 했다. — '계속'을 누르면 출동한다.`}return integAbstract('m6')}},
+    {t:'이번엔 남는다',ok:null,go:()=>{G.flags.resv2Done=1;return '"알겠습니다. 가족 곁에 계십시오." 무전이 끊겼다. 멀리서 둔탁한 포성이 세 번 울리고 조용해졌다.'}}
+  ],lesson:'장갑차는 소총으로 상대할 수 없다. 대전차 화기가 없으면 거리를 벌리고 엄폐가 두꺼운 곳으로 이동한다. 후폭풍 구역(발사기 뒤 수 미터)에 사람이 없어야 한다.',src:'생존 수첩 교전규칙 · 판저파우스트3 운용 수칙(공개 자료)'});
+E({id:'roofdrone',pool:1,cond:()=>G.loc==='roof'&&G.turn>=2&&!G.flags.resvDone&&!G.flags.noResv,w:()=>40,art:'shield',tone:'amber',cat:'예비군 동원',title:'옥상 초소 — 무인기가 넘어온다',
+  text:()=>`옥상 난간에 자리 잡은 병사들이 하늘을 살핀다. 분대장이 당신을 본다. "예비역이시죠? 소형 무인기가 단지 쪽으로 넘어옵니다. 무인기가 머리 위에 멈추면 폭탄을 떨어뜨립니다. 사수가 모자랍니다."`,
+  hint:'무인기가 머리 위에서 멈추면 즉시 엄폐한다. 떨어지는 폭탄은 작지만 지붕 위에선 피할 곳이 적다.',
+  choices:[
+    {t:'소총을 받아 든다 — 옥상 초소 사수',ok:true,go:()=>{G.flags.resvGo=1;if(integ3D()){G.cur.next='__battle:m5';return `K2를 받아 난간 뒤에 엎드렸다. 가족은 계단실 안쪽으로 보냈다. — '계속'을 누르면 교전이 시작된다.`}return integAbstract('m5')}},
+    {t:'가족과 계단실로 내려간다',ok:null,go:()=>{G.flags.noResv=1;return '계단실 안쪽에 가족과 웅크렸다. 머리 위에서 총성과 작은 폭발음이 10분쯤 이어졌다.'}}
+  ],lesson:'무인기 공격은 머리 위에서 멈추는 순간이 신호다. 옥상은 시야는 좋지만 엄폐가 적어 민간인에게는 권장 대피 장소가 아니다.',src:'행정안전부 민방공 국민행동요령 · 생존 수첩 무인기 대응'});
+/* 복귀 카드(결과 화면용) */
+['resv_after','resv2_after','roof_after'].forEach(id=>E({id,art:'shield',tone:'green',cat:'교전 결과',title:()=>INTEG.lastT||'대피소 복귀',text:()=>'',choices:[{t:()=>INTEG.lastC||'임무를 마치고 돌아왔다',ok:true,go:()=>''}],
+  lesson:'교전 뒤에는 바로 가족 상태·물·약을 다시 확인한다. 총상·파편상은 지혈과 감염 예방이 먼저다.',src:'Stop the Bleed 표준 · 생존 수첩 응급처치'}));
+/* ---------- 결과 반영 ---------- */
+function integApply(win,o){o=o||{};const mid=o.mid||'m3';const MI=INTEG_MIS[mid]||INTEG_MIS.m3;const s=o.s||{};const parts=[];
+  if(win){parts.push(MI.win);if(mid==='m3'){G.flags.resvWin=1;res('water',6);res('food',2);G.flags.armyInfo=1;mor(8);parts.push('소대장이 어깨를 두드렸다. 군 배급 우선 명단에 올라 물 6L·식량 2일분을 받았고, 다음 공습 예보를 먼저 듣게 된다.')}
+    else if(mid==='m6'){G.flags.resv2Done=1;res('water',4);res('food',2);G.res.meds+=2;mor(10);parts.push('분대가 남은 전투식량과 구급낭을 나눠 줬다. 국도가 다시 열렸다.')}
+    else{res('water',4);mor(8);G.flags.armyInfo=1;parts.push('병사들이 생수를 나눠 줬다. 이제 옥상 초소가 하늘을 지켜 준다.')}
+    const dmg=Math.round((1-(o.hpFrac==null?1:o.hpFrac))*20);if(dmg>=4){hurt('me',dmg);parts.push(`파편과 타박상으로 몸이 무겁다 (체력 −${dmg}).`)}}
+  else if(o.quit){hurt('me',8);mor(-4);parts.push('분대장이 후퇴를 지시했다. 구역을 확보하지 못한 채 대피소로 돌아왔다.')}
+  else{parts.push(MI.lose);hurt('me',30);addC(M('me'),'injury');mor(-6);parts.push('상처는 깊지 않지만 감염을 막으려면 소독과 붕대가 필요하다.')}
+  if((s.civ||0)+(s.surr||0)>0){mor(-10);if(G.scen==='conv'&&typeof G.trust==='number')G.trust=Math.max(0,G.trust-10);parts.push(`보호 대상 ${(s.civ||0)+(s.surr||0)}명이 총에 맞았다. 분대장은 아무 말도 하지 않았고, 당신은 평생 잊지 못할 것이다 (사기 −10 · 이웃 신뢰 −10).`)}
+  if(mid==='m3'||mid==='m5')G.flags.resvDone=1;if(mid==='m6')G.flags.resv2Done=1;
+  if(!o.abstract&&s.shots!=null){const acc=s.shots?Math.round(s.hits/s.shots*100):0;parts.push(`<span class="small mut">교전 기록 · 사격 ${s.shots}발 명중 ${acc}% · 적 무력화 ${s.kills||0}${s.drone?` · 무인기 ${s.drone}`:''}${s.apc?' · 장갑차 격파':''} · 받은 피해 ${s.dmg||0}</span>`)}
+  INTEG.lastT=win?(MI.n+' — 임무 완수'):(o.quit?MI.n+' — 후퇴':MI.n+' — 부상 복귀');INTEG.lastC=win?'분대와 함께 임무를 마치고 돌아왔다':o.quit?'구역을 확보하지 못하고 돌아왔다':'부상을 입고 실려 돌아왔다';
+  return parts.join(' ')}
+/* 3D 불가 기기: 글로 푼다 */
+function integAbstract(mid){const p=G.diff==='easy'?.8:G.diff==='hard'?.5:.65;const win=chance(p);const hp=win?.55+rnd()*.4:.2;const s={shots:40+Math.floor(rnd()*60),hits:0,kills:win?6+Math.floor(rnd()*6):2,civ:0,surr:0,dmg:Math.round((1-hp)*60)};s.hits=Math.round(s.shots*(.25+rnd()*.3));
+  return '(이 기기는 3D 교전을 지원하지 않아 결과만 반영한다) '+integApply(win,{mid,s,hpFrac:hp,abstract:false})}
+/* ---------- 전투 진입·복귀 ---------- */
+function integStart(mid){INTEG.on=true;INTEG.mid=mid;INTEG.ev=G.cur.ev;INTEG.turn=G.turn;
+  const sel=cbGet('sel',{});cbSet('sel',Object.assign(sel,{mid,char:'me',diff:G.diff==='easy'?'easy':G.diff==='hard'?'hard':'norm'}));UI.bl=null;save();setScreen('bbrief')}
+function integReturn(win,o){o=o||{};if(!INTEG.on)return;const mid=INTEG.mid;INTEG.on=false;const s=BS?BS.stt:{};FX=[];
+  const txt=integApply(win,{mid,s,hpFrac:BS?Math.max(0,BS.hp)/BS.maxhp:1,quit:o.quit});
+  const ev=mid==='m6'?'resv2_after':mid==='m5'?'roof_after':'resv_after';G.fired[ev]=1;G.cur={ev,r:{i:0,ok:win?true:(o.quit?null:false),text:txt,fx:FX.slice()}};G.step='result';
+  if(checkOver()){save();toEnd();return}save();setScreen('shelter')}
+function integAbort(){/* 브리핑에서 되돌아감 = 불응 */INTEG.on=false;G.cur.next=null;G.flags.noResv=1;mor(-2);G.cur.r.text+=' …막상 소총을 받자 손이 떨렸다. 중위에게 사과하고 가족 곁으로 돌아왔다.';save();setScreen('shelter')}
+/* 주인공을 예비역 '당신'으로 */
+(function(){const base=charOf;window.charOf=function(id){const c=base(id);if(INTEG.on&&c&&c.id==='me')return Object.assign({},c,{n:(G&&M('me')&&M('me').n!=='당신')?M('me').n:'당신',rank:'예비역',role:'동원 예비군 · 분대 배속'});return c}})();
+/* 브리핑·결과 화면을 통합 흐름에 맞게 */
+(function(){const base=vBBrief;window.vBBrief=function(){let h=base();if(!INTEG.on)return h;
+  h=h.replace('data-a="b-hub" aria-label="뒤로"','data-a="integ-abort" aria-label="되돌아가기"').replace('<div class="eyebrow">작전 브리핑</div>','<div class="eyebrow">예비군 동원 · 작전 브리핑</div>');
+  h=h.replace('<p class="small mut" style="margin:0">작전은 전체화면·가로로 진행된다.','<p class="small mut" style="margin:0">가족은 대피소에 남아 있다. 교전 결과(부상·사기·물자)는 생존 진행에 그대로 반영된다. 작전은 전체화면·가로로 진행된다.');return h}})();
+(function(){const base=vBRes;window.vBRes=function(){let h=base();if(!INTEG.on)return h;
+  h=h.replace(/<div class="row"><button class="btn pri" data-a="b-again">다시 출격<\/button><button class="btn" data-a="b-hub">작전 선택<\/button><\/div>\s*<div class="row"><button class="btn ghost" data-a="b-arm">[\s\S]*?<\/div>/,'<div class="row"><button class="btn pri" data-a="integ-back">대피소로 복귀</button></div>');return h}})();
+(function(){const base=bQuit;window.bQuit=function(){if(INTEG.on&&BS){BS.done=true;SFX.ambStop();cancelAnimationFrame(UI.raf);wake(false);bUnmount();bFullscreen(false);integReturn(false,{quit:true});return}base()}})();
+/* 일시정지 문구: 중단 = 후퇴 */
+(function(){const base=bPauseOv;window.bPauseOv=function(){base();if(!INTEG.on)return;const o=$('#ov');if(!o)return;const p=o.querySelector('p.small');if(p)p.textContent='지금 중단하면 후퇴로 처리된다 — 구역을 확보하지 못한 채 대피소로 돌아간다 (체력 −8 · 사기 −4). 가족의 72시간은 그대로 이어진다.';const q=o.querySelector('[data-a=b-quit]');if(q)q.textContent='후퇴 — 대피소로'}})();
+/* 통합 중에는 장비 화면의 뒤로가기도 브리핑으로 */
+(function(){const base=vBLoad;window.vBLoad=function(){let h=base();if(INTEG.on)h=h.replace('data-a="b-hub" aria-label="뒤로"','data-a="b-brief" aria-label="뒤로"');return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a=integ-back],[data-a=integ-abort]');if(!b)return;
+  if(b.dataset.a==='integ-back'){integReturn(!!(BS&&BS.win));return}integAbort()});
+/* 결과 카드 '계속' → 교전 */
+(function(){document.addEventListener('click',e=>{const b=e.target.closest('[data-a=follow]');if(!b)return;const nx=G&&G.cur&&G.cur.next;if(nx&&String(nx).indexOf('__battle:')===0){e.stopImmediatePropagation();e.preventDefault();integStart(nx.slice(9))}},true)})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
