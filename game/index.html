@@ -7,11 +7,11 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0b0f13">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="72시간">
+<meta name="apple-mobile-web-app-title" content="생존of탕정">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>72시간 생존게임</title>
+<title>생존of탕정</title>
 <style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -74,6 +74,11 @@ button{font:inherit;color:inherit}
 .cd-mark{width:42px;height:42px;flex:none}
 .title-block h1{margin:0;font-size:clamp(52px,17vw,76px);line-height:.95;font-weight:900;letter-spacing:-.05em}
 .title-block h1 span{color:var(--amber)}
+.title-block h1.ttl-sot{display:flex;align-items:baseline;gap:.1em;white-space:nowrap;font-size:clamp(48px,15.5vw,72px);letter-spacing:-.045em}
+.ttl-sot b{font-weight:900}
+.ttl-sot i{display:inline-block;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;font-size:.4em;letter-spacing:0;color:var(--mut);margin:0 .06em;transform:translateY(-.32em)}
+.ttl-sub{font-size:15px;font-weight:800;color:var(--body);letter-spacing:.01em;margin-top:-2px}
+.ttl-sub b{color:var(--amber);font-weight:900}
 .tagline{font-size:17px;font-weight:700;color:var(--body);text-wrap:balance;margin:0}
 .title-note{font-size:12.5px;color:var(--faint);line-height:1.6;margin:0}
 .sweep{transform-origin:50% 100%;animation:sweep 7s ease-in-out infinite alternate}
@@ -797,6 +802,8 @@ body.fps{overflow:hidden}
 .out-enc h2{font-size:16px}.out-enc .sheet>p{font-size:13px}.out-enc .choice{padding:8px 10px}.out-enc .choice b{font-size:13px}.out-enc .choice small{font-size:11px}.out-enc .lesson{font-size:12px;padding:8px 10px}.out-enc .btn{justify-self:end;padding:9px 16px;min-height:0;width:auto}
 @media (min-width:760px){.out-enc .choices{grid-template-columns:1fr 1fr}}
 .out-warn{position:absolute;left:50%;top:118px;transform:translateX(-50%);z-index:8;display:grid;gap:2px;text-align:center;background:rgba(120,14,10,.88);border:2px solid #ff5449;border-radius:14px;padding:9px 16px;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:frp 1s ease-in-out infinite;pointer-events:none}
+.out-warn.para{top:84px;padding:5px 14px;border-radius:11px;gap:0;background:rgba(104,14,8,.84);animation:none}.out-warn.para b{font-size:13px}.out-warn.para span{font-size:11.5px}.out-warn.para em{font-style:normal;font-weight:900;color:#fff;font-size:14px}
+.b-tmr{font-size:12.5px}.b-tmr.red{animation:frp 1s ease-in-out infinite}
 .out-warn b{font-size:15px}.out-warn span{font-size:12px;color:#ffd6d0}.out-warn.safe{background:rgba(10,60,34,.9);border-color:#2ccf7c;animation:none}.out-warn.safe span{color:#c8f5dc}
 #oBar button{cursor:pointer}
 
@@ -824,6 +831,9 @@ body.fps{overflow:hidden}
 .tjb-ask span{font-size:12px;color:var(--mut);width:100%}
 .sv3.tj-on:has(.sv3-dsstat) .tj-mini{top:112px}
 .tj-drv{top:58px}
+.sv3.tj-driving .sv3-jump{display:none}
+.endless-cta{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid rgba(90,168,255,.45);background:rgba(20,40,70,.45);border-radius:14px;padding:12px 14px;margin:10px 0}
+.endless-cta b{display:block;font-size:15px}.endless-cta small{display:block;color:var(--mut);font-size:12px;margin-top:2px;max-width:46ch}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -6748,7 +6758,8 @@ function vTitle(){
   return `<div class="title-art">${skyline('night')}</div>
   <div class="title-block">
     <div class="logo-row">${cdMark(44)}<div><div class="eyebrow">생존 수첩 실전 훈련</div><div class="small mut">어른용 · 한 판 10~15분</div></div><span style="flex:1"></span>${musBtn()}${sndBtn()}</div>
-    <h1>72<span>시간</span></h1>
+    <h1 class="ttl-sot" aria-label="생존 of 탕정"><b>생존</b><i>of</i><span>탕정</span></h1>
+    <div class="ttl-sub"><b>72시간</b>, 그 후</div>
     <p class="tagline">오늘 밤 11시, 경계경보가 울린다면?</p>
   </div>
   <div class="stack">
@@ -6854,7 +6865,7 @@ function gSlotsOf(ids){const out=[];ids.forEach(id=>{const s=ITEMS[id].s||0;for(
 /* ---------- HUD ---------- */
 function hud(){
   const ph=G.phase;let clk,sub;
-  if(ph==='shelter'){clk=`T+${G.turn*6}h`;sub=`${clockAt(G.turn)} · ${dayOf(Math.min(G.turn,11))}일차`}
+  if(ph==='shelter'){clk=`T+${G.turn*6}h`;sub=`${clockAt(G.turn)} · ${dayOf(G.endless?G.turn:Math.min(G.turn,11))}일차`}
   else if(ph==='move'){clk=simClock(G.simT||60);sub='대피 이동'}else{clk='23:08';sub=''}
   const scenChip=G.scenKnown?`<span class="chip red">${ic(SCEN[G.scen].ic)}${SCEN[G.scen].s}</span>`:`<span class="chip amb">${ic('siren')}원인 미상</span>`;
   return `<div class="hud"><div class="hclk"><span class="clock">${clk}</span><span class="sub">${sub}</span></div><span class="sp"></span>${scenChip}${sndBtn()}<button class="iconbtn" data-a="menu" aria-label="메뉴">${ic('menu')}</button></div>`;
@@ -6889,7 +6900,7 @@ function rationCard(){
   const n=G.fam.length;const day=dayOf(G.turn);
   const est=k=>{const per=RATION[k].w*4*n;const d=G.res.water/per;return d>=10?'충분':`물 ${d.toFixed(1)}일분`};
   return `<div class="sheet fade-in"><div class="lead"><div class="badge blue">${ic('water')}</div><div><div class="eyebrow">${day}일차 아침 회의</div><h2>오늘 배급을 정하자</h2></div></div>
-  <p>물 ${fmtL(G.res.water)}L · 식량 ${fmtL(G.res.food)}일분 · ${n}명. 구조까지 ${72-G.turn*6}시간 남았다. 사람은 물 없이 3일을 넘기기 어렵고, 음식은 몇 주를 버틴다. 당국 지시가 없으면 마실 물은 줄이지 않는 것이 원칙이다(FEMA).</p>
+  <p>물 ${fmtL(G.res.water)}L · 식량 ${fmtL(G.res.food)}일분 · ${n}명. ${G.endless?`72시간이 지나 ${dayOf(G.turn)}일째 — 구호가 닿을 때까지 버틴다.`:`구조까지 ${72-G.turn*6}시간 남았다.`} 사람은 물 없이 3일을 넘기기 어렵고, 음식은 몇 주를 버틴다. 당국 지시가 없으면 마실 물은 줄이지 않는 것이 원칙이다(FEMA).</p>
   <div class="choices">${['full','base','lean','save'].map((k,i)=>`<button class="choice" data-a="ration" data-v="${k}"><span class="k">${'ABCD'[i]}</span><span class="ct"><b>${RATION[k].n} — ${RATION[k].d}</b><small>${est(k)} · ${k==='full'?'체력·사기 회복':k==='base'?'최소 음용량 유지':k==='lean'?'물은 지키고 식량을 아낀다':'탈수 위험 · 당국 지시 없이 권장되지 않음'}</small></span></button>`).join('')}</div></div>`;
 }
 function actionCard(){
@@ -6898,7 +6909,7 @@ function actionCard(){
   <div class="actions">${acts.map(a=>{const ok=a.ok();return `<button class="act${a.warn&&a.warn()?' warn':''}" data-a="act" data-v="${a.id}" ${ok?'':'disabled'}>${ic(a.ic)}<b>${a.n}</b><small>${ok?a.d():val(a.na)||'지금은 불가'}</small></button>`}).join('')}</div></div>`;
 }
 function actResCard(){
-  const c=G.cur;const notes=G.turnNotes||[];const last=G.turn>=11;
+  const c=G.cur;const notes=G.turnNotes||[];const last=G.turn>=11&&!G.endless;
   return `<div class="sheet fade-in"><div class="lead"><div class="badge">${ic(ACTIONS.find(a=>a.id===c.act).ic)}</div><div><div class="eyebrow">${ACTIONS.find(a=>a.id===c.act).n}</div><h2>${clockAt(G.turn+1)}까지</h2></div></div>
   <p class="result">${c.at}</p>${fxChips(c.afx)}
   <div class="lesson"><span class="eyebrow" style="color:var(--mut)">6시간 경과 · 배급 ${RATION[G.ration].n}</span>${notes.length?notes.map(x=>`<div>${x}</div>`).join(''):'<div>큰 일 없이 시간이 흘렀다.</div>'}${fxChips(G.turnFx)}</div>
@@ -9751,7 +9762,7 @@ function vBHub(){
   <div class="b-hero">${(()=>{const u=heroSnap(c);return u?`<img src="${u}" alt="엄폐물 뒤의 국군 분대"><div class="cap"><b>국군 분대 · 침투 저지</b><span>가로 화면 FPS — 왼쪽 이동 · 오른쪽 시점 · 사격 버튼</span></div>`:bHeroSVG(c)})()}</div>${HAS3D?'':'<div class="lesson no"><span class="eyebrow">3D 미지원 기기</span><div>이 기기의 브라우저가 WebGL을 지원하지 않아 전투 모드를 실행할 수 없다. 다른 브라우저나 기기에서 열어 주세요.</div></div>'}
   <div class="b-quick"><button class="b-q" data-a="b-arm">${ic('tool')}<b>병기고</b><small>개조품 ${Object.keys(P.owned).length}/${Object.keys(ATT).length}</small></button><button class="b-q" data-a="b-dex">${ic('group')}<b>인물 도감</b><small>국군·미군·북한군</small></button><button class="b-q inf" data-a="b-infsel">${ic('clock')}<b>무한 방어전</b><small>최고 ${infBest}웨이브</small></button></div>
   <div class="sec-h"><h3>작전</h3><span class="small mut">가상 시나리오 · 휘장 ${medN}/${Object.keys(MEDAL).length}</span></div>
-  <div class="b-mis">${MISSIONS.map((m,i)=>{const ok=misUnlocked(m),r=rec[m.id]||{};const need=m.unlock&&MISSIONS.find(x=>x.id===m.unlock);
+  <div class="b-mis">${MISSIONS.filter(m=>!m.integOnly).map((m,i)=>{const ok=misUnlocked(m),r=rec[m.id]||{};const need=m.unlock&&MISSIONS.find(x=>x.id===m.unlock);
     return `<button class="b-mc${S.mid===m.id?' on':''}${ok?'':' lock'}${m.boss?' boss':''}" data-a="b-mid" data-v="${m.id}" ${ok?'':'aria-disabled="true"'}><span class="b-no num">0${i+1}</span><div><b>${m.n}${m.boss?' <em>보스</em>':''}${m.id==='m5'||m.id==='m6'?' <em class="us">한미 연합</em>':''}</b><small>${ok?`${m.type} · ${m.time} · ${m.phases.length}단계${r.best?` · 최고 ${r.best.toLocaleString()}점`:''}`:`${ic('lock')} ‘${need?need.n:''}’ 완수 시 열림`}</small></div><span class="b-st">${ok?stars(r.stars||0):''}</span></button>`}).join('')}</div>
   <div class="sec-h"><h3>분대원</h3><span class="small mut">내가 맡을 병사 · 레벨은 병사별</span></div>
   <div class="b-sq">${SQUAD.map(x=>{const lv=charLv(x.id),Lx=loadoutFor(x.id);return `<button class="b-cc${S.char===x.id?' on':''}${x.id==='me'?' me':''}" data-a="b-char" data-v="${x.id}">${portraitImg(Object.assign({},x,{lv}),64)}<div><b>${x.rank} ${x.n}</b><small class="b-role">${x.role} · ${WPN[Lx.pri].n.split(' ')[0]}</small>${xpBar(x.id)}<small>${x.perk}</small><small class="p5${lv>=5?' on':''}">${lv>=5?'':ic('lock')}${x.perk5}</small></div></button>`}).join('')}</div>
@@ -10186,7 +10197,7 @@ const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving
       else{vx=dx/d;vz=dz/d;len=1;const ty=Math.atan2(-vx,-vz);let dy=ty-this.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));this.yaw+=dy*Math.min(1,dt*6);this.pitch*=Math.max(0,1-dt*4)}}
     else{len=Math.min(1,Math.hypot(this.mv.x,this.mv.y));if(len>.05){const fx=-Math.sin(this.yaw),fz=-Math.cos(this.yaw),rx=Math.cos(this.yaw),rz=-Math.sin(this.yaw);vx=fx*this.mv.y+rx*this.mv.x;vz=fz*this.mv.y+rz*this.mv.x}}
     this.moving=len;
-    if(len>.05){const sp=this.speed*(this.nav?1.15:1);const nx=this.pos.x+vx*sp*dt,nz=this.pos.z+vz*sp*dt;let mvd=false;
+    if(len>.05&&!this.noWalk){const sp=this.speed*(this.nav?1.15:1);const nx=this.pos.x+vx*sp*dt,nz=this.pos.z+vz*sp*dt;let mvd=false;
       if(!this.blocked(nx,this.pos.z,null,this.jy)){this.pos.x=nx;mvd=true}if(!this.blocked(this.pos.x,nz,null,this.jy)){this.pos.z=nz;mvd=true}
       if(this.nav){const prog=Math.hypot(this.pos.x-(this.nav.lx==null?this.pos.x:this.nav.lx),this.pos.z-(this.nav.lz==null?this.pos.z:this.nav.lz));this.nav.lx=this.pos.x;this.nav.lz=this.pos.z;this.nav.stuck=prog>sp*dt*.35?0:(this.nav.stuck||0)+dt;
         if(this.nav.stuck>.5&&!this.nav.side){/* 옆으로 비켜 간다 */this.nav.side=1;const t=this.nav.pts[this.nav.i];const rx=-(t.z-this.pos.z),rz=t.x-this.pos.x;const L=Math.hypot(rx,rz)||1;const sx=rx/L,sz=rz/L;const dir=!this.blocked(this.pos.x+sx*.9,this.pos.z+sz*.9)?1:!this.blocked(this.pos.x-sx*.9,this.pos.z-sz*.9)?-1:0;if(dir){this.nav.pts.splice(this.nav.i,0,{x:this.pos.x+sx*dir*1.0,z:this.pos.z+sz*dir*1.0});this.nav.stuck=0}}
@@ -11887,7 +11898,7 @@ function tjLabelDraw(x,toS,scale,clip){const D=TJ_DATA;x.textAlign='center';x.te
     if(k==='pin'){x.fillStyle='#ff5a8a';x.beginPath();x.arc(sx,sy,4*scale,0,7);x.fill();x.strokeStyle='rgba(10,12,16,.9)';x.lineWidth=3*scale;x.strokeText(nm,sx,sy-11*scale);x.fillStyle='#ffd0de';x.fillText(nm,sx,sy-11*scale);continue}
     x.strokeStyle='rgba(10,12,16,.85)';x.lineWidth=3.2*scale;x.strokeText(nm,sx,sy);x.fillStyle=k==='road'?'#e8d6a8':k==='home'?'#9cc4ff':k==='water'?'#8fc8ee':k==='poi'?'#a8f0c8':'#eef1f4';x.fillText(nm,sx,sy)}}
 function tjMarkers(x,toS,scale){const p=FP3.pos;const BK=TJ.goal||(OUT.on?OUT.back:null);if(BK){const [bx,by]=toS(BK.bx,BK.bz);x.fillStyle='#2ccf7c';x.strokeStyle='#0a0c10';x.lineWidth=2*scale;x.beginPath();x.arc(bx,by,5.5*scale,0,7);x.fill();x.stroke()}
-  (TJ.goal||!OUT.on?[]:(OUT.spots||[])).forEach(s=>{if(s.taken)return;const [sx,sy]=toS(s.x,s.z);x.fillStyle=s.warn?'#ff6b5a':'#ffb224';x.beginPath();x.arc(sx,sy,3.2*scale,0,7);x.fill()});
+  (TJ.goal||!OUT.on?[]:(OUT.spots||[])).forEach(s=>{if(s.taken||s.nomap)return;const [sx,sy]=toS(s.x,s.z);x.fillStyle=s.warn?'#ff6b5a':'#ffb224';x.beginPath();x.arc(sx,sy,3.2*scale,0,7);x.fill()});
   const [mx,my]=toS(p.x,p.z);x.save();x.translate(mx,my);x.rotate(-(TJ.head!=null?TJ.head:FP3.yaw));x.fillStyle='rgba(255,178,36,.22)';x.beginPath();x.moveTo(0,0);x.arc(0,0,26*scale,-Math.PI/2-.55,-Math.PI/2+.55);x.closePath();x.fill();
   x.fillStyle='#ffb224';x.strokeStyle='#0a0c10';x.lineWidth=2*scale;x.beginPath();x.moveTo(0,-9*scale);x.lineTo(6.5*scale,7*scale);x.lineTo(0,3.5*scale);x.lineTo(-6.5*scale,7*scale);x.closePath();x.fill();x.stroke();x.restore()}
 function tjMini(dt){TJ.miniT-=dt||0;if(TJ.miniT>0)return;TJ.miniT=.066;const cv=$('#tjMiniC');if(!cv)return;const x=cv.getContext('2d');const W=cv.width;const span=230;const mc=tjMapCanvas(false);const R=TJ_DATA.R;const k=mc.width/(2*R);const p=FP3.pos;
@@ -11939,7 +11950,7 @@ function tjPopulate(sc){const SG=new T.Group();SG.name='outStatic';sc.add(SG);OU
   P.shops.forEach(s=>{OUT.covers.push({x:s.door[0],z:s.door[1],r:3.2,n:SHN[s.k]});if(!done['shop:'+s.k])OUT.spots.push({id:'shop:'+s.k,k:s.k,x:s.door[0],z:s.door[1],r:2.6,g:'?',n:`${SHN[s.k]} 안 뒤지기`,s:'30분 · 물자 발견 가능',h:.5})});
   OUT.covers.push({x:P.shelterB.door[0],z:P.shelterB.door[1],r:3.4,n:'상가 지하 대피소'},{x:P.subway.p[0],z:P.subway.p[1],r:4,n:'지하보도'},{x:P.gym[0],z:P.gym[1],r:4,n:'체육관'},{x:P.guard[0],z:P.guard[1],r:3.2,n:'경비실'});
   TJ.lobbies.forEach(q=>OUT.covers.push({x:q[0],z:q[1],r:3.2,n:`${q[2]}동 1층 현관`}));
-  /* 버려진 차·불탄 차 */P.cars.forEach((c,i)=>{const b=c.b;const car=PK.car(b?null:['#9aa3ad','#d0d0d0','#5a2a2a','#2a3a6a'][i%4],SG,!!b);car.position.set(c.p[0],0,c.p[1]);car.rotation.y=yawOf(c.t[0],c.t[1])+(r()-.5)*.6;TOWN.solids.push(new T.Box3().setFromObject(car));
+  /* 버려진 차·불탄 차 — 멀쩡한 차는 운전할 수 있게 따로 둔다(병합 제외) */OUT.dcars=[];P.cars.forEach((c,i)=>{const b=c.b;const car=PK.car(b?null:['#9aa3ad','#d0d0d0','#5a2a2a','#2a3a6a'][i%4],b?SG:sc,!!b);if(!b)car.userData.dyn=1;car.position.set(c.p[0],0,c.p[1]);car.rotation.y=yawOf(c.t[0],c.t[1])+(r()-.5)*.6;const cbx=new T.Box3().setFromObject(car);TOWN.solids.push(cbx);if(!b)OUT.dcars.push({i,car,box:cbx});
     if(b){if(i===2){FX3.fire(new T.Vector3(c.p[0],1.1,c.p[1]),{sec:99999,r:1.3});OUT.fires.push({x:c.p[0],z:c.p[1],r:2.6})}else MM(GG.pl(3,5),new T.MeshBasicMaterial({map:scorchTex(),transparent:true,opacity:.8,depthWrite:false}),c.p[0],.03,c.p[1],{p:sc,rx:-Math.PI/2,cast:false,recv:false})}
     else if(!done['car:'+i])OUT.spots.push({id:'car:'+i,k:'car',x:c.p[0]-c.t[0]*3.0,z:c.p[1]-c.t[1]*3.0,r:2.1,g:'?',n:'버려진 차 트렁크 열기',s:'30분 · 담요·물 있을 수도',h:.5})});
   /* 잔해 */const rub=mat('#5e5a55',{r:1});const c2=P.cars[2];for(let i=0;i<12;i++){const a=r()*6.28,d=3+r()*14;const x=c2.p[0]+Math.cos(a)*d,z=c2.p[1]+Math.sin(a)*d;const b=MM(GG.box(.6+r()*1.4,.25+r()*.5,.5+r()*1.2),rub,x,.2,z,{p:SG});b.rotation.y=r()*3;TOWN.solids.push(new T.Box3().setFromObject(b))}
@@ -11974,7 +11985,7 @@ function vOutside3TJ(){const P=TJ_DATA.POI,R=TJ_DATA.R;
   FP3.boxes=TOWN.solids.filter(b=>b.max.y>.4);FP3.bounds=[-R+12,-R+12,R-12,R-12];FP3.occ=TJ.occ;
   tjCamOn();TJ.goal=null;
   setTimeout(()=>{const h=$('#sv3Hint');if(h)h.classList.add('out')},9000);
-  outBar();outStat();SV3.step=dt=>{if(OUT.mapOpen){OUT.me&&OUT.me.update(0);return}outStep(dt);tjStep(dt)};return ''}
+  if(OUT.drv)SV3.el.classList.add('tj-driving');outBar();outStat();SV3.step=dt=>{if(OUT.mapOpen){OUT.me&&OUT.me.update(0);return}if(OUT.drv&&typeof tjDrivePre==='function')tjDrivePre(dt);outStep(dt);if(OUT.drv&&typeof tjDrivePost==='function')tjDrivePost(dt);tjStep(dt)};return ''}
 (function(){const base=vOutside3;window.vOutside3=function(){if(tjUse()&&TJ.ok)return vOutside3TJ();if(tjUse())tjPrep(()=>{if(UI.screen==='outside')render()});return base()};SV3.views.outside=window.vOutside3;
   const ret=outReturn;window.outReturn=function(why){tjBigClose();FP3.occ=null;SV3.exp=1;if(SV3.cam){SV3.cam.far=300;SV3.cam.near=.04;SV3.cam.updateProjectionMatrix()}return ret(why)}})();
 /* ---------- 거리 교통(실제 지도): 이순신대로 동쪽 차로 정체 · 서쪽으로 달리는 차 · 보도를 뛰는 사람들 ---------- */
@@ -12060,13 +12071,197 @@ function vDrive3TJ(){const D=TJ_DATA,P=D.POI,R=D.R,V=D.V,Y=tjRoadLine();const sc
     FP3.pos.set(car.position.x,0,car.position.z);TJ.head=DRV.yaw+Math.PI;tjTownStep(dt,car.position);tjMini(dt);
     if(!DRV.done&&((onRoad&&pr.s>=goalS)||DRV.t>120)){DRV.done=true;DRV.on=false;TJ.goal=null;SND.engineStop();G.flags.droveKm=Math.round(DRV.km);setTimeout(()=>{G.cur.drove=1;UI.after=SV3.heldAfter||null;SV3.heldAfter=null;render()},1200)}}}
 /* 다른 장면으로 넘어가면 실제 지도 설정(충돌 격자·먼 시야·노출)을 푼다 */
-(function(){const base=sv3Mount;window.sv3Mount=function(kind,html,o){if(TJ.litScene&&SV3.scene!==TJ.litScene)tjUnlight();FP3.occ=null;TJ.head=null;if(SV3.cam){SV3.cam.far=300;SV3.cam.near=.04;SV3.cam.updateProjectionMatrix()}SV3.exp=1;TJ.goal=kind==='street'||kind==='drive'?TJ.goal:null;return base(kind,html,o)}})();
+(function(){const base=sv3Mount;window.sv3Mount=function(kind,html,o){if(TJ.litScene&&SV3.scene!==TJ.litScene&&kind!=='apt')tjUnlight();FP3.occ=null;TJ.head=null;if(SV3.cam){SV3.cam.far=300;SV3.cam.near=.04;SV3.cam.updateProjectionMatrix()}SV3.exp=1;TJ.goal=kind==='street'||kind==='drive'?TJ.goal:null;return base(kind,html,o)}})();
 (function(){const bS=vStreet3;window.vStreet3=function(){if(tjUse()&&TJ.ok)return vStreet3TJ();return bS()};SV3.views.street=window.vStreet3;
   const bD=vDrive3;window.vDrive3=function(){if(tjUse()&&TJ.ok)return vDrive3TJ();return bD()}})();
 /* 멈춤 메뉴: 거리 지도 선택(실제 탕정 / 가상 거리) */
 (function(){const base=menuOverlay;window.menuOverlay=function(){const r=base.apply(this,arguments);try{const g=document.querySelector('#ov .ov-grid');if(g&&typeof TJ_DATA!=='undefined'&&HAS3D){const on=store.get('sg.tjmap',true)!==false;const d=document.createElement('div');d.className='seg';
     d.innerHTML=`<div class="seg-label">거리 지도 <span class="small mut">실제 탕정면 일대(OSM) · 밖 탐색·대피 달리기·운전</span></div><div class="seg-opts"><button data-a="tjmap3" data-v="1" aria-pressed="${on}"><b>실제 탕정</b></button><button data-a="tjmap3" data-v="0" aria-pressed="${!on}"><b>가상 거리</b></button></div>`;g.appendChild(d)}}catch(e){}return r}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=tjmap3]');if(!b)return;const v=b.dataset.v==='1';store.set('sg.tjmap',v);const o=$('#ov');if(o)o.querySelectorAll('[data-a=tjmap3]').forEach(x=>x.setAttribute('aria-pressed',(x.dataset.v==='1')===v));toast(v?'다음에 밖으로 나갈 때 실제 탕정 지도를 쓴다':'다음에 밖으로 나갈 때 가상 거리를 쓴다',2200)});
+
+/* ===================== 26 · 72시간 이후 계속 살아가기(무한 진행) ===================== */
+/* 72시간 결과 화면에서 '계속 살아가기' → 4일째부터 턴이 이어진다. 정해진 사건표는 끝났으므로 공통 사건 풀을 8턴(2일)마다 다시 쓰고,
+   '72시간 이후'에만 나오는 사건(구호 배급소·급수차·단전 복구·감염병·대피소 재배치·귀가 판단)을 섞는다. 죽거나 그만두면 그때 결과를 다시 매긴다 */
+const ENDLESS={refresh:8};
+const isEndless=()=>!!(G&&G.endless);
+function endlessDays(){return G&&G.endless?Math.max(0,dayOf(G.turn)-3):0}
+/* 72시간 이후 전용 사건 */
+E({id:'ex_relief',pool:1,cond:()=>isEndless(),w:2,art:'store',tone:'blue',cat:'구호',title:'구호 배급소가 열렸다',
+  text:()=>'게시판에 공지가 붙었다. "주민센터 앞 구호 배급 — 가구당 생수·즉석밥. 신분 확인." 줄이 이미 골목 끝까지 늘어섰다.',
+  hint:'구호 물자는 공지된 장소·시간에 가구 단위로 받는다. 줄을 서는 동안 가족 중 한 명은 대피소에 남아 짐을 지킨다.',
+  choices:[
+    {t:'한 사람이 신분증을 들고 줄을 선다. 나머지는 대피소에 남는다',ok:true,go:()=>{res('water',6);res('food',3);mor(3);return '세 시간을 기다려 생수 6L와 즉석밥 3일분을 받았다. 돌아오니 짐도 그대로다.'}},
+    {t:'온 가족이 함께 가서 더 받아 온다',ok:false,go:()=>{res('water',6);res('food',3);if(rnd()<.5){res('water',-3);mor(-4);return '배급은 가구당 같았다. 비운 자리에 둔 물통 하나가 사라졌다.'}return '배급은 가구당 같았다. 다리만 아팠다.'}},
+    {t:'새치기하려는 사람과 다투며 앞으로 간다',ok:false,go:()=>{trust(-2);hurt('me',5);res('water',6);return '물은 받았지만 주변 시선이 싸늘하다. 밀치다 팔꿈치를 다쳤다.'}}],
+  lesson:'재난 후 구호는 주민센터·대피소 공지에 따라 가구 단위로 배분된다. 신분증을 챙기고, 가족은 나눠 움직여 짐과 자리를 지킨다.',src:'행정안전부 이재민 구호 · 생존 수첩 구호',guide:'now'});
+E({id:'ex_watertruck',pool:1,cond:()=>isEndless(),w:2,art:'water',tone:'blue',cat:'급수',title:'급수차가 왔다',
+  text:()=>'확성기 소리. "급수차 도착 — 용기를 가져오세요." 사람들이 페트병·냄비·비닐봉지를 들고 몰려나간다.',
+  hint:'급수차 물은 깨끗한 뚜껑 있는 용기에 받아 그늘에 보관한다. 소독 안내가 있으면 따른다.',
+  choices:[
+    {t:'뚜껑 있는 깨끗한 용기를 모아 받아 오고 그늘에 둔다',ok:true,go:()=>{res('water',8);mor(2);return '물통 네 개를 채웠다. 뚜껑을 닫아 그늘진 벽 쪽에 두었다.'}},
+    {t:'아무 그릇에나 받아 오고 뚜껑은 신경 쓰지 않는다',ok:false,go:()=>{res('water',8);if(rnd()<.45){addC(victim(),'sick');return '물은 받았지만 열린 냄비에 먼지가 앉았다. 하루 뒤 한 명이 배를 움켜쥐었다.'}return '물은 받았다. 운이 좋았다.'}},
+    {t:'줄이 길다 — 남은 물로 버틴다',ok:null,go:()=>{mor(-2);return '물통이 가벼워지는 게 느껴진다.'}}],
+  lesson:'임시 급수는 깨끗하고 뚜껑 있는 용기로 받아 직사광선을 피해 보관한다. 오래 둔 물은 끓이거나 안내된 방법으로 소독해 마신다.',src:'환경부 비상급수 · WHO 가정 내 물 보관',guide:'now'});
+E({id:'ex_power',pool:1,cond:()=>isEndless()&&!G.flags.powerBack,w:1.5,art:'battery',tone:'amber',cat:'전력',title:'전기가 잠깐 들어왔다',
+  text:()=>'천장 등이 깜빡이더니 켜졌다. 여기저기서 멀티탭에 충전기를 꽂는다. "몇 시간 있으면 또 끊긴대."',
+  hint:'단전 뒤 전기가 돌아올 때는 순간 과전류가 생길 수 있다. 꼭 필요한 기기만 차례로 충전한다.',
+  choices:[
+    {t:'휴대폰·보조배터리·라디오만 차례로 충전한다',ok:true,go:()=>{G.flags.powerBack=1;res('power',45);mor(3);return '보조배터리가 가득 찼다. 라디오로 정부 발표도 들었다.'}},
+    {t:'멀티탭에 문어발로 전부 꽂는다',ok:false,go:()=>{G.flags.powerBack=1;res('power',20);if(rnd()<.4){mor(-4);return '퍽 — 멀티탭이 타며 차단기가 내려갔다. 충전은 반도 못 했다.'}return '충전은 됐지만 멀티탭이 뜨끈하다.'}},
+    {t:'곧 끊긴다니 그냥 둔다',ok:null,go:()=>{return '불빛만 잠깐 반가웠다.'}}],
+  lesson:'정전 복구 직후에는 전압이 불안정할 수 있다. 꼭 필요한 통신·조명 기기부터 하나씩 충전하고 문어발 연결은 피한다.',src:'한국전기안전공사 정전 대비 · 생존 수첩 정전',guide:'comm'});
+E({id:'ex_sick',pool:1,cond:()=>isEndless()&&G.turn>=14,w:1.5,art:'pill',tone:'red',cat:'감염병',title:'설사·발열 환자가 늘었다',
+  text:()=>'대피소 한쪽에서 아이 둘이 열이 나고 설사를 한다. 화장실 앞이 북적이고, 손 씻을 물은 부족하다.',
+  hint:'집단 생활에서는 손 위생·화장실 분리·환자 분리가 감염병 확산을 막는다. 설사가 있으면 경구수액(ORS)으로 수분을 보충한다.',
+  choices:[
+    {t:'손 소독·화장실 청소 당번을 제안하고, 환자는 구석에 따로 쉬게 한다',ok:true,go:()=>{trust(2);mor(2);return '당번표가 붙었다. 이틀 뒤 새 환자가 줄었다.'}},
+    {t:'우리 가족만 멀리 떨어져 앉는다',ok:null,go:()=>{if(rnd()<.35)addC(victim(),'sick');return '자리를 옮겼다. 그러나 화장실은 같이 쓴다.'}},
+    {t:'별일 아니다 — 평소처럼 지낸다',ok:false,go:()=>{if(rnd()<.6)addC(victim(),'sick');mor(-3);return '사흘째, 우리 가족 중에도 배를 움켜쥐는 사람이 생겼다.'}}],
+  lesson:'대피소 감염병은 손 씻기·화장실 위생·환자 분리로 막는다. 설사에는 깨끗한 물 1L에 설탕 6티스푼·소금 0.5티스푼(ORS)으로 수분을 보충한다.',src:SRC.ors||'WHO 경구수액 · 질병관리청',guide:'aid'});
+E({id:'ex_move',pool:1,cond:()=>isEndless()&&G.turn>=16,w:1,art:'pin',tone:'amber',cat:'재배치',title:'대피소를 옮기라는 안내',
+  text:()=>'관리 요원이 말한다. "이 대피소는 정원이 넘었습니다. 희망 가구는 내일 아침 버스로 광역 구호소로 이동합니다."',
+  hint:'공식 안내에 따른 재배치는 대체로 더 나은 급수·의료 시설로 가는 것이다. 가족 연락처·이동 장소를 게시판과 지인에게 남긴다.',
+  choices:[
+    {t:'이동을 신청하고, 가족 메모(이름·연락처·행선지)를 게시판에 남긴다',ok:true,go:()=>{trust(1);mor(4);res('water',3);res('food',2);return '광역 구호소 배정표를 받았다. 출발 전 배급도 받았다. (이동은 다음 날 아침 — 당분간 같은 자리에서 지낸다)'}},
+    {t:'정든 자리를 떠나기 싫다 — 남는다',ok:null,go:()=>{mor(-1);return '남기로 했다. 빈자리가 생겨 조금 넓어졌다.'}},
+    {t:'말없이 따로 집으로 돌아간다',ok:false,go:()=>{mor(-3);trust(-1);return '아무에게도 알리지 않고 짐을 쌌다가 다시 풀었다. 길은 아직 위험하다.'}}],
+  lesson:'재배치·귀가는 당국 안내에 따른다. 이동할 때는 가족 재회를 위해 이름·연락처·행선지를 대피소 게시판과 지인에게 남긴다.',src:'행정안전부 이재민 보호 · 생존 수첩 가족 재회',guide:'now'});
+/* 흐름: 12턴 이후에도 이어지게 */
+(function(){const bt=beginTurn;window.beginTurn=function(){if(isEndless()&&G.turn>=12){
+    /* 8턴(2일) 지난 공통 사건은 다시 나올 수 있다 */const at=G.firedAt||(G.firedAt={});EVENTS.forEach(e=>{if(e.pool&&G.fired[e.id]&&(at[e.id]==null||at[e.id]<G.turn-ENDLESS.refresh))delete G.fired[e.id]});
+    if(G.turn%4===0&&!G.flags['r'+G.turn]){G.step='ration';G.cur={};return}enterEvent();return}return bt()};
+  const ee=enterEvent;window.enterEvent=function(){const r=ee();try{if(G.cur&&G.cur.ev){(G.firedAt||(G.firedAt={}))[G.cur.ev]=G.turn}}catch(e){}return r}})();
+/* 결과 화면: 살아서 72시간을 넘겼으면 '계속 살아가기' */
+(function(){const ve=vEnd;window.vEnd=function(){let h=ve();try{
+    if(G.endless){const d=endlessDays();h=h.replace('<div class="end-h">',`<div class="end-h"><div class="chip blue" style="margin-bottom:6px">${ic('clock')} 72시간 이후 ${d}일 더 버텼다 · T+${G.turn*6}h</div>`)}
+    else if(!G.over&&G.end&&G.phase==='end'){h=h.replace('<div class="row"><button class="btn pri" data-a="again">',`<div class="endless-cta"><div><b>여기서 끝이 아니다</b><small>4일째부터 계속 — 물자는 줄고, 구호·급수·감염병·약탈·교전 같은 일이 이어진다. 기록은 따로 남는다.</small></div><button class="btn pri" data-a="endless">${ic('clock')} 계속 살아가기</button></div><div class="row"><button class="btn" data-a="again">`)}}catch(e){}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a=endless]');if(!b)return;e.stopImmediatePropagation();
+  G.endless=true;G.end72=G.end;G.end=null;G.over=false;G.phase='shelter';G.turn=Math.max(12,G.turn);G.cur=null;G.newBadges=[];
+  toast('72시간을 넘겼다 — 4일째가 시작된다',2400);beginTurn();save();setScreen('shelter')},true);
+
+/* ===================== 27 · 밖 탐색 확장: 길가 차 운전 · 아무 아파트나 들어가기 ===================== */
+/* ---------- 아파트 현관: 실제 지도 고층 동마다 큰길 쪽 변에 1층 현관을 낸다(우리 단지는 동 번호 현관) ---------- */
+function tjAptDoors(){if(TJ.apts)return TJ.apts;const D=TJ_DATA,R=D.R;const L=[];const RP=[];D.roads.forEach(([t,w,p])=>{if(t===3)return;for(let i=0;i<p.length;i+=2)RP.push(p[i],p[i+1])});
+  D.B.forEach((b,bi)=>{if(b[0]!==0)return;const p=b[4];const n=p.length/2;let cx=0,cz=0;for(let i=0;i<n;i++){cx+=p[2*i];cz+=p[2*i+1]}cx/=n;cz/=n;if(Math.abs(cx)>R-30||Math.abs(cz)>R-30)return;
+    let best=1e18,dx=0,dz=1;for(let i=0;i<RP.length;i+=2){const d=(RP[i]-cx)**2+(RP[i+1]-cz)**2;if(d<best){best=d;dx=RP[i]-cx;dz=RP[i+1]-cz}}const dl=Math.hypot(dx,dz)||1;dx/=dl;dz/=dl;
+    let ar=0;for(let i=0;i<n;i++){const j=(i+1)%n;ar+=p[2*i]*p[2*j+1]-p[2*j]*p[2*i+1]}const sg=ar>0?1:-1;let be=-2,door=null;
+    for(let i=0;i<n;i++){const j=(i+1)%n;const ax=p[2*i],az=p[2*i+1],bx=p[2*j],bz=p[2*j+1];const ex=bx-ax,ez=bz-az,el=Math.hypot(ex,ez);if(el<4)continue;const nx=sg*ez/el,nz=-sg*ex/el;const s=nx*dx+nz*dz;if(s>be){be=s;door={x:(ax+bx)/2+nx*1.4,z:(az+bz)/2+nz*1.4,nx,nz}}}
+    if(door){door.bi=bi;door.fl=b[2];door.own=0;L.push(door)}});
+  const V=D.V;(TJ.lobbies||[]).forEach(q=>L.push({x:q[0],z:q[1],nx:-V[0],nz:-V[1],fl:28,no:q[2],own:1}));
+  return TJ.apts=L}
+/* 일반 동 1층 현관 모양(유리문·차양·불빛) — 세계 묶음을 만들 때 함께 넣는다 */
+(function(){const base=tjProps;window.tjProps=function(root){base(root);try{tjAptDoors().forEach(d=>{if(d.own)return;const g=grp(d.x-d.nx*1.4,0,d.z-d.nz*1.4,root);g.rotation.y=Math.atan2(d.nx,d.nz);
+    MM(GG.box(4.2,.25,2.2),mat('#7a7670',{r:.85}),0,3.15,.9,{p:g,cast:true});MM(GG.box(2.6,2.7,.12),new T.MeshStandardMaterial({color:'#9fb4c8',roughness:.15,metalness:.3,emissive:'#3a4a5a',emissiveIntensity:.35}),0,1.35,.08,{p:g,cast:false});
+    for(const sx of [-1.45,1.45])MM(GG.box(.25,2.9,.3),mat('#8a857c',{r:.8}),sx,1.45,.15,{p:g,cast:true});lampAt(g,0,2.9,1.2,'#fff2d8',10,10)})}catch(e){console.error(e)}}})();
+/* ---------- 밖 탐색에 아파트·운전석 표식 추가 + 차를 따라 움직이는 표식 ---------- */
+(function(){const base=tjPopulate;window.tjPopulate=function(sc){base(sc);const done=G.outDone||(G.outDone={});
+  tjAptDoors().forEach((d,k)=>{OUT.spots.push({id:'apt:'+k,k:'apt',apt:k,x:d.x,z:d.z,r:2.4,g:'⌂',n:d.own?`${d.no}동 1층 현관으로 들어가기`:'아파트 1층 현관으로 들어가기',s:'계단으로 올라가 세대를 살핀다',h:0,nomap:1})});
+  (OUT.dcars||[]).forEach(dc=>{if(done['dead:drv:'+dc.i])return;OUT.spots.push({id:'drv:'+dc.i,k:'drive',dc,lx:1.75,lz:.35,x:0,z:0,r:2.0,g:'▶',n:'운전석에 타기',s:'시동이 걸리면 몰고 갈 수 있다',h:0});const tr=OUT.spots.find(s=>s.id==='car:'+dc.i);if(tr){tr.dc=dc;tr.lx=0;tr.lz=-3.0}});
+  tjSpotsFollow()}})();
+function tjSpotsFollow(){(OUT.spots||[]).forEach(s=>{if(!s.dc)return;const c=s.dc.car,y=c.rotation.y;const lx=Math.cos(y),lz=-Math.sin(y),fx=Math.sin(y),fz=Math.cos(y);s.x=c.position.x+lx*s.lx+fx*s.lz;s.z=c.position.z+lz*s.lx+fz*s.lz})}
+(function(){const base=tjStep;window.tjStep=function(dt){tjSpotsFollow();return base(dt)}})();
+/* ---------- 길가 차 운전 ---------- */
+function tjDriveStart(c){const dc=c.dc;if(!dc)return;const done=G.outDone||(G.outDone={});
+  if(!done['key:drv:'+dc.i]){if(rnd()<.28){done['dead:drv:'+dc.i]=1;c.taken=1;OUT.spots=OUT.spots.filter(s=>s!==c);OUT.sig='';SND.bad&&SND.bad();outNote('<b>시동이 걸리지 않는다</b><div>배터리가 나갔다. 다른 차를 찾아본다.</div>',2600);return}done['key:drv:'+dc.i]=1}
+  const car=dc.car;const D={dc,car,v:0,yaw:car.rotation.y,steer:0,t:0,prevV:0,pitch:0,roll:0};OUT.drv=D;const bi=TOWN.solids.indexOf(dc.box);if(bi>=0)TOWN.solids.splice(bi,1);FP3.boxes=TOWN.solids.filter(b=>b.max.y>.4);
+  OUT.me.root.visible=false;OUT.follow.forEach(f=>{f.h.root.visible=false});FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;FP3.yaw=0;FP3.pitch=-.1;try{SND.engineStart()}catch(e){}if(SV3.el)SV3.el.classList.add('tj-driving');
+  if(!car.userData.hl){for(const sx of [-.6,.6]){const hl=new T.SpotLight('#fff3d8',OUT.tod==='day'?0:120,45,.5,.6,1.4);hl.position.set(sx,.7,2.0);hl.target.position.set(sx*2,0,30);car.add(hl);car.add(hl.target)}car.userData.hl=1}
+  OUT.sig='';outNote(`<b>시동이 걸렸다</b><div>왼쪽 조이스틱 위=가속 · 아래=브레이크·후진 · 좌우=핸들. 아무 데서나 '차에서 내리기'.${OUT.follow.length?' 동행한 사람도 함께 탔다.':''}</div>`,4200)}
+function tjCarHit(x,z,yaw){const O=TJ.occ;const c=Math.cos(yaw),s=Math.sin(yaw);for(const [a,b] of [[-.95,-2.1],[.95,-2.1],[-.95,2.1],[.95,2.1],[0,2.2],[0,-2.2],[0,0]]){const px=x+a*c+b*s,pz=z-a*s+b*c;if(O){const i=Math.floor(px-O.x0),j=Math.floor(pz-O.z0);if(i<0||j<0||i>=O.n||j>=O.n||O.b[j*O.n+i])return true}}
+  const bx=new T.Box3().setFromCenterAndSize(new T.Vector3(x,.8,z),new T.Vector3(2.0,1.4,4.4));for(const b of TOWN.solids){if(bx.intersectsBox(b))return true}return false}
+function tjDrivePre(dt){const D=OUT.drv;if(!D)return;const car=D.car;D.t+=dt;const mv=FP3.mv;const th=OUT.enc?0:mv.y;const st=OUT.enc?0:mv.x;
+  const steerT=-st*.45*clamp(1.15-Math.abs(D.v)/26,.45,1);D.steer+=(steerT-D.steer)*Math.min(1,dt*6);const acc=th>0?th*5.5:th<0?th*9:0;D.v+=acc*dt;D.v-=D.v*.3*dt;if(th===0)D.v-=Math.sign(D.v)*Math.min(Math.abs(D.v),1.6*dt);D.v=clamp(D.v,-4,16);
+  const yawRate=(D.v/3.0)*Math.tan(D.steer*Math.min(1,.45+Math.abs(D.v)/10));D.yaw+=yawRate*dt;const nx=car.position.x+Math.sin(D.yaw)*D.v*dt,nz=car.position.z+Math.cos(D.yaw)*D.v*dt;const R=TJ_DATA.R-14;
+  if(Math.abs(nx)<R&&Math.abs(nz)<R&&!tjCarHit(nx,nz,D.yaw)){car.position.x=nx;car.position.z=nz}else{if(Math.abs(D.v)>3){sv3Shake(.5);SND.boom(false,.22);vib(50);FX=[];if(Math.abs(D.v)>9){hurt('me',4);OUT.fx.push(...FX);outStat()}}D.v*=-.25}
+  car.rotation.y=D.yaw;const accL=(D.v-D.prevV)/Math.max(dt,1e-3);D.prevV=D.v;D.pitch+=((-accL*.012)-D.pitch)*Math.min(1,dt*5);D.roll+=((yawRate*D.v*.02)-D.roll)*Math.min(1,dt*5);car.rotation.x=clamp(D.pitch,-.06,.06)*.5;car.rotation.z=clamp(D.roll,-.07,.07)*.5;
+  try{SND.engine(D.v,th);SND.skid(Math.max(0,Math.abs(yawRate*D.v)-3.5)/4)}catch(e){}
+  FP3.pos.set(car.position.x,0,car.position.z);TJ.head=D.yaw+Math.PI;OUT.follow.forEach(f=>{f.h.root.position.set(car.position.x,0,car.position.z)});
+  /* 사람을 치면 */OUT.npcs.forEach(a=>{const h=a.h;if(!h||h.pose==='dead'||a.lying||!h.root.visible)return;const d=Math.hypot(h.root.position.x-car.position.x,h.root.position.z-car.position.z);
+    if(d<1.8&&Math.abs(D.v)>2.5){rbxDie(h,null);h.root.rotation.order='YXZ';h.root.rotation.set(-Math.PI/2,D.yaw+Math.PI/2,0);h.root.position.y=.08;a.kind='dead';G.flags.ranOver=(G.flags.ranOver||0)+1;FX=[];mor(-12);trust(-2);OUT.fx.push(...FX);outStat();sv3Shake(1.0);SND.boom(false,.45);vib([80,40,120]);outNote('<b>사람을 쳤다</b><div>사기 −12 · 이웃 신뢰 −2. 사람이 있는 길에서는 천천히.</div>',3600);D.v*=.4}
+    else if(d<6&&Math.abs(D.v)>6&&h.pose!=='run'&&a.kind!=='rok'&&a.kind!=='inj')h.setPose('run')})}
+function tjDrivePost(dt){const D=OUT.drv;if(!D)return;const car=D.car,cam=SV3.cam;const cy=D.yaw+FP3.yaw;const dist=7.2,hgt=3.0;const tx=car.position.x-Math.sin(cy)*dist,tz=car.position.z-Math.cos(cy)*dist;
+  if(!D.cam){D.cam=new T.Vector3(tx,hgt,tz)}const k=Math.min(1,dt*4);D.cam.x+=(tx-D.cam.x)*k;D.cam.z+=(tz-D.cam.z)*k;D.cam.y+=(hgt-FP3.pitch*2-D.cam.y)*k;cam.position.copy(D.cam);cam.lookAt(car.position.x+Math.sin(cy)*6,1.0,car.position.z+Math.cos(cy)*6);
+  cam.rotation.z+=SV3.shake*Math.sin(SV3.t*37)*.02}
+function tjDriveEnd(){const D=OUT.drv;if(!D)return;const car=D.car,y=car.rotation.y;car.rotation.x=0;car.rotation.z=0;const lx=Math.cos(y),lz=-Math.sin(y),fx=Math.sin(y),fz=Math.cos(y);let p=null;
+  for(const [dx,dz] of [[lx*2.0,lz*2.0],[-lx*2.0,-lz*2.0],[-fx*3.3,-fz*3.3],[fx*3.3,fz*3.3]]){const x=car.position.x+dx,z=car.position.z+dz;if(!FP3.blocked(x,z,.3)){p=[x,z];break}}if(!p)p=[car.position.x+lx*2,car.position.z+lz*2];
+  D.dc.box=new T.Box3().setFromObject(car);TOWN.solids.push(D.dc.box);FP3.boxes=TOWN.solids.filter(b=>b.max.y>.4);FP3.pos.set(p[0],0,p[1]);OUT.me.root.position.set(p[0],0,p[1]);OUT.me.root.rotation.y=y;OUT.me.root.visible=true;
+  OUT.follow.forEach((f,i)=>{f.h.root.visible=true;f.h.root.position.set(p[0]-fx*(1.2+i*.8),0,p[1]-fz*(1.2+i*.8))});FP3.yaw=y+Math.PI;FP3.noWalk=false;TJ.head=null;try{SND.engineStop()}catch(e){}OUT.drv=null;if(SV3.el)SV3.el.classList.remove('tj-driving');OUT.sig='';tjSpotsFollow()}
+/* 운전 중에는 '차에서 내리기'만, 약탈자는 차를 쫓지 않는다 */
+(function(){const oc=outCands;window.outCands=function(){if(OUT.drv)return[{id:'exitcar',k:'exitcar',x:FP3.pos.x,z:FP3.pos.z,r:99,g:'⇲',n:'차에서 내리기',s:Math.round(Math.abs(OUT.drv.v)*3.6)+'km/h · 여기 세워 두고 걷는다',h:0}];return oc()};
+  const ol=outLooter;window.outLooter=function(a,dt){if(OUT.drv||APT.on)return;return ol(a,dt)};
+  const od=outDo;window.outDo=function(c){if(c&&c.k==='exitcar'){tjDriveEnd();return}if(c&&c.k==='drive'){tjDriveStart(c);return}if(c&&c.k==='apt'){tjAptAsk(c);return}return od(c)};
+  const orr=outReturn;window.outReturn=function(why){if(OUT.drv)tjDriveEnd();if(APT.on)tjAptLeave(true);return orr(why)}})();
+/* ---------- 아파트 들어가기: 층 고르기 → 세대 안(정전·어둠) 수색 · 남은 주민 ---------- */
+const APT={on:false,spots:[],npc:null,sig:'',uiT:0};
+const APT_FL=[[2,'2층 — 바로 위',.15],[5,'5층 — 계단 조금',.25],[12,'12층 — 숨이 찬다',.5],[0,'꼭대기 층 — 오래 걸린다',.75]];
+function tjAptAsk(c){const d=tjAptDoors()[c.apt];if(!d)return;const top=Math.max(4,d.fl||20);const done=G.outDone||(G.outDone={});OUT.enc={id:'apt-floor',cat:'아파트',title:'몇 층으로 올라갈까',noLog:1};FP3.lock=true;FP3.mv.x=FP3.mv.y=0;const el=$('#oEnc');if(!el)return;el.hidden=false;
+  el.innerHTML=`<div class="sheet"><div class="lead"><div class="badge">${ic('stairs')}</div><div><div class="eyebrow">${d.own?d.no+'동':'아파트'} · 정전 — 엘리베이터 멈춤</div><h2>몇 층으로 올라갈까</h2></div></div><p>로비는 어둡고 우편함이 열려 있다. 계단으로 올라가 문이 열린 세대를 살핀다. 높이 올라갈수록 시간이 걸리지만 덜 털렸을 수 있다.</p>
+    <div class="choices">${APT_FL.map(([f,t,h],i)=>{const fl=f||top;const key='apt:'+c.apt+':'+fl;const vis=!!done[key];return `<button class="choice" data-g3="afl" data-i="${i}" ${h>OUT.h+.01?'disabled':''}><span class="k">${'ABCD'[i]}</span><span class="ct"><b>${f?t:`${fl}층 — 꼭대기`}</b><small>${Math.round(h*60)}분${vis?' · 이미 둘러본 층':''}</small></span></button>`}).join('')}
+    <button class="choice" data-g3="afl" data-i="-1"><span class="k">✕</span><span class="ct"><b>들어가지 않는다</b></span></button></div></div>`;
+  APT.ask=c}
+function tjAptEnter(i){const c=APT.ask;const el=$('#oEnc');if(el){el.hidden=true;el.innerHTML=''}OUT.enc=null;FP3.lock=false;if(i<0||!c)return;const d=tjAptDoors()[c.apt];const [f0,,h]=APT_FL[i];const fl=f0||Math.max(4,d.fl||20);if(h>OUT.h+.01){outNote('<b>남은 시간이 모자란다</b>',2000);return}
+  OUT.h=Math.max(0,OUT.h-h);const done=G.outDone||(G.outDone={});const key='apt:'+c.apt+':'+fl;OUT.apt={k:c.apt,fl,key,door:d,seed:(c.apt*131+fl*17+G.turn*7)>>>0,visited:!!done[key],lobby:false};done[key]=1;
+  APT.back={x:d.x,z:d.z,yaw:Math.atan2(-d.nx,-d.nz)};UI.screen='apt';render()}
+const APT_LOOT={fridge:[['food',2,.35],['water',2,.3]],counter:[['food',1,.3],['candle',1,.2]],bath:[['meds',2,.35],['bleach',1,.15]],closet:[['quilt',1,.3],['blanket',1,.2]],drawer:[['power',15,.25],['torch',1,.2],['radio',1,.1]],util:[['water',4,.35],['vinyl',1,.2]],desk:[['power',10,.2],['firstaid',1,.12]],lobby:[['water',2,.25],['mask',1,.2],['firstaid',1,.15]]};
+const APT_N={fridge:'냉장고',counter:'싱크대 위 찬장',bath:'욕실 수납장',closet:'안방 옷장',drawer:'거실 서랍장',util:'다용도실 선반',desk:'작은방 책상',lobby:'관리사무소 비상함'};
+function vApt3(){const A=OUT.apt;if(!A){UI.screen='outside';return render()}const night=OUT.tod==='night'||OUT.tod==='dawn';const H=buildHome3({night:night?1:0,lights:0});const sc=H.scene;APT.H=H;
+  Object.values(H.items||{}).forEach(m=>{if(m.parent)m.parent.remove(m)});
+  const r=rng3(A.seed);
+  /* 손전등(카메라를 따라간다) + 어두운 보조광 */const tl=new T.SpotLight(has('torch')?'#fff4dc':'#e8f0ff',has('torch')?26:12,has('torch')?16:9,.6,.5,1.3);const tg=new T.Object3D();sc.add(tl);sc.add(tg);tl.target=tg;APT.torch=tl;APT.tg=tg;const amb=new T.PointLight('#cfd8ff',night?.6:.3,6,1.6);sc.add(amb);APT.amb=amb;
+  /* 털린 흔적: 바닥에 흩어진 물건 */const mess=mat('#6a5e52',{r:1});for(let i=0;i<10;i++){const b=MM(GG.box(.15+r()*.35,.04+r()*.08,.15+r()*.3),mess,hpX(120+r()*260),.04,hpZ(30+r()*240),{p:sc,cast:false});b.rotation.y=r()*3}
+  /* 수색 자리 */const SP=A.lobby?[['lobby',[60,130]],['drawer',[248,228]],['counter',[250,30]]]:[['fridge',[204,84]],['counter',[250,30]],['bath',[56,180]],['closet',[372,170]],['drawer',[220,228]],['util',[360,30]],['desk',[112,80]]];
+  const pick=SP.slice().sort(()=>r()-.5).slice(0,A.lobby?3:5);APT.spots=pick.map(([k,p])=>({id:k,k,x:hpX(p[0]),z:hpZ(p[1]),r:1.6,g:'?',n:`${APT_N[k]} 뒤지기`,s:'15분 · 물자 있을 수도',h:.25}));
+  APT.spots.push({id:'out',k:'out',x:hpX(60),z:hpZ(118),r:1.6,g:'⇲',n:'현관으로 나가기',s:A.lobby?'로비로 나가 밖으로':'계단으로 내려가 밖으로',h:0});
+  /* 남은 주민(처음 들어온 세대) */APT.npc=null;if(!A.visited&&!A.lobby&&r()<.45){const kind=r()<.45?'elder':r()<.6?'family':'hostile';const h=civHuman(20+(A.seed%7),kind==='hostile'?'angry':kind==='elder'?'sit':'nervous',kind==='family'&&r()<.5?'kid':'civ');h.root.position.set(hpX(262),0,hpZ(214));h.root.rotation.y=-Math.PI/2;sc.add(h.root);APT.npc={h,kind,x:hpX(262),z:hpZ(214),met:0}}
+  SV3.scene=sc;const html=`${hud()}<div class="fr-bar" id="aBar"></div><div class="fr-stat" id="oStat"></div><div class="sv3-hint" id="sv3Hint" style="top:76px;left:10px;right:auto;bottom:auto">${A.lobby?'1층 로비':A.fl+'층'} · ${A.visited?'이미 둘러본 곳 — 남은 게 적다':'문이 열린 세대'} · 표식(주황 원)에 가면 할 수 있는 일이 뜬다</div>
+    <div class="fr-acts" id="oActs"></div><div class="fr-note" id="oNote" hidden></div><div class="out-enc" id="oEnc" hidden></div>${SV3_JOY}<div class="sv3-vig" id="sv3Vig"></div><div class="sv3-flash" id="sv3Flash"></div>`;
+  sv3Mount('apt',html);SV3.el.classList.add('fr-on');FP3.attach(SV3.el);FP3.pos.set(hpX(60),0,hpZ(126));FP3.yaw=-Math.PI/2;FP3.pitch=-.05;FP3.eye=1.55;FP3.boxes=H.boxes;FP3.bounds=H.bounds;FP3.speed=2.2;FP3.surface='wood';FP3.nav=null;FP3.lock=false;FP3.onTap=null;FP3.occ=null;
+  APT.on=true;APT.sig='';APT.uiT=0;outStat();tjAptBar();setTimeout(()=>{const h=$('#sv3Hint');if(h)h.classList.add('out')},7000);
+  if(A.visited)outNote(`<b>${A.fl}층 — 이미 둘러본 곳</b><div>서랍이 다 열려 있다. 남은 게 거의 없을 것 같다.</div>`,3200);
+  SV3.step=tjAptStep;return ''}
+function tjAptBar(){const b=$('#aBar');if(!b)return;const H=Math.max(0,OUT.h);const html=`<span class="fr-h${H<=1?' low':''}">⏱ 남은 시간 <b>${(Math.floor(H*2)/2).toFixed(1)}h</b></span><span>${OUT.apt.lobby?'1층 로비':OUT.apt.fl+'층'}</span>${OUT.follow.length?`<span>동행 ${OUT.follow.length}</span>`:''}<button data-g3="aptx">↩ 밖으로</button>`;if(b._h!==html){b._h=html;b.innerHTML=html}}
+function tjAptStep(dt){if(!OUT.on||!APT.on)return;if(!OUT.enc&&!OUT.busy){FP3.speed=Math.hypot(FP3.mv.x,FP3.mv.y)>.85?3.2:2.0;FP3.step(dt);OUT.h=Math.max(0,OUT.h-OUT_RATE*dt);outHazard(OUT_RATE*dt*.3)}else{FP3.mv.x=FP3.mv.y=0;FP3.step(0)}
+  const cam=SV3.cam;APT.torch.position.copy(cam.position);const fw=new T.Vector3(0,0,-1).applyQuaternion(cam.quaternion);APT.tg.position.copy(cam.position).addScaledVector(fw,4);APT.amb.position.set(cam.position.x,2.2,cam.position.z);
+  const n=APT.npc;if(n){n.h.update(dt);const d=Math.hypot(FP3.pos.x-n.x,FP3.pos.z-n.z);if(d<5)lifeFace(n.h,FP3.pos.x,FP3.pos.z);if(d<2.6&&!n.met&&!OUT.enc){n.met=1;tjAptMeet(n)}}
+  OUT.follow.forEach(f=>f.h.update(dt));
+  APT.uiT+=dt;if(APT.uiT>.2){APT.uiT=0;tjAptUI();tjAptBar()}
+  if(OUT.h<=0&&!OUT.enc&&!OUT.ending){OUT.ending=true;outNote('<b>날이 바뀐다 — 대피소로 돌아가야 한다</b>',2600);setTimeout(()=>{tjAptLeave(true);outReturn('time')},1400)}}
+function tjAptUI(){const acts=$('#oActs');if(!acts)return;const p=FP3.pos;const sc=SV3.scene;if(!APT.mk)APT.mk=new Map();const seen=new Set();
+  APT.spots.forEach(c=>{c.d=Math.hypot(c.x-p.x,c.z-p.z);if(c.taken||c.d>12||c.d<1.2)return;seen.add(c.id);let s=APT.mk.get(c.id+'@'+OUT.apt.key);if(!s){s=new T.Sprite(new T.SpriteMaterial({map:frGlyph(c.g,false),transparent:true,depthWrite:false,fog:false}));s.scale.set(.26,.26,1);s.renderOrder=5;sc.add(s);APT.mk.set(c.id+'@'+OUT.apt.key,s)}s.position.set(c.x,1.4,c.z);s.visible=true;s.userData.id=c.id});
+  APT.mk.forEach(s=>{if(!seen.has(s.userData.id)||s.parent!==sc)s.visible=false});
+  if(OUT.enc||OUT.busy){if(acts.innerHTML)acts.innerHTML='';APT.sig='';return}
+  const near=APT.spots.filter(c=>!c.taken&&c.d<c.r).sort((a,b)=>a.d-b.d).slice(0,2);APT.near=near;const sig=near.map(c=>c.id).join('|');if(sig===APT.sig)return;APT.sig=sig;
+  acts.innerHTML=near.map((c,i)=>`<button class="fr-act" data-g3="aact" data-i="${i}"><span class="g">${c.g}</span><span class="t"><b>${c.n}</b><small>${c.s}</small></span></button>`).join('')}
+function tjAptDo(c){if(!c||OUT.busy||OUT.enc)return;if(c.k==='out'){tjAptLeave();return}if(c.h>OUT.h+.01){outNote('<b>남은 시간이 모자란다</b>',2000);return}
+  OUT.busy=true;c.taken=1;OUT.h=Math.max(0,OUT.h-c.h);const n0=OUT.fx.length;FX=[];let t='';const L=APT_LOOT[c.k]||[];const rr=rnd();
+  if(OUT.apt.visited&&rnd()<.7)t='다 열려 있고 텅 비었다. 누가 먼저 왔다 갔다.';
+  else if(rnd()<.08){hurt('me',3);OUT.fx.push(...FX);t='어둠 속에서 깨진 유리에 손을 베였다.'}
+  else{let acc=0,hit=null;for(const q of L){acc+=q[2];if(rr<acc){hit=q;break}}if(hit){const got=outGive(hit[0],hit[1]);t=`${got}을(를) 찾았다.`}else t='쓸 만한 건 없었다.'}
+  outStat();outNote(`<b>${APT_N[c.k]||'수색'}</b><div>${t}</div>${fxChips(OUT.fx.slice(n0))}<small>15분 사용 · 남은 시간 ${(Math.floor(OUT.h*2)/2).toFixed(1)}h</small>`,3800);APT.sig='';setTimeout(()=>{OUT.busy=false},900);if(checkOver())outReturn('dead')}
+function tjAptMeet(n){const fam=n.kind==='family',eld=n.kind==='elder';
+  if(eld)outEncShow({id:'apt-elder',cat:'아파트 · 남은 주민',art:'person',tone:'blue',title:'혼자 남은 어르신',text:'"누구요?" 안방 앞 의자에 할머니가 앉아 있다. 엘리베이터가 멈춰 내려가지 못했다고 한다. 물병이 비어 있다.',
+      lesson:'거동이 불편한 이웃은 재난 때 가장 늦게 대피한다. 혼자 옮기기 어려우면 위치를 대피소·구조 인력에 알리고, 그 사이 물·약을 나눠 둔다.',src:'행정안전부 재난약자 대피 지원 · 생존 수첩 이웃 돕기',guide:'now',
+      choices:[{t:'물 1L와 약을 나눠 드리고, 위치를 대피소 관리자에게 알리겠다고 약속한다',ok:true,go:()=>{if(G.res.water>=1)res('water',-1);if(G.res.meds>0)res('meds',-1);trust(3);mor(3);G.flags.elderReport=(G.flags.elderReport||0)+1;return '할머니가 손을 꼭 잡았다. "고마워요." 동·호수를 적어 왔다.'}},
+        {t:'부축해서 계단으로 함께 내려간다(대피소로 데려간다)',ok:true,s:'천천히 — 동행',go:()=>{n.h.setPose('limp');OUT.follow.push({h:n.h,sp:1.1,walk:'limp',idle:'idle',apt:1,reward:()=>{trust(4);mor(5);return '어르신을 대피소 의료진에게 모셔다 드렸다.'}});APT.npc=null;return '할머니가 당신 팔에 기대 일어섰다. 계단을 한 칸씩 내려가야 한다.'}},
+        {t:'우리 가족 챙기기도 바쁘다 — 그냥 나온다',ok:false,go:()=>{mor(-4);return '문을 닫고 나오는데 등 뒤가 무겁다.'}}]});
+  else if(fam)outEncShow({id:'apt-family',cat:'아파트 · 남은 주민',art:'group',tone:'blue',title:'숨어 있던 가족',text:'욕실 문틈으로 아이 눈이 보인다. 아버지가 나와 두 손을 든다. "물건 가져가도 돼요. 대신 바깥 소식 좀…"',
+      lesson:'고립된 사람에게는 가장 가까운 대피소 위치·급수 시간 같은 공식 정보를 전해 주는 것이 큰 도움이 된다. 남의 집 물건을 가져가지 않는다.',src:'생존 수첩 이웃 돕기 · 행정안전부 대피소 안내',guide:'now',
+      choices:[{t:'가까운 대피소·급수 정보를 알려 주고 물건은 가져가지 않는다',ok:true,go:()=>{trust(3);mor(2);APT.spots.forEach(s=>{if(s.k!=='out')s.taken=1});return '"고맙습니다. 내일 아침에 가 볼게요." 아버지가 라디오 주파수를 알려 줬다. (다음 상황 힌트 1번)'+(G.infoTurns=Math.max(G.infoTurns||0,1),'')}},
+        {t:'물자를 나눠 받는 대신 소식을 알려 준다',ok:null,go:()=>{res('food',1);trust(1);return '즉석밥 하나를 받았다. 서로 고개를 끄덕였다.'}},
+        {t:'겁을 줘서 물건을 챙긴다',ok:false,go:()=>{res('water',2);res('food',1);trust(-3);mor(-5);return '아이가 울음을 터뜨렸다. 물을 챙겼지만 계단을 내려오는 내내 그 소리가 따라온다.'}}]});
+  else outEncShow({id:'apt-hostile',cat:'아파트 · 위험',art:'hand',tone:'red',title:'"나가! 우리 집이야!"',text:'거실 어둠 속에서 남자가 골프채를 들고 막아선다. 눈이 충혈돼 있다.',
+      lesson:'흥분한 사람과 맞서지 않는다. 손을 보이게 들고 천천히 물러나며, 위협이 있으면 경찰·군에 알린다.',src:'경찰청 위기 대응 수칙 · 생존 수첩 치안',guide:'now',
+      choices:[{t:'손을 들고 천천히 물러나 나온다',ok:true,go:()=>{APT.spots.forEach(s=>{if(s.k!=='out')s.taken=1});return '"미안합니다, 사람이 없는 줄 알았어요." 문이 쾅 닫혔다.'}},
+        {t:'우리도 급하다며 밀고 들어간다',ok:false,go:()=>{hurt('me',12);addC(M('me'),'injury');trust(-2);APT.spots.forEach(s=>{if(s.k!=='out')s.taken=1});return '골프채가 어깨를 내리쳤다. 간신히 빠져나왔다.'}}],after:()=>{if(n.h.root.parent)n.h.setPose('idle')}})}
+function tjAptLeave(silent){if(!APT.on)return;APT.on=false;const B=APT.back;OUT.apt=null;if(OUT.enc){const el=$('#oEnc');if(el)el.hidden=true;OUT.enc=null}FP3.lock=false;FP3.eye=1.55;
+  /* 데려온 사람은 바깥 장면으로 옮긴다 */OUT.follow.forEach((f,i)=>{if(f.h.root.parent!==OUT.scene){OUT.scene.add(f.h.root)}f.h.root.position.set(B.x+Math.sin(B.yaw)*(1.2+i*.8),0,B.z+Math.cos(B.yaw)*(1.2+i*.8))});
+  if(APT.mk){APT.mk.forEach(s=>{if(s.parent)s.parent.remove(s)});APT.mk.clear()}
+  FP3.pos.set(B.x,0,B.z);FP3.yaw=B.yaw+Math.PI;if(OUT.me){OUT.me.root.position.set(B.x,0,B.z);OUT.me.root.rotation.y=B.yaw}
+  if(!silent){UI.screen='outside';render();outNote('<b>밖으로 나왔다</b><div>현관 앞이다.</div>',2000)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=afl],[data-g3=aact],[data-g3=aptx]');if(!b)return;const k=b.dataset.g3;if(k==='afl'){tjAptEnter(+b.dataset.i);return}if(k==='aact'){tjAptDo((APT.near||[])[+b.dataset.i]);return}if(k==='aptx'){if(!OUT.enc)tjAptLeave()}});
+SV3.screens.push('apt');SV3.views=Object.assign(SV3.views||{},{apt:vApt3});
+/* 3D를 끈 채 아파트 화면이 그려지려 하면 밖으로 */
+(function(){const base=render;window.render=function(){if(UI.screen==='apt'&&!SV3.handles('apt')){tjAptLeave(true);UI.screen='outside'}return base()}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
