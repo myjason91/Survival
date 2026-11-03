@@ -739,9 +739,9 @@ body.fps{overflow:hidden}
 /* ===== 3D 화면 카드: 오른쪽 세로 패널 대신 화면 위쪽 가로 띠(아래 절반은 조작용으로 비워 둔다) ===== */
 .sv3-panel.sv3-deck{left:0;right:0;top:auto;bottom:0;width:auto;max-height:56%;padding:10px 10px 8px;background:linear-gradient(0deg,rgba(6,8,11,.9) 0%,rgba(6,8,11,.84) 72%,rgba(6,8,11,0) 100%);overflow-y:auto;border-top:0}
 .sv3-deck .deck-tg{position:absolute;right:8px;top:2px;z-index:2;border:1px solid var(--line2);background:rgba(6,8,11,.6);color:var(--mut);font:700 11px system-ui,sans-serif;padding:2px 8px;border-radius:8px}
-.sv3-deck.min{max-height:none}.sv3-deck.min .sheet>*:not(.lead){display:none}.sv3-deck.min .sheet{grid-template-columns:1fr}
+.sv3-deck.min{max-height:none;cursor:pointer;background:linear-gradient(0deg,rgba(6,8,11,.82) 0%,rgba(6,8,11,.7) 70%,rgba(6,8,11,0) 100%)}.sv3-deck.min .sheet>*:not(.lead){display:none}.sv3-deck.min .sheet{grid-template-columns:1fr}.sv3-deck.min .lead h2::after{content:'  · 탭해서 선택지 보기';font-size:11px;font-weight:600;color:var(--mut)}
 .sv3:has(.sv3-deck) .sv3-tag{top:46px;bottom:auto}.sv3:has(.sv3-deck) .sv3-hint{top:46px;bottom:auto;left:auto;right:12px}
-.sv3-deck .sv3-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;align-items:stretch;margin:0 0 5px;padding-right:70px}.sv3-deck .sv3-strip::-webkit-scrollbar{display:none}
+.sv3-deck .sv3-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;align-items:stretch;margin:0 68px 5px 0}.sv3-deck .sv3-strip::-webkit-scrollbar{display:none}
 .sv3-deck .sv3-strip .fam{display:flex;flex:none;gap:4px}.sv3-deck .sv3-strip .fam .mem{padding:2px 7px;gap:0 6px;border-radius:8px;min-width:0;display:flex;align-items:center;flex-wrap:wrap}.sv3-deck .mem .top{gap:4px}.sv3-deck .mem b{font-size:11px}.sv3-deck .mem .hp{font-size:10px}.sv3-deck .mem .bar{width:26px;height:3px;flex:none}.sv3-deck .mem .conds{display:none}.sv3-deck .mem.crit .conds,.sv3-deck .mem:not(:has(.cond.ok)) .conds{display:flex;gap:3px;flex-basis:100%}.sv3-deck .mem .cond{font-size:9px;padding:0 4px}
 .sv3-deck .sv3-strip .res{display:flex;flex:none;gap:4px}.sv3-deck .sv3-strip .res .r{padding:2px 7px;border-radius:8px;display:flex;gap:4px;align-items:center}.sv3-deck .res .r>div{display:flex;gap:4px;align-items:baseline}.sv3-deck .res .r b{font-size:11.5px}.sv3-deck .res .r span{font-size:9.5px;white-space:nowrap}.sv3-deck .res .r svg{width:12px;height:12px}
 .sv3-deck .sheet{background:transparent;border:0;padding:0;gap:6px;border-radius:0}
@@ -758,6 +758,38 @@ body.fps{overflow:hidden}
 /* 카드 본문과 선택지를 가로로: 넓은 화면에서는 왼쪽 글·오른쪽 선택지 */
 @media (min-width:760px){.sv3-deck .sheet{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:min-content minmax(0,1fr) auto;grid-auto-rows:auto;grid-auto-flow:dense;align-items:start;column-gap:12px}.sv3-deck .sheet .lead{grid-column:1}.sv3-deck .sheet>p,.sv3-deck .sheet .hint,.sv3-deck .sheet .timebar,.sv3-deck .sheet .result,.sv3-deck .sheet .fx-list,.sv3-deck .sheet .lesson,.sv3-deck .sheet .small{grid-column:1}.sv3-deck .choices,.sv3-deck .actions{grid-column:2;grid-row:1/span 2}.sv3-deck .sheet>.btn,.sv3-deck .sheet>.row{grid-column:2;grid-row:3;align-self:start;justify-self:end}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:6.4em}.sv3-deck .choices{grid-template-columns:1fr;gap:5px}.sv3-deck .choice{padding:4px 9px;min-height:0}.sv3-deck .choice .ct{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;min-width:0}.sv3-deck .choice b{display:inline;font-size:12.5px}.sv3-deck .choice small{display:inline;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.sv3-deck .actions{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-height:420px){.sv3-panel.sv3-deck{max-height:60%}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:6.4em}.sv3-deck .lesson{max-height:4.2em}}
+
+/* 일시정지: 맨 위 '게임으로 돌아가기' 고정, 화면 안에서 스크롤, 가로 화면은 2열 */
+.overlay .sheet{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+.ov-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:-15px;z-index:2;background:var(--panel);margin:-15px -15px 0;padding:12px 15px 8px;border-bottom:1px solid var(--line)}
+.ov-head h2{margin:0}.ov-head .btn{flex:none;width:auto;padding:9px 14px;min-height:0}
+.ov-grid{display:grid;gap:9px}
+@media (max-height:520px){.overlay{padding:10px}.ov-pause{max-width:min(760px,96vw)}.ov-pause .ov-grid{grid-template-columns:1fr 1fr;align-items:start}.ov-pause .seg-opts button{padding:7px 4px;min-height:0}.ov-pause .btn{padding:9px 12px;min-height:0}}
+/* 점프 버튼 */
+.sv3-jump{position:absolute;right:16px;bottom:18px;z-index:6;width:66px;height:66px;border-radius:50%;border:2px solid rgba(255,255,255,.38);background:rgba(10,14,18,.5);color:#fff;display:grid;place-items:center;align-content:center;gap:0;touch-action:none;-webkit-user-select:none;user-select:none;box-shadow:0 2px 10px rgba(0,0,0,.4);transition:transform .1s,background .1s}
+.sv3-jump span{font-size:24px;line-height:1;font-weight:800}.sv3-jump small{font-size:10px;font-weight:800;letter-spacing:.02em}
+.sv3-jump.on{transform:scale(.9);background:rgba(255,178,36,.55)}.sv3-jump.g{bottom:76px}
+
+/* ===== 자유 행동 모드 ===== */
+.sv3-deck.fr-hide{display:none!important}
+.fr-bar{position:absolute;right:10px;top:6px;z-index:7;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:62%}
+.fr-bar>*{font:800 12px system-ui,sans-serif;border-radius:10px;padding:7px 10px;border:1px solid var(--line2);background:rgba(6,8,11,.72);color:#e8edf1;white-space:nowrap}
+.fr-h b{color:var(--amber);font-size:13px}.fr-h.low b{color:var(--alert,#ff5449)}
+.fr-pend{max-width:260px;overflow:hidden;text-overflow:ellipsis;border-color:var(--amber-dim,#7a5a1a)!important}
+.fr-pend.pulse{animation:frp 1.4s ease-in-out infinite;border-color:var(--amber)!important;color:#ffe2a8}
+@keyframes frp{0%,100%{box-shadow:0 0 0 0 rgba(255,178,36,.0)}50%{box-shadow:0 0 0 4px rgba(255,178,36,.35)}}
+.fr-tg.on{border-color:#2ccf7c!important;color:#b8f5d4}
+.fr-stat{position:absolute;left:10px;right:10px;top:46px;z-index:5;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;pointer-events:auto}.fr-stat::-webkit-scrollbar{display:none}
+.fr-stat .fam,.fr-stat .res{display:flex;flex:none;gap:4px}.fr-stat .mem{padding:2px 7px;gap:0 6px;border-radius:8px;display:flex;align-items:center;background:rgba(6,8,11,.66)}.fr-stat .mem b{font-size:11px}.fr-stat .mem .hp{font-size:10px}.fr-stat .mem .bar{width:26px;height:3px;flex:none}.fr-stat .mem .conds{display:none}.fr-stat .mem:not(:has(.cond.ok)) .conds{display:flex;gap:3px}.fr-stat .mem .cond{font-size:9px;padding:0 4px}
+.fr-stat .res .r{padding:2px 7px;border-radius:8px;display:flex;gap:4px;align-items:center;background:rgba(6,8,11,.66)}.fr-stat .res .r>div{display:flex;gap:4px;align-items:baseline}.fr-stat .res .r b{font-size:11.5px}.fr-stat .res .r span{font-size:9.5px;white-space:nowrap}.fr-stat .res .r svg{width:12px;height:12px}
+.sv3.fr-on .sv3-tag{top:auto;bottom:10px}.sv3.fr-on .sv3-hint{top:76px;bottom:auto;left:10px;right:auto}
+.fr-acts{position:absolute;right:96px;bottom:14px;z-index:6;display:flex;flex-direction:column;gap:6px;align-items:flex-end;max-width:min(360px,56vw)}
+.fr-act{display:flex;gap:9px;align-items:center;text-align:left;padding:8px 12px 8px 8px;border-radius:14px;border:1px solid var(--amber-dim,#7a5a1a);background:rgba(6,8,11,.82);color:#e8edf1;box-shadow:0 3px 12px rgba(0,0,0,.45);animation:fra .18s ease-out}
+.fr-act .g{flex:none;width:30px;height:30px;border-radius:50%;background:var(--amber);color:#111;display:grid;place-items:center;font:900 16px system-ui,sans-serif}.fr-act.warn .g{background:#ff5449}
+.fr-act b{display:block;font-size:13.5px;line-height:1.2}.fr-act small{display:block;font-size:11px;color:var(--mut);line-height:1.25}
+@keyframes fra{from{transform:translateY(6px);opacity:0}to{transform:none;opacity:1}}
+.fr-note{position:absolute;left:50%;top:76px;transform:translateX(-50%);z-index:8;max-width:min(520px,70vw);background:rgba(6,8,11,.88);border:1px solid var(--line2);border-radius:14px;padding:10px 14px;font-size:12.5px;line-height:1.45;color:#e8edf1;box-shadow:0 4px 18px rgba(0,0,0,.5);transition:opacity .35s;pointer-events:none}
+.fr-note b{display:block;font-size:13.5px;margin-bottom:2px;color:#ffe2a8}.fr-note small{display:block;color:var(--mut);margin-top:4px;font-size:11px}.fr-note .fx-list{margin-top:5px}.fr-note.out{opacity:0}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -6959,11 +6991,12 @@ document.addEventListener('click',e=>{
 });
 function menuOverlay(){
   const d=document.createElement('div');d.className='overlay';d.id='ov';
-  d.innerHTML=`<div class="sheet"><h2>잠깐 멈춤</h2><p class="small mut">진행 상황은 이 기기에 자동 저장된다. 처음 화면에서 "이어하기"로 돌아올 수 있다.</p>
-  <a class="btn ghost" href="${HB}" target="_blank" rel="noopener">${ic('book')} 생존 수첩 열기</a>${HAS3D?`<button class="btn ghost" data-a="toggle-3d">${ic('pin')} ${store.get('sg.3d',true)?'2D 화면으로 보기 (느린 기기)':'3D 화면으로 보기'}</button>
+  d.innerHTML=`<div class="sheet ov-pause"><div class="ov-head"><h2>잠깐 멈춤</h2><button class="btn pri" data-a="close-ov">${ic('back')} 게임으로 돌아가기</button></div><p class="small mut">진행 상황은 이 기기에 자동 저장된다. 처음 화면에서 "이어하기"로 돌아올 수 있다.</p>
+  <div class="ov-grid"><a class="btn ghost" href="${HB}" target="_blank" rel="noopener">${ic('book')} 생존 수첩 열기</a>${HAS3D?`<button class="btn ghost" data-a="toggle-3d">${ic('pin')} ${store.get('sg.3d',true)?'2D 화면으로 보기 (느린 기기)':'3D 화면으로 보기'}</button>
   <div class="seg"><div class="seg-label">3D 화질${(typeof cbGet==='function'&&(cbGet('sel',{}).qual||'auto')==='auto')?` · 자동(${({high:'높음',mid:'중간',low:'낮음'})[store.get('sg.qtier','high')]||'높음'})`:''}</div><div class="seg-opts">${[['auto','자동'],['low','낮음'],['mid','중간'],['high','높음']].map(o=>`<button data-a="qual3" data-v="${o[0]}" aria-pressed="${(typeof cbGet==='function'?(cbGet('sel',{}).qual||'auto'):'auto')===o[0]}"><b>${o[1]}</b></button>`).join('')}</div></div>
-  <div class="seg"><div class="seg-label">성능 표시 <span class="small mut">fps·그리기 호출·인물 수</span></div><div class="seg-opts">${[[0,'끔'],[1,'켬']].map(o=>`<button data-a="perf3" data-v="${o[0]}" aria-pressed="${+(typeof cbGet==='function'?(cbGet('sel',{}).perf||0):0)===o[0]}"><b>${o[1]}</b></button>`).join('')}</div></div>`:''}
+  <div class="seg"><div class="seg-label">성능 표시 <span class="small mut">fps·그리기 호출·인물 수</span></div><div class="seg-opts">${[[0,'끔'],[1,'켬']].map(o=>`<button data-a="perf3" data-v="${o[0]}" aria-pressed="${+(typeof cbGet==='function'?(cbGet('sel',{}).perf||0):0)===o[0]}"><b>${o[1]}</b></button>`).join('')}</div></div>`:''}</div>
   <div class="row"><button class="btn" data-a="close-ov">계속하기</button><button class="btn" data-a="quit">저장하고 나가기</button></div></div>`;
+  d.addEventListener('click',e=>{if(e.target===d)d.remove()});
   document.body.appendChild(d);
 }
 
@@ -10083,10 +10116,14 @@ SV3.shake=0;
 function sv3Shake(a){SV3.shake=Math.max(SV3.shake,a)}
 
 /* ---------- 1인칭 조작: 왼쪽 드래그 이동 · 오른쪽 드래그 시점 · 탭 상호작용 · 자동 이동 ---------- */
-const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving:0,bobT:0,stepT:0,boxes:[],bounds:null,nav:null,speed:2.4,onTap:null,onStep:null,el:null,lock:false,surface:'wood',
-  attach(el){this.detach();this.el=el;el.addEventListener('pointerdown',this._d=e=>this.down(e));el.addEventListener('pointermove',this._m=e=>this.move(e));el.addEventListener('pointerup',this._u=e=>this.up(e));el.addEventListener('pointercancel',this._u)},
+const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving:0,bobT:0,stepT:0,boxes:[],bounds:null,nav:null,speed:2.4,onTap:null,onStep:null,el:null,lock:false,surface:'wood',jy:0,vy:0,air:false,
+  /* 점프: 위로 3.9m/s(최고 약 0.75m, 체공 0.8초). 낮은 상자(0.75m 이하)는 넘거나 위에 올라설 수 있다 */
+  jump(){if(this.air||this.lock||this.nav)return false;this.vy=3.9;this.air=true;this.jy=Math.max(this.jy,.001);try{SFX.step(this.surface)}catch(e){}vib(12);return true},
+  groundAt(x,z){let g=0;const r=.18;for(const b of this.boxes){if(b.max.y<.9&&b.max.y<=this.jy+.08&&x+r>b.min.x&&x-r<b.max.x&&z+r>b.min.z&&z-r<b.max.z&&b.max.y>g)g=b.max.y}return g},
+  attach(el){this.detach();this.el=el;this.jy=0;this.vy=0;this.air=false;el.addEventListener('pointerdown',this._d=e=>this.down(e));el.addEventListener('pointermove',this._m=e=>this.move(e));el.addEventListener('pointerup',this._u=e=>this.up(e));el.addEventListener('pointercancel',this._u)},
   detach(){if(this.el){this.el.removeEventListener('pointerdown',this._d);this.el.removeEventListener('pointermove',this._m);this.el.removeEventListener('pointerup',this._u);this.el.removeEventListener('pointercancel',this._u)}this.el=null;this.ptr={};this.mv.x=this.mv.y=0;const j=$('#sv3Joy');if(j)j.hidden=true},
-  down(e){if(e.target.closest('button,a,input,.overlay,.sv3-panel,[data-a],[data-g3]'))return;if(this.lock)return;e.preventDefault();SND.ac();const p=sv3Local(e.clientX,e.clientY);const W=SV3.vw,H=SV3.vh;const role=(p.x<W*.42&&p.y>H*.28)?'move':'look';
+  down(e){if(e.target.closest('button,a,input,.overlay,.sv3-panel,[data-a],[data-g3]'))return;if(this.lock)return;e.preventDefault();
+    /* 대피소에서 장면을 만지면(이동·둘러보기) 아래 카드 띠를 자동으로 접어 시야와 엄지 영역을 비운다 */if(UI.screen==='shelter'){const d=$('#sv3Panel');if(d&&d.classList.contains('sv3-deck')&&!d.classList.contains('min')){d.classList.add('min');const t=d.querySelector('.deck-tg');if(t)t.textContent='▴ 펼치기'}}SND.ac();const p=sv3Local(e.clientX,e.clientY);const W=SV3.vw,H=SV3.vh;const role=(p.x<W*.42&&p.y>H*.28)?'move':'look';
     this.ptr[e.pointerId]={role,x:p.x,y:p.y,x0:p.x,y0:p.y,t0:performance.now(),moved:0};try{this.el.setPointerCapture(e.pointerId)}catch(x){}
     if(role==='move'){this.nav=null;sv3JoyDraw(p.x,p.y,p.x,p.y)}},
   move(e){const q=this.ptr[e.pointerId];if(!q)return;const p=sv3Local(e.clientX,e.clientY);const dx=p.x-q.x,dy=p.y-q.y;q.x=p.x;q.y=p.y;q.moved+=Math.abs(dx)+Math.abs(dy);
@@ -10095,7 +10132,7 @@ const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving
   up(e){const q=this.ptr[e.pointerId];if(!q)return;delete this.ptr[e.pointerId];
     if(q.role==='move'){this.mv.x=0;this.mv.y=0;const j=$('#sv3Joy');if(j)j.hidden=true}
     else if(q.moved<9&&performance.now()-q.t0<300&&this.onTap){const nx=(q.x/SV3.vw)*2-1,ny=-(q.y/SV3.vh)*2+1;this.onTap(nx,ny)}},
-  blocked(x,z,r){r=r||.28;for(const b of this.boxes){if(x+r>b.min.x&&x-r<b.max.x&&z+r>b.min.z&&z-r<b.max.z)return true}if(this.bounds){const B=this.bounds;if(x<B[0]||x>B[2]||z<B[1]||z>B[3])return true}return false},
+  blocked(x,z,r,feet){r=r||.28;feet=feet||0;for(const b of this.boxes){if(x+r>b.min.x&&x-r<b.max.x&&z+r>b.min.z&&z-r<b.max.z){if(feet>.01&&feet>=b.max.y-.06)continue;return true}}if(this.bounds){const B=this.bounds;if(x<B[0]||x>B[2]||z<B[1]||z>B[3])return true}return false},
   step(dt){let vx=0,vz=0;let len=0;
     if(this.nav){const t=this.nav.pts[this.nav.i];const dx=t.x-this.pos.x,dz=t.z-this.pos.z;const d=Math.hypot(dx,dz);
       if(d<(this.nav.i===this.nav.pts.length-1?(this.nav.reach||.5):.35)){this.nav.i++;if(this.nav.i>=this.nav.pts.length){const cb=this.nav.done;this.nav=null;if(cb)cb()}}
@@ -10103,13 +10140,14 @@ const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving
     else{len=Math.min(1,Math.hypot(this.mv.x,this.mv.y));if(len>.05){const fx=-Math.sin(this.yaw),fz=-Math.cos(this.yaw),rx=Math.cos(this.yaw),rz=-Math.sin(this.yaw);vx=fx*this.mv.y+rx*this.mv.x;vz=fz*this.mv.y+rz*this.mv.x}}
     this.moving=len;
     if(len>.05){const sp=this.speed*(this.nav?1.15:1);const nx=this.pos.x+vx*sp*dt,nz=this.pos.z+vz*sp*dt;let mvd=false;
-      if(!this.blocked(nx,this.pos.z)){this.pos.x=nx;mvd=true}if(!this.blocked(this.pos.x,nz)){this.pos.z=nz;mvd=true}
+      if(!this.blocked(nx,this.pos.z,null,this.jy)){this.pos.x=nx;mvd=true}if(!this.blocked(this.pos.x,nz,null,this.jy)){this.pos.z=nz;mvd=true}
       if(this.nav){const prog=Math.hypot(this.pos.x-(this.nav.lx==null?this.pos.x:this.nav.lx),this.pos.z-(this.nav.lz==null?this.pos.z:this.nav.lz));this.nav.lx=this.pos.x;this.nav.lz=this.pos.z;this.nav.stuck=prog>sp*dt*.35?0:(this.nav.stuck||0)+dt;
         if(this.nav.stuck>.5&&!this.nav.side){/* 옆으로 비켜 간다 */this.nav.side=1;const t=this.nav.pts[this.nav.i];const rx=-(t.z-this.pos.z),rz=t.x-this.pos.x;const L=Math.hypot(rx,rz)||1;const sx=rx/L,sz=rz/L;const dir=!this.blocked(this.pos.x+sx*.9,this.pos.z+sz*.9)?1:!this.blocked(this.pos.x-sx*.9,this.pos.z-sz*.9)?-1:0;if(dir){this.nav.pts.splice(this.nav.i,0,{x:this.pos.x+sx*dir*1.0,z:this.pos.z+sz*dir*1.0});this.nav.stuck=0}}
         if(this.nav.stuck>1.4){const cb=this.nav.done;this.nav=null;if(cb)cb('blocked')}}
       this.bobT+=dt*9*len;this.stepT-=dt;if(this.stepT<=0){this.stepT=.46;if(this.onStep)this.onStep();else SFX.step(this.surface)}}
-    const cam=SV3.cam;const bob=Math.sin(this.bobT)*.025*this.moving;const shk=SV3.shake;SV3.shake*=Math.exp(-dt*3.5);
-    cam.position.set(this.pos.x,this.pos.y||0,this.pos.z);cam.position.y+=this.eye+bob;
+    /* 수직: 점프·낙하·착지 */{const g=this.groundAt(this.pos.x,this.pos.z);if(this.air){this.vy-=9.8*dt;this.jy+=this.vy*dt;if(this.jy<=g){const v=this.vy;this.jy=g;this.vy=0;this.air=false;if(v<-2.2){try{SFX.step(this.surface)}catch(e){}if(this.onLand)this.onLand(-v)}}}else if(this.jy>g+.02){this.air=true;this.vy=0}else this.jy=g}
+    const cam=SV3.cam;const bob=this.air?0:Math.sin(this.bobT)*.025*this.moving;const shk=SV3.shake;SV3.shake*=Math.exp(-dt*3.5);
+    cam.position.set(this.pos.x,this.pos.y||0,this.pos.z);cam.position.y+=this.eye+bob+this.jy;
     cam.rotation.y=this.yaw+shk*Math.sin(SV3.t*41)*.02;cam.rotation.x=this.pitch+shk*Math.sin(SV3.t*47)*.03;cam.rotation.z=shk*Math.sin(SV3.t*37)*.02},
   goto(pts,done,reach){this.nav={pts,i:0,done,reach};this.mv.x=this.mv.y=0},
   /* 격자 길찾기(너비우선): 가구를 피해 가는 경로. gridBuild 후 사용 */
@@ -10129,6 +10167,9 @@ const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving
 };
 function sv3JoyDraw(bx,by,kx,ky){const j=$('#sv3Joy');if(!j)return;j.hidden=false;j.style.left=bx+'px';j.style.top=by+'px';const k=$('#sv3Knob');if(k)k.style.transform=`translate(${kx-bx}px,${ky-by}px)`}
 const SV3_JOY='<div class="b-joy" id="sv3Joy" hidden><i class="base"></i><i class="knob" id="sv3Knob"></i></div>';
+const SV3_JUMP=(cls)=>`<button class="sv3-jump${cls?' '+cls:''}" id="sv3Jump" data-g3="jump" aria-label="점프"><span>⤒</span><small>점프</small></button>`;
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-g3=jump]');if(!b)return;e.preventDefault();if(typeof LIFE!=='undefined'&&LIFE.on&&(LIFE.cho||(LIFE.me&&LIFE.me.sleeping)))return;if(FP3.jump()){b.classList.add('on');setTimeout(()=>b.classList.remove('on'),180)}},{passive:false});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&SV3.el&&document.getElementById('sv3Jump')&&!e.repeat){e.preventDefault();FP3.jump()}});
 /* 탭한 지점의 3D 물체 찾기 */
 const _tapRay=new T.Raycaster();
 function sv3Pick(nx,ny,list){_tapRay.setFromCamera({x:nx,y:ny},SV3.cam);_tapRay.far=12;const hs=_tapRay.intersectObjects(list,true);return hs.length?hs[0]:null}
@@ -10440,7 +10481,7 @@ function vGrab3(){
     <div class="sv3-tray"><b id="trayRoom">${ROOMS[GR.room].n}</b><div class="tray sv3-items" id="tray"></div></div>
     <button class="btn go sv3-exit" id="exitBtn" data-g="exit">${ic('door')}현관문 열고 대피</button>
     <div class="sv3-pick" id="gPick" hidden><div class="bar"><i id="gPickBar"></i></div><span id="gPickT"></span></div>
-    <div class="sv3-fam" id="gFam"></div>${SV3_JOY}<div class="sv3-vig" id="sv3Vig"></div><div class="sv3-flash" id="sv3Flash"></div>`;
+    <div class="sv3-fam" id="gFam"></div>${SV3_JOY}${SV3_JUMP('g')}<div class="sv3-vig" id="sv3Vig"></div><div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('grab',html);
   /* 시작 위치·시점 */
   const start={living:[250,196],master:[332,216],hall:[48,126]}[GR.room]||[250,196];FP3.pos.set(hpX(start[0]),0,hpZ(start[1]));FP3.yaw=GR.room==='master'?Math.PI/2:GR.room==='hall'?-Math.PI/2:0;FP3.pitch=-.05;FP3.eye=1.55;FP3.boxes=H.boxes;FP3.bounds=H.bounds;FP3.speed=2.6;FP3.surface='wood';FP3.nav=null;FP3.lock=false;
@@ -10727,7 +10768,7 @@ function vShelter3(){
   else if(st==='result'||st==='fresult'){const ev=EV[G.cur.ev];const last=st==='fresult';sheet=resultCard(ev,G.cur.r,last?{a:'to-end',t:'72시간 — 결과 보기'}:G.cur.next?{a:'follow',t:'계속'}:{a:'to-action',t:'이 6시간 동안 할 일'})}
   else if(st==='action')sheet=actionCard();else if(st==='actres')sheet=actResCard();
   const roam=RBX.ok&&G.loc!=='home';
-  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel"><button class="deck-tg" data-g3="deck" aria-label="카드 접기">▾ 접기</button><div class="sv3-strip">${famStrip()}${resGrid()}</div>${sheet}</div><span class="tag sv3-tag">${locName()}</span>${roam?SV3_JOY+'<div class="sv3-hint" id="sv3Hint">왼쪽 드래그 이동 · 오른쪽 드래그 둘러보기</div>':''}<div class="sv3-flash" id="sv3Flash"></div>`;
+  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel"><button class="deck-tg" data-g3="deck" aria-label="카드 접기">▾ 접기</button><div class="sv3-strip">${famStrip()}${resGrid()}</div>${sheet}</div><span class="tag sv3-tag">${locName()}</span>${roam?SV3_JOY+SV3_JUMP()+'<div class="sv3-hint" id="sv3Hint">왼쪽 드래그 이동 · 오른쪽 드래그 둘러보기</div>':''}<div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('shelter',html);
   const dark=!!(G.flags.blackout&&G.loc!=='gym'&&G.loc!=='high');const key=G.loc+'_'+(dark?1:0)+'_'+(G.flags.light||'')+'_'+Math.floor(G.turn/2);
   if(SH3.key!==key||!SH3.scene){SH3.key=key;sv3ShelterScene(G.loc,dark)}
@@ -10847,6 +10888,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a=qual3]')
 
 /* 카드 접기/펼치기(아래쪽 띠) */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=deck]');if(!b)return;const d=$('#sv3Panel');if(!d)return;const m=d.classList.toggle('min');b.textContent=m?'▴ 펼치기':'▾ 접기'});
+/* 접힌 띠를 탭하면 다시 펼친다 */
+document.addEventListener('click',e=>{const d=e.target.closest('#sv3Panel.sv3-deck.min');if(!d||e.target.closest('[data-g3=deck]'))return;d.classList.remove('min');const t=d.querySelector('.deck-tg');if(t)t.textContent='▾ 접기'});
 
 /* ===================== 20 · 생존 3D 생활: 3인칭 플레이어 · 가족 · 주민 NPC 행동 · 돌발 상황(비네트) · 선택지 동작 ===================== */
 const LIFE={on:false,npcs:[],fam:[],me:null,vig:[],cho:null,t:0,roam:false,loc:null,props:[],lastTurn:-1,toastT:0};
@@ -10979,13 +11022,14 @@ function lifeChoStep(dt){const c=LIFE.cho;if(!c)return;const me=LIFE.me;const st
 function lifeStep(dt){if(!LIFE.on)return;LIFE.t+=dt;const me=LIFE.me;
   /* 플레이어: 조이스틱 이동(안무 중이 아닐 때) → 아바타가 따라가고 카메라는 뒤에서 */
   if(me&&LIFE.roam){if(!LIFE.cho){const mv=FP3.mv;const len=Math.hypot(mv.x,mv.y);FP3.speed=len>.85?3.0:1.5;const px=FP3.pos.x,pz=FP3.pos.z;FP3.step(dt);const dx=FP3.pos.x-px,dz=FP3.pos.z-pz;const moved=Math.hypot(dx,dz)/Math.max(dt,1e-3);
-      if(!me.sleeping){me.root.position.set(FP3.pos.x,0,FP3.pos.z);if(moved>.3){const want=Math.atan2(dx,dz);let dy=want-me.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));me.root.rotation.y+=dy*Math.min(1,dt*10);const pose=moved>2.2?'run':'walk';if(me.pose!==pose)me.setPose(pose)}else if(me.pose==='walk'||me.pose==='run')me.setPose('idle')}}
+      if(!me.sleeping){me.root.position.set(FP3.pos.x,FP3.jy,FP3.pos.z);if(moved>.3){const want=Math.atan2(dx,dz);let dy=want-me.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));me.root.rotation.y+=dy*Math.min(1,dt*10);if(!FP3.air){const pose=moved>2.2?'run':'walk';if(me.pose!==pose)me.setPose(pose)}}else if(!FP3.air&&(me.pose==='walk'||me.pose==='run'))me.setPose('idle');
+        /* 체공 중: 달리기 동작의 한 순간으로 멈춰 도약처럼 보이게 */if(FP3.air){if(me.pose!=='run'){me.setPose('run');me.anim.t=.2}me.autoSpeed=false;me.anim.speed=.1}else if(!me.autoSpeed)me.autoSpeed=true}}
     else{lifeChoStep(dt);FP3.pitch*=Math.max(0,1-dt*2)}
     /* 3인칭 카메라: 뒤·위에서, 인물은 화면 왼쪽 1/3 */
     const cam=SV3.cam;const yaw=FP3.yaw,pitch=FP3.pitch;const dist=2.7,hgt=1.55-pitch*1.1;const bx=Math.sin(yaw)*dist,bz=Math.cos(yaw)*dist;let cx=FP3.pos.x+bx,cz=FP3.pos.z+bz;
     /* 카메라가 벽 안으로 들어가지 않게 */for(let k=0;k<6&&FP3.blocked(cx,cz,.25);k++){cx=FP3.pos.x+bx*(1-k*.15);cz=FP3.pos.z+bz*(1-k*.15)}
     const rx=Math.cos(yaw),rz=-Math.sin(yaw);const shk=SV3.shake;SV3.shake*=Math.exp(-dt*3.5);
-    cam.position.set(cx+rx*.55,Math.max(.6,hgt),cz+rz*.55);cam.lookAt(FP3.pos.x+rx*.7,1.15-pitch*.6,FP3.pos.z+rz*.7);cam.rotation.z+=shk*Math.sin(SV3.t*37)*.02;cam.position.y+=shk*Math.sin(SV3.t*43)*.03}
+    cam.position.set(cx+rx*.55,Math.max(.6,hgt)+FP3.jy*.6,cz+rz*.55);cam.lookAt(FP3.pos.x+rx*.7,1.15-pitch*.6+FP3.jy*.8,FP3.pos.z+rz*.7);cam.rotation.z+=shk*Math.sin(SV3.t*37)*.02;cam.position.y+=shk*Math.sin(SV3.t*43)*.03}
   else{const l=SH3.look;SV3.cam.position.copy(SH3.camP);SV3.cam.position.y+=Math.sin(LIFE.t*.9)*.01;SV3.cam.lookAt(l.x+Math.sin(LIFE.t*.35)*.15,l.y,l.z+Math.cos(LIFE.t*.3)*.1);SV3.cam.rotation.z=SV3.shake*Math.sin(SV3.t*37)*.02;SV3.shake*=Math.exp(-dt*3.5)}
   /* 주민 행동 */
   const mp=me?me.root.position:SV3.cam.position;
@@ -11166,16 +11210,17 @@ function vStreet3(){const sc=buildTown3();townTraffic(sc,{peds:12});SV3.scene=sc
   const dest=G.loc==='subway'?'탕정역 지하 대합실':G.loc==='bldg'?'상가 지하 2층':'학교 체육관';
   const html=`${hud()}<div class="sv3-dsstat drv"><div class="ds-fl"><b id="strDist" class="num">--</b><span>m 남음</span></div><div class="ds-bars"><div class="ds-lbl"><span>${dest}까지</span><span id="strT" class="num">0:00</span></div><div class="bar"><i id="strBar" style="width:0%;background:var(--amber)"></i></div></div></div>
     <div class="sv3-note" id="strNote" style="top:auto;bottom:14px">왼쪽 드래그로 달린다(끝까지 밀면 전력 질주) · 오른쪽 드래그 시점. 차도로 내려가지 말고 녹색 기둥(입구)까지.</div>
-    ${SV3_JOY}<div class="sv3-vig" id="sv3Vig"></div><div class="sv3-flash" id="sv3Flash"></div>`;
+    ${SV3_JOY}${SV3_JUMP()}<div class="sv3-vig" id="sv3Vig"></div><div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('street',html);FP3.attach(SV3.el);Object.assign(STR,{on:true,t:0,done:false,stam:100,hitT:0});SND.siren(14);
   SV3.step=dt=>{if(!STR.on)return;STR.t+=dt;const mv=FP3.mv;const len=Math.hypot(mv.x,mv.y);FP3.speed=len>.85&&STR.stam>5?4.2:2.2;if(len>.85)STR.stam=Math.max(0,STR.stam-dt*6);else STR.stam=Math.min(100,STR.stam+dt*4);
     const px=FP3.pos.x,pz=FP3.pos.z;FP3.step(dt);const dx=FP3.pos.x-px,dz=FP3.pos.z-pz;const moved=Math.hypot(dx,dz)/Math.max(dt,1e-3);
-    me.root.position.set(FP3.pos.x,0,FP3.pos.z);if(moved>.3){const want=Math.atan2(dx,dz);let dy=want-me.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));me.root.rotation.y+=dy*Math.min(1,dt*10);const pose=moved>3?'run':'walkFast';if(me.pose!==pose)me.setPose(pose)}else if(me.pose!=='idle'&&me.pose!=='look')me.setPose('idle');
+    me.root.position.set(FP3.pos.x,FP3.jy,FP3.pos.z);if(moved>.3){const want=Math.atan2(dx,dz);let dy=want-me.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));me.root.rotation.y+=dy*Math.min(1,dt*10);if(!FP3.air){const pose=moved>3?'run':'walkFast';if(me.pose!==pose)me.setPose(pose)}}else if(!FP3.air&&me.pose!=='idle'&&me.pose!=='look')me.setPose('idle');
+    if(FP3.air){if(me.pose!=='run'){me.setPose('run');me.anim.t=.2}me.autoSpeed=false;me.anim.speed=.1}else if(!me.autoSpeed)me.autoSpeed=true;
     me.update(dt);
     /* 가족 따라오기 */STR.fam.forEach(f=>{const h=f.h;const tx=FP3.pos.x+Math.sin(FP3.yaw)*f.off[1]+Math.cos(FP3.yaw)*f.off[0],tz=FP3.pos.z+Math.cos(FP3.yaw)*f.off[1]-Math.sin(FP3.yaw)*f.off[0];const ddx=tx-h.root.position.x,ddz=tz-h.root.position.z;const d=Math.hypot(ddx,ddz);
       if(d>.6){const sp=Math.min(f.m.k==='eld'?3.2:f.m.k==='kid'?3.6:4.4,d*2.5);const nx=h.root.position.x+ddx/d*sp*dt,nz=h.root.position.z+ddz/d*sp*dt;if(!FP3.blocked(nx,nz,.3)){h.root.position.x=nx;h.root.position.z=nz}h.root.rotation.y=Math.atan2(ddx,ddz);const pose=sp>3?'run':'walkFast';if(h.pose!==pose)h.setPose(pose)}else if(h.pose!=='idle')h.setPose('idle');h.update(dt)});
     /* 3인칭 카메라 */const cam=SV3.cam;const yaw=FP3.yaw,pitch=FP3.pitch;const dist=4.2,hgt=2.3-pitch*1.2;let cx=FP3.pos.x+Math.sin(yaw)*dist,cz=FP3.pos.z+Math.cos(yaw)*dist;for(let k=0;k<6&&FP3.blocked(cx,cz,.3);k++){cx=FP3.pos.x+Math.sin(yaw)*dist*(1-k*.15);cz=FP3.pos.z+Math.cos(yaw)*dist*(1-k*.15)}
-    cam.position.set(cx,Math.max(.8,hgt),cz);cam.lookAt(FP3.pos.x,1.3,FP3.pos.z);cam.rotation.z+=SV3.shake*Math.sin(SV3.t*37)*.02;SV3.shake*=Math.exp(-dt*3.5);
+    cam.position.set(cx,Math.max(.8,hgt)+FP3.jy*.6,cz);cam.lookAt(FP3.pos.x,1.3+FP3.jy*.8,FP3.pos.z);cam.rotation.z+=SV3.shake*Math.sin(SV3.t*37)*.02;SV3.shake*=Math.exp(-dt*3.5);
     /* 차도 위험: 달리는 차에 치임 */TOWN.cars.forEach(c=>{if(c.jam)return;const d=Math.hypot(c.obj.position.x-FP3.pos.x,c.obj.position.z-FP3.pos.z);if(d<2.2&&!STR.hitT){STR.hitT=2;hurt('me',25);addC(G.fam[0],'injury');sv3Shake(1.4);SND.boom(false,.6);vib([120,60,160]);sv3Flash(.5);toast('차에 치였다 — 부상',2600)}});if(STR.hitT)STR.hitT=Math.max(0,STR.hitT-dt);
     townStep(dt,FP3.pos);
     const d=Math.hypot(goal.x-FP3.pos.x,goal.z-FP3.pos.z);const el=$('#strDist');if(el)el.textContent=Math.round(d);const tt=$('#strT');if(tt){const s=Math.floor(STR.t);tt.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}const bar=$('#strBar');if(bar)bar.style.width=Math.round(clamp(1-d/300,0,1)*100)+'%';
@@ -11265,6 +11310,141 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a=integ-ba
   if(b.dataset.a==='integ-back'){integReturn(!!(BS&&BS.win));return}integAbort()});
 /* 결과 카드 '계속' → 교전 */
 (function(){document.addEventListener('click',e=>{const b=e.target.closest('[data-a=follow]');if(!b)return;const nx=G&&G.cur&&G.cur.next;if(nx&&String(nx).indexOf('__battle:')===0){e.stopImmediatePropagation();e.preventDefault();integStart(nx.slice(9))}},true)})();
+
+/* ===================== 23 · 자유 행동 모드: 카드 없이 대피소를 돌아다니며 사람·물건과 직접 상호작용. 시간은 행동할 때만 흐른다 ===================== */
+/* 카드 흐름(배급 → 상황 → 결과 → 행동 → 6시간 경과)은 그대로 두고, '행동' 단계를 3D 세계 안의 상호작용으로 바꾼다.
+   한 시간대(6시간)마다 시간 예산 6h. 상호작용마다 1~3h를 쓰고, 다 쓰거나 매트에서 잠들면 다음 시간대로 넘어간다.
+   상황 카드는 '새 상황' 알림으로 기다리며, 시간이 흐르기 직전에만 반드시 답하게 한다 */
+const FREE={open:false,force:false,near:[],spots:[],mk:new Map(),tick:0,noteT:null,busy:false,ending:false};
+const freeAvail=()=>UI.screen==='shelter'&&typeof SV3!=='undefined'&&SV3.on()&&RBX.ok&&G&&G.loc!=='home'&&LIFE.on&&!!LIFE.me;
+const freeActive=()=>freeAvail()&&!!store.get('sg.free',false);
+function freeHours(){if(G.freeTurn!==G.turn){G.freeTurn=G.turn;G.freeH=6;G.freeUsed={}}return G.freeH}
+const fu=k=>G.freeUsed&&G.freeUsed[k]===G.turn;const fuSet=k=>{G.freeUsed=G.freeUsed||{};G.freeUsed[k]=G.turn};
+function needsCareFor(m){if(m.crit)return 'none';for(const c of ['bleed','co','cold','heat','sick','burn','fracture','injury'])if(m.c.includes(c))return c;return m.hp<65?'none':null}
+const RUMOR={conv:['옆 동 지하주차장에 급수차가 온대요','편의점 사장님이 내일 아침에 남은 물건을 나눈대요','국도는 아직 검문 중이래요 — 차로 나가면 막혀요','정전이 길어지면 휴대폰은 절전 모드로 아끼래요','불난 건물엔 절대 엘리베이터 타지 말래요'],
+  nuke:['낙진은 첫날이 제일 세대요 — 24시간은 안에 있어야 한대요','밖에 다녀온 사람은 겉옷부터 비닐에 넣으래요','요오드 알약은 정부가 나눠 줄 때만 먹으래요','샤워는 비누로, 컨디셔너는 쓰지 말래요'],
+  chem:['냄새가 나면 위층으로 올라가래요 — 가스는 아래로 깔린대요','수돗물은 정부 발표 전까지 마시지 말래요','피부에 묻으면 흐르는 물로 15분 넘게 씻어야 한대요','젖은 수건으로 문틈을 막으래요']};
+const ASKL={conv:['"미사일 경보는 아직 해제 전입니다. 대피소 밖으로 나가지 마십시오."','"구호품은 내일 오전에 군 트럭으로 옵니다. 신분증을 준비해 두십시오."','"화재 신고는 119로, 부상자는 의료진에게 먼저 보내십시오."'],
+  nuke:['"낙진 시간대입니다. 출입구 근처에 오래 있지 마십시오."','"이동 안내는 정부 방송으로 나갑니다. 함부로 이동하지 마십시오."'],
+  chem:['"환풍구 쪽은 막아 두었습니다. 계단 아래로 내려가지 마십시오."','"오염된 옷은 벗어서 비닐에 묶어 두십시오."']};
+function freeTalk(a){a.talked=G.turn;const r=rnd();
+  if(a.kind==='kid'){mor(3);trust(1);return pick(['아이에게 끝말잇기를 걸었다. 아이가 처음으로 웃었다.','아이와 손그림자 놀이를 했다. 옆의 엄마가 고개 숙여 인사했다.'])}
+  if(r<.32){G.infoTurns=Math.max(G.infoTurns||0,1);return `"${pick(RUMOR[G.scen]||RUMOR.conv)}" — 새겨 둘 만한 이야기다. (다음 상황 힌트 1번)`}
+  if(r<.5&&G.res.food<G.fam.length*1.5&&G.res.water>=3){res('water',-1);res('food',1);return '물 1L와 이웃의 에너지바를 바꿨다.'}
+  if(r<.6&&G.trust>=3){res('water',1);trust(1);return '"그때 도와줘서 고마웠어요." 이웃이 생수 한 병을 건넸다.'}
+  if(r<.85){mor(2);trust(1);return pick(['서로의 고향 이야기를 나눴다. 잠깐 숨이 쉬어진다.','이웃과 교대로 출입구를 지켜보기로 했다.','옆자리 할머니가 담요 한 장을 덮어 주셨다.'])}
+  mor(-1);return pick(['"물 좀 있으면 나눠 줘요." 거절하자 눈빛이 싸늘해졌다.','다들 예민하다. 말을 걸자 등을 돌린다.'])}
+function freeSearch(s){s.done=1;if(s.obj)s.obj.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive)o.material=o.material.clone(),o.material.emissiveIntensity=0});const r=rnd();
+  if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear&&r<.15){addC(M('me'),'contam');pol(6);return '구석에 고인 물이 이상한 냄새를 풍겼다. 손에 묻었다 — 씻어야 한다.'}
+  if(r<.12){hurt('me',5);return '어두운 구석에서 철제 선반에 무릎을 부딪쳤다.'}
+  if(r<.6){const f=pick([['water',2,'뜯지 않은 생수 2L'],['food',1,'주인 없는 에너지바 한 봉지'],['meds',1,'구급함 속 소독약·거즈'],['power',12,'버려진 보조배터리']]);res(f[0],f[1]);return `${f[2]}를 찾았다.`}
+  return '박스 더미를 뒤졌지만 빈 상자뿐이었다.'}
+/* ---------- 지금 할 수 있는 일(위치별) ---------- */
+function freeCands(){const L=[];if(!LIFE.on)return L;const c=LIFE.camp,cx=c[0],cz=c[2];const H=freeHours();
+  const add=(o)=>{if(o.h!=='all'&&o.h>H)return;L.push(o)};
+  add({k:'sleep',id:'camp',x:cx,z:cz,r:2.4,g:'z',n:'매트에서 잠자기',s:'남은 시간 모두 · 체력 회복',h:'all'});
+  if(has('radio')){if(!fu('radio'))add({k:'radio',id:'camp',x:cx,z:cz,r:2.4,g:'≋',n:'라디오 듣기',s:'2시간 · 정부 안내·힌트 2번',h:2})}
+  else if(!fu('phone')&&G.res.power>=8&&!G.flags.emp)add({k:'phone',id:'camp',x:cx,z:cz,r:2.4,g:'≋',n:'재난문자 확인',s:'1시간 · 힌트 1번 · 전력 −8%',h:1});
+  if(has('bleach')&&G.flags.tap&&G.scen==='conv'&&!fu('purify'))add({k:'purify',id:'camp',x:cx,z:cz,r:2.4,g:'◌',n:'물 정수',s:'3시간 · 물 +4L',h:3});
+  if(G.fam.some(m=>m.c.includes('contam'))&&!fu('wash')&&(G.flags.tap||G.res.water>=3))add({k:'wash',id:'camp',x:cx,z:cz,r:2.4,g:'◌',n:'오염 씻어내기',s:G.flags.tap?'3시간 · 수돗물':'3시간 · 물 3L',h:3});
+  const meC=needsCareFor(M('me'));if(meC&&!fu('treat_me'))add({k:'treat',id:'camp',m:M('me'),c:meC,x:cx,z:cz,r:2.4,g:'+',n:'내 상처 치료',s:`2시간 · ${TREAT[meC].n}${TREAT[meC].meds?(G.res.meds?' · 약 1':' · 약 없음'):''}`,h:2});
+  LIFE.fam.forEach(f=>{const p=f.h.root.position;const cc=needsCareFor(f.m);
+    if(cc&&!fu('treat_'+f.m.id))add({k:'treat',id:'fam:'+f.m.id,m:f.m,c:cc,x:p.x,z:p.z,r:1.7,g:'+',n:`${f.m.n} 응급처치`,s:`2시간 · ${TREAT[cc].n}${TREAT[cc].meds?(G.res.meds?' · 약 1':' · 약 없음'):''}`,h:2});
+    else if(!fu('care'))add({k:'care',id:'fam:'+f.m.id,m:f.m,x:p.x,z:p.z,r:1.7,g:'♥',n:`${f.m.n} 곁에서 이야기`,s:'2시간 · 사기 +8',h:2})});
+  LIFE.npcs.forEach((a,i)=>{const p=a.h.root.position;if(a.sleep&&!a.lying)return;
+    if(a.lying&&a.h.pose!=='dead'){if(!fu('aid_'+i))add({k:'aidn',id:'npc:'+i,a,x:p.x,z:p.z,r:1.8,g:'+',n:'다친 이웃 돕기',s:'2시간 · 신뢰 +2',h:2});return}
+    if(a.lying)return;
+    if(a.kind==='medic'){if(!fu('medic'))add({k:'medic',id:'npc:'+i,a,x:p.x,z:p.z,r:1.9,g:'+',n:'의료진에게 진료 받기',s:'2시간 · 약 없이 치료 · 1회',h:2});return}
+    if(a.kind==='police'||a.kind==='rok'){if(!fu('ask'))add({k:'ask',id:'npc:'+i,a,x:p.x,z:p.z,r:1.9,g:'i',n:a.kind==='rok'?'군인에게 상황 묻기':'경찰에게 상황 묻기',s:'1시간 · 바깥 소식·힌트',h:1});return}
+    if(a.talked!==G.turn&&(a.st==='rest'||a.st==='pausing'))add({k:'talk',id:'npc:'+i,a,x:p.x,z:p.z,r:1.7,g:'…',n:a.kind==='kid'?'아이 달래기':'이웃에게 말 걸기',s:a.kind==='kid'?'1시간 · 사기·신뢰':'1시간 · 소문·거래·위로',h:1})});
+  if(LIFE.table&&G.turn>=1&&G.freeUsed.relief!==Math.floor(G.turn/4))add({k:'relief',id:'table',x:LIFE.table[0],z:LIFE.table[1],r:2.2,g:'▤',n:'배급 줄 서기',s:'1시간 · 하루 1회 · 물·식량',h:1});
+  if(LIFE.exit&&!fu('scout')&&!M('me').c.includes('fracture'))add({k:'scout',id:'exit',x:LIFE.exit[0],z:LIFE.exit[1],r:2.6,g:'↗',n:'출구 밖 살피기',s:(G.scen==='nuke'&&G.turn<4)?'3시간 · 낙진 시간대 — 피폭 위험!':'3시간 · 물자 발견 · 부상 위험',h:3,warn:G.scen==='nuke'&&G.turn<4});
+  FREE.spots.forEach((s,i)=>{if(!s.done)add({k:'search',id:'spot:'+i,s,x:s.x,z:s.z,r:1.5,g:'?',n:'박스 더미 살펴보기',s:'1시간 · 물자 발견 가능',h:1})});
+  return L}
+/* ---------- 실행 ---------- */
+function freeDo(c){if(!c||FREE.busy||LIFE.cho)return;const H=freeHours();const cost=c.h==='all'?H:c.h;if(cost>H){toast('남은 시간이 모자란다');return}
+  FX=[];let t='';const me=LIFE.me;const face=(h,x,z)=>{if(h)lifeFace(h,x,z)};
+  const famF=m=>LIFE.fam.find(f=>f.m===m);const listenAll=()=>LIFE.fam.forEach(f=>{if(f.h.lying||f.pose==='sleep'||f.h.sleeping)return;lifeFace(f.h,FP3.pos.x,FP3.pos.z);f.h.setPose('listen')});
+  if(c.k==='sleep'){t=doAction('rest');lifeAct('rest')}
+  else if(['radio','phone','purify','wash','care'].includes(c.k)){t=doAction(c.k);if(c.k==='radio'){const q=(t.match(/"([^"]+)"/)||[])[1];if(q)later(()=>broadcast('KBS 재난방송 · 게임 속 가상 방송',q),400)}
+    if(c.k==='radio'||c.k==='phone'){if(me)me.setPose(c.k);listenAll()}else if(c.k==='care'){const f=famF(c.m);if(f&&!f.h.lying){face(me,f.h.root.position.x,f.h.root.position.z);if(me)me.setPose(f.m.k==='kid'?'crouch':'talk');lifeFace(f.h,FP3.pos.x,FP3.pos.z);f.h.setPose(f.m.k==='kid'?'cheer':'listen')}}else if(me)me.setPose('crouch')}
+  else if(c.k==='treat'){t=treat(c.m,c.c==='none'?null:c.c);fuSet(c.m.id==='me'?'treat_me':'treat_'+c.m.id);const f=famF(c.m);if(f&&!f.h.lying){face(me,f.h.root.position.x,f.h.root.position.z);lifeFace(f.h,FP3.pos.x,FP3.pos.z);f.h.setPose(f.m.k==='kid'?'nervous':'sitNervous')}if(me)me.setPose('crouch')}
+  else if(c.k==='medic'){const n=needsCare();if(n){if(n.c){if(n.c==='fracture'){clrC(n.m,'fracture');addC(n.m,'injury')}else clrC(n.m,n.c)}heal(n.m,12);t=`의료진이 ${josa(n.m.n,'을를')} 살폈다 — ${TREAT[n.c||'none'].n}. 약은 대피소 비축분을 썼다.`}else{mor(2);t='의료진이 가족 상태를 확인했다. 지금은 큰 이상이 없다고 한다.'}
+    face(me,c.a.h.root.position.x,c.a.h.root.position.z);if(me)me.setPose('talk');face(c.a.h,FP3.pos.x,FP3.pos.z);c.a.h.setPose('talk')}
+  else if(c.k==='ask'){G.infoTurns=Math.max(G.infoTurns||0,1);reveal();mor(1);t=pick(ASKL[G.scen]||ASKL.conv);face(me,c.a.h.root.position.x,c.a.h.root.position.z);if(me)me.setPose('listen');face(c.a.h,FP3.pos.x,FP3.pos.z);c.a.h.setPose('talk')}
+  else if(c.k==='talk'){t=freeTalk(c.a);face(me,c.a.h.root.position.x,c.a.h.root.position.z);if(me)me.setPose('talk');if(!c.a.h.pose||!/sit|crouch/.test(c.a.h.pose)){face(c.a.h,FP3.pos.x,FP3.pos.z);c.a.h.setPose(c.a.kind==='kid'?'cheer':'listen')}}
+  else if(c.k==='aidn'){if(G.res.meds>0&&chance(.5))res('meds',-1);trust(2);mor(3);t='쓰러진 이웃의 상처를 세게 눌러 지혈하고 의료진을 불렀다.';face(me,c.a.h.root.position.x,c.a.h.root.position.z);if(me)me.setPose('crouch')}
+  else if(c.k==='relief'){res('water',2);res('food',1);G.freeUsed.relief=Math.floor(G.turn/4);t='줄을 서서 생수 2L와 전투식량 한 봉지를 받았다.';face(me,LIFE.table[0],LIFE.table[1]);if(me)me.setPose('bag')}
+  else if(c.k==='scout'){t=scout();if(me)me.setPose('look');sv3Flash&&sv3Flash(.25)}
+  else if(c.k==='search'){t=freeSearch(c.s);if(me)me.setPose('crouch')}
+  if(['radio','phone','purify','wash','care','scout','medic','ask'].includes(c.k))fuSet(c.k);if(c.k==='aidn')fuSet('aid_'+LIFE.npcs.indexOf(c.a));
+  logFree(c,t);const fx=FX.slice();G.freeH=Math.max(0,H-cost);
+  /* 짧은 동작(2.6초) 뒤 자세 원위치 — 그동안에도 걸어서 벗어날 수 있다 */if(c.k!=='sleep'){FREE.busy=true;setTimeout(()=>{FREE.busy=false;FREE.sig='';if(me&&!me.sleeping&&!LIFE.cho&&!/walk|run/.test(me.pose||''))me.setPose('idle');if(c.a&&c.a.st==='rest'&&!c.a.lying)c.a.h.setPose(c.a.restPose);if(['radio','phone','care','treat'].includes(c.k))lifeFamRest()},2600)}
+  freeNote(`<b>${c.n}</b><div>${t}</div>${fxChips(fx)}<small>${c.h==='all'?'잠이 들었다':`${cost}시간 사용 · 남은 시간 ${G.freeH}h`}</small>`,4600);
+  freeStatus();if(checkOver()){save();later(toEnd,1400);return}
+  if(G.freeH<=0||c.k==='sleep'){setTimeout(freeEndTurn,c.k==='sleep'?3200:2200)}else save();FREE.tick=99}
+function logFree(c,t){/* 판단 기록: 수칙 판정이 있는 행동만(낙진 외출 등은 scout 안에서 기록) */}
+/* ---------- 시간대 넘기기 ---------- */
+function freeEndTurn(){if(FREE.ending||!G)return;FREE.ending=true;
+  try{
+    if(G.step==='ration'){G.flags['r'+G.turn]=1;enterEvent();freeNote(`<b>배급은 지난번과 같게</b><div>${RATION[G.ration].n} — ${RATION[G.ration].d}</div>`,3600)}
+    if((G.step==='event'&&G.cur.ev!=='quiet')||G.step==='final'){FREE.force=true;FREE.open=true;FREE.ending=false;save();render();setTimeout(()=>freeNote('<b>시간이 흐르기 전에 정할 일이 있다</b><div>아래 상황에 답하면 다음 6시간으로 넘어간다.</div>',3600),200);return}
+    if(G.step==='fresult'){FREE.ending=false;toEnd();return}
+    if(G.step==='result'&&G.cur&&G.cur.next){FREE.ending=false;FREE.open=true;render();return}
+    if(checkOver()){FREE.ending=false;toEnd();return}
+    const notes=endTurn();const fx=G.turnFx||[];const until=clockAt(G.turn+1);
+    if(G.over){save();FREE.ending=false;later(toEnd,1200);return}
+    G.turn++;beginTurn();FREE.open=false;FREE.force=false;save();render();
+    setTimeout(()=>freeNote(`<b>${until}까지 6시간이 흘렀다 · 배급 ${RATION[G.ration].n}</b>${notes.length?notes.map(x=>`<div>${x}</div>`).join(''):'<div>큰 일 없이 시간이 흘렀다.</div>'}${fxChips(fx)}`,5600),350)}
+  finally{FREE.ending=false}}
+/* ---------- 화면 ---------- */
+function freeNote(html,ms){const n=$('#frNote');if(!n)return;n.innerHTML=html;n.hidden=false;n.classList.remove('out');clearTimeout(FREE.noteT);FREE.noteT=setTimeout(()=>{n.classList.add('out');setTimeout(()=>{n.hidden=true},400)},ms||4000)}
+function freeStatus(){const s=$('#frStat');if(s)s.innerHTML=`${famStrip()}${resGrid()}`;freeBar()}
+function freePendTitle(){const st=G.step;if(st==='ration')return '오늘 배급 정하기';if(st==='event'||st==='final'){if(G.cur.ev==='quiet')return null;return val(EV[G.cur.ev].title)}if(st==='result'||st==='fresult')return '결과 보기';return null}
+function freeBar(){const b=$('#frBar');if(!b)return;const on=freeActive();const t=on?freePendTitle():null;const H=on?freeHours():0;
+  b.innerHTML=`${on?`<span class="fr-h${H<=2?' low':''}">⏱ 남은 시간 <b>${H}h</b></span>`:''}${t?`<button class="fr-pend${(G.step==='event'||G.step==='ration'||G.step==='final')&&!FREE.open?' pulse':''}" data-g3="fpend">📋 ${FREE.force?'아래 상황에 답하면 시간이 흐른다':FREE.open?'카드 닫기':esc(t)}</button>`:''}<button class="fr-tg${on?' on':''}" data-g3="free">🧭 자유 행동 ${on?'켬':'끔'}</button>`}
+const esc=s=>String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+function freeApply(){/* render 직후: 자유 모드면 카드 띠를 숨기고 상단 바·상태 줄·행동 버튼을 붙인다 */
+  const el=SV3.el;if(!el||UI.screen!=='shelter'||!freeAvail())return;
+  if(!$('#frBar'))el.insertAdjacentHTML('beforeend','<div class="fr-bar" id="frBar"></div><div class="fr-stat" id="frStat" hidden></div><div class="fr-acts" id="frActs"></div><div class="fr-note" id="frNote" hidden></div>');
+  const on=freeActive();const deck=$('#sv3Panel');const st=G.step;
+  if(on){freeHours();if(st==='action'){FREE.open=false;FREE.force=false}
+    if(st==='result'&&G.cur&&/_after$/.test(G.cur.ev||'')&&FREE.autoKey!==G.cur.ev+G.turn){FREE.autoKey=G.cur.ev+G.turn;FREE.open=true}
+    const show=FREE.open&&st!=='action';if(deck){deck.classList.toggle('fr-hide',!show);deck.classList.remove('min');const tg=deck.querySelector('[data-a=to-action]');if(tg)tg.textContent='자유 행동으로 돌아가기'}
+    const fs=$('#frStat');fs.hidden=show;fs.innerHTML=`${famStrip()}${resGrid()}`;const hint=$('#sv3Hint');if(hint)hint.textContent='가까이 가면 할 수 있는 일이 뜬다 · 매트에서 잠자기 = 다음 6시간';el.classList.add('fr-on')}
+  else{if(deck)deck.classList.remove('fr-hide');$('#frStat').hidden=true;$('#frActs').innerHTML='';el.classList.remove('fr-on');freeMarkers([])}
+  freeBar();FREE.tick=99}
+/* 표식: 할 수 있는 일이 있는 대상 머리 위 */
+const FR_TEX={};function frGlyph(g,warn){const k=g+(warn?'w':'');if(FR_TEX[k])return FR_TEX[k];const c=cvs(64,64),x=c.getContext('2d');x.fillStyle=warn?'rgba(255,84,73,.92)':'rgba(255,178,36,.92)';x.beginPath();x.arc(32,32,26,0,Math.PI*2);x.fill();x.strokeStyle='rgba(0,0,0,.45)';x.lineWidth=3;x.stroke();x.fillStyle='#111';x.font='900 30px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(g,32,34);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return FR_TEX[k]=t}
+function freeMarkers(list){const sc=LIFE.scene;if(!sc)return;const seen=new Set();
+  list.forEach(c=>{if(seen.has(c.id))return;seen.add(c.id);let s=FREE.mk.get(c.id);if(!s||s.parent!==sc){s=new T.Sprite(new T.SpriteMaterial({map:frGlyph(c.g,c.warn),transparent:true,depthWrite:false}));s.scale.set(.28,.28,1);s.renderOrder=5;sc.add(s);FREE.mk.set(c.id,s)}else if(s.userData.g!==c.g+(c.warn?'w':'')){s.material.map=frGlyph(c.g,c.warn);s.material.needsUpdate=true}s.userData.g=c.g+(c.warn?'w':'');
+    const y=c.id.indexOf('npc:')===0||c.id.indexOf('fam:')===0?(c.a&&c.a.h.pose&&/sit|crouch|sleep/.test(c.a.h.pose)?1.45:2.15):1.25;s.userData.y=y;s.position.set(c.x,y,c.z);s.visible=true});
+  FREE.mk.forEach((s,id)=>{if(!seen.has(id)){s.visible=false}})}
+function freeStep(dt){const on=freeActive();const el=SV3.el;if(!el)return;
+  /* 점프 버튼·행동 버튼 높이: 카드 띠가 보이면 그 위로 */FREE.tick+=dt;const deck=$('#sv3Panel');
+  if(FREE.tick<.2){FREE.mk.forEach(s=>{if(s.visible)s.position.y=s.userData.y+Math.sin(SV3.t*3+s.id)*.04});return}FREE.tick=0;
+  const vis=deck&&!deck.classList.contains('fr-hide')&&deck.offsetParent!==null;const dh=vis?deck.getBoundingClientRect().height:0;const j=$('#sv3Jump');if(j)j.style.bottom=(dh+14)+'px';
+  if(!on){return}
+  const acts=$('#frActs');if(!acts)return;acts.style.bottom=(dh+14)+'px';
+  if(LIFE.cho||FREE.busy||FREE.ending){if(acts.innerHTML)acts.innerHTML='';freeMarkers([]);return}
+  const L=freeCands();const p=FP3.pos;L.forEach(c=>{c.d=Math.hypot(c.x-p.x,c.z-p.z)});
+  freeMarkers(L.filter(c=>c.d<16&&c.d>2.1));
+  const near=L.filter(c=>c.d<c.r).sort((a,b)=>(a.d-a.r)-(b.d-b.r));const pickN=[];const ids=new Set();for(const c of near){if(pickN.length>=3)break;if(pickN.find(x=>x.k===c.k&&x.id===c.id))continue;pickN.push(c);ids.add(c.id)}
+  FREE.near=pickN;const sig=pickN.map(c=>c.k+c.id+c.s).join('|')+'#'+(vis?1:0);if(sig===FREE.sig)return;FREE.sig=sig;
+  acts.innerHTML=vis?'':pickN.map((c,i)=>`<button class="fr-act${c.warn?' warn':''}" data-g3="fact" data-i="${i}"><span class="g">${c.g}</span><span class="t"><b>${c.n}</b><small>${c.s}</small></span></button>`).join('')}
+/* ---------- 연결 ---------- */
+(function(){const base=vShelter3;window.vShelter3=function(){const r=base();try{freeApply()}catch(e){console.error(e)}return r}})();
+(function(){const base=lifeStep;window.lifeStep=function(dt){base(dt);try{if(UI.screen==='shelter')freeStep(dt)}catch(e){console.error(e)}}})();
+(function(){const base=lifeSetup;window.lifeSetup=function(sc,o){base(sc,o);FREE.spots=[];FREE.mk.forEach(s=>s.removeFromParent());FREE.mk.clear();if(!LIFE.roam)return;
+  const camp=LIFE.camp;for(let i=0;i<3;i++){let s=null;for(let k=0;k<30&&!s;k++){const q=lifeSpot(LIFE.area,6);if(q&&Math.hypot(q.x-camp[0],q.z-camp[2])>4)s=q}if(!s)continue;const g=FK.cardboard(sc,2);g.position.set(s.x,0,s.z);g.rotation.y=i*1.3;FREE.spots.push({x:s.x,z:s.z,obj:g,done:0})}}})();
+/* 장면을 만지면: 자유 모드에선 카드를 숨긴다(강제 상황 제외) */
+(function(){const base=FP3.down.bind(FP3);FP3.down=function(e){if(UI.screen==='shelter'&&freeActive()&&FREE.open&&!FREE.force&&!e.target.closest('button,a,input,.overlay,.sv3-panel,[data-a],[data-g3]')){FREE.open=false;const d=$('#sv3Panel');if(d)d.classList.add('fr-hide');const fs=$('#frStat');if(fs)fs.hidden=false;freeBar();FREE.sig=''}return base(e)}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=free],[data-g3=fpend],[data-g3=fact]');if(!b)return;const k=b.dataset.g3;
+  if(k==='free'){const on=!store.get('sg.free',false);store.set('sg.free',on);FREE.open=false;FREE.force=false;FREE.sig='';render();toast(on?'자유 행동: 카드 없이 돌아다니며 직접 행동한다 · 정할 일은 📋 알림으로':'카드 진행으로 돌아왔다',2600);return}
+  if(k==='fpend'){if(FREE.force)return;FREE.open=!FREE.open;const d=$('#sv3Panel');if(d){d.classList.toggle('fr-hide',!FREE.open);d.classList.remove('min')}const fs=$('#frStat');if(fs)fs.hidden=FREE.open;FREE.sig='';freeBar();return}
+  if(k==='fact'){const c=FREE.near[+b.dataset.i];freeDo(c)}});
+/* 상황 답한 뒤 결과 → '자유 행동으로 돌아가기': 남은 시간이 없으면 바로 다음 시간대로 */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a=to-action]');if(!b||!freeActive())return;if(freeHours()<=0){e.stopImmediatePropagation();e.preventDefault();G.step='action';FREE.open=false;FREE.force=false;freeEndTurn()}else{FREE.force=false}},true);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
