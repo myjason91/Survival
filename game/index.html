@@ -737,8 +737,11 @@ body.fps{overflow:hidden}
 .drv-dest{font-size:11px;font-weight:800;color:#e8edf1;text-shadow:0 1px 3px #000}
 
 /* ===== 3D 화면 카드: 오른쪽 세로 패널 대신 화면 위쪽 가로 띠(아래 절반은 조작용으로 비워 둔다) ===== */
-.sv3-panel.sv3-deck{left:0;right:0;top:42px;bottom:auto;width:auto;max-height:calc(100% - 42px - 29%);padding:4px 10px 10px;background:linear-gradient(180deg,rgba(6,8,11,.88) 0%,rgba(6,8,11,.8) 75%,rgba(6,8,11,0) 100%);overflow-y:auto}
-.sv3-deck .sv3-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;align-items:stretch;margin:0 0 5px}.sv3-deck .sv3-strip::-webkit-scrollbar{display:none}
+.sv3-panel.sv3-deck{left:0;right:0;top:auto;bottom:0;width:auto;max-height:56%;padding:10px 10px 8px;background:linear-gradient(0deg,rgba(6,8,11,.9) 0%,rgba(6,8,11,.84) 72%,rgba(6,8,11,0) 100%);overflow-y:auto;border-top:0}
+.sv3-deck .deck-tg{position:absolute;right:8px;top:2px;z-index:2;border:1px solid var(--line2);background:rgba(6,8,11,.6);color:var(--mut);font:700 11px system-ui,sans-serif;padding:2px 8px;border-radius:8px}
+.sv3-deck.min{max-height:none}.sv3-deck.min .sheet>*:not(.lead){display:none}.sv3-deck.min .sheet{grid-template-columns:1fr}
+.sv3:has(.sv3-deck) .sv3-tag{top:46px;bottom:auto}.sv3:has(.sv3-deck) .sv3-hint{top:46px;bottom:auto;left:auto;right:12px}
+.sv3-deck .sv3-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;align-items:stretch;margin:0 0 5px;padding-right:70px}.sv3-deck .sv3-strip::-webkit-scrollbar{display:none}
 .sv3-deck .sv3-strip .fam{display:flex;flex:none;gap:4px}.sv3-deck .sv3-strip .fam .mem{padding:2px 7px;gap:0 6px;border-radius:8px;min-width:0;display:flex;align-items:center;flex-wrap:wrap}.sv3-deck .mem .top{gap:4px}.sv3-deck .mem b{font-size:11px}.sv3-deck .mem .hp{font-size:10px}.sv3-deck .mem .bar{width:26px;height:3px;flex:none}.sv3-deck .mem .conds{display:none}.sv3-deck .mem.crit .conds,.sv3-deck .mem:not(:has(.cond.ok)) .conds{display:flex;gap:3px;flex-basis:100%}.sv3-deck .mem .cond{font-size:9px;padding:0 4px}
 .sv3-deck .sv3-strip .res{display:flex;flex:none;gap:4px}.sv3-deck .sv3-strip .res .r{padding:2px 7px;border-radius:8px;display:flex;gap:4px;align-items:center}.sv3-deck .res .r>div{display:flex;gap:4px;align-items:baseline}.sv3-deck .res .r b{font-size:11.5px}.sv3-deck .res .r span{font-size:9.5px;white-space:nowrap}.sv3-deck .res .r svg{width:12px;height:12px}
 .sv3-deck .sheet{background:transparent;border:0;padding:0;gap:6px;border-radius:0}
@@ -747,14 +750,14 @@ body.fps{overflow:hidden}
 .sv3-deck .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .sv3-deck .choice{padding:7px 9px;gap:8px;border-radius:10px;align-items:center}.sv3-deck .choice .k{width:22px;height:22px;font-size:12px;border-radius:6px}.sv3-deck .choice b{font-size:12.5px;line-height:1.25;display:block}.sv3-deck .choice small{font-size:10.5px;line-height:1.25}
 .sv3-deck .lesson{padding:7px 10px;font-size:11.5px;gap:2px;max-height:5.2em;overflow-y:auto}.sv3-deck .lesson .src{font-size:10px}
-.sv3-deck .actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sv3-deck .act{min-height:0;padding:7px 9px;gap:2px}.sv3-deck .act b{font-size:12.5px}.sv3-deck .act small{font-size:10.5px}.sv3-deck .act svg{width:16px;height:16px}
+.sv3-deck .actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.sv3-deck .act{min-height:0;padding:5px 8px;gap:1px}.sv3-deck .act b{font-size:12.5px}.sv3-deck .act small{font-size:10.5px}.sv3-deck .act svg{width:16px;height:16px}
 .sv3-deck .btn{padding:8px 12px;font-size:13px;min-height:0;justify-self:start}.sv3-deck .sheet>.btn,.sv3-deck .sheet .row{justify-self:end}
 .sv3-deck .tbar-wrap,.sv3-deck .tbar{margin:0}
 .sv3-deck .chips,.sv3-deck .fxchips{gap:4px}.sv3-deck .chip{font-size:10.5px;padding:2px 7px}
 .sv3-deck .hint{font-size:11.5px;padding:5px 9px;max-height:3.4em;overflow-y:auto}.sv3-deck .fx-list{gap:4px}.sv3-deck .fx{font-size:10.5px;padding:1px 7px}.sv3-deck .timebar{height:4px}
 /* 카드 본문과 선택지를 가로로: 넓은 화면에서는 왼쪽 글·오른쪽 선택지 */
-@media (min-width:760px){.sv3-deck .sheet{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:min-content minmax(0,1fr) auto;grid-auto-rows:auto;grid-auto-flow:dense;align-items:start;column-gap:12px}.sv3-deck .sheet .lead{grid-column:1}.sv3-deck .sheet>p,.sv3-deck .sheet .hint,.sv3-deck .sheet .timebar,.sv3-deck .sheet .result,.sv3-deck .sheet .fx-list,.sv3-deck .sheet .lesson,.sv3-deck .sheet .small{grid-column:1}.sv3-deck .choices,.sv3-deck .actions{grid-column:2;grid-row:1/span 2}.sv3-deck .sheet>.btn,.sv3-deck .sheet>.row{grid-column:2;grid-row:3;align-self:start;justify-self:end}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:6.5em}.sv3-deck .choices{grid-template-columns:1fr;gap:5px}.sv3-deck .choice{padding:4px 9px;min-height:0}.sv3-deck .choice .ct{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;min-width:0}.sv3-deck .choice b{display:inline;font-size:12.5px}.sv3-deck .choice small{display:inline;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.sv3-deck .actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-height:420px){.sv3-panel.sv3-deck{top:40px;max-height:calc(100% - 40px - 27%)}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:4.6em}.sv3-deck .lesson{max-height:3.6em}}
+@media (min-width:760px){.sv3-deck .sheet{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:min-content minmax(0,1fr) auto;grid-auto-rows:auto;grid-auto-flow:dense;align-items:start;column-gap:12px}.sv3-deck .sheet .lead{grid-column:1}.sv3-deck .sheet>p,.sv3-deck .sheet .hint,.sv3-deck .sheet .timebar,.sv3-deck .sheet .result,.sv3-deck .sheet .fx-list,.sv3-deck .sheet .lesson,.sv3-deck .sheet .small{grid-column:1}.sv3-deck .choices,.sv3-deck .actions{grid-column:2;grid-row:1/span 2}.sv3-deck .sheet>.btn,.sv3-deck .sheet>.row{grid-column:2;grid-row:3;align-self:start;justify-self:end}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:6.4em}.sv3-deck .choices{grid-template-columns:1fr;gap:5px}.sv3-deck .choice{padding:4px 9px;min-height:0}.sv3-deck .choice .ct{display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;min-width:0}.sv3-deck .choice b{display:inline;font-size:12.5px}.sv3-deck .choice small{display:inline;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.sv3-deck .actions{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-height:420px){.sv3-panel.sv3-deck{max-height:60%}.sv3-deck .sheet>p,.sv3-deck .sheet .result{max-height:6.4em}.sv3-deck .lesson{max-height:4.2em}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -10668,7 +10671,7 @@ function vMove3(){
   if(step==='grabsum')sheet=grabSummaryCard();else if(step==='card')sheet=eventCard(EV[evId]);else if(step==='result')sheet=resultCard(EV[evId],G.cur.r,{a:'move-next',t:G.moveQ.length?'계속 이동':'대피소로'});
   const kind=evId==='road'?'road':(evId==='mv_loc'||(G.flags.elev&&['mv_conv','mv_nuke','mv_chem'].includes(evId)))?'lobby':'stairs';
   const fl=step==='grabsum'?HF():(evId==='mv_elev'||!evId)?HF():['mv_conv','mv_nuke','mv_chem'].includes(evId)?(G.flags.elev?1:(G.dmid||1)):1;
-  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel">${sheet}</div><span class="tag sv3-tag">${kind==='road'?'국도 · 정체':kind==='lobby'?'1층 로비':flName(fl)+' 비상계단'}</span><div class="sv3-flash" id="sv3Flash"></div>`;
+  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel"><button class="deck-tg" data-g3="deck" aria-label="카드 접기">▾ 접기</button>${sheet}</div><span class="tag sv3-tag">${kind==='road'?'국도 · 정체':kind==='lobby'?'1층 로비':flName(fl)+' 비상계단'}</span><div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('move',html);FP3.detach();
   sv3MoveScene(kind,fl,evId,step);
   return '';
@@ -10724,7 +10727,7 @@ function vShelter3(){
   else if(st==='result'||st==='fresult'){const ev=EV[G.cur.ev];const last=st==='fresult';sheet=resultCard(ev,G.cur.r,last?{a:'to-end',t:'72시간 — 결과 보기'}:G.cur.next?{a:'follow',t:'계속'}:{a:'to-action',t:'이 6시간 동안 할 일'})}
   else if(st==='action')sheet=actionCard();else if(st==='actres')sheet=actResCard();
   const roam=RBX.ok&&G.loc!=='home';
-  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel"><div class="sv3-strip">${famStrip()}${resGrid()}</div>${sheet}</div><span class="tag sv3-tag">${locName()}</span>${roam?SV3_JOY+'<div class="sv3-hint" id="sv3Hint">왼쪽 드래그 이동 · 오른쪽 드래그 둘러보기</div>':''}<div class="sv3-flash" id="sv3Flash"></div>`;
+  const html=`${hud()}<div class="sv3-panel sv3-deck" id="sv3Panel"><button class="deck-tg" data-g3="deck" aria-label="카드 접기">▾ 접기</button><div class="sv3-strip">${famStrip()}${resGrid()}</div>${sheet}</div><span class="tag sv3-tag">${locName()}</span>${roam?SV3_JOY+'<div class="sv3-hint" id="sv3Hint">왼쪽 드래그 이동 · 오른쪽 드래그 둘러보기</div>':''}<div class="sv3-flash" id="sv3Flash"></div>`;
   sv3Mount('shelter',html);
   const dark=!!(G.flags.blackout&&G.loc!=='gym'&&G.loc!=='high');const key=G.loc+'_'+(dark?1:0)+'_'+(G.flags.light||'')+'_'+Math.floor(G.turn/2);
   if(SH3.key!==key||!SH3.scene){SH3.key=key;sv3ShelterScene(G.loc,dark)}
@@ -10841,6 +10844,9 @@ document.addEventListener('click',e=>{if(document.fullscreenElement||!HAS3D)retu
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=toggle-3d]');if(!b)return;const v=!store.get('sg.3d',true);store.set('sg.3d',v);toast(v?'3D 화면으로 본다':'2D 화면으로 본다');const o=$('#ov');if(o)o.remove();render()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=perf3]');if(!b)return;const v=+b.dataset.v;cbSet('sel',Object.assign(cbGet('sel',{}),{perf:v}));const o=$('#ov');if(o)o.querySelectorAll('[data-a=perf3]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===v));if(!v)perfHud(false)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=qual3]');if(!b)return;const v=b.dataset.v;cbSet('sel',Object.assign(cbGet('sel',{}),{qual:v}));if(v==='auto'){store.del('sg.qtierSet');SV3.qualDone=0}const o=$('#ov');if(o){o.querySelectorAll('[data-a=qual3]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===v))}if(SV3.el)sv3SetQual(v==='auto'?store.get('sg.qtier','high'):v,true);toast('3D 화질: '+b.textContent.trim())});
+
+/* 카드 접기/펼치기(아래쪽 띠) */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=deck]');if(!b)return;const d=$('#sv3Panel');if(!d)return;const m=d.classList.toggle('min');b.textContent=m?'▴ 펼치기':'▾ 접기'});
 
 /* ===================== 20 · 생존 3D 생활: 3인칭 플레이어 · 가족 · 주민 NPC 행동 · 돌발 상황(비네트) · 선택지 동작 ===================== */
 const LIFE={on:false,npcs:[],fam:[],me:null,vig:[],cho:null,t:0,roam:false,loc:null,props:[],lastTurn:-1,toastT:0};
