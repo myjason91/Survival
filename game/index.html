@@ -1150,6 +1150,17 @@ body.fs-l .bx-how,body.fs-l .bx-opp small{font-size:14.5px}
 .owd .fpv-msg{top:27%;font-size:16px;text-align:center;white-space:nowrap}.owd .fpv-msg.go{color:#9dff8a}
 .owd .fpv-tip{bottom:30px;font-size:10.5px}
 .owc-it.owc-dr-b.on{border-color:#ffd23a;box-shadow:0 0 0 2px rgba(255,210,58,.35)}
+
+/* v9.0.1 팀 화면 */
+.tm-panel .mis-row>div:nth-child(2){min-width:0;flex:1}
+.tm-panel .mis-row b small{font-weight:600;color:#aab2bd;margin-left:4px}
+.tm-hp{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.14);margin-top:5px;overflow:hidden;width:100%;max-width:220px}
+.tm-hp>i{display:block;height:100%;border-radius:3px}
+.tm-acts{display:grid;gap:6px;justify-items:end;align-content:center}
+.tm-panel em.red{color:#ff8a7a}.tm-panel em.amb{color:#ffc46b}
+.tm-mem{display:grid;gap:3px;margin:8px 0 2px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px}.tm-mem span{color:#c9ced6}
+.tm-btn.warn{border-color:#e0503a!important;box-shadow:0 0 0 2px rgba(224,80,58,.35)}
+.tm-bleed{font:800 11px var(--sans);color:#ffb0a6;background:rgba(120,20,16,.72);padding:3px 8px;border-radius:8px;align-self:center}.tm-bleed[hidden]{display:none}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13179,7 +13190,7 @@ function perfStartup(){try{const m=performance.getEntriesByName('sot-title')[0];
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.0';
+const APP_VER='9.0.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -15022,7 +15033,7 @@ function tmInvite(a){const pr=tmProfile(a.nm);const n=tmLive().length;a.mode='st
 function tmFreeSlot(){return [0,1,2].find(s=>!tmLive().some(m=>m.slot===s))}
 function tmJoin(a,pr){const slot=tmFreeSlot();const d={id:'t'+tmHash(a.nm+G.seed),nm:a.nm,g:npcG(a.h),li:a.li!=null?a.li:40+(tmHash(a.nm)%40),lk:a.lk||'civ',job:pr.job,role:pr.role,age:pr.age,hp:100,st:'ok',since:G.turn,kills:0,aid:-1};
   tmData().push(d);if(typeof PED!=='undefined')PED.list=PED.list.filter(x=>x!==a);if(a.mate){a.mate.mate=null;a.mate=null}
-  const m=tmWrap(a,d,slot);TEAM.list.push(m);tmTag(m);try{if(SND.ok)SND.ok()}catch(e){}tmUI();return m}
+  const m=tmWrap(a,d,slot);a.h.root.visible=true;TEAM.list.push(m);tmTag(m);try{if(SND.ok)SND.ok()}catch(e){}tmUI();return m}
 function tmWrap(a,d,slot){a.kind='team';a.d=d;a.slot=slot;a.v=0;a.stuck=0;a.order=slot;a.pT=0;a.still=0;a.mode='team';return a}
 function tmTag(m){const R=TM_ROLE[m.d.role];m.tagL=`${R.ic} ${m.d.nm} · ${m.d.st==='hurt'?'부상':m.d.st==='crit'?'중상':m.d.role}`}
 /* ---------- 외출 시작: 저장된 팀원 데려오기 ---------- */
@@ -15055,7 +15066,7 @@ function tmMove(m,dt,C){const h=m.h,P=h.root.position,S=TM_SLOT[m.slot]||TM_SLOT
   if(!ok){const q=tmTrailPt(2.2+m.order*1.5);tx=q.x;tz=q.z}
   const dx=tx-P.x,dz=tz-P.z,dd=Math.hypot(dx,dz);const far=Math.hypot(P.x-C.p.x,P.z-C.p.z);
   if(far>40){tmPlace(m);return}
-  let want=dd<.3?0:clamp(dd*1.8,0,Math.max(1.8,C.ls+2.2));if(far>14)want=Math.max(want,Math.min(6.2,far*.4));/* 내가 걸으면 팀원도 걷는다(빠른 걸음까지) — 7m 넘게 처질 때만 뛴다 */if(C.ls<2.6&&far<7)want=Math.min(want,3.0);if(hurt)want=Math.min(want,1.05);want=Math.min(want,6.4);
+  /* 내가 멈춰 있으면 0.65m 안은 도착으로 본다(자리 근처에서 꼼지락거리지 않게) */let want=dd<(C.ls<.3?.65:.3)?0:clamp(dd*1.8,0,Math.max(1.8,C.ls+2.2));if(far>14)want=Math.max(want,Math.min(6.2,far*.4));/* 내가 걸으면 팀원도 걷는다(빠른 걸음까지) — 7m 넘게 처질 때만 뛴다 */if(C.ls<2.6&&far<7)want=Math.min(want,3.0);if(hurt)want=Math.min(want,1.05);want=Math.min(want,6.4);
   m.v+=(want-m.v)*Math.min(1,dt*(want>m.v?3.2:5.5));
   if(m.v>.06&&dd>.05){const st=Math.min(dd,m.v*dt);let nx=P.x+dx/dd*st,nz=P.z+dz/dd*st;
     if(FP3.blocked(nx,nz,.26)){if(!FP3.blocked(nx,P.z,.26))nz=P.z;else if(!FP3.blocked(P.x,nz,.26))nx=P.x;else{nx=P.x;nz=P.z;m.stuck+=dt}}else m.stuck=Math.max(0,m.stuck-dt*.5);
@@ -15103,7 +15114,7 @@ function tmUI(){const b=$('#oBar');if(!b||!OUT.on)return;let t=b.querySelector('
 function tmPanel(open){const el=SV3.el;if(!el)return;let p=$('#tmPanel');if(!open){if(p)p.remove();return}if(!p){p=document.createElement('div');p.id='tmPanel';p.className='mis-panel tm-panel';el.appendChild(p)}
   const L=tmLive();const row=m=>{const d=m.d,R=TM_ROLE[d.role];const near=Math.hypot(m.h.root.position.x-FP3.pos.x,m.h.root.position.z-FP3.pos.z)<4.5;const st=d.st==='crit'?`<em class="red">중상 · ${Math.ceil(m.bleed||0)}초</em>`:d.st==='hurt'?'<em class="amb">부상 — 절뚝임</em>':'<em>따라옴 · 엄호</em>';
     const aid=(d.st==='crit'||d.st==='hurt')?`<button class="btn sm ${d.st==='crit'?'pri':''}" data-g3="tmaid" data-id="${d.id}"${near?'':' disabled'}>${near?'응급 처치':'가까이 가야'}</button>`:'';
-    return `<div class="mis-row"><span class="mis-ico">${R.ic}</span><div><b>${d.nm} <small>${d.age}대 · ${d.job}</small></b><small>${TM_SLOT[m.slot]?TM_SLOT[m.slot].n:''} · ${d.role} — ${R.d}</small>${st}<i class="tm-hp"><i style="width:${Math.max(0,Math.round(d.hp))}%"></i></i></div><div class="tm-acts">${aid}<button class="btn sm ghost" data-g3="tmkick" data-id="${d.id}">내보내기</button></div></div>`};
+    return `<div class="mis-row"><span class="mis-ico">${R.ic}</span><div><b>${d.nm} <small>${d.age}대 · ${d.job}</small></b><small>${TM_SLOT[m.slot]?TM_SLOT[m.slot].n:''} · ${d.role} — ${R.d}</small>${st}<i class="tm-hp"><i style="width:${Math.max(0,Math.round(d.hp))}%;background:${d.hp<25?'#e0503a':d.hp<60?'#e6a23a':'#2ccf7c'}"></i></i></div><div class="tm-acts">${aid}<button class="btn sm ghost" data-g3="tmkick" data-id="${d.id}">내보내기</button></div></div>`};
   const away=tmData().filter(d=>d.st==='away');const M=tmMemorial();
   const h=`<div class="mis-head"><b>👥 팀 ${L.length}/${TEAM.max}</b><button class="btn sm" data-g3="tmclose">닫기</button></div>${L.length?L.map(row).join(''):'<p class="mis-note">아직 팀원이 없다. 길에서 만난 사람에게 다가가 \'팀에 초대\'를 누른다.</p>'}
     ${away.length?`<p class="mis-note">후송 중: ${away.map(d=>`${d.nm}(${Math.max(0,(d.back||0)-G.turn)}턴 뒤)`).join(', ')}</p>`:''}${M.length?`<div class="tm-mem"><b>🎗 추모</b>${M.map(x=>`<span>${x.nm} · ${x.job} · ${x.at} · ${x.why}</span>`).join('')}</div>`:''}
