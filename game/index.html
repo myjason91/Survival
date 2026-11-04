@@ -1035,6 +1035,99 @@ body.fs-l .bx-how,body.fs-l .bx-opp small{font-size:14.5px}
 .sv3.tj-driving .sv3-punch,.sv3.rd-on .sv3-punch{display:none}.sv3.br-on .sv3-punch,.sv3.cine-on .sv3-punch{visibility:hidden}
 .mis-head .btn,.mis-row .btn{width:auto;flex:none;white-space:nowrap;min-height:34px;padding:6px 12px}
 .mis-head b{white-space:nowrap}
+/* ===== v8.7 같은 배경 교전(실제 지도 1인칭) ===== */
+.sv3.owc-on .hud,.sv3.owc-on .fr-bar,.sv3.owc-on .fr-stat,.sv3.owc-on .fr-acts,.sv3.owc-on .fr-note,.sv3.owc-on .out-warn,.sv3.owc-on .sv3-hint,.sv3.owc-on .sv3-jump,.sv3.owc-on .sv3-punch,.sv3.owc-on #misHud,.sv3.owc-on #misPanel,.sv3.owc-on #fpdUI,.sv3.owc-on .mis-btn,.sv3.owc-on .tip84{display:none!important}
+.sv3.owc-on .tj-mini{left:auto;right:max(10px,env(safe-area-inset-right,0px));top:8px;width:92px;height:92px}
+.sv3.owc-on .tj-mini span{display:none}
+.owc{position:absolute;inset:0;z-index:8;pointer-events:none;font-family:var(--sans);color:#fff;-webkit-user-select:none;user-select:none}
+.owc button{pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent}
+.owc-xh{position:absolute;left:50%;top:50%;width:0;height:0;--g:7px;z-index:2}
+.owc-xh i{position:absolute;background:#fff;box-shadow:0 0 2px #000}
+.owc-xh .xc{width:3px;height:3px;border-radius:50%;left:-1.5px;top:-1.5px}
+.owc-xh .xl{width:9px;height:2px;top:-1px;right:var(--g)}
+.owc-xh .xr{width:9px;height:2px;top:-1px;left:var(--g)}
+.owc-xh .xu{height:9px;width:2px;left:-1px;bottom:var(--g)}
+.owc-xh .xd{height:9px;width:2px;left:-1px;top:var(--g)}
+.owc-xh.tgt{--g:9px}.owc-xh.tgt i{background:#ff5a4a}.owc-xh.no i{background:#6ad0ff}
+.owc-auto,.owc-nf{position:absolute;left:50%;top:calc(50% + 22px);transform:translateX(-50%);white-space:nowrap;text-shadow:0 1px 3px #000}
+.owc-auto{font:800 10.5px/1 var(--mono);color:#ffb08a;letter-spacing:.04em}
+.owc-nf{font:800 11px/1.2 var(--sans);color:#8fe0ff;top:calc(50% + 36px)}
+.owc-hitm{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;opacity:0}
+.owc-hitm::before,.owc-hitm::after{content:'';position:absolute;left:0;top:12px;width:26px;height:2px;background:#fff;box-shadow:0 0 2px #000;transform:rotate(45deg)}
+.owc-hitm::after{transform:rotate(-45deg)}
+.owc-hitm.on{animation:owcHit .24s ease-out}
+.owc-hitm.hd::before,.owc-hitm.hd::after{background:#ff4a3a}
+@keyframes owcHit{0%{opacity:1;transform:scale(.7)}100%{opacity:0;transform:scale(1.15)}}
+.owc-vig{position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 42%,rgba(170,10,0,.6) 100%)}
+.owc-vig.on{animation:owcVig .55s ease-out}
+.owc-vig.low{opacity:.5}
+.owc-vig.low.on{animation:owcVig .55s ease-out}
+@keyframes owcVig{0%{opacity:1}100%{opacity:.0}}
+.owc-dmg{position:absolute;left:50%;top:50%;width:0;height:0}
+.owc-dmg i{position:absolute;left:-60px;top:-140px;width:120px;height:140px;transform-origin:60px 140px}
+.owc-dmg i::before{content:'';position:absolute;left:12px;top:0;width:96px;height:24px;border-top:5px solid rgba(255,60,40,.92);border-radius:50% 50% 0 0/100% 100% 0 0;filter:drop-shadow(0 0 4px rgba(255,40,20,.8))}
+.owc-marks i{position:absolute;transform:translate(-50%,-100%);font:800 10px/1.2 var(--sans);white-space:nowrap;text-shadow:0 1px 2px #000;font-style:normal}
+.owc-marks i.en{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid #ff4a3a;filter:drop-shadow(0 0 2px #000)}
+.owc-marks i.en.warn::after{content:'';position:absolute;left:-12px;top:-21px;width:20px;height:20px;border:2px solid #ff4a3a;border-radius:50%;animation:owcWarn .45s ease-in-out infinite alternate}
+@keyframes owcWarn{from{transform:scale(.8);opacity:.55}to{transform:scale(1.18);opacity:1}}
+.owc-marks i.al{color:#8fe0ff;padding:1px 4px;border-radius:5px;background:rgba(0,20,30,.45)}
+.owc-marks i.al.hurt{color:#ffb08a}
+.owc-marks i.pr{color:#fff;font-size:10.5px;padding:1px 5px;border-radius:5px;background:rgba(30,30,30,.62);border:1px solid rgba(255,255,255,.7)}
+.owc-tl{position:absolute;left:max(10px,env(safe-area-inset-left,0px));top:8px;display:flex;gap:8px;align-items:flex-start}
+.owc-menu{width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(10,14,18,.55);color:#fff;display:grid;place-items:center;padding:0}
+.owc-menu .ic{width:18px;height:18px}
+.owc-hp{display:grid;gap:3px;width:172px}
+.owc-hp .bar{position:relative;height:17px;border-radius:6px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.owc-hp .bar i{position:absolute;left:0;top:0;bottom:0;transition:width .25s ease,background .25s}
+.owc-hp .bar b{position:absolute;right:7px;top:0;font:800 12px/17px var(--mono);text-shadow:0 1px 2px #000,0 0 4px #000}
+.owc-hp small{font-size:10.5px;color:#e4eaef;text-shadow:0 1px 3px #000;white-space:nowrap}
+.owc-sq{position:absolute;left:max(10px,env(safe-area-inset-left,0px));top:56px;display:grid;gap:3px;justify-items:start}
+.owc-sm{display:flex;gap:5px;align-items:center;padding:2px 7px;border-radius:8px;background:rgba(10,14,18,.5);font-size:10.5px;line-height:1.3}
+.owc-sm i{width:7px;height:7px;border-radius:50%;background:#2ccf7c;flex:none}
+.owc-sm.hurt i{background:#e6a23a}.owc-sm.out{opacity:.55}.owc-sm.out i{background:#8a8f96}
+.owc-sm small{color:#c8d0d8;font-size:9.5px}
+.owc-tc{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:min(46%,430px);display:grid;justify-items:center;gap:5px}
+.owc-obj{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;text-shadow:0 1px 3px #000;font-size:12px}
+.owc-obj b{font-size:12.5px}
+.owc-radio{max-width:100%;padding:4px 10px;border-radius:9px;background:rgba(10,14,18,.68);border-left:3px solid #8fe0ff;font-size:12px;line-height:1.35;text-align:left}
+.owc-radio b{color:#8fe0ff;margin-right:4px}
+.owc-radio.pri{border-left-color:#ffb340}.owc-radio.pri b{color:#ffb340}
+.owc-msg{padding:4px 12px;border-radius:9px;background:rgba(10,14,18,.72);font-weight:800;font-size:13px}
+.owc-msg.warn{color:#ffb08a;border:1px solid rgba(255,120,80,.5)}
+.owc-feed{position:absolute;right:max(10px,env(safe-area-inset-right,0px));top:108px;display:grid;gap:3px;justify-items:end}
+.owc-feed div{padding:2px 8px;border-radius:7px;background:rgba(10,14,18,.55);font-size:10.5px;text-shadow:0 1px 2px #000}
+.owc-feed .me{color:#ffd27a}.owc-feed .al{color:#8fe0ff}.owc-feed .ok{color:#9ff0b8}
+.owc-fire{position:absolute;right:max(8px,env(safe-area-inset-right,0px));bottom:6px;width:250px;height:200px}
+.owc-fire>*{position:absolute}
+.owc-fb{right:2px;bottom:4px;width:90px;height:90px;border-radius:50%;border:3px solid rgba(255,255,255,.35);background:radial-gradient(circle at 40% 35%,#ff7a4a,#b8312a 70%);color:#fff;display:grid;justify-items:center;align-content:center;font-weight:900;font-size:12px;box-shadow:0 6px 18px -6px rgba(0,0,0,.8);padding:0}
+.owc-fb .ic{width:30px;height:30px;color:#fff}
+.owc-fb.on{transform:scale(.94);filter:brightness(1.15)}
+.owc-b{width:54px;height:54px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(10,14,18,.55);color:#fff;display:grid;justify-items:center;align-content:center;font-size:9.5px;font-weight:800;gap:1px;padding:0}
+.owc-b .ic{width:18px;height:18px;color:#fff}.owc-b .jg{font-size:18px;line-height:1}
+.owc-b.on{background:rgba(255,179,64,.35);border-color:#ffb340}
+.owc-ads{right:100px;bottom:56px}.owc-rel{right:108px;bottom:0}.owc-cr{right:8px;bottom:102px}.owc-jp{right:66px;bottom:140px}
+.owc-ammo{right:170px;bottom:8px;display:grid;grid-template-columns:auto auto;align-items:baseline;justify-content:end;text-align:right;text-shadow:0 2px 6px #000,0 0 3px #000;pointer-events:none}
+.owc-ammo b{font:900 28px/1 var(--mono)}.owc-ammo b.low{color:#ff7a5a}
+.owc-ammo span{font:700 13px/1 var(--mono);color:#cfd6dd;margin-left:2px}
+.owc-ammo small{grid-column:1/3;font-size:10px;color:#cfd6dd;margin-top:2px}
+.owc-items{position:absolute;right:max(180px,calc(env(safe-area-inset-right,0px) + 172px));bottom:62px;display:flex;gap:6px}
+.owc-it{position:relative;width:50px;height:50px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(10,14,18,.55);color:#fff;display:grid;justify-items:center;align-content:center;font-size:9.5px;font-weight:800;padding:0}
+.owc-it .ic{width:18px;height:18px;color:#fff}.owc-it i{position:absolute;right:4px;top:3px;font:800 11px/1 var(--mono);color:#ffd27a;font-style:normal}
+.owc-it:disabled{opacity:.4}
+.owc-help{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);width:min(480px,calc(100% - 300px));margin:0;text-align:center;font-size:11px;line-height:1.4;color:#e8eef2;text-shadow:0 1px 3px #000;transition:opacity .6s}
+.owc-help.out{opacity:0}
+.owc-res,.owc-res *{pointer-events:auto}
+.owc-res{z-index:30}
+.owc-stat{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.owc-stat span{display:grid;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.06);font-size:11px;color:var(--mut,#9aa4ad)}
+.owc-stat b{font-size:17px;color:var(--fg,#fff)}
+.owc-pause{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);pointer-events:auto;z-index:40}
+.owc-pause .sheet{width:min(420px,calc(100% - 32px));padding:16px;border-radius:16px;background:var(--panel,#12171d);border:1px solid var(--line,#2a323b);color:var(--fg,#fff)}
+.owc-pause h2{margin:0 0 6px;font-size:17px}
+.owc-pause .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+.owc-res .lead{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.owc-res .owc-go{justify-self:end;white-space:nowrap}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -12621,7 +12714,9 @@ function paraStep(dt){if(!PARA.on||!OUT.on)return;PARA.t+=dt;if(!PARA.cine&&PARA
 function paraClear(){PARA.on=false;PARA.cine=null;paraBars(false);paraSound(false);const w=$('#pBan');if(w)w.remove();if(PARA.hemi){PARA.hemi.intensity=PARA.hemi0;PARA.hemi=null}if(OUT.scene)PARA.objs.forEach(o=>OUT.scene.remove(o));PARA.objs=[];PARA.chutes=[];PARA.fl=[];PARA.tr=[];PARA.beams=[];PARA.crew=[];PARA.plane=null;PARA.tilt=0;TJ.goal=null;SND.stopSiren()}
 function paraAsk(){outEncShow({id:'para-join',cat:'예비군 집결 · 현관 방어',art:'shield',tone:'amber',title:'101동 현관 — 바리케이드 앞',text:'동 대표 박정수 씨(예비역 중사)가 소총을 내민다. "공수부대가 정문 쪽으로 옵니다. 예비역 셋, 주민 여섯이 전부예요. 현관만 지키면 위층 사람들은 삽니다." 계단실 쪽에서 아이 울음소리가 들린다.',
   lesson:'동원된 예비군은 지휘에 따라 무장하고 정해진 위치를 지킨다. 민간인은 교전에 끼지 말고 지하·계단실 안쪽으로 대피하며, 부상자 이송·물자 운반처럼 위험이 적은 일을 돕는다.',src:'예비군법(동원·지역 방위) · 민방위 기본법 · 생존 수첩 교전규칙',guide:'now',
-  choices:[{t:'소총을 받는다 — 주민·예비군과 현관을 지킨다',ok:true,s:'실시간 교전 · 가로 전체화면',go:()=>{G.flags.paraJoin=1;setTimeout(paraBattle,900);return '방탄 조끼 대신 두꺼운 외투를 여몄다. 바리케이드 뒤에 무릎을 꿇었다.'}},
+  choices:[{t:'소총을 받는다 — 주민·예비군과 현관을 지킨다',ok:true,s:(typeof owcAvail==='function'&&owcAvail())?'이 자리에서 바로 교전 · 화면 전환 없음':'실시간 교전 · 가로 전체화면',go:()=>{G.flags.paraJoin=1;
+      /* v8.7: 같은 배경 교전 — '계속'을 누르면 밖 탐색 장면 그대로 1인칭 교전 */if(typeof owcAvail==='function'&&owcAvail()&&OUT.enc){OUT.enc.after=()=>{if(!owcStart('para'))paraBattle()};return '방탄 조끼 대신 두꺼운 외투를 여몄다. 소총을 받아 모래주머니 뒤에 무릎을 꿇었다. — \'계속\'을 누르면 이 자리에서 바로 교전이 시작된다.'}
+      setTimeout(paraBattle,900);return '방탄 조끼 대신 두꺼운 외투를 여몄다. 바리케이드 뒤에 무릎을 꿇었다.'}},
     {t:'주민들을 계단실 안쪽으로 대피시키는 일을 맡는다',ok:true,go:()=>{G.flags.paraDone=1;trust(3);mor(1);paraClear();return '아이와 노인을 위층 계단실로 올려 보냈다. 현관 쪽 총성은 한 시간 넘게 이어지다 멎었다. (예비군이 현관을 지켰다)'}},
     {t:'가족이 있는 대피소로 돌아간다',ok:null,go:()=>{G.flags.paraDone=1;mor(-2);paraClear();return '돌아서는 등 뒤로 총성이 시작됐다.'}}]})}
 function paraMiss(){G.flags.paraDone=1;FX=[];mor(-4);OUT.fx.push(...FX);outStat();paraClear();outNote('<b>집결 시간이 지났다</b><div>101동 쪽에서 총성이 한참 이어지다 멎었다. 예비군과 주민들이 가까스로 현관을 지켰다고 한다. 사기 −4</div>',5200)}
@@ -13050,7 +13145,7 @@ function perfStartup(){try{const m=performance.getEntriesByName('sot-title')[0];
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='8.6';
+const APP_VER='8.7';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13067,7 +13162,7 @@ const EDU_SKIP=new Set(['resv','resv2','roofdrone','wv_debate','wv_vip','wv_mob'
 (function(){if(typeof VIG==='undefined'||!VIG.body)return;const o=VIG.body.only;VIG.body.only=function(){if(eduOn())return false;return o?o.apply(this,arguments):true}})();
 (function(){const base=window.outEncShow;window.outEncShow=function(E){if(E&&eduOn()&&Array.isArray(E.choices)){
   if(E.id==='out-looter')E.choices=E.choices.filter(c=>!/맞서 싸운다|맨손으로 맞선다/.test(c.t));
-  if(E.id==='para-join')E.choices=E.choices.filter(c=>!/교전|소총을 받아/.test(c.t))}
+  if(E.id==='para-join')E.choices=E.choices.filter(c=>!/교전|소총을 받/.test(c.t))}
   return base.apply(this,arguments)}})();
 /* ---------- 오류 기록(기기 안에만, 최근 25건) ---------- */
 const ERRLOG={k:'sg.errlog',max:25,list(){const L=store.get(this.k,[]);return Array.isArray(L)?L:[]},
@@ -13153,6 +13248,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
     ${s4Seg('vib','진동','',[[1,'켬'],[0,'끔']],a.vib?1:0)}
     <div class="s4-sec">게임 방식</div>
     ${s4Seg('pace','화면 움직임','끊겨 보이면 30fps로 고르게 고정 — 자동은 장면마다 재서 정한다',[['auto','자동'],['30','30 고정'],['60','최대']],paceMode())}
+    ${s4Seg('owc','실제 지도 교전','공수부대 강하 때 밖 탐색 장면 그대로 싸울지, 전투 화면으로 넘어갈지',[[1,'같은 배경'],[0,'전투 화면']],store.get('sg.owc',true)!==false?1:0)}
     ${s4Seg('otime','밖 탐색 시간','걷고 둘러보는 동안에도 시간이 흐를지 (뒤지기·돕기 같은 행동은 늘 시간을 쓴다)',[[0,'걷기 무제한'],[1,'현실처럼 흐름']],store.get('sg.outTimed',false)?1:0)}
     <div class="s4-sec">교육용 모드</div>
     ${s4Seg('edu','교육용 모드','전투·격투·정치 선동·시신 장면 없이 생존 수칙만 (학교·기관용, 다음 사건부터)',[[0,'끔'],[1,'켬']],eduOn()?1:0)}
@@ -13173,6 +13269,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='v'){S4.view=b.dataset.v;S4.conf=null;s4Re();return}
   if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
+    else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
     else if(k==='edu'){store.set('sg.edu',v==='1');a11yApply();toast(v==='1'?'교육용 모드: 전투·격투·정치 선동·시신 장면을 뺀다 (다음 사건부터)':'교육용 모드를 껐다',3000)}s4Re();return}
   if(a==='errcopy'){const L=ERRLOG.list();s4Copy(`[생존of탕정 오류 기록 v${APP_VER}] ${navigator.userAgent}\n`+L.map(x=>`${x.t}${x.n?' ×'+x.n:''} [${x.s}] ${x.m}${x.at?' @'+x.at:''}`).join('\n'));return}
@@ -13973,6 +14070,489 @@ document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-g3=p
 document.addEventListener('keydown',e=>{if(e.code==='KeyF'&&SV3.el&&$('#sv3Punch')&&!e.repeat){e.preventDefault();punch()}});
 /* 대피소 자유 모드는 카드 띠 높이에 맞춰 점프 버튼을 올린다 — 주먹도 같은 높이로 */
 (function(){const st=FP3.step;FP3.step=function(dt){const r=st.call(this,dt);const j=document.getElementById('sv3Jump'),p=document.getElementById('sv3Punch');if(j&&p&&p.style.bottom!==j.style.bottom)p.style.bottom=j.style.bottom;return r}})();
+
+/* ===================== 48 · v8.7 같은 배경 교전 — 실제 지도 위에서 화면 전환 없이 1인칭 교전 ===================== */
+/* 공수부대 강하(28) 뒤 101동 현관에서 '소총을 받는다'를 고르면 밖 탐색 장면 그대로 교전이 시작된다(전투 화면으로 넘어가지 않는다).
+   · 내 편: 예비군 소대장·경비원·주민 등 무장 5명 + 탄약을 나르는 주민 2명, 현관 앞 모래주머니·소파·책상 바리케이드
+   · 적(가상 상황): 정문으로 들어오는 정찰조 3 → 본대 5(+담장 밖 도로 사격조 2, 마당을 가로질러 뛰는 주민 1) → 돌격조 5(+흰 천 투항자 1)
+   · 기동타격대 도착(4분)까지 버티거나 모두 물리치면 이긴다 — 결과(신뢰·사기·물자·부상)는 생존 진행에 그대로(28 integApply m7)
+   판정: 내 총탄 = 사람 맞춤(머리·몸·다리) + 엄폐물(회전 상자) + 건물 높이 격자(1m) + 땅. 적·아군 사격 = 시야(건물 높이)·거리·엄폐·움직임 확률 */
+const OWC={on:false,k:'',S:null,t:0,done:false,en:[],al:[],hp:[],pr:[],cov:[],obj:[],grp:null,F:null,A:null,face:null,
+  hpP:100,mag:30,res:120,nade:2,med:2,reload:0,ads:false,adsK:0,cr:false,crK:0,fire:false,lastShot:-9,bloom:0,kickP:0,kick:0,medT:0,
+  stt:{shots:0,hits:0,kills:0,civ:0,surr:0,dmg:0,cap:0,heads:0,ff:0},wave:-1,waveT:0,qrf:0,hitList:[],hitDirty:true,byH:new Map(),aimOn:null,aimT:0,
+  q:[],say:[],sayT:0,feed:[],dmgA:[],camT:0,after:false,res0:null,leaveT:0,lowSaid:0,nades:[],vm:null,auto:true,sens:1};
+const OWC_W={n:'K2 소총',mag:30,res:120,rate:.105,sp:1.75,spA:.42,bl:.4,bmax:3.2,reload:2.3};
+const OWC_E={rifle:{n:'적 소총수',hp:2,aim:1.35,acc:.7,dmg:12,burst:3,gap:.15},mg:{n:'적 기관총 사수',hp:3,aim:1.05,acc:.72,dmg:9,burst:6,gap:.085},
+  elite:{n:'적 특수부대 조장',hp:5,aim:.95,acc:.8,dmg:14,burst:4,gap:.13},rusher:{n:'적 돌격조',hp:2,aim:1,acc:.6,dmg:20,burst:2,gap:.2},surr:{n:'투항자'},civ:{n:'주민'}};
+const owcDiff=()=>{const d=G&&G.diff;return d==='train'?.62:d==='hard'?1.15:.86};
+const owcRng=()=>Math.random();
+/* ---------- 건물 높이 격자(1m): 시야·총탄 판정. 담장·물은 막지 않는다(총은 철망 너머로도 보인다) ---------- */
+function owcHG(){if(OWC.hg)return OWC.hg;const D=TJ_DATA,R=D.R,N=2*R;const c=cvs(N,N),x=c.getContext('2d',{willReadFrequently:true});x.fillStyle='#000';x.fillRect(0,0,N,N);
+  for(const b of D.B){const p=b[4];let near=false;for(let i=0;i<p.length;i+=2)if(Math.abs(p[i])<R+30&&Math.abs(p[i+1])<R+30){near=true;break}if(!near)continue;const h=clamp(Math.round(b[1]||6),3,255);x.fillStyle=`rgb(${h},0,0)`;x.beginPath();for(let i=0;i<p.length;i+=2){i?x.lineTo(p[i]+R,p[i+1]+R):x.moveTo(p[i]+R,p[i+1]+R)}x.closePath();x.fill()}
+  const d=x.getImageData(0,0,N,N).data;const h=new Uint8Array(N*N);for(let i=0;i<N*N;i++)h[i]=d[i*4];return OWC.hg={x0:-R,z0:-R,n:N,h}}
+function owcLos(ax,ay,az,bx,by,bz){const G0=owcHG(),n=G0.n,H=G0.h;const dx=bx-ax,dz=bz-az,dy=by-ay;const L=Math.hypot(dx,dz);if(L<1)return true;const st=Math.ceil(L/.6);
+  for(let k=1;k<st;k++){const u=k/st;const i=Math.floor(ax+dx*u-G0.x0),j=Math.floor(az+dz*u-G0.z0);if(i<0||j<0||i>=n||j>=n)continue;const h=H[j*n+i];if(h&&h>ay+dy*u)return false}return true}
+/* 광선이 건물에 처음 닿는 거리(없으면 Infinity) */
+function owcRayHG(o,d,maxD){const G0=owcHG(),n=G0.n,H=G0.h;if(Math.hypot(d.x,d.z)<1e-4)return Infinity;for(let t=.5;t<maxD;t+=.5){const y=o.y+d.y*t;if(y<0)return Infinity;const i=Math.floor(o.x+d.x*t-G0.x0),j=Math.floor(o.z+d.z*t-G0.z0);if(i<0||j<0||i>=n||j>=n)return Infinity;const h=H[j*n+i];if(h&&h>y)return Math.max(.1,t-.25)}return Infinity}
+/* ---------- 길찾기: 앵커(현관)까지 거리장(담장·건물을 돌아 정문으로) ---------- */
+function owcFlow(ax,az,R){const O=TJ.occ,n=O.n;const ci=Math.floor(ax-O.x0),cj=Math.floor(az-O.z0);const i0=Math.max(1,ci-R),j0=Math.max(1,cj-R),i1=Math.min(n-2,ci+R),j1=Math.min(n-2,cj+R);const W=i1-i0+1,H=j1-j0+1;const D=new Uint16Array(W*H).fill(65535);
+  const free=(i,j)=>!O.b[j*n+i];let si=ci,sj=cj;if(!free(si,sj)){let bd=1e9;for(let dj=-5;dj<=5;dj++)for(let di=-5;di<=5;di++){if(free(ci+di,cj+dj)&&di*di+dj*dj<bd){bd=di*di+dj*dj;si=ci+di;sj=cj+dj}}}
+  const bk=[];const push=(k,c)=>{(bk[c]||(bk[c]=[])).push(k)};const k0=(sj-j0)*W+(si-i0);D[k0]=0;push(k0,0);const NB=[[1,0,10],[-1,0,10],[0,1,10],[0,-1,10],[1,1,14],[1,-1,14],[-1,1,14],[-1,-1,14]];
+  for(let c=0;c<bk.length;c++){const B=bk[c];if(!B)continue;for(let q=0;q<B.length;q++){const k=B[q];if(D[k]!==c)continue;const li=k%W,lj=(k-li)/W;const gi=li+i0,gj=lj+j0;
+      for(let m=0;m<8;m++){const di=NB[m][0],dj=NB[m][1];const ni=li+di,nj=lj+dj;if(ni<0||nj<0||ni>=W||nj>=H)continue;if(O.b[(gj+dj)*n+gi+di])continue;if(di&&dj&&(O.b[gj*n+gi+di]||O.b[(gj+dj)*n+gi]))continue;const nk=nj*W+ni,nc=c+NB[m][2];if(nc<D[nk]){D[nk]=nc;push(nk,nc)}}}bk[c]=null}
+  return{i0,j0,W,H,D,ax:si+O.x0+.5,az:sj+O.z0+.5}}
+function owcFD(F,x,z){const O=TJ.occ;const i=Math.floor(x-O.x0)-F.i0,j=Math.floor(z-O.z0)-F.j0;if(i<0||j<0||i>=F.W||j>=F.H)return 65535;return F.D[j*F.W+i]}
+/* 거리장 내리막으로 look칸 앞 지점 */
+function owcFStep(F,x,z,look){const O=TJ.occ;let i=Math.floor(x-O.x0)-F.i0,j=Math.floor(z-O.z0)-F.j0;if(i<0||j<0||i>=F.W||j>=F.H)return null;
+  for(let s=0;s<look;s++){let bi=i,bj=j,bd=F.D[j*F.W+i];for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const ni=i+di,nj=j+dj;if(ni<0||nj<0||ni>=F.W||nj>=F.H)continue;const v=F.D[nj*F.W+ni];if(v<bd){bd=v;bi=ni;bj=nj}}if(bi===i&&bj===j)break;i=bi;j=bj}
+  return{x:i+F.i0+O.x0+.5,z:j+F.j0+O.z0+.5}}
+function owcTrace(F,x,z,max){const L=[];let p={x,z};for(let k=0;k<(max||900);k++){const q=owcFStep(F,p.x,p.z,1);if(!q||(Math.abs(q.x-p.x)<.01&&Math.abs(q.z-p.z)<.01))break;L.push(q);p=q;if(owcFD(F,p.x,p.z)<=0)break}return L}
+function owcFree(x,z,r){const O=TJ.occ,n=O.n;for(let dj=-Math.ceil(r);dj<=Math.ceil(r);dj++)for(let di=-Math.ceil(r);di<=Math.ceil(r);di++){if(di*di+dj*dj>r*r+.5)continue;const i=Math.floor(x+di-O.x0),j=Math.floor(z+dj-O.z0);if(i<0||j<0||i>=n||j>=n||O.b[j*n+i])return false}return true}
+/* ---------- 엄폐물: 회전 상자(판정) + 모습(모래주머니·방호벽·불탄 차·소파·책상·화단) ---------- */
+function owcObb(x,z,ang,hw,hd,h,kind){return{x,z,ang,c:Math.cos(ang),s:Math.sin(ang),hw,hd,h,kind}}
+function owcRayObb(o,d,b,maxD){const lx=o.x-b.x,lz=o.z-b.z;const ox=lx*b.c+lz*b.s,oz=-lx*b.s+lz*b.c;const dx=d.x*b.c+d.z*b.s,dz=-d.x*b.s+d.z*b.c;let t0=0,t1=maxD;
+  const sl=(p,v,mn,mx)=>{if(Math.abs(v)<1e-9){if(p<mn||p>mx)t1=-1;return}let a=(mn-p)/v,c=(mx-p)/v;if(a>c){const t=a;a=c;c=t}if(a>t0)t0=a;if(c<t1)t1=c};
+  sl(ox,dx,-b.hw,b.hw);if(t1<t0)return Infinity;sl(oz,dz,-b.hd,b.hd);if(t1<t0)return Infinity;sl(o.y,d.y,0,b.h);if(t1<t0)return Infinity;return t0}
+function owcSeg2(ax,az,bx,bz,b){const lx=ax-b.x,lz=az-b.z;const ox=lx*b.c+lz*b.s,oz=-lx*b.s+lz*b.c;const dx0=bx-ax,dz0=bz-az;const dx=dx0*b.c+dz0*b.s,dz=-dx0*b.s+dz0*b.c;let t0=0,t1=1;
+  for(let k=0;k<2;k++){const p=k?oz:ox,v=k?dz:dx,m=k?b.hd:b.hw;if(Math.abs(v)<1e-9){if(p<-m||p>m)return -1;continue}let a=(-m-p)/v,c=(m-p)/v;if(a>c){const t=a;a=c;c=t}if(a>t0)t0=a;if(c<t1)t1=c;if(t1<t0)return -1}return t0}
+function owcInObb(x,z,b,r){const lx=x-b.x,lz=z-b.z;const u=lx*b.c+lz*b.s,v=-lx*b.s+lz*b.c;return Math.abs(u)<b.hw+r&&Math.abs(v)<b.hd+r}
+/* 맞는 쪽(bx,bz) 가까이(near m 안)에서 사선이 지나는 엄폐물 높이(없으면 0) */
+function owcCovH(ax,az,bx,bz,near){let best=0;const L=Math.hypot(bx-ax,bz-az)||1;for(const b of OWC.cov){if(Math.abs(b.x-bx)>near+2.6||Math.abs(b.z-bz)>near+2.6)continue;const t=owcSeg2(ax,az,bx,bz,b);if(t>=0&&(1-t)*L<=near&&b.h>best)best=b.h}return best}
+function owcAgentBlocked(x,z,r,skip){const O=TJ.occ,n=O.n;for(let k=0;k<5;k++){const a=k*1.2566,ox=k?Math.cos(a)*r:0,oz=k?Math.sin(a)*r:0;const i=Math.floor(x+ox-O.x0),j=Math.floor(z+oz-O.z0);if(i<0||j<0||i>=n||j>=n||O.b[j*n+i])return true}
+  for(const b of OWC.cov){if(b===skip)continue;if(Math.abs(b.x-x)>3.5||Math.abs(b.z-z)>3.5)continue;if(owcInObb(x,z,b,r))return true}return false}
+function owcLineOK(x0,z0,x1,z1,skip){const L=Math.hypot(x1-x0,z1-z0);const n=Math.max(1,Math.ceil(L/.5));for(let k=1;k<=n;k++){const u=k/n;if(owcAgentBlocked(x0+(x1-x0)*u,z0+(z1-z0)*u,.25,skip))return false}return true}
+const OWC_COV={bags:{hw:1.2,hd:.3,h:.92},barrier:{hw:1.2,hd:.27,h:.9},car:{hw:2.1,hd:.9,h:1.3},sofa:{hw:1.1,hd:.45,h:.85},desk:{hw:.8,hd:.4,h:.78},planter:{hw:1.2,hd:.45,h:.85}};
+function owcCover(kind,x,z,ang){const K=OWC_COV[kind];const b=owcObb(x,z,ang,K.hw,K.hd,K.h,kind);OWC.cov.push(b);const g=grp(x,0,z,OWC.grp);g.rotation.y=-ang;
+  if(kind==='bags'){const s=PK.sandbags(2.4,.95,g);s.traverse(o=>{if(o.isMesh)o.userData.solid=false})}
+  else if(kind==='barrier'){MM(GG.box(2.4,.62,.54),mat('#a39f95',{r:.95}),0,.31,0,{p:g});MM(GG.box(2.4,.3,.3),mat('#aaa69c',{r:.95}),0,.77,0,{p:g});MM(GG.box(2.42,.08,.56),mat('#c8a83a',{r:.8}),0,.12,0,{p:g,cast:false})}
+  else if(kind==='car'){const c=PK.car(null,g,true);c.rotation.y=Math.PI/2;MM(GG.pl(2.6,4.8),new T.MeshBasicMaterial({map:scorchTex(),transparent:true,opacity:.7,depthWrite:false}),0,.03,0,{p:g,rx:-Math.PI/2,rz:Math.PI/2,cast:false,recv:false})}
+  else if(kind==='sofa'){MM(GG.box(2.2,.45,.9,.06),mat('#6a4a3a',{r:.9}),0,.32,0,{p:g});MM(GG.box(2.2,.5,.22,.05),mat('#5e4234',{r:.9}),0,.68,-.34,{p:g});for(const sx of [-1,1])MM(GG.box(.22,.32,.9,.05),mat('#5e4234',{r:.9}),sx*1.0,.62,0,{p:g})}
+  else if(kind==='desk'){MM(GG.box(1.6,.06,.8),mat('#8a6a48',{r:.8}),0,.75,0,{p:g});MM(GG.box(1.56,.68,.06),mat('#7a5c3e',{r:.85}),0,.38,.36,{p:g});for(const sx of [-1,1])MM(GG.box(.06,.72,.76),mat('#7a5c3e',{r:.85}),sx*.76,.37,0,{p:g})}
+  else if(kind==='planter'){PK.planter(2.4,g)}
+  /* 내 몸 충돌: 긴 상자는 몇 조각의 축 정렬 상자로 나눠 모서리 헛충돌을 줄인다 */const nseg=Math.max(1,Math.round(K.hw/Math.max(.45,K.hd)));for(let i=0;i<nseg;i++){const u=-K.hw+K.hw*2*(i+.5)/nseg;const cx=x+b.c*u,cz=z+b.s*u;const hw=K.hw/nseg,hd=K.hd;const ex=Math.abs(b.c)*hw+Math.abs(b.s)*hd,ez=Math.abs(b.s)*hw+Math.abs(b.c)*hd;
+    const bx=new T.Box3(new T.Vector3(cx-ex,0,cz-ez),new T.Vector3(cx+ex,K.h,cz+ez));FP3.boxes.push(bx);OWC.pboxes.push(bx)}
+  return b}
+/* ---------- 사람 ---------- */
+function owcLook(type,id){if(type==='civ')return Object.assign({},look3('civ',id),{gun:null});return look3(type==='elite'?'elite':type==='mg'?'mg':type==='rusher'?'rusher':type==='surr'?'surr':'rifle',id)}
+function owcAllyLook(A,i){if(A.look==='rok')return charLook3({id:A.id,n:A.n,tint:SKINC[i%SKINC.length]},{nameTag:A.n,gun:'k2'});
+  const c=CIV3[(A.seed||i)%CIV3.length];return Object.assign({skin:SKINC[(A.seed||i)%SKINC.length],seed:A.seed||i},c,{gun:A.gun||'k2',vest:i%2?'#4f553b':null})}
+function owcMuz(h,out){if(h.gun&&!h.skipped){const m=h.gun.getObjectByName('muzzle');if(m){h.root.updateMatrixWorld(true);return m.getWorldPosition(out)}}const y=h.root.rotation.y;return out.set(h.root.position.x+Math.sin(y)*.6,(h.pose==='kneel'||h.pose==='low'?1.0:1.4),h.root.position.z+Math.cos(y)*.6)}
+function owcFace(h,x,z,dt,k){const want=Math.atan2(x-h.root.position.x,z-h.root.position.z);let dy=want-h.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));h.root.rotation.y+=dy*(dt==null?1:Math.min(1,dt*(k||8)))}
+function owcAdd(o){OUT.scene.add(o);OWC.obj.push(o);return o}
+/* ---------- 상황 정의 ---------- */
+const OWC_SC={
+  para:{n:'우리 아파트 지키기',sub:'101동 현관 방어',timer:240,mid:'m7',
+    waves:[{n:'정찰조',list:['rifle','rifle','rifle'],say:['예비군 소대장 박정수','정문! 적 셋 — 들어온다!']},
+      {n:'강하 본대',list:['rifle','rifle','mg','rifle','rifle'],flank:['rifle','rifle'],civ:1,say:['예비군 소대장 박정수','본대다! 정문으로 다섯, 담장 밖 도로에도 둘!']},
+      {n:'돌격조',list:['rusher','rifle','elite','rusher','rifle'],surr:1,say:['예비군 소대장 박정수','돌격조! 뛰어온다 — 바리케이드 지켜!']}],
+    allies:[{id:'kim',n:'박정수',r:'예비군 소대장',look:'rok',lead:1},{id:'jung',n:'최영길',r:'101동 경비원',look:'civ',seed:3},{id:'park',n:'이민호',r:'1203호 주민',look:'civ',seed:8},{id:'lee',n:'정하늘',r:'대학생 주민',look:'rok',seed:5},{id:'han',n:'한상철',r:'1501호 · 예비역 병장',look:'civ',seed:11}],
+    helpers:['김순자','오경호']}
+};
+/* ---------- 시작 ---------- */
+function owcAvail(){return typeof TJ!=='undefined'&&!!TJ.occ&&!!TJ.world&&typeof OUT!=='undefined'&&OUT.on&&!!OUT.scene&&RBX.ok&&store.get('sg.owc',true)!==false&&!eduOn()}
+function owcStart(kind){if(OWC.on||!owcAvail())return false;const S=OWC_SC[kind];if(!S)return false;
+  try{if(OUT.ride&&typeof rideEnd==='function')rideEnd()}catch(e){}try{if(OUT.drv&&typeof tjDriveEnd==='function')tjDriveEnd()}catch(e){}try{if(typeof MIS!=='undefined'&&MIS.cur){misClear();misHud(null)}}catch(e){}try{tjBigClose()}catch(e){}
+  if(typeof PARA!=='undefined'&&PARA.on)paraClear();owcCleanup(true);
+  Object.assign(OWC,{on:true,k:kind,S,t:0,done:false,res0:null,en:[],al:[],hp:[],pr:[],cov:[],obj:[],pboxes:[],wave:-1,waveT:0,qrf:S.timer||0,qrfSaid:0,hpP:100,mag:OWC_W.mag,res:OWC_W.res,nade:2,med:2,reload:0,ads:false,adsK:0,cr:false,crK:0,fire:false,lastShot:-9,bloom:0,kickP:0,kick:0,medT:0,
+    stt:{shots:0,hits:0,kills:0,civ:0,surr:0,dmg:0,cap:0,heads:0,ff:0,alHurt:0},tm:[],hitList:[],hitDirty:true,byH:new Map(),aimOn:null,aimT:0,q:[],say:[],sayT:0,feed:[],dmgA:[],camT:0,after:false,leaveT:0,lowSaid:0,nades:[],resT:28,flT:2,fl:[],qrfT:0,ffT:0,lowT:0,deadT:0});
+  OWC.hp0=Math.max(30,Math.min(100,G&&M('me')?M('me').hp:100));OWC.hpP=OWC.hp0;OWC.auto=!!bSel().auto;OWC.sens=bSel().sens||1;
+  OWC.grp=new T.Group();OWC.grp.name='owcStatic';OUT.scene.add(OWC.grp);
+  try{owcBuild(kind)}catch(e){console.error(e);OWC.on=false;owcCleanup(true);return false}
+  try{mergeStatic(OWC.grp,{cell:60})}catch(e){}
+  OWC.cam0={p:SV3.cam.position.clone(),q:SV3.cam.quaternion.clone()};OWC.camT=0;
+  /* 내 몸은 1인칭 동안 감춘다(밤 손전등 빛은 몸에 붙어 있으므로 몸통만 숨긴다) — 손전등은 바로 앞 모래주머니가 하얗게 뜨지 않게 줄인다 */if(OUT.me){OUT.me.mesh.visible=false}if(OUT.torch){OWC.torch0=OUT.torch.intensity;OUT.torch.intensity*=.45}
+  FP3.lock=false;FP3.mv.x=FP3.mv.y=0;FP3.nav=null;OUT.enc=null;OUT.busy=false;FP3.onTap=owcTap;
+  owcUI();owcVmBuild();SV3.el.classList.add('owc-on');SV3.cam.near=.05;SV3.cam.updateProjectionMatrix();
+  OWC.ray=OWC.ray||new T.Raycaster();OWC.FPS0=FP3.speed;
+  owcSay(S.allies[0].r+' '+S.allies[0].n,'정문 쪽으로 온다! 바리케이드 뒤로 — 머리 숙이고!',1);
+  owcLater(3.8,()=>{if(!OWC.done)owcSay('주민 '+S.helpers[0],'탄약은 계단 밑에 둘게요! 다치면 안으로 끌어낼게요!')});
+  try{SND.siren&&SND.stopSiren&&SND.stopSiren()}catch(e){}vib([60,40,60]);
+  return true}
+/* 전장 꾸리기: 앵커(현관 앞), 위협 방향(정문 쪽 경로), 바리케이드·아군 자리, 적 엄폐 자리 */
+function owcBuild(kind){const D=TJ_DATA,P=D.POI,V=D.V,U=D.U;
+  const L=tjLobbyOut(4.6);const F=owcFlow(L[0],L[1],230);OWC.F=F;const A={x:F.ax,z:F.az};OWC.A=A;
+  /* 정문 밖(도로 쪽) 진입점 → 앵커까지 경로 */const gx=P.gate[0]-V[0]*9,gz=P.gate[1]-V[1]*9;let ent={x:gx,z:gz};if(!owcFree(gx,gz,.6)){const q=owcNearFree(gx,gz,6);if(q)ent=q}OWC.ent=ent;
+  const tr=owcTrace(F,ent.x,ent.z,900);OWC.tr=tr;
+  /* 위협 방향: 앵커에서 경로 14~20m 지점 쪽 */let fx=0,fz=-1;for(let k=tr.length-1;k>=0;k--){const d=Math.hypot(tr[k].x-A.x,tr[k].z-A.z);if(d>=16){fx=tr[k].x-A.x;fz=tr[k].z-A.z;break}}const fl=Math.hypot(fx,fz)||1;fx/=fl;fz/=fl;OWC.face={x:fx,z:fz};
+  const rx=-fz,rz=fx;/* 오른쪽(위협을 볼 때) */const ang=Math.atan2(rz,rx);/* 상자 x축 = 좌우(rx,rz) */
+  /* 바리케이드: 앵커 앞 2.6m에 모래주머니 셋(가운데·좌우) + 양옆 소파·책상 */
+  /* 내 자리: 정면(정문 쪽) 모래주머니 + 왼쪽(담장·도로 쪽) 모래주머니로 ㄱ자 엄폐. 아군은 내 사선을 막지 않게 1~2m 뒤로 물러서 좌우에 */
+  const lz=(a)=>({x:-Math.sin(a),z:Math.cos(a)});const spots=[];
+  const put=(o,f,k,tw)=>{const x=A.x+rx*o+fx*f,z=A.z+rz*o+fz*f;if(!owcFree(x,z,.5))return null;if(OWC.cov.some(b=>Math.hypot(b.x-x,b.z-z)<2.2))return null;const a=ang+tw;owcCover(k,x,z,a);const n=lz(a);return{x:x+n.x*1.05,z:z+n.z*1.05,ch:OWC_COV[k].h,tw}};
+  OWC.pSpot=put(0,2.6,'bags',0)||{x:A.x+fx*1.4,z:A.z+fz*1.4,ch:.92};put(-1.35,1.45,'bags',Math.PI/2);
+  for(const c of [[3.0,1.2,'bags',0],[-3.3,1.05,'bags',.45],[-6.5,.65,'sofa',.75],[-9.7,.25,'bags',1.0],[5.9,.4,'desk',-.15],[-12.8,-.3,'barrier',1.15],[-4.9,-1.9,'planter',1.25],[1.9,-1.7,'bags',0]]){if(spots.length>=5)break;const q=put(...c);if(q)spots.push(q)}
+  /* 적 엄폐 자리: 경로를 따라 18~86m, 좌우로 */const es=[];for(let k=0;k<tr.length;k+=5){const p=tr[k];const de=Math.hypot(p.x-A.x,p.z-A.z);if(de<19||de>86)continue;const q=tr[Math.min(tr.length-1,k+4)];let tx=q.x-p.x,tz=q.z-p.z;const tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
+    for(const side of [-1,1]){let ok=null;for(const off of [6,9,3.5,12]){const x=p.x-tz*side*off,z=p.z+tx*side*off;if(!owcFree(x,z,1.7))continue;if(es.some(s=>Math.hypot(s.x-x,s.z-z)<6.5))continue;if(spots.some(s=>Math.hypot(s.x-x,s.z-z)<9))continue;if(!owcLos(x,1.35,z,A.x,1.3,A.z))continue;ok={x,z};break}
+      if(ok){const dx=A.x-ok.x,dz=A.z-ok.z,dl=Math.hypot(dx,dz)||1;const ux=dx/dl,uz=dz/dl;const kinds=['bags','barrier','car','bags','planter','barrier'];const kk=kinds[es.length%kinds.length];const cx=ok.x+ux*(kk==='car'?1.5:1.0),cz=ok.z+uz*(kk==='car'?1.5:1.0);
+        const cb=owcCover(kk,cx,cz,Math.atan2(-ux,uz)+(owcRng()-.5)*.3);es.push({x:ok.x,z:ok.z,de:Math.hypot(ok.x-A.x,ok.z-A.z),fd:owcFD(F,ok.x,ok.z),ch:cb.h,cb,used:null,out:false})}}}
+  /* 담장 밖 도로 사격조 자리: 담장 너머(길로는 멀고 눈으로는 가까운 곳) — 정문 쪽(내 오른쪽 앞)으로 치우쳐, 아군이 내 사선을 막지 않게 */const os=[];for(let s=8;s<=50&&os.length<4;s+=4){for(const k of [31,35,39,28]){const x=A.x-V[0]*k+U[0]*s,z=A.z-V[1]*k+U[1]*s;const de=Math.hypot(x-A.x,z-A.z);if(de<24||de>52)continue;if(!owcFree(x,z,1.5))continue;const fd=owcFD(F,x,z);if(fd<de*10*1.8)continue;if(!owcLos(x,1.4,z,A.x,1.3,A.z))continue;if(os.some(q=>Math.hypot(q.x-x,q.z-z)<8))continue;
+      const dx=A.x-x,dz=A.z-z,dl=Math.hypot(dx,dz)||1;const ux=dx/dl,uz=dz/dl;const kk=os.length%2?'barrier':'car';const cb=owcCover(kk,x+ux*(kk==='car'?1.5:1.0),z+uz*(kk==='car'?1.5:1.0),Math.atan2(-ux,uz));os.push({x,z,de,fd,ch:cb.h,cb,used:null,out:true});break}}
+  OWC.es=es.sort((a,b)=>b.de-a.de);OWC.os=os;
+  /* 아군: 바리케이드 뒤 5자리 */const S=OWC.S;S.allies.forEach((A0,i)=>{const sp=spots[i%spots.length]||{x:A.x+rx*(i-2)*2,z:A.z+rz*(i-2)*2,ch:.9};let h=null;try{h=makeHuman(owcAllyLook(A0,i))}catch(e){h=null}if(!h)return;
+    const jit=i>=spots.length?(i-spots.length+1)*1.3:0;const x=sp.x+rx*jit,z=sp.z+rz*jit;h.root.position.set(x,0,z);h.root.rotation.y=Math.atan2(fx,fz);h.setPose('crouch',true);h.lookKeep=true;owcAdd(h.root);
+    const a={side:'al',id:A0.id,n:A0.n,r:A0.r,lead:!!A0.lead,h,x,z,sp:{x,z,ch:sp.ch},st:'cover',t:.5+i*.4,hp:3,aimP:0,tgt:null,burst:0,shotT:0,cd:0,said:0};OWC.al.push(a);OWC.byH.set(h,a)});
+  /* 도우미 주민: 현관 안쪽 */S.helpers.forEach((n,i)=>{const h=civHuman(30+i*3,i?'crouch':'carry','civ');const x=A.x-fx*1.2+rx*(i?1.6:-1.6),z=A.z-fz*1.2+rz*(i?1.6:-1.6);h.root.position.set(x,0,z);h.root.rotation.y=Math.atan2(fx,fz)+(i?.6:-.6);owcAdd(h.root);OWC.hp.push({n,h,x,z,home:{x,z},st:'idle',t:0})});
+  /* 내 자리: 가운데 모래주머니 뒤, 정문 쪽을 본다 */FP3.pos.set(OWC.pSpot.x,0,OWC.pSpot.z);FP3.yaw=Math.atan2(-fx,-fz);FP3.pitch=-.02;OWC.cr=true;OWC.crK=1;
+  owcHG()}
+function owcNearFree(x,z,R){for(let r=1;r<=R;r++)for(let a=0;a<12;a++){const q={x:x+Math.cos(a/12*6.283)*r,z:z+Math.sin(a/12*6.283)*r};if(owcFree(q.x,q.z,.6))return q}return null}
+/* ---------- 정리 ---------- */
+function owcCleanup(all){(OWC.obj||[]).forEach(o=>{if(o.parent)o.parent.remove(o)});OWC.obj=[];if(OWC.grp&&OWC.grp.parent)OWC.grp.parent.remove(OWC.grp);OWC.grp=null;
+  if(OWC.pboxes){FP3.boxes=FP3.boxes.filter(b=>!OWC.pboxes.includes(b));OWC.pboxes=[]}OWC.cov=[];OWC.en=[];OWC.al=[];OWC.hp=[];OWC.pr=[];OWC.byH=new Map();OWC.hitList=[];OWC.after=false;
+  (OWC.fxL||[]).forEach(f=>{if(f.el&&f.el.parent)f.el.parent.remove(f.el)});OWC.fxL=[];if(OWC.pool){OWC.pool.forEach(p=>{if(p.m.parent)p.m.parent.remove(p.m)});OWC.pool=null}if(OWC.lights){OWC.lights.forEach(l=>{if(l.parent)l.parent.remove(l)});OWC.lights=null}
+  (OWC.fl||[]).forEach(f=>{if(f.g.parent)f.g.parent.remove(f.g)});OWC.fl=[];(OWC.nades||[]).forEach(n=>{if(n.el.parent)n.el.parent.remove(n.el)});OWC.nades=[]}
+/* ---------- 매 프레임(밖 탐색 outStep 대신) ---------- */
+function owcLater(sec,fn){(OWC.tm||(OWC.tm=[])).push({t:OWC.t+sec,fn})}
+function owcTimers(){if(!OWC.tm||!OWC.tm.length)return;const now=OWC.t;const due=OWC.tm.filter(q=>q.t<=now);if(!due.length)return;OWC.tm=OWC.tm.filter(q=>q.t>now);due.forEach(q=>{try{if(OWC.on)q.fn()}catch(e){console.error(e)}})}
+function owcStep(dt){OWC.t+=dt;const S=OWC.S;owcTimers();
+  /* 1) 나: 이동·자세·카메라 */owcPlayer(dt);
+  /* 2) 파도·시간 */if(!OWC.done)owcWaves(dt);
+  /* 3) 사람들 */owcAgents(dt);
+  /* 4) 효과·소리·조명탄 */owcFx(dt);FX3.step(dt);try{townLights(FP3.pos.x,FP3.pos.z)}catch(e){}if(TOWN.pool)TOWN.pool.forEach(l=>{l.intensity*=OUT.lampK==null?1:OUT.lampK});
+  /* 5) 조준 확인·자동사격·사격 */if(!OWC.done)owcAim(dt);
+  /* 6) 화면 */owcHud(dt);owcMarks();
+  if(OUT.me){OUT.me.root.position.set(FP3.pos.x,0,FP3.pos.z);OUT.me.root.rotation.y=FP3.yaw+Math.PI;OUT.me.update(dt)}}
+/* ---------- 나 ---------- */
+const _oc=new T.Vector3(),_od=new T.Vector3(),_oe=new T.Vector3(),_of=new T.Vector3(),_og=new T.Vector3();
+function owcPlayer(dt){const mv=FP3.mv;const len=Math.hypot(mv.x,mv.y);const busy=OWC.medT>0;
+  OWC.sprint=len>.88&&!OWC.ads&&!OWC.cr&&mv.y>.3&&!busy&&!OWC.done;FP3.speed=busy?.8:OWC.cr?1.35:OWC.sprint?5.0:OWC.ads?1.6:2.6;
+  if(!OWC.dead){FP3.step(dt)}else{FP3.mv.x=FP3.mv.y=0}
+  OWC.adsK+=((OWC.ads&&!OWC.sprint&&OWC.reload<=0?1:0)-OWC.adsK)*Math.min(1,dt*12);OWC.crK+=((OWC.cr?1:0)-OWC.crK)*Math.min(1,dt*9);
+  OWC.bloom=Math.max(0,OWC.bloom-dt*(OWC.fire?2.2:6));OWC.kickP=Math.max(0,OWC.kickP-dt*(OWC.fire?.05:.16));OWC.kick=Math.max(0,OWC.kick-dt*9);
+  if(OWC.reload>0){OWC.reload-=dt;if(OWC.reload<=0){const need=OWC_W.mag-OWC.mag;const n=Math.min(need,OWC.res);OWC.mag+=n;OWC.res-=n;owcAmmoUI()}}
+  if(OWC.medT>0){OWC.medT-=dt;if(OWC.medT<=0){OWC.hpP=Math.min(100,OWC.hpP+35);owcHpUI();owcFeed('구급 — 지혈대·붕대 (+35)','ok')}}
+  /* 떠나면 후퇴로 */const dA=Math.hypot(FP3.pos.x-OWC.A.x,FP3.pos.z-OWC.A.z);if(!OWC.done&&dA>95){OWC.leaveT+=dt;if(OWC.leaveT>.1&&OWC.leaveT-dt<=.1)owcMsg('현관에서 너무 멀다 — 돌아가지 않으면 후퇴로 처리된다',2.5,1);if(OWC.leaveT>8)owcEnd(false,'quit')}else OWC.leaveT=0;
+  /* 카메라: 눈높이(앉으면 1.1m) + 걷기 흔들림 + 반동 + 피격 흔들림. 시작할 때 0.7초 동안 3인칭에서 눈으로 옮긴다 */
+  const cam=SV3.cam;const eye=1.6-.38*OWC.crK+(FP3.jy||0);const mvK=Math.min(1,FP3.moving);OWC.bobT=(OWC.bobT||0)+dt*(OWC.sprint?11:7)*mvK;const bob=Math.sin(OWC.bobT)*.035*mvK*(1-OWC.adsK*.8);
+  _oc.set(FP3.pos.x,eye+bob,FP3.pos.z);let pitch=FP3.pitch+OWC.kickP,yaw=FP3.yaw;
+  if(OWC.dead){OWC.deadT+=dt;_oc.y=Math.max(.35,eye-OWC.deadT*1.2);pitch=Math.min(.6,FP3.pitch+OWC.deadT*.5)}
+  cam.rotation.order='YXZ';const fov=70-24*OWC.adsK;if(Math.abs(cam.fov-fov)>.05){cam.fov=fov;cam.updateProjectionMatrix()}
+  if(OWC.camT<.7){OWC.camT+=dt;const u=Math.min(1,OWC.camT/.7),e=u*u*(3-2*u);cam.position.copy(OWC.cam0.p).lerp(_oc,e);const q1=new T.Quaternion().setFromEuler(new T.Euler(pitch,yaw,0,'YXZ'));cam.quaternion.copy(OWC.cam0.q).slerp(q1,e)}
+  else{cam.position.copy(_oc);cam.rotation.set(pitch,yaw,(SV3.shake||0)*Math.sin(SV3.t*37)*.02)}
+  SV3.shake=(SV3.shake||0)*Math.exp(-dt*4);
+  try{tjSunFollow(FP3.pos)}catch(e){}}
+function owcAimDir(sp){const cam=SV3.cam;cam.getWorldDirection(_od);if(sp>0){const a=Math.random()*Math.PI*2,r=Math.sqrt(Math.random())*sp*DEG;_oe.crossVectors(_od,_og.set(0,1,0)).normalize();_of.crossVectors(_oe,_od);_od.addScaledVector(_oe,Math.cos(a)*r).addScaledVector(_of,Math.sin(a)*r).normalize()}return _od}
+function owcSpread(){const W=OWC_W;let s=W.sp+(W.spA-W.sp)*OWC.adsK+OWC.bloom*(1-.5*OWC.adsK);if(OWC.cr)s*=.8;s*=1+.8*Math.min(1,FP3.moving);if(FP3.air)s*=1.8;if(OUT.tod==='night'&&!OWC.flI)s*=1.15;return s}
+/* 사람·엄폐물·건물·땅 중 처음 맞는 곳 */
+function owcCast(o,d,maxD,skipAl){if(OWC.hitDirty)owcHitList();OWC.ray.set(o,d);OWC.ray.far=maxD;const hs=OWC.ray.intersectObjects(OWC.hitList,false);let best=null,bd=maxD;
+  for(const h of hs){const ud=h.object.userData;if(ud&&ud.hit&&ud.hit.h&&!ud.hit.h.dead){if(skipAl){const a=OWC.byH.get(ud.hit.h);if(a&&a.side==='al')continue}best={pt:h.point,hit:ud.hit,d:h.distance};bd=h.distance;break}}
+  for(const b of OWC.cov){const t=owcRayObb(o,d,b,bd);if(t<bd){bd=t;best={pt:o.clone().addScaledVector(d,t),cov:b,d:t}}}
+  const th=owcRayHG(o,d,bd);if(th<bd){bd=th;best={pt:o.clone().addScaledVector(d,th),wall:1,d:th}}
+  if(d.y<-1e-3){const tg=-o.y/d.y;if(tg<bd){bd=tg;best={pt:o.clone().addScaledVector(d,tg),ground:1,d:tg}}}return best}
+function owcHitList(){const L=[];for(const a of OWC.en)if(a.h&&!a.h.dead&&a.h.root.visible)L.push(...a.h.hits);for(const a of OWC.al)if(a.h&&!a.gone)L.push(...a.h.hits);for(const a of OWC.pr)if(a.h&&!a.h.dead&&a.h.root.visible)L.push(...(a.h.hits||[]));OWC.hitList=L;OWC.hitDirty=false}
+function owcShoot(){const W=OWC_W;if(OWC.done||OWC.dead||OWC.mag<=0||OWC.reload>0||OWC.medT>0)return false;if(OWC.sprint){OWC.sprint=false}
+  OWC.mag--;OWC.lastShot=OWC.t;OWC.stt.shots++;const cam=SV3.cam;const d=owcAimDir(owcSpread()).clone();OWC.bloom=Math.min(W.bmax,OWC.bloom+W.bl);OWC.kickP+=.0062*(1-.45*OWC.adsK);OWC.kick=1;
+  SFX.shot('rifle',{mine:true});vib(8);owcFlash(true);
+  const o=cam.position.clone();const b=owcCast(o,d,320,true);const from=owcVmMuzzle();
+  if(b){owcTracer(from,b.pt,0);if(b.hit)owcHitPerson(b.hit,b.pt,d);else{owcImpact(b.pt,b.ground?'#8d8676':b.cov&&b.cov.kind==='bags'?'#a8986e':'#c9c2b2',b.ground?null:d);owcSuppress(b.pt)}}
+  else owcTracer(from,o.clone().addScaledVector(d,160),0);
+  if(OWC.mag===0&&OWC.res>0)owcLater(.18,()=>{if(OWC.mag===0)owcReload()});owcAmmoUI();return true}
+function owcTap(){if(OWC.on&&!OWC.done&&OWC.t-OWC.lastShot>=OWC_W.rate)owcShoot()}
+function owcReload(){if(OWC.reload>0||OWC.mag>=OWC_W.mag||OWC.done)return;if(OWC.res<=0){owcMsg('남은 탄이 없다 — 주민이 탄을 가져올 때까지 버틴다',2,1);SFX.mech('empty');return}OWC.reload=OWC_W.reload;OWC.ads=false;owcBtn();SFX.mech('magout');setTimeout(()=>{if(OWC.on&&OWC.reload>0)SFX.mech('magin')},OWC_W.reload*600);setTimeout(()=>{if(OWC.on)SFX.mech('bolt')},OWC_W.reload*950);owcAmmoUI()}
+/* 맞은 사람 */
+function owcHitPerson(hit,pt,d){const a=OWC.byH.get(hit.h);if(!a)return;const part=hit.part;
+  if(a.side==='al'){OWC.stt.ff++;owcBlood(pt);if(OWC.t-OWC.ffT>4){OWC.ffT=OWC.t;owcSay(a.r+' '+a.n,'아군이다! 사격 중지!',1);FX=[];trust(-1);OUT.fx.push(...FX)}a.flinch=1;return}
+  if(a.prot){owcBlood(pt);owcROE(a);return}
+  OWC.stt.hits++;const head=part==='head';const dmg=head?2.2:part==='legs'?.7:1;a.hp-=dmg;a.flinch=1;owcBlood(pt);owcHitMark(head);
+  if(a.hp<=0){if(head)OWC.stt.heads++;owcKill(a,'me',d,head)}else if(a.st==='aim'){a.aimP=Math.max(0,a.aimP-.55);if(Math.random()<.45){a.st='hide';a.t=.35}}}
+function owcROE(a){if(a.hit)return;a.hit=1;a.h&&humanDie(a.h);a.st='down';OWC.hitDirty=true;if(a.type==='surr')OWC.stt.surr++;else OWC.stt.civ++;
+  owcSay('예비군 소대장 박정수',a.type==='surr'?'사격 중지! 투항자였다고!':'사격 중지! 주민이었어요!',1);owcMsg(a.type==='surr'?'투항자 사격 — 교전규칙 위반':'주민 피격 — 교전규칙 위반',3,1);SND.bad&&SND.bad();vib([120,60,120])}
+function owcKill(a,by,d,head){if(a.st==='down')return;a.st='down';a.hp=0;humanDie(a.h,d?{x:Math.sign(d.x)*(Math.abs(d.x)>Math.abs(d.z)?1:0),z:Math.sign(d.z)*(Math.abs(d.z)>=Math.abs(d.x)?1:0)}:null);a.downT=0;OWC.hitDirty=true;if(a.spot){a.spot.used=null;a.spot=null}
+  const nm=(OWC_E[a.type]||OWC_E.rifle).n;if(by==='me'){OWC.stt.kills++;owcFeed(`당신 ▸ ${nm}${head?' (머리)':''}`,'me')}else{owcFeed(`${by.n} ▸ ${nm}`,'al');if(OWC.t-(by.said||-9)>9&&Math.random()<.6){by.said=OWC.t;owcSay(by.r+' '+by.n,['하나 잡았다!','쓰러졌다!','하나 처리!'][Math.floor(Math.random()*3)])}}}
+/* 탄이 적 근처에 떨어지면 조준이 흐트러진다(제압) */
+function owcSuppress(p){for(const a of OWC.en){if(a.st!=='aim'||a.prot)continue;const q=a.h.root.position;if(Math.hypot(p.x-q.x,p.y-1.2,p.z-q.z)<2.4){a.aimP=Math.max(0,a.aimP-.22);if(Math.random()<.22){a.st='hide';a.t=.35}}}}
+/* 조준점: 적 위에 머물면 자동사격(전투 모드 설정 '자동사격'을 따른다) */
+function owcAim(dt){if(OWC.dead)return;const cam=SV3.cam;cam.updateMatrixWorld(true);const d=owcAimDir(0).clone();const b=owcCast(cam.position.clone(),d,260);let tgt=null,host=false,prot=false,al=false;
+  if(b&&b.hit){const a=OWC.byH.get(b.hit.h);if(a){if(a.side==='al')al=true;else if(a.prot)prot=true;else if(a.st!=='down'){tgt=a;host=true}}}
+  if(tgt!==OWC.aimOn){OWC.aimOn=tgt;OWC.aimT=0}else if(tgt)OWC.aimT+=dt;
+  const xh=$('#owcXh');if(xh){xh.classList.toggle('tgt',host);xh.classList.toggle('no',prot||al)}const nf=$('#owcNoFire');if(nf){const t=prot?'사격 금지 — 보호 대상':al?'아군':'';if(nf.textContent!==t){nf.textContent=t;nf.hidden=!t}}
+  const W=OWC_W;const can=OWC.mag>0&&OWC.reload<=0&&OWC.medT<=0&&!OWC.sprint&&OWC.t-OWC.lastShot>=W.rate;
+  if(OWC.fire&&can)owcShoot();else if(OWC.fire&&OWC.mag<=0&&OWC.reload<=0&&OWC.t-OWC.lastShot>.3){OWC.lastShot=OWC.t;SFX.mech('empty');if(OWC.res>0)owcReload()}
+  else if(OWC.auto&&host&&OWC.aimT>=.18&&can&&!OWC.fire){owcShoot();const h=$('#owcAuto');if(h){h.hidden=false;clearTimeout(owcAim._t);owcAim._t=setTimeout(()=>{h.hidden=true},400)}}}
+/* 맞음 */
+function owcHurt(n,from,src){if(OWC.done||OWC.dead)return;n=Math.round(n);if(n<=0)return;OWC.hpP=Math.max(0,OWC.hpP-n);OWC.stt.dmg+=n;vib([90,30,60]);SND.tone(70,.18,'sine',.3);if(OWC.hpP<35)try{SND.heart()}catch(e){}
+  const v=$('#owcVig');if(v){v.classList.remove('on');void v.offsetWidth;v.classList.add('on')}sv3Shake(.25);
+  if(from){const dx=from.x-FP3.pos.x,dz=from.z-FP3.pos.z;const fx=-Math.sin(FP3.yaw),fz=-Math.cos(FP3.yaw);const rx=Math.cos(FP3.yaw),rz=-Math.sin(FP3.yaw);const ang=Math.atan2(dx*rx+dz*rz,dx*fx+dz*fz);OWC.dmgA.push({a:ang,t:1.3})}
+  if(OWC.hpP<40&&OWC.t-OWC.lowSaid>14){OWC.lowSaid=OWC.t;owcSay('예비군 소대장 박정수','머리 숙여요! 앉아서 쏴요!',1)}
+  owcHpUI();if(OWC.hpP<=0){OWC.dead=true;OWC.deadT=0;owcMsg('쓰러졌다 — 주민들이 계단실로 끌어낸다',3,1);owcLater(1.8,()=>owcEnd(false,'down'))}}
+/* ---------- 끝 ---------- */
+function owcEnd(win,why){if(OWC.done)return;OWC.done=true;OWC.win=!!win;OWC.why=why||'';OWC.fire=false;OWC.ads=false;
+  if(win){OWC.en.forEach(a=>{if(a.st!=='down'&&!a.prot){a.st='retreat';a.t=20;a.h.setPose('run')}});owcSay('예비군 소대장 박정수',why==='qrf'?'기동타격대가 왔다… 살았다. 다들 괜찮아요?':'끝났다… 다들 괜찮아요?',1)}
+  owcLater(win?1.8:.6,owcResult)}
+function owcResult(){if(!OWC.on)return;const S=OWC.S;const s=OWC.stt;const win=OWC.win,quit=OWC.why==='quit';
+  /* 결과 반영: 28의 m7 결과 함수를 그대로 쓴다(신뢰·사기·물·식량·부상·교전규칙) */
+  const s2={shots:s.shots,hits:s.hits,kills:s.kills,civ:s.civ,surr:s.surr,dmg:s.dmg};FX=[];let txt='';
+  try{if(G&&M('me'))M('me').hp=Math.max(1,Math.min(M('me').hp,OWC.hp0));txt=integApply(win,{mid:S.mid||'m7',s:s2,hpFrac:clamp(OWC.hpP/Math.max(1,OWC.hp0),0,1),quit})}catch(e){console.error(e);txt=''}
+  if(s.alHurt)txt+=` <span class="small">부상 후송 ${s.alHurt}명 — 주민들이 계단실로 옮겼다.</span>`;if(s.cap)txt+=` <span class="small">투항자 ${s.cap}명 확보 — 기동타격대에 넘겼다.</span>`;
+  const fx=FX.slice();OUT.fx.push(...fx);try{outStat()}catch(e){}
+  if(OUT.timed)OUT.h=Math.max(0,OUT.h-.5);OWC.res0={win,quit,txt};
+  const el=$('#owcResult');if(el){const acc=s.shots?Math.round(s.hits/s.shots*100):0;el.hidden=false;
+    el.innerHTML=`<div class="sheet"><div class="lead"><div class="badge ${win?'green':'red'}">${ic(win?'shield':'x')}</div><div><div class="eyebrow">같은 자리 교전 · ${S.n}</div><h2>${win?'101동 현관을 지켰다':quit?'현관을 내주고 물러났다':'부상 — 계단실로 끌려 올라왔다'}</h2></div><button class="btn pri owc-go" data-g3="owcclose">밖 탐색 계속</button></div>
+      <div class="owc-stat"><span><b class="num">${s.kills}</b>무력화</span><span><b class="num">${acc}%</b>명중 (${s.hits}/${s.shots})</span><span><b class="num">${s.heads}</b>머리</span><span><b class="num">${s.dmg}</b>받은 피해</span></div>
+      <p class="result">${txt}</p>${fxChips(fx)}<div class="lesson ok"><span class="eyebrow">기억할 것</span><div>동원된 예비군은 지휘에 따라 정해진 위치를 지키고, 민간인은 교전에서 떨어져 부상자 이송·물자 운반을 돕는다. 무장 위협에만 쏘고 투항자·주민은 보호한다.</div><span class="src">출처 · 예비군법 · 민방위 기본법 · 생존 수첩 교전규칙</span></div></div>`}
+  if(checkOver())setTimeout(()=>{owcClose();outReturn('dead')},2400)}
+function owcClose(){if(!OWC.on)return;const el=$('#owcResult');if(el){el.hidden=true;el.innerHTML=''}OWC.on=false;OWC.after=true;OWC.afterT=0;
+  /* 3인칭으로 돌아간다: 몸·조작·화면 */if(OUT.torch&&OWC.torch0!=null){OUT.torch.intensity=OWC.torch0;OWC.torch0=null}if(OUT.me){OUT.me.mesh.visible=true;OUT.me.root.rotation.y=FP3.yaw+Math.PI;OUT.me.setPose('idle')}FP3.onTap=null;FP3.speed=2.4;OWC.dead=false;
+  const cam=SV3.cam;cam.fov=62;cam.updateProjectionMatrix();cam.near=.08;cam.updateProjectionMatrix();if(SV3.el)SV3.el.classList.remove('owc-on');const u=$('#owcUI');if(u)u.remove();owcVmDrop();
+  if(G){G.flags.owcN=(G.flags.owcN||0)+1}OWC.hitList=[];
+  /* 아군은 그 자리에서 숨을 돌린다 — 적은 30초 뒤(안 보일 때) 치운다 */OWC.al.forEach(a=>{if(!a.gone){a.st='rest';a.h.setPose('idle')}});OWC.hp.forEach(p=>p.h.setPose('idle'));
+  try{save()}catch(e){}if(OWC.res0)outNote(`<b>${OWC.res0.win?'현관 사수':OWC.res0.quit?'후퇴':'부상'}</b><div>주민들이 바리케이드를 정리한다. 밖 탐색을 이어 간다.</div>`,4200)}
+/* 교전 뒤: 아군·주민 숨 고르기, 쓰러진 적은 보이지 않을 때 치운다 */
+function owcAfter(dt){OWC.afterT+=dt;const p=FP3.pos;OWC.al.forEach(a=>{if(!a.gone)a.h.update(dt)});OWC.hp.forEach(q=>q.h.update(dt));
+  OWC.en.forEach(a=>{if(a.gone)return;a.h.update(dt);if(a.st==='retreat'){owcRetreat(a,dt)}});
+  if(OWC.afterT>30){OWC.en.forEach(a=>{if(a.gone)return;const q=a.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)>35||!owcInView(q)){a.gone=1;if(a.h.root.parent)a.h.root.parent.remove(a.h.root)}})}
+  if(Math.hypot(p.x-OWC.A.x,p.z-OWC.A.z)>160&&OWC.afterT>10){owcCleanup(true)}}
+function owcInView(q){const cam=SV3.cam;_oe.set(q.x,1,q.z).sub(cam.position);cam.getWorldDirection(_of);return _oe.dot(_of)>0}
+
+/* ===================== 49 · v8.7 같은 배경 교전 — 적·아군 행동, 파도, 효과, 1인칭 총, 화면, 연결 ===================== */
+/* ---------- 적 생성 ---------- */
+const _om=new T.Vector3(),_on=new T.Vector3(),_oq=new T.Vector3(),_vmG=new T.Color(),_vmE=new T.Color();
+function owcEntPt(k){const e=OWC.ent;const F=OWC.face;for(let t=0;t<6;t++){const o=((k+t)%5-2)*1.6;const x=e.x+(-F.z)*o+(Math.random()-.5),z=e.z+F.x*o+(Math.random()-.5);if(owcFree(x,z,.45))return{x,z}}return{x:e.x,z:e.z}}
+function owcSpawn(type,o){o=o||{};const id=(OWC.nid=(OWC.nid||100)+1);let h=null;try{h=makeHuman(owcLook(type,id))}catch(e){h=null}if(!h)return null;
+  const p=o.at||OWC.ent;h.root.position.set(p.x,0,p.z);h.lookKeep=true;owcAdd(h.root);const E=OWC_E[type]||OWC_E.rifle;
+  const a={side:'en',type,id,h,st:'walk',t:0,hp:E.hp||1,aimP:0,tgt:null,burst:0,shotT:0,spot:null,cyc:0,flinch:0,prot:type==='surr'||type==='civ',out:!!o.out,seen:-9,losT:0,los:false,lineT:0,line:false,wave:OWC.wave};
+  owcFace(h,OWC.A.x,OWC.A.z);
+  if(type==='surr'){h.setPose('up',true);a.st='surr'}else if(type==='rusher'){h.setPose('run',true);a.st='rush'}else{h.setPose('run',true);a.st='walk';if(o.spot){a.spot=o.spot;o.spot.used=a}else owcPickSpot(a)}
+  OWC.en.push(a);OWC.byH.set(h,a);OWC.hitDirty=true;return a}
+/* 담장 밖 도로 사격조: 정문 쪽 도로에서 걸어와 자기 자리에 선다 */
+function owcSpawnOut(type,k){const L=OWC.os;if(!L.length)return owcSpawn(type,{at:owcEntPt(k)});const s=L.filter(q=>!q.used)[0];if(!s)return owcSpawn(type,{at:owcEntPt(k)});
+  const U=TJ_DATA.POI?TJ_DATA.U:[1,0];const gs=Math.sign((OWC.ent.x-s.x)*U[0]+(OWC.ent.z-s.z)*U[1])||1;let at=null;for(const d of [18,13,8]){const x=s.x+U[0]*gs*d,z=s.z+U[1]*gs*d;if(owcFree(x,z,.5)&&owcLineOK(x,z,s.x,s.z,s.cb)){at={x,z};break}}
+  const a=owcSpawn(type,{at:at||{x:s.x,z:s.z},out:true,spot:s});if(a){a.lineT=99;a.line=true}return a}
+/* 엄폐 자리 고르기: 처음엔 먼 자리, 다음부턴 더 가까운 자리 */
+function owcPickSpot(a,closer){const P=a.h.root.position;const L=a.out?OWC.os:OWC.es;const cur=closer&&a.spot?a.spot.de:1e9;
+  let C=L.filter(s=>!s.used&&s.de<cur-6&&(!closer||s.de>=17));if(!C.length&&!closer)C=L.filter(s=>!s.used);if(!C.length)return false;
+  if(!closer){C.sort((x,y)=>y.de-x.de);C=C.slice(0,Math.min(C.length,4+Math.floor(Math.random()*2)))}else{C.sort((x,y)=>Math.hypot(x.x-P.x,x.z-P.z)-Math.hypot(y.x-P.x,y.z-P.z));C=C.slice(0,3)}
+  const s=C[Math.floor(Math.random()*C.length)];if(a.spot&&a.spot.used===a)a.spot.used=null;a.spot=s;s.used=a;a.lineT=0;return true}
+/* ---------- 사람들 매 프레임 ---------- */
+function owcAgents(dt){for(const a of OWC.en){if(!a.gone)try{owcEnemy(a,dt)}catch(e){console.error(e)}}for(const a of OWC.al)try{owcAlly(a,dt)}catch(e){console.error(e)}OWC.hp.forEach(p=>owcHelper(p,dt));
+  if(OWC.qrfMen)OWC.qrfMen.forEach(m=>{m.h.update(dt);if(m.run){const P=m.h.root.position;const dx=m.tx-P.x,dz=m.tz-P.z,d=Math.hypot(dx,dz);if(d<.5){m.run=0;m.h.setPose('aim')}else{const q=owcFStep(OWC.F,P.x,P.z,3);const tx=d<6||!q?m.tx:q.x,tz=d<6||!q?m.tz:q.z;const l=Math.hypot(tx-P.x,tz-P.z)||1;P.x+=(tx-P.x)/l*Math.min(l,4.2*dt);P.z+=(tz-P.z)/l*Math.min(l,4.2*dt);owcFace(m.h,tx,tz,dt)}}})}
+function owcMeHead(){return{x:FP3.pos.x,y:1.6-.48*OWC.crK+(FP3.jy||0),z:FP3.pos.z}}
+function owcAlHead(t){const P=t.h.root.position;return{x:P.x,y:t.st==='aim'||t.st==='fire'?(t.sp.ch>1.05?1.5:1.15):.95,z:P.z}}
+function owcEnemy(a,dt){const h=a.h,P=h.root.position;h.update(dt);a.t-=dt;a.flinch=Math.max(0,a.flinch-dt*3);
+  if(a.st==='down'){a.downT=(a.downT||0)+dt;return}
+  if(a.st==='retreat'){owcRetreat(a,dt);return}
+  /* 내가 볼 수 있는지(표시·미니맵용) */a.losT-=dt;if(a.losT<=0){a.losT=.3+Math.random()*.15;const c=SV3.cam.position;a.vis=owcLos(c.x,c.y,c.z,P.x,1.3,P.z)&&Math.hypot(P.x-c.x,P.z-c.z)<170;if(a.vis)a.seen=OWC.t}
+  const E=OWC_E[a.type]||OWC_E.rifle;
+  if(a.st==='surr'){/* 흰 천을 들고 천천히 현관 쪽으로, 14m 앞에서 멈춘다 */const dA=Math.hypot(P.x-OWC.A.x,P.z-OWC.A.z);if(dA>14){const q=owcFStep(OWC.F,P.x,P.z,4);if(q)owcMoveTo(a,q.x,q.z,1.1,dt,'walk')}else{if(h.pose!=='up')h.setPose('up');owcFace(h,OWC.A.x,OWC.A.z,dt);if(!a.capd){a.capd=1;OWC.stt.cap++;owcSay('예비군 소대장 박정수','투항자 — 그 자리에 엎드리게 해! 쏘지 마!',1)}}return}
+  if(a.st==='civ'){owcCivStep(a,dt);return}
+  if(a.st==='rush'){owcRush(a,dt,E);return}
+  if(a.st==='walk'){const s=a.spot;if(!s){a.st='cover';a.t=1;h.setPose('crouch');return}const d=Math.hypot(s.x-P.x,s.z-P.z);
+    if(d<.45){P.x=s.x;P.z=s.z;a.st='cover';a.t=.4+Math.random()*.9;h.setPose('crouch');owcFace(h,OWC.A.x,OWC.A.z);return}
+    /* 막혀 못 가면(5초에 1m도 못 줄이면) 다른 자리로, 그것도 없으면 그 자리에서 엎드린다 */a.pg=(a.pg||0)+dt;if(a.pg>5){if(a.pd!=null&&a.pd-d<1){a.pdN=(a.pdN||0)+1;if(a.pdN>1||!owcPickSpot(a,false)){if(a.spot)a.spot.used=null;a.spot={x:P.x,z:P.z,ch:.9,de:Math.hypot(P.x-OWC.A.x,P.z-OWC.A.z),fd:0,used:a,tmp:1};a.st='cover';a.t=.5;h.setPose('crouch');return}}a.pg=0;a.pd=d}
+    a.lineT-=dt;if(a.lineT<=0){a.lineT=.45;a.line=d<4||owcLineOK(P.x,P.z,s.x,s.z,s.cb)}
+    let tx=s.x,tz=s.z;if(!a.line){const q=owcFStep(OWC.F,P.x,P.z,4);if(q){tx=q.x;tz=q.z}}owcMoveTo(a,tx,tz,a.type==='elite'?3.9:3.4,dt,'run',s.cb);
+    /* 달리다 가까이 보이면 멈춰 쏜다(드물게) */if(a.vis&&d>8&&Math.random()<dt*.08&&Math.hypot(P.x-OWC.A.x,P.z-OWC.A.z)<70){const t=owcPickTgt(a,1.45);if(t){a.tgt=t;a.st='aim';a.aimP=.25;a.open=1;h.setPose('aim')}}return}
+  if(a.st==='cover'){if(h.pose!=='crouch')h.setPose('crouch');owcFace(h,OWC.A.x,OWC.A.z,dt,4);
+    if(a.t<=0){const up=(a.spot&&a.spot.ch>1.05)?1.45:1.05;const t=owcPickTgt(a,up);if(t){a.tgt=t;a.st='rise';a.t=.32;a.open=0;h.setPose(up>1.2?'aim':'kneel')}else{a.idleN=(a.idleN||0)+1;a.t=.7+Math.random()*.6;if(a.idleN>4&&owcPickSpot(a,true)){a.st='walk';a.idleN=0;h.setPose('run')}}}return}
+  if(a.st==='rise'){if(a.t<=0){a.st='aim';a.aimP=0}return}
+  if(a.st==='aim'){const t=a.tgt;if(!owcTgtOK(t)){a.st='hide';a.t=.3;return}const tp=t==='me'?owcMeHead():owcAlHead(t);owcFace(h,tp.x,tp.z,dt,9);h.look=_oq.set(tp.x,tp.y,tp.z);
+    a.losT2=(a.losT2||0)-dt;if(a.losT2<=0){a.losT2=.35;const ey=h.pose==='kneel'?1.05:1.45;if(!owcLos(P.x,ey,P.z,tp.x,tp.y,tp.z)){a.st='hide';a.t=.3;return}}
+    const rate=(a.flinch>0?.5:1)*(OWC.diffK||1);a.aimP+=dt/(E.aim/rate);if(a.aimP>=1){a.st='fire';a.burst=E.burst+(Math.random()<.35?1:0);a.shotT=0}return}
+  if(a.st==='fire'){a.shotT-=dt;if(a.shotT<=0){owcEnemyShot(a,E);a.burst--;a.shotT=E.gap*(.85+Math.random()*.3);if(a.burst<=0){a.st='hide';a.t=.3;a.cyc++}}return}
+  if(a.st==='hide'){if(a.t<=0){if(a.open||!a.spot){a.open=0;if(!a.spot&&!owcPickSpot(a)){a.st='cover';a.t=1;h.setPose('crouch');return}a.st='walk';h.setPose('run');return}
+      a.st='cover';a.t=1.1+Math.random()*1.5*(a.type==='mg'?.6:1);h.setPose('crouch');
+      /* 자리 옮기기: 정예는 자주, 보통은 가끔 — 더 가까운 엄폐물로 뛰어간다 */const pr=a.type==='elite'?.6:a.type==='mg'?.08:.3+(OWC.wave>=2?.15:0);if(a.cyc>=2&&!a.out&&Math.random()<pr&&owcPickSpot(a,true)){a.st='walk';a.cyc=0;h.setPose('run')}}return}}
+function owcTgtOK(t){if(!t)return false;if(t==='me')return !OWC.dead&&!OWC.done;return !t.gone&&t.st!=='hurt'}
+/* 표적: 보이는 사람 중 가까운 쪽(나를 조금 더 노린다) */
+function owcPickTgt(a,ey){const P=a.h.root.position;let best=null,bs=1e9;const cand=[];if(!OWC.dead)cand.push('me');OWC.al.forEach(t=>{if(!t.gone&&t.st!=='hurt')cand.push(t)});
+  for(const t of cand){const tp=t==='me'?owcMeHead():{x:t.h.root.position.x,y:1.1,z:t.h.root.position.z};const d=Math.hypot(tp.x-P.x,tp.z-P.z);if(d>120)continue;if(!owcLos(P.x,ey,P.z,tp.x,tp.y,tp.z))continue;const s=d+(t==='me'?-4:0)+Math.random()*14;if(s<bs){bs=s;best=t}}return best}
+function owcMoveTo(a,tx,tz,sp,dt,pose,skip){const h=a.h,P=h.root.position;const dx=tx-P.x,dz=tz-P.z;const d=Math.hypot(dx,dz);if(d<1e-3)return;const s=Math.min(d,sp*dt);let ux=dx/d,uz=dz/d;
+  /* 서로 겹치지 않게 */let sx=0,sz=0;for(const b of OWC.en){if(b===a||b.st==='down'||b.gone)continue;const q=b.h.root.position;const ex=P.x-q.x,ez=P.z-q.z;const e=Math.hypot(ex,ez);if(e<.75&&e>1e-3){sx+=ex/e*(.75-e)*.4;sz+=ez/e*(.75-e)*.4}}
+  const go=(ax,az)=>{const nx=P.x+ax*s+sx,nz=P.z+az*s+sz;if(!owcAgentBlocked(nx,nz,.25,skip)){P.x=nx;P.z=nz;return true}return false};
+  /* 막히면 옆으로 돌아간다(잠깐 그 방향을 유지해 모서리를 빠져나간다) */let mx=ux,mz=uz;if(a.detT>0){a.detT-=dt;if(go(a.dx,a.dz)){mx=a.dx;mz=a.dz}else a.detT=0}
+  if(!(a.detT>0)&&!go(ux,uz)){let done=false;const sd=a.sd||(Math.random()<.5?1:-1);for(const ang of [.55,1.0,1.5,2.1,2.7]){for(const sg of [sd,-sd]){const c=Math.cos(ang*sg),sn=Math.sin(ang*sg);const ax=ux*c-uz*sn,az=ux*sn+uz*c;if(go(ax,az)){a.sd=sg;a.dx=ax;a.dz=az;a.detT=.5;mx=ax;mz=az;done=true;break}}if(done)break}if(!done){a.stuck=(a.stuck||0)+dt}}else a.stuck=0;
+  owcFace(h,P.x+mx,P.z+mz,dt,10);if(pose&&h.pose!==pose)h.setPose(pose)}
+function owcRetreat(a,dt){const h=a.h,P=h.root.position;a.t-=dt;if(a.t<=0||Math.hypot(P.x-OWC.ent.x,P.z-OWC.ent.z)<2){a.gone=1;if(h.root.parent)h.root.parent.remove(h.root);OWC.hitDirty=true;return}
+  let tx=OWC.ent.x,tz=OWC.ent.z;if(a.out){const dx=P.x-OWC.A.x,dz=P.z-OWC.A.z,l=Math.hypot(dx,dz)||1;tx=P.x+dx/l*10;tz=P.z+dz/l*10}else if(!owcLineOK(P.x,P.z,tx,tz)){/* 들어온 길을 거꾸로 */const T0=OWC.tr;let bi=0,bd=1e9;for(let i=0;i<T0.length;i+=3){const d=Math.hypot(T0[i].x-P.x,T0[i].z-P.z);if(d<bd){bd=d;bi=i}}const q=T0[Math.max(0,bi-8)];tx=q.x;tz=q.z}
+  owcMoveTo(a,tx,tz,4.4,dt,'run')}
+/* 돌격조: 거리장을 따라 뛰어와 가까우면 나(또는 아군)에게 덤빈다 */
+function owcRush(a,dt,E){const h=a.h,P=h.root.position;const me=FP3.pos;const dMe=Math.hypot(me.x-P.x,me.z-P.z);let tgt='me',tx=me.x,tz=me.z,dT=dMe;
+  OWC.al.forEach(t=>{if(t.gone||t.st==='hurt')return;const q=t.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<dT-3){dT=d;tgt=t;tx=q.x;tz=q.z}});if(OWC.dead)tgt=null;
+  if(a.melee>0)a.melee-=dt;if(dT<1.7&&tgt){owcFace(h,tx,tz,dt,12);if(h.pose!=='aim')h.setPose('aim');if(!(a.melee>0)){a.melee=1.05;if(tgt==='me'){owcHurt(E.dmg*(OWC.cr?.9:1),{x:P.x,z:P.z},'rush');owcMsg('개머리판에 맞았다! 쏴서 떼어 낸다',1.4,1)}else owcAllyHit(tgt,a)}return}
+  a.lineT-=dt;if(a.lineT<=0){a.lineT=.4;a.line=dT<26&&owcLineOK(P.x,P.z,tx,tz)}let gx=tx,gz=tz;if(!a.line){const q=owcFStep(OWC.F,P.x,P.z,4);if(q){gx=q.x;gz=q.z}}owcMoveTo(a,gx,gz,5.1,dt,'run');
+  if(!a.yell&&dT<30&&a.vis){a.yell=1;owcSay('최영길','돌격! 뛰어온다 — 정면!',1)}}
+/* ---------- 적 사격(확률) ---------- */
+function owcEnemyShot(a,E){const t=a.tgt;if(!owcTgtOK(t))return;const P=a.h.root.position;const tp=t==='me'?owcMeHead():owcAlHead(t);const d=Math.hypot(tp.x-P.x,tp.z-P.z);
+  let p=E.acc*clamp(1.25-d/62,.22,1)*.27*owcDiff();const ch=owcCovH(P.x,P.z,tp.x,tp.z,2.8);const ex=t==='me'?(OWC.cr?(OWC.t-OWC.lastShot>1.2&&!OWC.ads?.95:1.15):1.6):(t.st==='aim'||t.st==='fire'?1.25:.95);
+  if(ch>0)p*=ch>=ex-.1?.12:ch>=ex-.45?.36:.72;if(t==='me'){if(OWC.sprint)p*=.55;else if(FP3.moving>.3)p*=.8}if(a.flinch>0)p*=.5;if(a.open)p*=.7;
+  const hit=Math.random()<p;const mz=owcMuz(a.h,_om).clone();owcNpcFlash(mz);
+  let end;if(hit)end=_on.set(tp.x+(Math.random()-.5)*.3,tp.y-.25-Math.random()*.4,tp.z+(Math.random()-.5)*.3).clone();else{const ox=(Math.random()-.5)*2.6,oy=(Math.random()-.25)*1.6;const rx=-(tp.z-P.z)/(d||1),rz=(tp.x-P.x)/(d||1);end=new T.Vector3(tp.x+rx*ox,Math.max(0,tp.y-.3+oy),tp.z+rz*ox);if(ch>0&&Math.random()<.6){end.y=Math.min(end.y,ch*.8)}}
+  if(Math.random()<.6)owcTracer(mz,end,1);owcShotSnd(a.type==='mg'?'mg':'rifle',mz);
+  if(hit){if(t==='me'){const k=G&&G.diff==='hard'?1.15:G&&G.diff==='train'?.72:1;owcHurt(E.dmg*(.8+Math.random()*.4)*k,{x:P.x,z:P.z},'en')}else owcAllyHit(t,a)}
+  else{if(t==='me'&&Math.random()<.55){try{bSnap()}catch(e){}}if(Math.random()<.5)owcImpact(end,'#c9c2b2',null)}}
+function owcAllyHit(t,a){t.hp--;t.flinch=1;owcBlood(_on.set(t.h.root.position.x,1.1,t.h.root.position.z));if(t.hp<=0&&t.st!=='hurt'){t.st='hurt';t.h.setPose('walk');OWC.stt.alHurt++;OWC.hitDirty=true;owcSay('주민 '+OWC.S.helpers[1],`${t.n} 씨가 맞았어요! 안으로 — 안으로!`,1);FX=[];mor(-1);OUT.fx.push(...FX)}
+  else if(t.hp>0&&Math.random()<.5&&OWC.t-(t.said||-9)>6){t.said=OWC.t;owcSay(t.r+' '+t.n,['스쳤어요, 괜찮아요!','윽 — 아직 쏠 수 있어요!'][Math.floor(Math.random()*2)])}}
+/* ---------- 아군 ---------- */
+function owcAlly(a,dt){const h=a.h;h.update(dt);if(a.gone)return;a.t-=dt;a.flinch=Math.max(0,(a.flinch||0)-dt*3);const P=h.root.position;
+  /* 내 사선에 들어오면 고개를 숙인다(1초) */if(!OWC.done&&a.st!=='hurt'){const c=SV3.cam.position;SV3.cam.getWorldDirection(_on);const vx=P.x-c.x,vy=1.15-c.y,vz=P.z-c.z;const t=vx*_on.x+vy*_on.y+vz*_on.z;if(t>.3&&t<14){const px=vx-_on.x*t,py=vy-_on.y*t,pz=vz-_on.z*t;if(px*px+py*py*.5+pz*pz<.55){a.duck=1;if(a.st==='aim'||a.st==='fire'){a.st='cover';a.t=.8}}}if(a.duck>0){a.duck-=dt;if(a.st==='cover'&&a.t<a.duck)a.t=a.duck}}
+  if(a.st==='hurt'){/* 다친 사람은 현관 안으로 걸어 들어간다 */const tx=OWC.A.x-OWC.face.x*2.2,tz=OWC.A.z-OWC.face.z*2.2;const d=Math.hypot(tx-P.x,tz-P.z);if(d<.6){a.gone=1;h.root.visible=false;OWC.hitDirty=true;return}const l=d||1;P.x+=(tx-P.x)/l*Math.min(d,1.3*dt);P.z+=(tz-P.z)/l*Math.min(d,1.3*dt);owcFace(h,tx,tz,dt);return}
+  if(a.st==='rest'){return}
+  if(OWC.done){if(h.pose!=='idle'&&h.pose!=='aim')h.setPose('aim');return}
+  if(a.st==='cover'){if(h.pose!=='crouch')h.setPose('crouch');owcFace(h,P.x+OWC.face.x,P.z+OWC.face.z,dt,3);if(a.t<=0){const e=owcPickEnemy(a);if(e){a.tgt=e;a.st='aim';a.aimP=0;h.setPose(a.sp.ch>1.05?'aim':'kneel')}else a.t=.5+Math.random()*.6}return}
+  if(a.st==='aim'){const e=a.tgt;if(!e||e.st==='down'||e.gone||e.prot){a.st='cover';a.t=.3;return}const q=e.h.root.position;owcFace(h,q.x,q.z,dt,9);h.look=_oq.set(q.x,1.2,q.z);a.aimP+=dt/(1.05+(a.flinch>0?.6:0));if(a.aimP>=1){a.st='fire';a.burst=3;a.shotT=0}return}
+  if(a.st==='fire'){a.shotT-=dt;if(a.shotT<=0){owcAllyShot(a);a.burst--;a.shotT=.13+Math.random()*.05;if(a.burst<=0){a.st='cover';a.t=.9+Math.random()*1.6;h.setPose('crouch')}}}}
+function owcPickEnemy(a){const P=a.h.root.position;const ey=a.sp.ch>1.05?1.5:1.15;let best=null,bs=1e9;for(const e of OWC.en){if(e.prot||e.st==='down'||e.gone||e.st==='retreat')continue;const q=e.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d>95)continue;
+    const exp=e.st==='aim'||e.st==='fire'||e.st==='walk'||e.st==='rush';if(!exp&&Math.random()<.65)continue;if(!owcLos(P.x,ey,P.z,q.x,1.2,q.z))continue;const s=d*(exp?1:1.6)+Math.random()*10;if(s<bs){bs=s;best=e}}return best}
+function owcAllyShot(a){const e=a.tgt;if(!e||e.st==='down')return;const P=a.h.root.position,q=e.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);
+  let p=.5*clamp(1.2-d/70,.2,1)*.16;const ch=owcCovH(P.x,P.z,q.x,q.z,2.6);const ex=e.st==='cover'||e.st==='hide'?.8:e.h.pose==='kneel'?1.15:1.5;if(ch>0)p*=ch>=ex-.1?.1:ch>=ex-.45?.4:.75;if(e.st==='walk'||e.st==='rush')p*=.8;
+  const hit=Math.random()<p;const mz=owcMuz(a.h,_om).clone();owcNpcFlash(mz);const end=hit?new T.Vector3(q.x,1.1+Math.random()*.4,q.z):new T.Vector3(q.x+(Math.random()-.5)*2.4,.5+Math.random()*1.5,q.z+(Math.random()-.5)*2.4);
+  if(Math.random()<.55)owcTracer(mz,end,0);owcShotSnd('rifle',mz);if(hit){e.hp-=1;e.flinch=1;owcBlood(end);if(e.hp<=0)owcKill(e,a,null,false);else if(e.st==='aim'){e.aimP=Math.max(0,e.aimP-.4)}}else if(e.st==='aim'&&Math.random()<.35){e.aimP=Math.max(0,e.aimP-.2)}}
+/* 탄약을 나르는 주민 */
+function owcHelper(p,dt){const h=p.h;h.update(dt);if(OWC.done||!OWC.on)return;const P=h.root.position;
+  if(p.st==='go'){const tx=FP3.pos.x-OWC.face.x*.9,tz=FP3.pos.z-OWC.face.z*.9;const d=Math.hypot(tx-P.x,tz-P.z);if(d<.8){p.st='give';p.t=.9;h.setPose('crouch');return}const l=d||1;P.x+=(tx-P.x)/l*Math.min(d,3.4*dt);P.z+=(tz-P.z)/l*Math.min(d,3.4*dt);owcFace(h,tx,tz,dt);if(h.pose!=='run')h.setPose('run');return}
+  if(p.st==='give'){p.t-=dt;if(p.t<=0){OWC.res=Math.min(180,OWC.res+60);if(OWC.med<2&&Math.random()<.5)OWC.med++;if(OWC.nade<2&&Math.random()<.3)OWC.nade++;owcAmmoUI();owcBtn();owcFeed('탄약 +60 (주민이 날라 왔다)','ok');SFX.mech('magin');p.st='back'}return}
+  if(p.st==='back'){const d=Math.hypot(p.home.x-P.x,p.home.z-P.z);if(d<.5){p.st='idle';h.setPose(p.home.pose||'crouch');return}const l=d||1;P.x+=(p.home.x-P.x)/l*Math.min(d,3.4*dt);P.z+=(p.home.z-P.z)/l*Math.min(d,3.4*dt);owcFace(h,p.home.x,p.home.z,dt);if(h.pose!=='run')h.setPose('run');return}}
+/* 마당을 가로질러 현관으로 뛰는 주민(보호 대상) */
+function owcCivRun(){const L=TJ.lobbies[1];if(!L)return;const V=TJ_DATA.V,vl=Math.hypot(V[0],V[1])||1;const x=L[0]-V[0]/vl*4,z=L[1]-V[1]/vl*4;if(!owcFree(x,z,.5))return;let h=null;try{h=makeHuman(owcLook('civ',44))}catch(e){h=null}if(!h)return;h.setPose('run',true);h.root.position.set(x,0,z);owcAdd(h.root);
+  const a={side:'en',type:'civ',id:999,h,st:'civ',t:0,hp:1,prot:true,seen:-9,losT:0,civ:1};OWC.en.push(a);OWC.byH.set(h,a);OWC.hitDirty=true;owcSay('이민호','102동에서 주민이 뛰어와요! 쏘지 마요!',1)}
+function owcCivStep(a,dt){const h=a.h,P=h.root.position;const d=Math.hypot(P.x-OWC.A.x,P.z-OWC.A.z);if(d<2.2){a.gone=1;h.root.visible=false;OWC.hitDirty=true;owcFeed('주민 1명 — 현관 안으로 피했다','ok');return}
+  const q=owcFStep(OWC.F,P.x,P.z,4);if(q){const dx=q.x-P.x,dz=q.z-P.z,l=Math.hypot(dx,dz)||1;P.x+=dx/l*Math.min(l,4.4*dt);P.z+=dz/l*Math.min(l,4.4*dt);owcFace(h,q.x,q.z,dt,10)}}
+/* ---------- 파도·시간 ---------- */
+function owcWaves(dt){const S=OWC.S;OWC.waveT+=dt;
+  if(OWC.q.length){OWC.qT=(OWC.qT||0)-dt;if(OWC.qT<=0){OWC.qT=.3;const f=OWC.q.shift();try{f()}catch(e){console.error(e)}}}
+  const alive=OWC.en.filter(a=>!a.prot&&a.st!=='down'&&a.st!=='retreat'&&!a.gone).length;OWC.alive=alive;const nx=OWC.wave+1;
+  if(nx<S.waves.length){const go=OWC.wave<0?OWC.t>5.5:((alive<=1&&OWC.waveT>14)||OWC.waveT>(OWC.wave===0?62:78));if(go&&!OWC.q.length)owcWave(nx)}
+  else if(alive===0&&!OWC.q.length&&OWC.waveT>5)owcEnd(true,'clear');
+  if(S.timer&&!OWC.done){OWC.qrf-=dt;if(OWC.qrf<=60&&!OWC.qrfSaid){OWC.qrfSaid=1;owcSay('예비군 소대장 박정수','기동타격대 1분 뒤 도착! 조금만 더!',1)}if(OWC.qrf<=0&&!OWC.qrfOn){OWC.qrfOn=1;owcQrf()}}
+  /* 주민이 탄을 날라 온다(30초쯤마다, 내가 현관 가까이 있을 때) */OWC.resT-=dt;if(OWC.resT<=0){OWC.resT=26+Math.random()*10;const p=OWC.hp.find(q=>q.st==='idle');if(p&&Math.hypot(FP3.pos.x-OWC.A.x,FP3.pos.z-OWC.A.z)<14&&(OWC.res<150||OWC.med<2)){p.home.pose=p.h.pose;p.st='go';owcSay('주민 '+p.n,['탄약 가져왔어요! 머리 숙여요!','물도 있어요, 조금만 버텨요!','탄창 여기 둘게요!'][Math.floor(Math.random()*3)])}}}
+function owcWave(i){const W=OWC.S.waves[i];OWC.wave=i;OWC.waveT=0;owcSay(W.say[0],W.say[1],1);owcMsg(`${i+1}/${OWC.S.waves.length} · ${W.n}`,2.4);
+  W.list.forEach((t,k)=>OWC.q.push(()=>owcSpawn(t,{at:owcEntPt(k)})));(W.flank||[]).forEach((t,k)=>OWC.q.push(()=>owcSpawnOut(t,k)));
+  if(W.civ)owcLater(10,()=>{if(!OWC.done)owcCivRun()});
+  if(W.surr)owcLater(16,()=>{if(!OWC.done)OWC.q.push(()=>{const a=owcSpawn('surr',{at:owcEntPt(1)});if(a)owcSay('정하늘','흰 천이다! 손 든 사람 — 쏘지 마요!',1)})});
+}
+/* 기동타격대: 국군 셋이 정문으로 뛰어 들어오고 남은 적은 물러난다 */
+function owcQrf(){owcSay('기동타격대','기동타격대 도착 — 현관 앞 정리한다. 예비군은 엄호!',1);owcMsg('기동타격대 도착',2.4);OWC.qrfMen=[];
+  for(let i=0;i<3;i++){const p=owcEntPt(i);let h=null;try{h=makeHuman(charLook3({id:'q'+i,n:'',tint:SKINC[i]},{gun:'k2'}))}catch(e){h=null}if(!h)continue;h.root.position.set(p.x,0,p.z);h.setPose('run',true);owcAdd(h.root);const tr=OWC.tr;const q=tr[Math.floor(tr.length*(.35+i*.12))]||OWC.A;OWC.qrfMen.push({h,run:1,tx:q.x,tz:q.z})}
+  owcLater(4.5,()=>{if(!OWC.done)owcEnd(true,'qrf')})}
+/* ---------- 효과: 예광탄·탄착·피·총구 섬광·조명탄 ---------- */
+function owcPoolInit(){if(OWC.pool)return;OWC.pool=[];const g=new T.BoxGeometry(.03,.03,1);const mF=new T.MeshBasicMaterial({color:'#ffd27a',transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false,fog:false});const mE=new T.MeshBasicMaterial({color:'#a6ff86',transparent:true,opacity:.85,blending:T.AdditiveBlending,depthWrite:false,fog:false});
+  for(let i=0;i<28;i++){const m=new T.Mesh(g,i<16?mF:mE);m.visible=false;m.frustumCulled=false;OUT.scene.add(m);OWC.pool.push({m,on:false,en:i>=16})}
+  OWC.lights=[];for(let i=0;i<3;i++){const l=new T.PointLight('#ffc070',0,14,2);OUT.scene.add(l);OWC.lights.push(l)}OWC.li=0;OWC.fxL=[]}
+function owcTracer(a,b,en){owcPoolInit();const r=OWC.pool.find(q=>!q.on&&q.en===!!en);if(!r)return;const d=b.clone().sub(a);const L=d.length();if(L<.3)return;d.normalize();r.on=true;r.m.visible=true;r.a=a.clone();r.d=d;r.L=L;r.t=0;r.v=en?260:420;r.len=Math.min(4,L*.4);r.m.scale.set(1,1,r.len);r.m.position.copy(a);r.m.lookAt(a.x+d.x,a.y+d.y,a.z+d.z)}
+function owcImpact(p,col,n){owcPoolInit();for(let i=0;i<2;i++){const sp=PK.sprite(puffTex(),col||'#cfc6b0',.22+Math.random()*.18,OUT.scene,{op:.8,fog:1});sp.position.copy(p);const v=new T.Vector3((Math.random()-.5)*1.1,.5+Math.random()*1.1,(Math.random()-.5)*1.1);if(n)v.addScaledVector(n,-1.1);OWC.fxL.push({el:sp,t:0,life:.55,v,s0:sp.scale.x,op:.8})}}
+function owcBlood(p){owcPoolInit();const sp=PK.sprite(puffTex(),'#6a1812',.3,OUT.scene,{op:.7,fog:1});sp.position.copy(p);OWC.fxL.push({el:sp,t:0,life:.35,v:new T.Vector3(0,.2,0),s0:.3,op:.7,grow:.5})}
+function owcNpcFlash(p){owcPoolInit();const sp=PK.sprite(flashTex(),'#ffe0a0',.5,OUT.scene,{add:1});sp.position.copy(p);sp.material.rotation=Math.random()*6;OWC.fxL.push({el:sp,t:0,life:.05,v:null,s0:.5,op:1});
+  const l=OWC.lights[OWC.li++%OWC.lights.length];l.position.copy(p);l.intensity=OUT.tod==='day'?3:9;l.userData.t=.06}
+function owcFlash(){const V=OWC.vm;if(V&&V.fl){V.fl.visible=true;V.fl.material.rotation=Math.random()*6;V.fl.scale.setScalar(.38+Math.random()*.14);clearTimeout(owcFlash._t);owcFlash._t=setTimeout(()=>{if(V.fl)V.fl.visible=false},45)}
+  owcPoolInit();const l=OWC.lights[OWC.li++%OWC.lights.length];l.position.copy(SV3.cam.position);l.intensity=OUT.tod==='day'?3:10;l.userData.t=.05}
+function owcShotSnd(kind,p){if(!SND.on)return;OWC.sndN=(OWC.sndN||0);if(OWC.sndN>=14)return;OWC.sndN++;const c=SV3.cam.position;const dx=p.x-c.x,dz=p.z-c.z;const d=Math.hypot(dx,dz,p.y-c.y);const rx=Math.cos(FP3.yaw),rz=-Math.sin(FP3.yaw);const az=d>.5?(dx*rx+dz*rz)/Math.hypot(dx,dz||1e-3):0;SFX.shot(kind,{d,az:clamp(az,-1,1)})}
+function owcFx(dt){OWC.sndT=(OWC.sndT||0)+dt;if(OWC.sndT>1){OWC.sndT=0;OWC.sndN=0}
+  if(OWC.pool)for(const r of OWC.pool){if(!r.on)continue;r.t+=dt;const s=r.t*r.v;if(s>r.L){r.on=false;r.m.visible=false;continue}r.m.position.copy(r.a).addScaledVector(r.d,Math.min(r.L-r.len/2,s+r.len/2))}
+  if(OWC.lights)OWC.lights.forEach(l=>{if(l.intensity>0){l.userData.t=(l.userData.t||0)-dt;if(l.userData.t<=0)l.intensity=0}});
+  OWC.fxL=(OWC.fxL||[]).filter(f=>{f.t+=dt;const u=f.t/f.life;if(u>=1){if(f.el.parent)f.el.parent.remove(f.el);f.el.material.dispose();return false}if(f.v){f.el.position.addScaledVector(f.v,dt);f.v.y-=dt*1.5}f.el.material.opacity=f.op*(1-u);if(f.grow)f.el.scale.setScalar(f.s0*(1+u*f.grow*2));return true});
+  /* 밤: 조명탄 — 하늘을 밝혀 적이 보인다 */if(OUT.tod==='night'||OUT.tod==='dawn'){OWC.flT-=dt;if(OWC.flT<=0&&!OWC.done){OWC.flT=20+Math.random()*8;owcFlare()}}
+  let I=0;OWC.fl=(OWC.fl||[]).filter(f=>{f.t+=dt;if(f.t>=f.life){if(f.g.parent)f.g.parent.remove(f.g);return false}f.g.position.y=Math.max(30,f.y0-f.t*3.2);f.g.position.x+=dt*1.2;const k=Math.min(1,f.t/.6)*Math.min(1,(f.life-f.t)/4)*(.85+.15*Math.sin(f.t*29));f.glow.material.opacity=k*.75;f.core.material.opacity=Math.min(1,k*1.4);f.L.intensity=k*110;I+=k;return true});
+  OWC.flI=Math.min(1,I);if(OWC.hemi==null){OWC.hemi=OUT.scene.children.find(o=>o.isHemisphereLight)||null;OWC.hemi0=OWC.hemi?OWC.hemi.intensity:0}if(OWC.hemi)OWC.hemi.intensity=OWC.hemi0*(1+2.0*OWC.flI);
+  /* 수류탄 */owcNadeStep(dt);
+  /* 먼 총성(분위기) */OWC.farT=(OWC.farT||3)-dt;if(OWC.farT<=0&&!OWC.done){OWC.farT=1.5+Math.random()*4;try{paraPop(new T.Vector3(FP3.pos.x+(Math.random()-.5)*600,1,FP3.pos.z+(Math.random()-.5)*600))}catch(e){}}}
+function owcFlare(){const A=OWC.A,F=OWC.face;const k=70+Math.random()*40;const g=new T.Group();g.position.set(A.x+F.x*k+(Math.random()-.5)*30,95+Math.random()*20,A.z+F.z*k+(Math.random()-.5)*30);const glow=PK.sprite(glowTex(),'#fff0c8',26,g,{add:1,op:0});const core=PK.sprite(glowTex(),'#ffffff',3.5,g,{add:1,op:0});const L=new T.PointLight('#fff2d0',0,320,1.1);g.add(L);OUT.scene.add(g);OWC.fl.push({g,glow,core,L,t:0,life:22,y0:g.position.y});try{SND.boom&&SND.boom(false,.22)}catch(e){}}
+/* ---------- 수류탄 ---------- */
+function owcThrow(){if(OWC.done||OWC.dead||OWC.nade<=0||OWC.medT>0)return;OWC.nade--;owcBtn();const cam=SV3.cam;const d=owcAimDir(0).clone();const p0=cam.position.clone().addScaledVector(d,.5);p0.y-=.15;const v=d.clone().multiplyScalar(14);v.y+=4.2;
+  const el=MM(GG.sph(.05,8),mat('#2c3122',{r:.8}),p0.x,p0.y,p0.z,{p:OUT.scene,cast:false});OWC.nades.push({p:p0,v,el,t:0,fuse:2.1});owcSay('당신','수류탄 투척!',0);OWC.ads=false;owcBtn()}
+function owcNadeStep(dt){if(!OWC.nades.length)return;OWC.nades=OWC.nades.filter(n=>{n.t+=dt;n.v.y-=9.8*dt;n.p.addScaledVector(n.v,dt);if(n.p.y<.05){n.p.y=.05;n.v.y*=-.32;n.v.x*=.55;n.v.z*=.55}
+    const G0=owcHG();const i=Math.floor(n.p.x-G0.x0),j=Math.floor(n.p.z-G0.z0);if(i>=0&&j>=0&&i<G0.n&&j<G0.n&&G0.h[j*G0.n+i]>n.p.y){n.v.x*=-.4;n.v.z*=-.4;n.p.addScaledVector(n.v,dt*2)}
+    for(const b of OWC.cov){if(n.p.y<b.h&&owcInObb(n.p.x,n.p.z,b,.05)){n.v.x*=-.4;n.v.z*=-.4;n.p.addScaledVector(n.v,dt*2);break}}
+    n.el.position.copy(n.p);if(n.t<n.fuse)return true;if(n.el.parent)n.el.parent.remove(n.el);owcBlast(n.p);return false})}
+function owcBlast(p){FX3.explode(new T.Vector3(p.x,.3,p.z),{r:3,kind:'frag'});SND.boom(true,.8);sv3Shake(.35);vib([40,30,80]);
+  for(const a of OWC.en){if(a.st==='down'||a.gone)continue;const q=a.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d>6.5)continue;if(!owcLos(p.x,.5,p.z,q.x,1,q.z))continue;const cov=owcCovH(p.x,p.z,q.x,q.z,1.6);const k=cov>.8&&d>2.2?.35:1;
+    if(a.prot){if(d<5)owcROE(a);continue}const dmg=(d<2.5?5:2.6*(1-d/6.5)+.4)*k;a.hp-=dmg;a.flinch=1;if(a.hp<=0)owcKill(a,'me',null,false);else if(a.st==='aim'||a.st==='cover'){a.st='hide';a.t=.4;a.aimP=0}}
+  OWC.al.forEach(t=>{if(t.gone)return;const q=t.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)<4.5&&owcLos(p.x,.5,p.z,q.x,1,q.z)){owcAllyHit(t,null);OWC.stt.ff++}});
+  const dm=Math.hypot(FP3.pos.x-p.x,FP3.pos.z-p.z);if(dm<5.5&&owcLos(p.x,.5,p.z,FP3.pos.x,1,FP3.pos.z)){owcHurt(45*(1-dm/5.5)+5,{x:p.x,z:p.z},'nade');try{SFX.ring()}catch(e){}}}
+function owcMed(){if(OWC.done||OWC.dead||OWC.med<=0||OWC.medT>0||OWC.hpP>=100)return;OWC.med--;OWC.medT=1.6;OWC.ads=false;OWC.fire=false;owcBtn();owcMsg('지혈대·압박붕대 — 1.6초',1.4)}
+/* ---------- 1인칭 총(별도 장면을 장면 위에 덧그린다) ---------- */
+function owcVmBuild(){owcVmDrop();const S=new T.Scene();const C=new T.PerspectiveCamera(50,1.6,.01,10);S.add(C);const night=OUT.tod==='night'||OUT.tod==='dawn';
+  S.add(new T.HemisphereLight(night?'#9aa8d0':'#e8eef6',night?'#3a3a34':'#6a6656',night?1.35:1.45));const sun=new T.DirectionalLight(night?'#b8c8e8':'#fff3e0',night?1.15:1.5);sun.position.set(-.4,1,.3);S.add(sun);const f1=new T.DirectionalLight('#cfd8e6',night?1.1:1.2);f1.position.set(1,.6,.5);S.add(f1);const f2=new T.DirectionalLight('#ffe8c8',night?1.0:.7);f2.position.set(-.6,.9,.8);S.add(f2);/* 밤: 손전등 반사광(아래 앞에서) */if(night){const f3=new T.DirectionalLight('#fff2dc',.9);f3.position.set(.2,-.6,1);S.add(f3)}
+  const vm=new T.Group();C.add(vm);const g=makeGun('k2c1',{});g.rotation.y=Math.PI;
+  g.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;if(o.position.z<-.2&&o.name!=='mag')o.visible=false;if(o.material&&o.material.isMeshStandardMaterial){o.material=o.material.clone();o.material.metalness=Math.min(.3,o.material.metalness);o.material.roughness=Math.min(.75,Math.max(.45,o.material.roughness));o.material.color.multiplyScalar(2.1);o.material.color.lerp(_vmG.set('#55595d'),night?.45:.3);if(o.material.emissive)o.material.emissive.set('#1a1c1e');o.material.emissiveIntensity=night?.6:.2}}});
+  const hold=new T.Group();hold.add(g);vm.add(hold);const slv=mat('#3a4656',{r:.92}),cuff=mat('#2a323e',{r:.92}),skin=mat('#34352f',{r:.95});/* 장갑(작업용) */
+  const arm=(from,to,r1,r2)=>{const a=new T.Vector3(...from),b=new T.Vector3(...to);const len=a.distanceTo(b);const m=MM(GG.cyl(r1,r2,len,12),slv,0,0,0,{p:hold,cast:false,recv:false});m.position.copy(a).lerp(b,.5);m.lookAt(b);m.rotateX(Math.PI/2);MM(GG.cyl(r1*1.08,r1*1.08,.05,12),cuff,0,0,0,{p:hold,cast:false,recv:false}).position.copy(a).lerp(b,.04);return m};
+  const hand=(x,y,z,rx,ry)=>{const g2=grp(x,y,z,hold);g2.rotation.set(rx||0,ry||0,0);MM(GG.box(.075,.09,.055,.02),skin,0,0,0,{p:g2,cast:false,recv:false});for(let i=0;i<3;i++)MM(GG.box(.019,.05,.022,.008),skin,-.025+i*.025,-.02,.036,{p:g2,cast:false,recv:false,rx:-.5});MM(GG.box(.021,.048,.024,.008),skin,.047,0,.02,{p:g2,cast:false,recv:false,rz:-.6});return g2};
+  hand(-.01,-.075,.045,.3,0);arm([-.01,-.12,.06],[.34,-.5,.14],.052,.06);hand(-.02,-.055,-.27,.15,0);arm([-.02,-.1,-.26],[-.28,-.55,-.05],.05,.058);
+  const mz=g.getObjectByName('muzzle');const fl=PK.sprite(flashTex(),'#ffe0a0',.42,null,{add:1});fl.visible=false;if(mz){fl.position.copy(mz.position);mz.parent.add(fl)}
+  OWC.vm={S,C,vm,hold,g,mz,fl,mag:g.getObjectByName('mag'),base:{x:.21,y:-.165,z:-.56,ry:.22,rx:.03},ads:{x:0,y:-.138,z:-.46},raise:1,sx:0,sy:0,py:FP3.yaw,pp:FP3.pitch}}
+function owcVmDrop(){if(OWC.vm){OWC.vm.S.traverse(o=>{if(o.material&&o.material.dispose&&o.material.userData&&!o.material.userData.keep){}});OWC.vm=null}}
+function owcVmStep(dt){const V=OWC.vm;if(!V)return;V.raise=Math.max(0,V.raise-dt*2.2);const b=V.base,a=V.ads,k=OWC.adsK;
+  /* 시점 흔들림: 돌린 만큼 총이 늦게 따라온다 */let dy=FP3.yaw-V.py;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const dp=FP3.pitch-V.pp;V.py=FP3.yaw;V.pp=FP3.pitch;V.sx+=(clamp(dy*.9,-.06,.06)-V.sx)*Math.min(1,dt*10);V.sy+=(clamp(dp*.9,-.05,.05)-V.sy)*Math.min(1,dt*10);
+  const mv=Math.min(1,FP3.moving);const bt=OWC.bobT||0;const bx=Math.sin(bt*.5)*.012*mv*(1-k*.85),by=Math.abs(Math.sin(bt*.5))*.012*mv*(1-k*.85);const sprint=OWC.sprint?1:0;
+  const rl=OWC.reload>0?Math.sin(Math.min(1,1-OWC.reload/OWC_W.reload)*Math.PI):0;const md=OWC.medT>0?1:0;const dn=Math.max(V.raise,md*.8,OWC.dead?1:0);
+  V.hold.position.set(b.x+(a.x-b.x)*k+V.sx*.5+bx+sprint*.06,b.y+(a.y-b.y)*k-V.sy*.4-by-rl*.09-dn*.35-sprint*.05,b.z+(a.z-b.z)*k+OWC.kick*.035);
+  V.hold.rotation.set(b.rx*(1-k)+OWC.kick*.06+rl*.55+sprint*-.2,b.ry*(1-k)+V.sx*.8+sprint*.55,rl*.35);
+  if(V.mag){V.mag.visible=!(rl>.55&&rl<.95)}}
+function owcVmMuzzle(){const V=OWC.vm;if(!V||!V.mz)return SV3.cam.position.clone();V.C.position.set(0,0,0);V.C.quaternion.identity();V.C.updateMatrixWorld(true);const p=V.mz.getWorldPosition(new T.Vector3());/* 총 장면 좌표 → 세상: 카메라 기준 */p.applyMatrix4(SV3.cam.matrixWorld);return p}
+/* ---------- 화면 ---------- */
+function owcUI(){const old=$('#owcUI');if(old)old.remove();if(!SV3.el)return;const S=OWC.S;const el=document.createElement('div');el.id='owcUI';el.className='owc';
+  el.innerHTML=`<div class="owc-xh" id="owcXh"><i class="xc"></i><i class="xl"></i><i class="xr"></i><i class="xu"></i><i class="xd"></i></div><div class="owc-auto" id="owcAuto" hidden>자동사격</div><div class="owc-nf" id="owcNoFire" hidden></div>
+  <div class="owc-hitm" id="owcHit"></div><div class="owc-vig" id="owcVig"></div><div class="owc-marks" id="owcMarks"></div><div class="owc-dmg" id="owcDmg"></div>
+  <div class="owc-tl"><button class="owc-menu" data-g3="owcmenu" aria-label="교전 메뉴">${ic('menu')}</button><div class="owc-hp"><div class="bar"><i id="owcHp"></i><b class="num" id="owcHpT">${Math.round(OWC.hpP)}</b></div><small>예비역 · 동원 주민 방어조</small></div></div>
+  <div class="owc-sq" id="owcSq"></div>
+  <div class="owc-tc"><div class="owc-obj"><b>${S.n}</b><span id="owcPh">준비</span><span class="chip red num" id="owcLeft">적 —</span>${S.timer?'<span class="chip amb num" id="owcTmr">--:--</span>':''}</div><div class="owc-radio" id="owcRadio" hidden></div><div class="owc-msg" id="owcMsg" hidden></div></div>
+  <div class="owc-feed" id="owcFeed"></div>
+  <div class="owc-items"><button class="owc-it" data-g3="owcmed" id="owcMd">${ic('aid')}<i class="num" id="owcMdN">${OWC.med}</i><span>구급</span></button><button class="owc-it" data-g3="owcnade" id="owcNd">${ic('dot')}<i class="num" id="owcNdN">${OWC.nade}</i><span>수류탄</span></button></div>
+  <div class="owc-fire"><div class="owc-ammo"><b class="num" id="owcMag">${OWC.mag}</b><span class="num" id="owcRes">/${OWC.res}</span><small>${OWC_W.n}</small></div>
+    <button class="owc-b owc-rel" data-g3="owcrel" aria-label="재장전">${ic('clock')}<span id="owcRelT">재장전</span></button><button class="owc-b owc-ads" data-g3="owcads" id="owcAds">${ic('pin')}<span>조준</span></button>
+    <button class="owc-b owc-cr${OWC.cr?' on':''}" data-g3="owccr" id="owcCr">${ic('stairs')}<span>${OWC.cr?'서기':'앉기'}</span></button><button class="owc-b owc-jp" data-g3="owcjp">${'<b class="jg">⤒</b>'}<span>점프</span></button>
+    <button class="owc-fb" data-g3="owcfire" id="owcFire">${ic('fire')}<span>사격</span></button></div>
+  <div class="out-enc owc-res" id="owcResult" hidden></div><div class="owc-pause" id="owcPause" hidden></div>
+  <p class="owc-help" id="owcHelp">왼쪽 드래그 이동 · 오른쪽 드래그 조준 · 사격 버튼(누르고 있으면 연사, 끌면 조준)${OWC.auto?' · 적 위에 조준점이 머물면 자동사격':''} · 앉으면 모래주머니 뒤에 숨는다 · 주민·흰 천에는 쏘지 않는다</p>`;
+  SV3.el.appendChild(el);owcFireBind();owcHpUI();owcAmmoUI();owcSqUI();setTimeout(()=>{const h=$('#owcHelp');if(h)h.classList.add('out')},9000)}
+function owcFireBind(){const fb=$('#owcFire');if(!fb)return;let pid=null,lx=0,ly=0;
+  fb.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();SND.ac();if(!OWC.on||OWC.done||OWC.paused)return;OWC.fire=true;pid=e.pointerId;const p=sv3Local(e.clientX,e.clientY);lx=p.x;ly=p.y;try{fb.setPointerCapture(e.pointerId)}catch(x){}fb.classList.add('on')});
+  fb.addEventListener('pointermove',e=>{if(e.pointerId!==pid||!OWC.fire)return;const p=sv3Local(e.clientX,e.clientY);const dx=p.x-lx,dy=p.y-ly;lx=p.x;ly=p.y;const s=.0042*OWC.sens*(OWC.ads?.55:1)*(OWC.aimOn?.6:1);FP3.yaw-=dx*s;FP3.pitch=clamp(FP3.pitch-dy*s,-1.2,1.2)});
+  const up=e=>{if(e.pointerId!==pid)return;pid=null;OWC.fire=false;fb.classList.remove('on')};fb.addEventListener('pointerup',up);fb.addEventListener('pointercancel',up);fb.addEventListener('lostpointercapture',up)}
+function owcBtn(){const a=$('#owcAds');if(a)a.classList.toggle('on',OWC.ads);const c=$('#owcCr');if(c){c.classList.toggle('on',OWC.cr);const s=c.querySelector('span');if(s)s.textContent=OWC.cr?'서기':'앉기'}const n=$('#owcNdN');if(n)n.textContent=OWC.nade;const m=$('#owcMdN');if(m)m.textContent=OWC.med;
+  const nb=$('#owcNd');if(nb)nb.disabled=OWC.nade<=0;const mb=$('#owcMd');if(mb)mb.disabled=OWC.med<=0}
+function owcHpUI(){const b=$('#owcHp'),t=$('#owcHpT');const v=Math.max(0,Math.round(OWC.hpP));if(b){b.style.width=v+'%';b.style.background=v<35?'var(--red,#e0503a)':v<65?'#e6a23a':'var(--exit,#2ccf7c)'}if(t)t.textContent=v}
+function owcAmmoUI(){const m=$('#owcMag'),r=$('#owcRes'),rt=$('#owcRelT');if(m){m.textContent=OWC.mag;m.classList.toggle('low',OWC.mag<=6)}if(r)r.textContent='/'+OWC.res;if(rt)rt.textContent=OWC.reload>0?'장전 중':'재장전'}
+function owcSqUI(){const el=$('#owcSq');if(!el)return;const h=OWC.al.map(a=>`<div class="owc-sm ${a.gone||a.st==='hurt'?'out':a.hp<3?'hurt':'ok'}"><i></i><b>${a.n}</b><small>${a.gone||a.st==='hurt'?'부상 후송':a.r}</small></div>`).join('');if(el.innerHTML!==h)el.innerHTML=h}
+function owcSay(who,txt,pri){OWC.say.push({who,txt,pri});if(OWC.say.length>3)OWC.say.splice(0,OWC.say.length-3)}
+function owcMsg(txt,sec,warn){const el=$('#owcMsg');if(!el)return;el.textContent=txt;el.hidden=false;el.classList.toggle('warn',!!warn);clearTimeout(owcMsg._t);owcMsg._t=setTimeout(()=>{el.hidden=true},(sec||2)*1000)}
+function owcFeed(txt,k){OWC.feed.push({txt,k,t:4.5});if(OWC.feed.length>4)OWC.feed.shift();OWC.feedDirty=1}
+function owcHitMark(head){SFX.mech(head?'head':'hit');const h=$('#owcHit');if(!h)return;h.classList.remove('on','hd');void h.offsetWidth;h.classList.add('on');if(head)h.classList.add('hd')}
+function owcHud(dt){if(OWC.vm)owcVmStep(dt);OWC.uiT=(OWC.uiT||0)-dt;
+  /* 무전 자막: 2.6초씩 차례로 */OWC.sayT-=dt;if(OWC.sayT<=0&&OWC.say.length){const s=OWC.say.shift();const el=$('#owcRadio');if(el){el.innerHTML=`<b>${s.who}</b> ${s.txt}`;el.hidden=false;el.classList.toggle('pri',!!s.pri)}OWC.sayT=2.6}else if(OWC.sayT<=-.2){const el=$('#owcRadio');if(el&&!el.hidden)el.hidden=true}
+  if(OWC.feed.length){let ch=false;OWC.feed.forEach(f=>{f.t-=dt;if(f.t<=0)ch=true});if(ch){OWC.feed=OWC.feed.filter(f=>f.t>0);OWC.feedDirty=1}}if(OWC.feedDirty){OWC.feedDirty=0;const el=$('#owcFeed');if(el)el.innerHTML=OWC.feed.map(f=>`<div class="${f.k}">${f.txt}</div>`).join('')}
+  /* 피격 방향 */if(OWC.dmgA.length){OWC.dmgA.forEach(d=>d.t-=dt);OWC.dmgA=OWC.dmgA.filter(d=>d.t>0);const el=$('#owcDmg');if(el)el.innerHTML=OWC.dmgA.map(d=>`<i style="transform:rotate(${(d.a*180/Math.PI).toFixed(0)}deg);opacity:${Math.min(1,d.t).toFixed(2)}"></i>`).join('')}else if(OWC.dmgHad){const el=$('#owcDmg');if(el)el.innerHTML=''}OWC.dmgHad=OWC.dmgA.length>0;
+  if(OWC.uiT>0&&dt)return;OWC.uiT=.2;
+  const S=OWC.S;const ph=$('#owcPh');if(ph){const t=OWC.done?(OWC.win?'완료':'종료'):OWC.wave<0?'준비 — 정문을 본다':`${OWC.wave+1}/${S.waves.length} · ${S.waves[OWC.wave].n}`;if(ph.textContent!==t)ph.textContent=t}
+  const lf=$('#owcLeft');if(lf){const n=OWC.alive==null?0:OWC.alive;const t=`적 ${n}`;if(lf.textContent!==t)lf.textContent=t}
+  const tm=$('#owcTmr');if(tm&&S.timer){const l=Math.max(0,OWC.qrf);const t=`기동타격대 ${Math.floor(l/60)}:${String(Math.floor(l%60)).padStart(2,'0')}`;if(tm.textContent!==t)tm.textContent=t;tm.classList.toggle('red',l<=30)}
+  owcSqUI();owcAmmoUI();const rv=$('#owcVig');if(rv)rv.classList.toggle('low',OWC.hpP<35)}
+/* 적·아군 표시: 보이는 적 머리 위 빨간 표식(나를 겨누면 고리), 아군 이름, 보호 대상 흰 표식 */
+function owcMarks(){const el=$('#owcMarks');if(!el)return;OWC.mkT=(OWC.mkT||0)+1;if(OWC.mkT%2)return;const cam=SV3.cam;const W=SV3.vw,H=SV3.vh;const out=[];
+  const put=(x,y,z,cls,txt)=>{_oe.set(x,y,z).project(cam);if(_oe.z>1||_oe.z<-1)return;const sx=(_oe.x+1)/2*W,sy=(1-_oe.y)/2*H;if(sx<-20||sx>W+20||sy<-20||sy>H+20)return;out.push(`<i class="${cls}" style="left:${sx.toFixed(0)}px;top:${sy.toFixed(0)}px">${txt||''}</i>`)};
+  for(const a of OWC.en){if(a.gone||a.st==='down')continue;const q=a.h.root.position;if(!a.vis&&!(a.prot&&OWC.t-a.seen<2))continue;const d=Math.hypot(q.x-cam.position.x,q.z-cam.position.z);
+    if(a.prot)put(q.x,2.15,q.z,'pr',a.type==='surr'?'투항자':'주민');else{const warn=a.st==='aim'&&a.tgt==='me'&&a.aimP>.3;put(q.x,(a.h.pose==='crouch'?1.35:1.95)+d*.004,q.z,warn?'en warn':'en','')}}
+  for(const a of OWC.al){if(a.gone)continue;const q=a.h.root.position;const d=Math.hypot(q.x-cam.position.x,q.z-cam.position.z);if(d>45||d<1.2)continue;put(q.x,(a.h.pose==='crouch'?1.45:1.95),q.z,'al'+(a.st==='hurt'?' hurt':''),a.n)}
+  const h=out.join('');if(el.innerHTML!==h)el.innerHTML=h}
+/* 멈춤 메뉴 */
+function owcPause(on){const el=$('#owcPause');if(!el)return;OWC.paused=!!on;OWC.fire=false;el.hidden=!on;if(!on){el.innerHTML='';return}
+  el.innerHTML=`<div class="sheet"><h2>교전 중</h2><p class="small">밖 탐색 장면 그대로 싸우는 중이다. 후퇴하면 현관을 내주고 물러난다 (체력 −8 · 사기 −5 · 신뢰 −2).</p><div class="row"><button class="btn pri" data-g3="owcgo">계속 싸운다</button><button class="btn" data-g3="owcquit">후퇴 — 현관을 내준다</button></div>
+    <p class="small mut">감도·자동사격은 전투 모드 설정을 따른다 (지금: 자동사격 ${OWC.auto?'켬':'끔'})</p><div class="row"><button class="btn ghost" data-g3="owcauto">자동사격 ${OWC.auto?'끄기':'켜기'}</button></div></div>`}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-g3^=owc]');if(!b||!OWC.on)return;const k=b.dataset.g3;if(k==='owcfire')return;e.preventDefault();e.stopPropagation();SND.ac();
+  if(k==='owcmenu'){owcPause(!OWC.paused);return}if(k==='owcgo'){owcPause(false);return}if(k==='owcquit'){owcPause(false);owcEnd(false,'quit');return}if(k==='owcauto'){OWC.auto=!OWC.auto;const s=cbGet('sel',{});cbSet('sel',Object.assign(s,{auto:OWC.auto?1:0}));owcPause(true);return}
+  if(k==='owcclose'){owcClose();return}if(OWC.done||OWC.paused)return;
+  if(k==='owcads'){OWC.ads=!OWC.ads;owcBtn();vib(6)}else if(k==='owccr'){OWC.cr=!OWC.cr;owcBtn();vib(6)}else if(k==='owcrel')owcReload();else if(k==='owcjp'){if(OWC.cr){OWC.cr=false;owcBtn()}else FP3.jump()}else if(k==='owcnade')owcThrow();else if(k==='owcmed')owcMed()},{passive:false,capture:true});
+document.addEventListener('keydown',e=>{if(!OWC.on||OWC.done||e.repeat)return;const k=e.code;if(k==='KeyR')owcReload();else if(k==='KeyC'){OWC.cr=!OWC.cr;owcBtn()}else if(k==='KeyQ'){OWC.ads=!OWC.ads;owcBtn()}else if(k==='KeyG')owcThrow();else if(k==='KeyH')owcMed();else if(k==='Space'){e.preventDefault();OWC.fire=true}else return});
+document.addEventListener('keyup',e=>{if(e.code==='Space'&&OWC.on)OWC.fire=false});
+/* ---------- 연결 ---------- */
+/* 밖 탐색 한 프레임: 교전 중엔 교전 단계가 대신한다 */
+(function(){const b=window.outStep;window.outStep=function(dt){if(OWC.on&&OUT.on){OWC.rf=1;if(OWC.paused){owcHud(0);return}try{owcStep(dt)}catch(e){console.error(e)}return}const r=b.apply(this,arguments);if(OWC.after&&OUT.on)try{owcAfter(dt)}catch(e){console.error(e)}return r}})();
+/* 1인칭 총은 장면을 그린 뒤 깊이를 지우고 덧그린다 */
+(function(){const b=window.sv3Loop;window.sv3Loop=function(now){OWC.rf=0;const r=b.apply(this,arguments);if(OWC.rf&&OWC.on&&OWC.vm&&!window.__noRender&&SV3.el&&R3.r){const R=R3.r,V=OWC.vm;try{V.C.aspect=SV3.cam.aspect;V.C.fov=50-6*OWC.adsK;V.C.updateProjectionMatrix();R.autoClear=false;R.clearDepth();R.render(V.S,V.C)}catch(e){}finally{R.autoClear=true}}return r}})();
+/* 시점 감도: 조준 중·적 위에서는 느리게 */
+(function(){const mv=FP3.move;FP3.move=function(e){if(!OWC.on)return mv.call(this,e);const y0=this.yaw,p0=this.pitch;const r=mv.call(this,e);const k=(OWC.sens||1)*(OWC.ads?.55:1)*(OWC.aimOn?.6:1);this.yaw=y0+(this.yaw-y0)*k;this.pitch=clamp(p0+(this.pitch-p0)*k,-1.2,1.2);return r}})();
+/* 교전 중엔 다른 행동·강하 재발생·행인·미션 신호를 멈춘다 */
+(function(){const od=window.outDo;window.outDo=function(c){if(OWC.on)return;return od.apply(this,arguments)}})();
+(function(){const pe=window.paraEligible;window.paraEligible=function(){if(OWC.on||(G&&G.flags.paraJoin&&OWC.after))return false;return pe.apply(this,arguments)}})();
+(function(){const ps=window.pedStep;if(typeof ps!=='function')return;window.pedStep=function(dt){if(OWC.on){if(!OWC.pedHid){OWC.pedHid=1;(PED.list||[]).forEach(a=>{if(a.h)a.h.root.visible=false})}return}OWC.pedHid=0;return ps.apply(this,arguments)}})();
+(function(){const ms=window.misStep;if(typeof ms!=='function')return;window.misStep=function(dt){if(OWC.on)return;return ms.apply(this,arguments)}})();
+(function(){const ob=window.outReturn;window.outReturn=function(why){if(OWC.on){OWC.on=false;const u=$('#owcUI');if(u)u.remove();owcVmDrop();if(OUT.me&&OUT.me.mesh)OUT.me.mesh.visible=true;if(SV3.el)SV3.el.classList.remove('owc-on');FP3.onTap=null}owcCleanup(true);return ob.apply(this,arguments)}})();
+/* 장면을 다시 그리면(같은 장면) 교전 화면·충돌 상자를 되살린다, 새 장면이면 정리 */
+(function(){const vt=window.vOutside3TJ;if(typeof vt!=='function')return;window.vOutside3TJ=function(){const sc0=OUT.scene;const r=vt.apply(this,arguments);try{if(OUT.scene!==sc0){if(OWC.on||OWC.after){OWC.on=false;owcCleanup(true)}}else if(OWC.on){SV3.el.classList.add('owc-on');FP3.onTap=owcTap;(OWC.pboxes||[]).forEach(b=>{if(!FP3.boxes.includes(b))FP3.boxes.push(b)});owcUI();owcBtn()}else if(OWC.after){(OWC.pboxes||[]).forEach(b=>{if(!FP3.boxes.includes(b))FP3.boxes.push(b)})}}catch(e){console.error(e)}return r}})();
+/* 미니맵: 본 적(빨강, 3초)·아군(하늘색)·현관(주황) */
+(function(){const tm=window.tjMarkers;window.tjMarkers=function(x,toS,scale){const r=tm.apply(this,arguments);if(!OWC.on)return r;try{const dot=(px,pz,col,rad)=>{const [sx,sy]=toS(px,pz);x.fillStyle=col;x.strokeStyle='#0a0c10';x.lineWidth=1.5*scale;x.beginPath();x.arc(sx,sy,rad*scale,0,Math.PI*2);x.fill();x.stroke()};
+  dot(OWC.A.x,OWC.A.z,'#ff9a3a',4.5);OWC.al.forEach(a=>{if(!a.gone)dot(a.h.root.position.x,a.h.root.position.z,'#5ad0ff',3)});OWC.en.forEach(a=>{if(a.gone||a.st==='down')return;if(OWC.t-a.seen<3)dot(a.h.root.position.x,a.h.root.position.z,a.prot?'#ffffff':'#ff4a3a',3.4)})}catch(e){}return r}})();
+/* 조작법에 '같은 배경 교전' */
+if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>h[0]==='전투');HELP84.splice(i>=0?i+1:HELP84.length,0,['같은 배경 교전',"공수부대 강하 때 101동 현관에서 '소총을 받는다'를 고르면 밖 탐색 장면 그대로 1인칭 교전이 된다. 왼쪽 끌기 이동, 오른쪽 끌기 조준, 빨간 버튼 사격(누른 채 끌면 조준), 조준점이 적 위에 머물면 자동사격. '앉기'면 모래주머니 뒤에 숨고 쏠 때만 머리가 드러난다. 구급·수류탄, 주민이 탄약을 날라 온다. 흰 천(투항자)·뛰는 주민은 쏘지 않는다. 기동타격대(4분)까지 버티거나 모두 물리치면 이긴다. 설정 '실제 지도 교전 → 전투 화면'이면 예전처럼 전투 화면으로 넘어간다."])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
