@@ -8763,7 +8763,11 @@ const RBX={get ok(){return typeof RBX_DATA!=='undefined'&&!!RBX_DATA&&!!RBX_DATA
     g.setAttribute('normal',new T.BufferAttribute(new Int8Array(buf,P.nor,n*3),3,true));g.setAttribute('uv',new T.BufferAttribute(new Uint16Array(buf,P.uv,n*2),2,true));
     g.setAttribute('skinIndex',new T.BufferAttribute(new Uint8Array(buf,P.si,n*4),4));g.setAttribute('skinWeight',new T.BufferAttribute(new Uint8Array(buf,P.sw,n*4),4,true));
     if(P.idx>=0)g.setIndex(new T.BufferAttribute(P.idx32?new Uint32Array(buf,P.idx,P.ic):new Uint16Array(buf,P.idx,P.ic),1));
-    P.groups.forEach(gr=>g.addGroup(gr.s,gr.c,gr.m));g.computeBoundingSphere();g.computeBoundingBox();return this.geo[k]=g},
+    /* v9.1: 같은 재질 조각을 한 묶음으로 — 사람 한 명 그리기 호출 7 → 3(군중이 많아져도 덜 무겁게) */
+    {const by=new Map();P.groups.forEach(gr=>{if(!by.has(gr.m))by.set(gr.m,[]);by.get(gr.m).push(gr)});
+     if(g.index&&by.size<P.groups.length){const src=g.index.array;let tot=0;P.groups.forEach(gr=>tot+=gr.c);const out=new src.constructor(tot);let o=0;for(const [m,L] of by){const st=o;for(const gr of L){out.set(src.subarray(gr.s,gr.s+gr.c),o);o+=gr.c}g.addGroup(st,o-st,m)}g.setIndex(new T.BufferAttribute(out,1))}
+     else P.groups.forEach(gr=>g.addGroup(gr.s,gr.c,gr.m))}
+    g.computeBoundingSphere();g.computeBoundingBox();return this.geo[k]=g},
   /* 재질(공유, 변형 키로 ROK/KPA 재색) */
   /* 변형: rok(국군, 녹갈색 디지털) · kpa(북한군, 카키·올리브) — 질감 재색 + 재질 색 곱 / tint: 피부·머리 밝기 변주 */
   materials(k,variant,tint){const mk=k+'|'+(variant||'')+'|'+(tint||'');if(this.mats[mk])return this.mats[mk];const A=RBX_DATA.avatars[k];const ms=A.j.parts[0].mats.map(m=>{let tk=m.tex;if(variant&&RBX_DATA.tex[tk+'_'+variant])tk=tk+'_'+variant;const isHead=/head/.test(m.n);const o={color:'#ffffff',roughness:.88,metalness:0,map:tk?this.texture(tk):null};
@@ -13190,7 +13194,7 @@ function perfStartup(){try{const m=performance.getEntriesByName('sot-title')[0];
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.0.1';
+const APP_VER='9.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13581,14 +13585,14 @@ function pedPick(x,z,rmin,rmax,avoid){const S=pedSegs();const c0=Math.floor(x/40
   if(!cand.length)return null;let fx=0,fz=0;if(avoid&&SV3.cam){const d=SV3.cam.getWorldDirection(new T.Vector3());const l=Math.hypot(d.x,d.z)||1;fx=d.x/l;fz=d.z/l}
   for(let k=0;k<18;k++){const i=cand[Math.floor(Math.random()*cand.length)];const s=S[i];const u=Math.random()*s.L;const px=s.ax+s.tx*u,pz=s.az+s.tz*u;const d=Math.hypot(px-x,pz-z);if(d<rmin||d>rmax)continue;
     if(avoid&&d<95&&((px-x)*fx+(pz-z)*fz)/d>.3)continue;return{i,u}}return null}
-function pedCount(){const q=SV3.qt||'high';let n=q==='low'?7:q==='mid'?13:20;if(OUT.tod==='night')n=Math.round(n*.55);else if(OUT.tod==='dawn')n=Math.round(n*.8);
-  if(G.scen==='nuke')n=Math.round(n*(G.turn<4?.2:.55));else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)n=Math.round(n*.3);return Math.max(2,n)}
+function pedCount(){const q=SV3.qt||'high';/* v9.1: 북적이게 — 20→24 / 13→16 / 7→9, 대신 보이는 반경 안에 모아 둔다 */let n=q==='low'?9:q==='mid'?16:24;if(OUT.tod==='night')n=Math.round(n*.55);else if(OUT.tod==='dawn')n=Math.round(n*.8);
+  /* 핵: 첫 24시간(4턴 전)은 낙진 때문에 30%, 그 뒤엔 구호품을 받으러 나와 80% */if(G.scen==='nuke')n=Math.round(n*(G.turn<4?.3:.8));else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)n=Math.round(n*.3);return Math.max(2,n)}
 function pedAt(a){const s=PED.segs[a.seg];const nx=-s.tz,nz=s.tx;const q=a._q||(a._q={x:0,z:0,dx:0,dz:0});q.x=s.ax+s.tx*a.s+nx*a.lat;q.z=s.az+s.tz*a.s+nz*a.lat;q.dx=s.tx*a.dir;q.dz=s.tz*a.dir;return q}/* v8.6: 매 프레임 새 객체를 만들지 않는다(GC 멈칫 줄이기) */
 function pedMk(sc,i,kind,mode,pk){const h=civHuman(i,mode==='stand'?mrPick(['idle','phone','talk','listen','look','nervous']):mode==='run'?'run':(i%3?'walk':'walkFast'),kind);if(!h)return null;if(kind==='civ'&&i%2===0&&typeof civProps==='function')try{civProps(h,i)}catch(e){}
   sc.add(h.root);const a={h,kind:'ped',mode,seg:pk.i,s:pk.u,dir:Math.random()<.5?1:-1,lat:(Math.random()-.5)*1.1,sp:mode==='run'?2.7+Math.random()*.8:1.05+Math.random()*.6,yaw:0};
   const q=pedAt(a);h.root.position.set(q.x,0,q.z);a.yaw=Math.atan2(q.dx,q.dz);h.root.rotation.y=a.yaw;return a}
 function pedSpawn(sc){PED.list=[];if(!RBX.ok||!TJ.occ)return;const n=pedCount();const st=tjStartPt();let made=0,id=40,guard=0;
-  while(made<n&&guard++<n*4){const pk=pedPick(st.x,st.z,12,92,false);if(!pk)break;const roll=Math.random();
+  while(made<n&&guard++<n*6){const pk=pedPick(st.x,st.z,8,pedVisD()+14,false);if(!pk)continue;const roll=Math.random();
     if(roll<.16&&made+2<=n){/* 서서 얘기하는 두 사람 */const a=pedMk(sc,id++,'civ','stand',pk);if(!a)break;const b=pedMk(sc,id++,id%5===0?'eldF':'civ','stand',pk);if(b){b.lat=a.lat+.95;const qa=pedAt(a),qb=pedAt(b);a.h.root.position.set(qa.x,0,qa.z);b.h.root.position.set(qb.x,0,qb.z);lifeFace(a.h,qb.x,qb.z);lifeFace(b.h,qa.x,qa.z);a.mate=b;b.mate=a;PED.list.push(b);made++}PED.list.push(a);made++}
     else if(roll<.27&&made+2<=n){/* 아이 손잡고 걷는 어른 */const a=pedMk(sc,id++,'civ','walk',pk);if(!a)break;a.sp=Math.min(a.sp,1.25);const k=civHuman(id++,'walk','kid');if(k){sc.add(k.root);const b={h:k,kind:'ped',mode:'kid',lead:a,seg:a.seg,s:a.s,dir:a.dir,lat:a.lat,sp:a.sp};PED.list.push(b);made++}PED.list.push(a);made++}
     else{const a=pedMk(sc,id++,'civ',roll>.86?'run':'walk',pk);if(!a)break;PED.list.push(a);made++}}
@@ -13609,9 +13613,9 @@ function pedStep(dt){if(!PED.list.length||!PED.segs)return;const S=PED.segs,p=FP
     const pose=run?'run':(a.sp>1.45?'walkFast':'walk');if(h.pose!==pose&&!h.faceHold)h.setPose(pose)}
   /* 0.5초마다: 멀어진 사람은 보이지 않는 쪽 보도로 옮긴다 */PED.chk-=dt;if(PED.chk>0)return;PED.chk=.5;
   for(const a of PED.list){if(a.kind!=='ped'||!a.h||a.mode==='kid'||a.h.pose==='dead')continue;const h=a.h;const d=Math.hypot(h.root.position.x-p.x,h.root.position.z-p.z);
-    if(d>112){const pk=pedPick(p.x,p.z,58,96,true);if(pk){a.seg=pk.i;a.s=pk.u;a.dir=Math.random()<.5?1:-1;a.lat=(Math.random()-.5)*1.1;if(a.mode==='stand'){a.mode='walk';a.sp=1.1+Math.random()*.5}const q=pedAt(a);h.root.position.set(q.x,0,q.z);if(a.mate){const m=a.mate;a.mate=null;m.mate=null}}}
+    if(d>pedVisD()+22){const vd=pedVisD();const pk=pedPick(p.x,p.z,vd*.55,vd-2,true)||pedPick(p.x,p.z,vd*.4,vd+14,true);if(pk){a.seg=pk.i;a.s=pk.u;a.dir=Math.random()<.5?1:-1;a.lat=(Math.random()-.5)*1.1;if(a.mode==='stand'){a.mode='walk';a.sp=1.1+Math.random()*.5}const q=pedAt(a);h.root.position.set(q.x,0,q.z);if(a.mate){const m=a.mate;a.mate=null;m.mate=null}}}
     h.root.visible=Math.hypot(h.root.position.x-p.x,h.root.position.z-p.z)<pedVisD()}}
-function pedVisD(){const q=SV3.qt||'high';return q==='low'?50:q==='mid'?68:88}
+function pedVisD(){const q=SV3.qt||'high';/* v9.1: 사람이 많아진 만큼 보이는 거리는 줄여 가까운 곳을 북적이게(그리기 비용 관리) */return q==='low'?40:q==='mid'?52:64}
 
 /* ---------- 탈것: 모양(정지 상태는 재질별로 합쳐 그리기 호출을 줄이고, 탈 때 바퀴가 도는 모양으로 바꾼다) ---------- */
 const RIDE={list:[],rider:null,bumpT:0,chk:0,snd:null};
@@ -15231,6 +15235,99 @@ function owcResultSpy(){const s=OWC.stt;const win=OWC.win,quit=OWC.why==='quit';
 (function(){const tm=window.tjMarkers;window.tjMarkers=function(x,toS,scale){const r=tm.apply(this,arguments);try{const a=SPY.chase?SPY.chase.a:SPY.cur;if(a&&a.h&&(SPY.noticed||SPY.chase)&&!SPY.done||SPY.chase){const q=a.h.root.position;const [sx,sy]=toS(q.x,q.z);x.fillStyle='#b46cff';x.strokeStyle='#0a0c10';x.lineWidth=1.5*scale;x.beginPath();x.arc(sx,sy,4*scale,0,Math.PI*2);x.fill();x.stroke()}}catch(e){}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(){SPY.cur=null;SPY.chase=null;return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^팀/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['간첩 — 수상한 사람 검문',"검문소·군 차량을 계속 찍는 사람이 있으면 나·팀원(🔭정찰이 가장 빨리)이 알아챈다(보라 점·'?'). 다가가 '검문한다' — 신분증·사진 확인이 먼저다. 간첩이면 잡히거나 달아나거나(25초 안에 붙잡기) 권총을 뽑는다(같은 배경 교전, 팀원도 합류 — 다치면 손을 들고 투항, 생포가 더 값지다). 확인 없이 덮치면 평범한 주민일 때 큰 벌점. 평소엔 거리를 두고 신고(간첩 신고 111·112)."])}
+
+/* ===================== 56 · 인파 거점 — 북적이는 거리 ===================== */
+/* 내가 150m 안으로 가면 그 자리에 사람 무리가 생기고, 190m 넘게 멀어지면 정리된다(화질별 사람 수 상한 · 먼 무리는 숨김).
+   마을 광장: 게시판 앞·자판기 앞·담소·뛰노는 아이 / 검문소: 통행 확인 줄(4턴부터는 구호품 트럭 배급 줄 — 앞사람이 상자를 받아 떠나면 한 칸씩 당겨진다)
+   핵 시나리오: 방사능 측정 줄 / 대피소 입구: 명단 확인·벤치에 앉은 사람 / 편의점 줄 / 버스 정류장 / 지하철역 입구 / 놀이터 / 우리 단지 정문
+   공습경보가 울리면 흩어졌다가 끝나고 20초 뒤 다시 모인다 · 교전 중엔 숨는다 · 거점 사람도 이름이 있고 팀에 초대할 수 있다 */
+const HUB={defs:[],act:new Map(),t:0,chk:0,scat:0,regT:0,sc:null};
+const HUB_LOOK=[0,1,2,3,4,5,7,8,9];/* civ 겉모습(6번 = 내 겉모습은 뺀다) */
+function hubYaw(dx,dz){return Math.atan2(dx,dz)}
+function hubCap(){const q=SV3.qt||'high';let n=q==='low'?8:q==='mid'?16:30;if(OUT.tod==='night')n=Math.round(n*.6);if(G.scen==='nuke'&&G.turn<4)n=Math.round(n*.35);else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)n=Math.round(n*.35);return n}
+function hubDefs(){const P=TJ_DATA.POI;const L=[];const add=(id,x,z,fx,fz,kind,n,o)=>L.push(Object.assign({id,x,z,fx,fz,kind,n},o||{}));
+  const vg=P.vgreen;if(vg){add('vboard',vg[0]-3,vg[1]+2.3,0,-1,'board',4);add('vvend',vg[0]+2,vg[1]+1.3,0,-1,'line',3,{gap:.85});add('vchat',vg[0]+5.5,vg[1]+7.5,0,1,'chat',4);add('vkids',vg[0]-7,vg[1]+11,0,1,'kids',4);
+    add('vsit',vg[0]+9,vg[1]+1.5,0,1,'gather',5,{sign:'급수 · 의료 안내'});add('vwalk',vg[0]+1,vg[1]+9,0,1,'stroll',5,{rad:11});add('vchat2',vg[0]-8,vg[1]+3.5,1,0,'chat',3)}
+  const ck=P.check;if(ck){const n=[-ck.t[1],ck.t[0]];if(G.turn>=4&&P.truck){const tp=P.truck.p;add('relief',tp[0]+n[0]*2.6,tp[1]+n[1]*2.6,-n[0],-n[1],'line',8,{gap:.8,staff:'medic',sign:'구호품 배부',give:1})}else add('pass',ck.p[0]-ck.t[0]*3.2,ck.p[1]-ck.t[1]*3.2,ck.t[0],ck.t[1],'line',5,{gap:.85});
+    if(G.scen==='nuke')add('rad',ck.p[0]-ck.t[0]*9+n[0]*4,ck.p[1]-ck.t[1]*9+n[1]*4,n[0],n[1],'line',4,{gap:.9,staff:'rok',sign:'방사능 측정·제염'})}
+  /* 집회(전면전 3턴~)가 광장에 있으면 그 자리는 비우고, 둘레에 휴대폰으로 찍는 구경꾼을 세운다 */
+  const Z=hubZone();if(Z){for(let i=L.length-1;i>=0;i--)if(Math.hypot(L[i].x-Z.x,L[i].z-Z.z)<Z.r+1.5)L.splice(i,1);
+    add('watch1',Z.x,Z.z,0,1,'ring',5,{rad:Z.r+1.2,a0:Math.PI*.35,arc:Math.PI*.7});add('watch2',Z.x,Z.z,0,1,'ring',4,{rad:Z.r+1.6,a0:Math.PI*1.25,arc:Math.PI*.6})}
+  const sb=P.shelterB;if(sb){const nx=sb.n[0],nz=sb.n[1];add('shel',sb.door[0]+nx*3.2,sb.door[1]+nz*3.2,-nx,-nz,'gather',6,{staff:'medic',sign:'대피자 명단 확인'})}
+  (P.shops||[]).slice(0,2).forEach((s,i)=>{add('shopq'+i,s.door[0]+s.n[0]*1.3,s.door[1]+s.n[1]*1.3,-s.n[0],-s.n[1],'line',3,{gap:.85});add('shopc'+i,s.mid[0]+s.n[0]*5+(i?3:-3),s.mid[1]+s.n[1]*5,0,1,'chat',3)});
+  (P.bus||[]).forEach((b,i)=>add('bus'+i,b.p[0]-b.n[0]*.9,b.p[1]-b.n[1]*.9,-b.n[0],-b.n[1],'wait',3));
+  if(P.subway){const s=P.subway;add('stn',s.p[0]+s.n[0]*5,s.p[1]+s.n[1]*5,-s.n[0],-s.n[1],'gather',5)}
+  if(P.play)add('play',P.play[0],P.play[1],0,1,'kids',4);
+  if(P.gateIn&&P.gate){const dx=P.gateIn[0]-P.gate[0],dz=P.gateIn[1]-P.gate[1],l=Math.hypot(dx,dz)||1;add('gate',P.gate[0]-dx/l*4+dz/l*3,P.gate[1]-dz/l*4-dx/l*3,dx/l,dz/l,'chat',4)}
+  return L}
+/* 집회 구역(성난 군중 둘레 7m)에는 거점 사람을 세우지 않는다 */
+function hubZone(){if(typeof CROWD==='undefined'||!CROWD.c||!G||G.scen!=='conv')return null;return{x:CROWD.c[0],z:CROWD.c[1],r:7.2}}
+function hubOk(x,z){if(!pedFree(x,z))return false;const Z=HUB.zone;return!(Z&&Math.hypot(x-Z.x,z-Z.z)<Z.r)}
+function hubFreeNear(x,z){if(hubOk(x,z))return{x,z};for(let r=.5;r<=2.1;r+=.4)for(let a=0;a<8;a++){const tx=x+Math.cos(a/8*6.283)*r,tz=z+Math.sin(a/8*6.283)*r;if(hubOk(tx,tz))return{x:tx,z:tz}}return null}
+let HUB_ID=600;
+function hubMk(D,role,i,kind,pose,x,z,face){const k=kind||'civ';const li=k==='civ'?HUB_LOOK[(HUB_ID+i)%HUB_LOOK.length]+10*((HUB_ID>>2)%6):HUB_ID;HUB_ID++;let h=null;try{h=civHuman(li,pose,k);if(h&&k==='civ'&&li%2===0&&typeof civProps==='function')civProps(h,li)}catch(e){h=null}if(!h)return null;
+  h.root.position.set(x,0,z);h.root.rotation.y=face;HUB.sc.add(h.root);const a={h,kind:'hub',hub:D,role,li,lk:k,mode:'hub',home:{x,z},tx:x,tz:z,face,pT:Math.random()*4,v:0};
+  if(typeof npcName==='function'&&k!=='rok'){a.nm=npcName('hub:'+D.id+':'+li,typeof npcG==='function'?npcG(h):'m');a.tagL=a.nm}OUT.npcs.push(a);return a}
+function hubSpawn(D){const M=[];const fy=hubYaw(D.fx,D.fz);const rx=-D.fz,rz=D.fx;const P=(o,f)=>hubFreeNear(D.x+rx*o+D.fx*f,D.z+rz*o+D.fz*f);
+  const props=new T.Group();HUB.sc.add(props);
+  if(D.sign){const q=P(D.kind==='gather'?-2.2:1.8,1.2);if(q){const g=new T.Group();g.position.set(q.x,0,q.z);g.rotation.y=fy+Math.PI;props.add(g);const tb=new T.Mesh(new T.BoxGeometry(1.5,.75,.6),new T.MeshStandardMaterial({color:'#a9a397',roughness:.95}));tb.position.y=.38;g.add(tb);
+      const pl=new T.Mesh(new T.PlaneGeometry(1.4,.42),new T.MeshBasicMaterial({map:textTex(D.sign,'#1f3a5a','#ffffff',256,80,30)}));pl.position.set(0,1.25,0);g.add(pl);
+      /* 뒤에서 봐도 판이 보이게(글씨 없는 뒷면) */const bk=new T.Mesh(new T.PlaneGeometry(1.4,.42),new T.MeshStandardMaterial({color:'#2a3440',roughness:.9}));bk.position.set(0,1.25,-.01);bk.rotation.y=Math.PI;g.add(bk);
+      const st=new T.Mesh(new T.CylinderGeometry(.03,.03,1.1,6),new T.MeshStandardMaterial({color:'#5a5e62'}));st.position.set(0,.55,-.02);g.add(st)}}
+  /* 벤치: 길이 방향이 앉는 사람의 좌우가 되게 놓고(앉은 사람은 무리와 같은 쪽을 본다), 등받이는 뒤에 */
+  if(D.kind==='gather'){const q=P(1.6,-.6);if(q){const bg=new T.Group();bg.position.set(q.x,0,q.z);bg.rotation.y=fy;props.add(bg);const wood=new T.MeshStandardMaterial({color:'#8a6a48',roughness:.95});
+      const seat=new T.Mesh(new T.BoxGeometry(2.0,.07,.44),wood);seat.position.set(0,.395,0);bg.add(seat);const back=new T.Mesh(new T.BoxGeometry(2.0,.36,.06),wood);back.position.set(0,.66,-.21);back.rotation.x=-.12;bg.add(back);
+      const base=new T.Mesh(new T.BoxGeometry(1.7,.36,.26),new T.MeshStandardMaterial({color:'#3c4044',roughness:.7,metalness:.3}));base.position.set(0,.18,-.02);bg.add(base);
+      D.bench={x:q.x,z:q.z,ux:Math.cos(fy),uz:-Math.sin(fy)}}}
+  const add=(role,i,kind,pose,o,f,face)=>{const q=P(o,f);if(!q)return null;const a=hubMk(D,role,i,kind,pose,q.x,q.z,face==null?fy:face);if(a)M.push(a);return a};
+  if(D.kind==='board'){for(let i=0;i<D.n;i++){const o=(i-(D.n-1)/2)*.85,f=-(.2+Math.abs(o)*.25);add('read',i,i===3?'eldF':'civ',['look','listen','phone','talk'][i%4],o,f,null)}}
+  else if(D.kind==='line'){if(D.staff){add('staff',0,D.staff,'idle',0,1.4,fy+Math.PI);if(D.n>=6)add('staff',1,D.staff,'look',1.1,1.5,fy+Math.PI)}for(let i=0;i<D.n;i++){const a=add('q',i,i%5===4?'eldF':'civ',i%3===1?'phone':'idle',0,-i*(D.gap||.85),null);if(a)a.qi=i}}
+  else if(D.kind==='chat'){for(let i=0;i<D.n;i++){const ang=i/D.n*6.283;const o=Math.cos(ang)*1.05,f=Math.sin(ang)*1.05;const q=P(o,f);if(!q)continue;const a=hubMk(D,'chat',i,i===2?'eldF':'civ',i%2?'listen':'talk',q.x,q.z,0);if(a){lifeFace(a.h,D.x,D.z);a.face=a.h.root.rotation.y;M.push(a)}}}
+  else if(D.kind==='kids'){const nk=Math.max(2,D.n-1);for(let i=0;i<nk;i++){const a=add('kid',i,'kid','run',0,0,null);if(a){a.ang=i/nk*6.283;a.rad=2.2+i*.5;a.sp=(1.9+Math.random()*.6)*(i%2?1:-1)}}add('parent',0,'eldF','phone',3.2,-1.4,fy+Math.PI*.8)}
+  else if(D.kind==='stroll'){for(let i=0;i<D.n;i++){const ang=Math.random()*6.283,r=Math.random()*(D.rad||10);const q=hubFreeNear(D.x+Math.cos(ang)*r,D.z+Math.sin(ang)*r);if(!q)continue;const a=hubMk(D,'stroll',i,i%4===3?'eldF':'civ','walk',q.x,q.z,Math.random()*6.283);if(a){a.gx=q.x;a.gz=q.z;a.wT=0;M.push(a)}}}
+  else if(D.kind==='wait'){for(let i=0;i<D.n;i++)add('wait',i,'civ',['idle','phone','look'][i%3],(i-1)*1.2,0,null)}
+  else if(D.kind==='gather'){if(D.staff)add('staff',0,D.staff,'look',-1.2,.9,fy+Math.PI);const B=D.bench;let s=0;for(let i=0;i<D.n;i++){let a=null;if(B&&s<2){/* 엉덩이가 좌판 가운데에 오도록 앞쪽으로 0.17m */const x=B.x+B.ux*(s?.55:-.55)+D.fx*.17,z=B.z+B.uz*(s?.55:-.55)+D.fz*.17;a=hubMk(D,'sit',i,i%2?'eldF':'civ','sit',x,z,fy);if(a){a.h.root.position.y=0;M.push(a)}s++}else a=add('stand',i,'civ',['nervous','phone','idle','talk'][i%4],(i%3-1)*1.3,-1.2-(i%2)*1.1,null)}}
+  else if(D.kind==='ring'){/* 구경꾼: 집회를 둘러서서 찍거나 지켜본다 */for(let i=0;i<D.n;i++){const ang=D.a0+(i+.5)*D.arc/D.n;const q=hubFreeNear(D.x+Math.cos(ang)*D.rad,D.z+Math.sin(ang)*D.rad);if(!q)continue;const a=hubMk(D,'watch',i,i===3?'eldF':'civ',['phone','look','phone','listen','nervous'][i%5],q.x,q.z,0);if(a){lifeFace(a.h,D.x,D.z);a.face=a.h.root.rotation.y;M.push(a)}}}
+  D.M=M;D.props=props;D.t=0;D.qT=6+Math.random()*5;return M}
+function hubDrop(D){(D.M||[]).forEach(a=>{if(a.kind!=='team'){a.h.root.parent&&a.h.root.parent.remove(a.h.root);a.kind='gone'}});OUT.npcs=OUT.npcs.filter(a=>!(a.hub===D&&a.kind==='gone'));if(D.props&&D.props.parent)D.props.parent.remove(D.props);D.M=[];D.props=null}
+/* 줄: 앞사람이 받고 떠나면 한 칸씩 당겨지고, 뒤로 새 사람이 걸어온다 */
+function hubLine(D,dt){D.qT-=dt;const Q=D.M.filter(a=>a.role==='q'&&a.kind==='hub').sort((a,b)=>a.qi-b.qi);if(D.qT<=0&&Q.length){D.qT=(D.give?8:10)+Math.random()*5;const f=Q[0];f.kind='hubleave';f.role='leave';const side=Math.random()<.5?1:-1;f.lx=-D.fz*side;f.lz=D.fx*side;f.lT=11;try{f.h.setPose('walk')}catch(e){}if(D.give){const bx=new T.Mesh(new T.BoxGeometry(.42,.3,.32),new T.MeshStandardMaterial({color:'#b48a5a',roughness:.95}));bx.position.set(0,1.02,.3);f.h.root.add(bx);if(Math.random()<.4)bubSay&&bubSay(f.h,['고맙습니다!','물 받았어요.','아이 몫도 받았어요.'][Math.floor(Math.random()*3)],2,'')}
+    Q.slice(1).forEach(a=>{a.qi--});const q=hubFreeNear(D.x-D.fx*(Q.length-1)*(D.gap||.85)-D.fx*9,D.z-D.fz*(Q.length-1)*(D.gap||.85)-D.fz*9);if(q&&D.M.length<24){const a=hubMk(D,'q',Q.length+HUB_ID%7,Math.random()<.2?'eldF':'civ','walk',q.x,q.z,hubYaw(D.fx,D.fz));if(a){a.qi=Q.length-1;D.M.push(a)}}}
+  for(const a of D.M){if(a.role==='q'&&a.kind==='hub'){const tx=D.x-D.fx*a.qi*(D.gap||.85),tz=D.z-D.fz*a.qi*(D.gap||.85);hubWalk(a,tx,tz,1.15,dt,hubYaw(D.fx,D.fz))}
+    else if(a.kind==='hubleave'){a.lT-=dt;const P=a.h.root.position;const nx=P.x+a.lx*1.25*dt,nz=P.z+a.lz*1.25*dt;if(!FP3.blocked(nx,nz,.26)){P.x=nx;P.z=nz}else{const t=a.lx;a.lx=-a.lz;a.lz=t}a.h.root.rotation.y=hubYaw(a.lx,a.lz);
+      if(a.lT<=0){a.h.root.parent&&a.h.root.parent.remove(a.h.root);a.kind='gone'}}}
+  if(D.M.some(a=>a.kind==='gone')){D.M=D.M.filter(a=>a.kind!=='gone');OUT.npcs=OUT.npcs.filter(a=>!(a.hub===D&&a.kind==='gone'))}}
+function hubWalk(a,tx,tz,sp,dt,face){const P=a.h.root.position;const dx=tx-P.x,dz=tz-P.z,d=Math.hypot(dx,dz);if(d>.08){const st=Math.min(d,sp*dt);P.x+=dx/d*st;P.z+=dz/d*st;a.h.root.rotation.y=hubYaw(dx,dz);if(a.h.pose!=='walk'&&d>.25)try{a.h.setPose('walk')}catch(e){}}else{if(a.h.pose==='walk')try{a.h.setPose(Math.random()<.4?'phone':'idle')}catch(e){}let dy=face-a.h.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));a.h.root.rotation.y+=dy*Math.min(1,dt*3)}}
+function hubLive(D,dt){D.t+=dt;if(D.kind==='line'){hubLine(D,dt);return}
+  for(const a of D.M){if(a.kind!=='hub')continue;a.pT-=dt;
+    if(a.role==='stroll'){a.wT-=dt;const P=a.h.root.position;if(a.wT<=0||Math.hypot(a.gx-P.x,a.gz-P.z)<.4){if(a.wT<=0&&a.h.pose==='walk'&&Math.random()<.35){a.wT=2+Math.random()*3;try{a.h.setPose(Math.random()<.5?'phone':'look')}catch(e){}continue}
+        const ang=Math.random()*6.283,r=Math.random()*(D.rad||10);const q=hubFreeNear(D.x+Math.cos(ang)*r,D.z+Math.sin(ang)*r);if(q){a.gx=q.x;a.gz=q.z}a.wT=7+Math.random()*5;try{a.h.setPose('walk')}catch(e){}}
+      if(a.h.pose==='walk'){const dx=a.gx-P.x,dz=a.gz-P.z,d=Math.hypot(dx,dz);if(d>.05){const st=Math.min(d,1.15*dt);const nx=P.x+dx/d*st,nz=P.z+dz/d*st;if(!FP3.blocked(nx,nz,.26)&&!(HUB.zone&&Math.hypot(nx-HUB.zone.x,nz-HUB.zone.z)<HUB.zone.r)){P.x=nx;P.z=nz}else a.wT=0;let dy=hubYaw(dx,dz)-a.h.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));a.h.root.rotation.y+=dy*Math.min(1,dt*5)}}continue}
+    if(a.role==='kid'){a.ang+=a.sp/a.rad*dt;const x=D.x+Math.cos(a.ang)*a.rad,z=D.z+Math.sin(a.ang)*a.rad;const P=a.h.root.position;if(hubOk(x,z)){a.h.root.rotation.y=hubYaw(x-P.x,z-P.z);P.x=x;P.z=z}else a.sp=-a.sp;continue}
+    if(a.pT<=0){a.pT=3+Math.random()*4;const L=a.role==='chat'?['talk','listen','listen','talk','idle']:a.role==='read'?['look','listen','phone','idle']:a.role==='watch'?['phone','phone','look','listen','nervous']:a.role==='sit'?null:['idle','phone','look','nervous','talk'];if(L)try{a.h.setPose(L[Math.floor(Math.random()*L.length)])}catch(e){}}}}
+/* 경보: 흩어져 뛰어간 뒤 숨는다 → 끝나고 20초 뒤 다시 */
+function hubScatter(){for(const D of HUB.act.values()){for(const a of D.M){if(a.kind!=='hub')continue;a.kind='hubleave';a.role='leave';const P=a.h.root.position;let dx=P.x-D.x,dz=P.z-D.z;const l=Math.hypot(dx,dz)||1;a.lx=dx/l;a.lz=dz/l;a.lT=6+Math.random()*3;a.run=1;try{a.h.setPose('run');if(a.h.root.position.y)a.h.root.position.y=0}catch(e){}}}}
+function hubStep(dt){if(!OUT.on||!HUB.defs.length||!HUB.sc)return;HUB.t+=dt;const p=FP3.pos;const hide=(typeof OWC!=='undefined'&&OWC.on)||(typeof APT!=='undefined'&&APT.on);
+  if(OUT.siren&&!HUB.scat){HUB.scat=1;hubScatter()}if(!OUT.siren&&HUB.scat){HUB.regT=20;HUB.scat=0;HUB.scatDone=1}
+  if(HUB.scatDone){HUB.regT-=dt;if(HUB.regT<=0){HUB.scatDone=0;for(const D of HUB.act.values())hubDrop(D);HUB.act.clear()}}
+  HUB.chk-=dt;if(HUB.chk<=0&&!HUB.scat&&!HUB.scatDone){HUB.chk=.6;const cap=hubCap();let used=0;for(const D of HUB.act.values())used+=D.M.filter(a=>a.kind==='hub').length;
+    const L=HUB.defs.map(D=>({D,d:Math.hypot(D.x-p.x,D.z-p.z)})).sort((a,b)=>a.d-b.d);
+    for(const {D,d} of L){const on=HUB.act.has(D.id);if(on&&d>190){used-=D.M.filter(a=>a.kind==='hub').length;hubDrop(D);HUB.act.delete(D.id);continue}
+      if(!on&&d<150){/* 자리가 모자라면 더 먼(90m 밖) 무리부터 정리하고 가까운 무리를 세운다 */while(used+D.n>cap){let far=null,fd=-1;for(const E of HUB.act.values()){const e=Math.hypot(E.x-p.x,E.z-p.z);if(e>Math.max(90,d+25)&&e>fd){fd=e;far=E}}if(!far)break;used-=far.M.filter(a=>a.kind==='hub').length;hubDrop(far);HUB.act.delete(far.id)}
+        if(used+D.n<=cap){hubSpawn(D);HUB.act.set(D.id,D);used+=D.M.length}}}}
+  const vd=(typeof pedVisD==='function'?pedVisD():64)+6;
+  for(const D of HUB.act.values()){const d=Math.hypot(D.x-p.x,D.z-p.z);const vis=!hide&&d<vd;for(const a of D.M)if(a.h.root.visible!==vis&&a.kind!=='gone')a.h.root.visible=vis;if(D.props)D.props.visible=!hide&&d<vd+40;
+    if(vis||d<110){try{if(HUB.scat||HUB.scatDone){hubFlee(D,dt)}else hubLive(D,dt)}catch(e){console.error(e)}}}}
+function hubFlee(D,dt){for(const a of D.M){if(a.kind!=='hubleave')continue;a.lT-=dt;const P=a.h.root.position;const sp=a.run?3.6:1.25;const nx=P.x+a.lx*sp*dt,nz=P.z+a.lz*sp*dt;if(!FP3.blocked(nx,nz,.26)){P.x=nx;P.z=nz}else{const t=a.lx;a.lx=-a.lz;a.lz=t}a.h.root.rotation.y=hubYaw(a.lx,a.lz);if(a.lT<=0){a.h.root.visible=false;a.kind='hubgone'}}}
+/* ---------- 연결 ---------- */
+(function(){const base=window.tjPopulate;window.tjPopulate=function(sc){const r=base.apply(this,arguments);try{HUB.sc=sc;HUB.act=new Map();HUB.scat=0;HUB.scatDone=0;HUB.zone=hubZone();HUB.defs=hubDefs()}catch(e){console.error(e);HUB.defs=[]}return r}})();
+(function(){const b=window.outStep;window.outStep=function(dt){const r=b.apply(this,arguments);if(OUT.on&&HUB.sc)try{hubStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){HUB.act=new Map();HUB.defs=[];HUB.sc=null;HUB.zone=null;return b.apply(this,arguments)}})();
+/* 거점 사람도 팀에 초대할 수 있다 */(function(){const b=window.tmNearPed;if(typeof b!=='function')return;window.tmNearPed=function(){const a=b.apply(this,arguments);if(a||tmLive().length>=TEAM.max||OUT.drv||OUT.ride)return a;let best=null,bd=3.2;const p=FP3.pos;
+  for(const D of HUB.act.values())for(const m of D.M){if(m.kind!=='hub'||m.role==='staff'||m.role==='kid'||!m.nm||!m.h.root.visible||TEAM.ask.has(m.nm))continue;const q=m.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<bd){bd=d;best=m}}
+  return best}})();
+(function(){const b=window.tmJoin;if(typeof b!=='function')return;window.tmJoin=function(a){if(a&&a.hub){const D=a.hub;D.M=D.M.filter(x=>x!==a);a.hub=null;a.role=null;try{if(a.h.pose==='sit'){a.h.root.position.y=0;a.h.setPose('idle')}}catch(e){}}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^밖 탐색/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['북적이는 거리 — 사람 모이는 곳',"마을 광장(대피·구호 안내 게시판·자판기·벤치·뛰노는 아이), 검문소(통행 확인 줄 → 넷째 턴부터 구호품 배급 줄), 대피소 입구(명단 확인), 편의점·버스 정류장·지하철역 입구에 사람들이 모여 있다. 핵 시나리오는 방사능 측정 줄도 선다(처음 하루는 낙진 때문에 사람이 적다). 모두 이름이 있고 다가가 '팀에 초대'할 수 있다. 공습경보가 울리면 흩어졌다가 끝나고 20초 뒤 다시 모인다. 밤에는 사람이 줄고, 화질을 낮추면 인원도 줄어든다."])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
