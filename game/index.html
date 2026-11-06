@@ -1161,6 +1161,42 @@ body.fs-l .bx-how,body.fs-l .bx-opp small{font-size:14.5px}
 .tm-mem{display:grid;gap:3px;margin:8px 0 2px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px}.tm-mem span{color:#c9ced6}
 .tm-btn.warn{border-color:#e0503a!important;box-shadow:0 0 0 2px rgba(224,80,58,.35)}
 .tm-bleed{font:800 11px var(--sans);color:#ffb0a6;background:rgba(120,20,16,.72);padding:3px 8px;border-radius:8px;align-self:center}.tm-bleed[hidden]{display:none}
+/* ===== v9.2 돌발 상황 지휘 · 상황판 · 화재 연기 · 드론 표식 ===== */
+.ev-alert{position:absolute;left:50%;top:50px;transform:translate(-50%,-10px);z-index:21;display:flex;gap:10px;align-items:center;padding:8px 16px 8px 12px;border-radius:14px;background:linear-gradient(180deg,rgba(150,18,14,.95),rgba(92,10,8,.95));border:1px solid rgba(255,120,100,.75);box-shadow:0 6px 24px rgba(0,0,0,.45),0 0 0 3px rgba(255,60,40,.2);color:#fff;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100% - 24px)}
+.ev-alert.on{opacity:1;transform:translate(-50%,0);animation:evPulse 1s ease-in-out 2}
+.ev-alert .i{font-size:26px;line-height:1}
+.ev-alert small{display:block;font:800 10.5px var(--sans);letter-spacing:.08em;color:#ffc9bf}
+.ev-alert b{display:block;font:900 16px/1.2 var(--sans)}
+.ev-alert em{display:block;font-style:normal;font-size:12px;color:#ffe2db;font-variant-numeric:tabular-nums}
+.ev-alert.info{background:linear-gradient(180deg,rgba(16,58,98,.95),rgba(8,36,66,.95));border-color:rgba(120,190,255,.75);box-shadow:0 6px 24px rgba(0,0,0,.45),0 0 0 3px rgba(84,168,255,.2);animation:none}
+.ev-alert.info small{color:#bfe0ff}
+@keyframes evPulse{50%{box-shadow:0 6px 24px rgba(0,0,0,.45),0 0 0 7px rgba(255,60,40,.32)}}
+.mis-hud.ev{border-color:rgba(255,96,72,.7);background:rgba(28,8,6,.86)}
+.mis-hud.ev b.ev-h{color:#ffb4a6}
+.mis-hud button.on{border-color:#ffb224;color:#ffd27a;background:rgba(255,178,36,.14)}
+.mis-hud button:disabled{opacity:.55}
+.mis-btn.ev-hot{border-color:#ff5a46!important;color:#ffd0c8!important;background:rgba(120,16,10,.55)!important;animation:evHot 1.1s ease-in-out infinite}
+.mis-btn .ev-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff4a3a;margin-left:3px;box-shadow:0 0 6px #ff4a3a}
+@keyframes evHot{50%{box-shadow:0 0 0 3px rgba(255,74,58,.35)}}
+.ev-board .mis-row.ev-now{background:rgba(120,16,10,.22);border-radius:10px}
+.ev-board .mis-row.ev-done{opacity:.55}
+.ev-btns{display:grid;gap:6px;justify-items:end}
+.ev-rec{font-size:12px;color:#c9ced6;margin:8px 2px 4px;border-top:1px solid var(--line2);padding-top:8px}
+.ev-rec b{color:#ffd27a;margin-right:6px}
+.ev-hist{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 6px}
+.ev-hist span{font-size:11px;padding:2px 7px;border-radius:8px;background:rgba(255,255,255,.06);color:#c9ced6}
+.ev-hist span.ok{color:#9be8b0;background:rgba(40,120,70,.18)}
+.ev-hist span.no{color:#ffb0a6;background:rgba(140,30,20,.18)}
+.ev-fq{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 2px;font-size:12px;color:#aab2bd}
+.ev-fq span{margin-right:4px}
+.ev-fq .btn{width:auto;flex:none;min-height:30px;padding:4px 10px}
+.ev-smoke{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(ellipse at 50% 60%,rgba(70,66,62,.55),rgba(30,28,26,.92) 70%)}
+.owc-marks i.dr{color:#ffd0c8;padding:1px 5px;border-radius:5px;background:rgba(120,16,10,.55);border:1px solid #ff5a46}
+.owc-marks i.dr::before{content:'◇ '}
+.owc-marks i.dr.warn{background:rgba(200,30,20,.8);color:#fff;animation:owcWarn .4s ease-in-out infinite alternate}
+.owc-it.ev-jam{border-color:rgba(120,200,255,.55);font-size:16px}
+.owc-it.ev-jam span{font-size:9.5px}
+.sv3.owc-on .ev-alert,.sv3.owc-on .ev-smoke{display:none!important}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13194,7 +13230,7 @@ function perfStartup(){try{const m=performance.getEntriesByName('sot-title')[0];
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.1';
+const APP_VER='9.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -15328,6 +15364,548 @@ function hubFlee(D,dt){for(const a of D.M){if(a.kind!=='hubleave')continue;a.lT-
   return best}})();
 (function(){const b=window.tmJoin;if(typeof b!=='function')return;window.tmJoin=function(a){if(a&&a.hub){const D=a.hub;D.M=D.M.filter(x=>x!==a);a.hub=null;a.role=null;try{if(a.h.pose==='sit'){a.h.root.position.y=0;a.h.setPose('idle')}}catch(e){}}return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^밖 탐색/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['북적이는 거리 — 사람 모이는 곳',"마을 광장(대피·구호 안내 게시판·자판기·벤치·뛰노는 아이), 검문소(통행 확인 줄 → 넷째 턴부터 구호품 배급 줄), 대피소 입구(명단 확인), 편의점·버스 정류장·지하철역 입구에 사람들이 모여 있다. 핵 시나리오는 방사능 측정 줄도 선다(처음 하루는 낙진 때문에 사람이 적다). 모두 이름이 있고 다가가 '팀에 초대'할 수 있다. 공습경보가 울리면 흩어졌다가 끝나고 20초 뒤 다시 모인다. 밤에는 사람이 줄고, 화질을 낮추면 인원도 줄어든다."])}
+
+/* ===================== 57 · 돌발 상황 지휘 — 미션을 받으러 가지 않는다. 밖에 있으면 저절로 터진다 ===================== */
+/* 밖 탐색 중 상황이 끝나고 1~2분마다(빈도: 적게·보통·자주·끔) 돌발 상황이 하나씩 터진다: 경보 띠 + 무전 + 미니맵·큰 지도 붉은 표식 + 기둥 + 남은 시간.
+   가면(가까이 들어가면) 그 자리에서 상황이 시작되고, 안 가거나 '무시'하면 결과가 따로 벌어진다(신뢰·사기·물자). 한 번에 하나, 교전·아파트 안·경보 중엔 새로 터지지 않는다.
+   종류는 다른 모듈이 EVK에 등록한다(58 화재 · 59 공수부대·드론·저격수·트럭 탈취 · 60 적 기지 첩보). 배달·순찰도 여기서 저절로 생긴다.
+   '🏁 미션' 버튼은 '🚨 상황판' — 지금 상황·다음 상황·적 기지 첩보·숨은 물자·기록·빈도 */
+const EVD={cur:null,t:0,nextT:55,n:0,last:[],beacon:null,hudOwn:false,boardT:0,sites:null,alT:0};
+const EVK={};
+function evFreq(){const f=+store.get('sg.evFreq',1);return f>=0&&f<=3?f:1}
+function evFreqK(){return [1.7,1,.55,0][evFreq()]}
+function evRec(){const F=G.flags;const r=F.ev&&typeof F.ev==='object'?F.ev:(F.ev={});r.win=+r.win||0;r.miss=+r.miss||0;r.lose=+r.lose||0;r.saved=+r.saved||0;r.bases=+r.bases||0;r.k=r.k&&typeof r.k==='object'?r.k:{};r.hist=Array.isArray(r.hist)?r.hist:[];return r}
+/* 지금 새 상황을 터뜨리면 안 되는 때 */
+function evBlock(){return(typeof OWC!=='undefined'&&OWC.on)||(typeof PARA!=='undefined'&&PARA.on)||(typeof APT!=='undefined'&&APT.on)||!!OUT.enc||!!OUT.ending||(typeof SPY!=='undefined'&&!!SPY.chase)||(typeof INTEG!=='undefined'&&INTEG.on)||!!OUT.mapOpen}
+/* ---------- 장소 ---------- */
+function evFree(x,z,r){return typeof misFree==='function'?misFree(x,z,r||.6):pedFree(x,z)}
+function evNear(x,z){if(evFree(x,z,.6))return{x,z};const q=typeof misNear==='function'?misNear(x,z,.6):null;return q?{x:q[0],z:q[1]}:null}
+function evSites(){if(EVD.sites)return EVD.sites;const P=TJ_DATA.POI;const L=[];const add=(x,z,n,o)=>{const q=evNear(x,z);if(q)L.push(Object.assign({x:q.x,z:q.z,n},o||{}))};
+  if(P.vgreen)add(P.vgreen[0]+1,P.vgreen[1]+6,'지중해마을 광장',{open:1,crowd:'vgreen',plaza:1});
+  if(P.subway){const s=P.subway;add(s.p[0]+s.n[0]*13,s.p[1]+s.n[1]*13,'탕정역 광장',{open:1,crowd:'stn',plaza:1})}
+  if(P.field&&P.field.length){let x=0,z=0;P.field.forEach(q=>{x+=q[0];z+=q[1]});add(x/P.field.length,z/P.field.length,'학교 운동장',{open:1})}
+  if(P.play)add(P.play[0],P.play[1],'단지 놀이터',{open:1,crowd:'play'});
+  if(P.check)add(P.check.p[0]-P.check.t[0]*4,P.check.p[1]-P.check.t[1]*4,'검문소 앞',{crowd:G.turn>=4?'relief':'pass',road:1});
+  if(P.shelterB){const s=P.shelterB;add(s.door[0]+s.n[0]*4,s.door[1]+s.n[1]*4,'상가 지하 대피소 입구',{crowd:'shel'})}
+  if(P.gym)add(P.gym[0]-TJ_DATA.V[0]*6,P.gym[1]-TJ_DATA.V[1]*6,'학교 체육관 앞',{open:1});
+  /* 넓힌 지도 바깥(v8.9) — 공수부대가 떨어질 만한 빈 땅 */for(const [x,z,n] of [[290,520,'탕정일반산업단지 공터'],[960,-150,'대학 캠퍼스 잔디밭'],[-640,700,'곡교천 둔치'],[-280,-840,'북쪽 숲 가장자리 들판'],[420,180,'탕정역 동쪽 공터']]){add(x,z,n,{open:1,far:1})}
+  return EVD.sites=L}
+function evPickSite(filter,dmin,dmax){const p=FP3.pos;let L=evSites().filter(filter||(()=>true)).map(s=>Object.assign({},s,{d:Math.hypot(s.x-p.x,s.z-p.z)}));let C=L.filter(s=>s.d>=(dmin||110)&&s.d<=(dmax||480));
+  if(!C.length)C=L.filter(s=>s.d>=60&&s.d<=900);if(!C.length)return null;return C[Math.floor(Math.random()*C.length)]}
+/* ---------- 감독 ---------- */
+function evPick(force){const W=[];const combat=typeof owcAvail==='function'&&owcAvail();for(const k in EVK){const D=EVK[k];if(D.noPick&&k!==force)continue;if(D.combat&&!combat)continue;let w=force?(k===force?1:0):(typeof D.w==='function'?D.w():(D.w||0));if(w<=0)continue;
+    if(!force){const li=EVD.last.lastIndexOf(k);if(li>=0&&li===EVD.last.length-1)w=0;else if(li>=0)w*=.35;if(!EVD.outN&&(k==='del'||k==='pat'))w*=.15}if(w>0)W.push([k,w])}
+  let s=0;W.forEach(q=>s+=q[1]);if(!s)return null;let r=Math.random()*s;for(const [k,w] of W){r-=w;if(r<=0)return k}return W[W.length-1][0]}
+function evFire(force){const k=evPick(force);if(!k){EVD.nextT=25;return false}const D=EVK[k];let site=null;try{site=D.site?D.site():evPickSite()}catch(e){console.error(e)}if(!site){EVD.nextT=20;return false}
+  const p=FP3.pos;const d=Math.hypot(site.x-p.x,site.z-p.z);const lim=D.lim?D.lim(d,site):Math.round(clamp(48+d/3.1,70,210));
+  const E={k,id:++EVD.n,t:0,ph:'go',site,d,d0:d,lim,warn:0};EVD.cur=E;EVD.outN=(EVD.outN||0)+1;EVD.last.push(k);if(EVD.last.length>3)EVD.last.shift();
+  try{D.announce&&D.announce(E)}catch(e){console.error(e)}if(EVD.cur!==E)return true;
+  if(!E.noBeacon){try{EVD.beacon=misPillar(OUT.scene,site.x,site.z,D.col||'#ff4a3a',D.combat?16:11);EVD.beacon.userData.keepGlow=1}catch(e){}}
+  if(!E.noGoal)TJ.goal={bx:site.x,bz:site.z};evAlert(D,E);evRecK(k).n++;return true}
+function evRecK(k){const R=evRec();return R.k[k]||(R.k[k]={n:0,w:0})}
+/* 끝: o={ok,txt,miss,quiet} */
+function evEnd(o){const E=EVD.cur;if(!E)return;o=o||{};const D=EVK[E.k];const R=evRec();if(o.ok){R.win++;evRecK(E.k).w++}else if(o.miss)R.miss++;else R.lose++;
+  R.hist.push({k:E.k,ok:!!o.ok,miss:!!o.miss,txt:(o.short||(o.ok?'대응':'놓침')).slice(0,60),turn:G.turn});if(R.hist.length>10)R.hist.splice(0,R.hist.length-10);
+  try{D.clear&&D.clear(E)}catch(e){console.error(e)}evDrop();EVD.cur=null;EVD.nextT=(70+Math.random()*60)*(evFreqK()||1);
+  if(o.txt&&!o.quiet)outNote(o.txt,o.ms||5200);try{save()}catch(e){}}
+function evDrop(){if(EVD.beacon&&EVD.beacon.parent)EVD.beacon.parent.remove(EVD.beacon);EVD.beacon=null;const E=EVD.cur;if(E&&TJ.goal&&TJ.goal.bx===E.site.x&&TJ.goal.bz===E.site.z)TJ.goal=null;evHudOff();const a=$('#evAlert');if(a)a.classList.remove('on')}
+/* 안 갔다(시간 초과) · 무시 — 결과가 따로 벌어진다 */
+function evMiss(why){const E=EVD.cur;if(!E)return;const D=EVK[E.k];FX=[];let t='';try{t=D.miss?D.miss(E,why):''}catch(e){console.error(e)}const fx=FX.slice();OUT.fx.push(...fx);try{outStat()}catch(e){}
+  const chips=fx.map(x=>`${x.l} ${x.n>0?'+':''}${x.n}${x.u||''}`).join(' · ');vib(80);
+  evEnd({ok:false,miss:true,short:why==='skip'?'무시':'못 갔다',txt:`<b>${D.ico} ${why==='skip'?'무시했다':'제때 가지 못했다'} — ${D.n}</b><div>${t}${chips?' '+chips:''}</div>`,ms:6000})}
+/* ---------- 경보 띠·소리 ---------- */
+function evAlert(D,E){const el=SV3.el;if(!el)return;let a=$('#evAlert');if(!a){a=document.createElement('div');a.id='evAlert';a.className='ev-alert';el.appendChild(a)}
+  a.classList.toggle('info',!!D.info);a.innerHTML=`<span class="i">${D.ico}</span><div><small>${D.info?'첩보 · 무전':'돌발 상황 · 무전'}</small><b>${D.n}</b><em>${E.site.n}${E.noGoal?'':` · ${Math.round(E.d)}m`}${E.lim&&!D.info?` · ${fmtT(E.lim).replace(/\.\d$/,'')} 안에`:''}</em></div>`;
+  void a.offsetWidth;a.classList.add('on');clearTimeout(EVD.alT);EVD.alT=setTimeout(()=>{a.classList.remove('on')},3600);
+  try{if(SND.on){const c=SND.ac();const beep=(f,t0,d)=>{const o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(.0001,c.currentTime+t0);g.gain.exponentialRampToValueAtTime(D.info?.035:.05,c.currentTime+t0+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+t0+d);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t0);o.stop(c.currentTime+t0+d+.05)};
+    if(D.info){beep(1180,0,.09);beep(1480,.13,.12)}else{beep(880,0,.16);beep(620,.2,.16);beep(880,.4,.16);beep(620,.6,.22)}}}catch(e){}
+  vib(D.info?[30,40,30]:[120,60,120,60,200]);if(E.radio)outNote(E.radio,4800)}
+/* ---------- 위쪽 띠(HUD): 지금 상황의 거리·남은 시간 ---------- */
+function evHud(){const E=EVD.cur;if(!E){evHudOff();return}if(typeof MIS!=='undefined'&&MIS.cur){evHudOff();return}const D=EVK[E.k];EVD.hudT=(EVD.hudT||0)-1;if(EVD.hudT>0)return;EVD.hudT=3;
+  let html='';if(D.hud)html=D.hud(E)||'';if(!html&&E.ph==='go'){const left=E.lim-E.t;const d=Math.round(E.d||0);html=`<b class="ev-h">${D.ico} ${D.n}</b><span>${E.site.n} · ${d}m</span>${E.lim?`<i class="${left<20?'late':left<45?'warn':''}">${fmtT(left)}</i>`:''}${E.wait?`<small>${E.wait}</small>`:''}<button data-g3="evskip">무시</button>`}
+  if(!html){evHudOff();return}EVD.hudOwn=true;EVD._h=1;try{misHud(html)}finally{EVD._h=0}const h=$('#misHud');if(h)h.classList.toggle('ev',true)}
+function evHudOff(){if(!EVD.hudOwn)return;EVD.hudOwn=false;EVD._h=1;try{misHud(null)}finally{EVD._h=0}}
+/* 상황 HUD가 떠 있는 동안 '물자 신호' 띠가 덮어쓰지 않게 */(function(){const b=window.misHud;window.misHud=function(html){if(EVD.hudOwn&&!EVD._h&&!(typeof MIS!=='undefined'&&MIS.cur))return;const r=b.apply(this,arguments);if(!EVD._h){const h=$('#misHud');if(h)h.classList.remove('ev')}return r}})();
+/* ---------- 매 프레임 ---------- */
+function evStep(dt){if(!OUT.on||!TJ.world)return;const E=EVD.cur;
+  if(E){const D=EVK[E.k];const frozen=(typeof OWC!=='undefined'&&OWC.on&&E.ph==='go')||(typeof APT!=='undefined'&&APT.on);if(!frozen)E.t+=dt;
+    try{D.step&&D.step(E,dt)}catch(e){console.error(e)}if(EVD.cur!==E)return;
+    if(E.ph==='go'){const p=FP3.pos;E.d=Math.hypot(E.site.x-p.x,E.site.z-p.z);if(EVD.beacon&&EVD.beacon.userData.ring)EVD.beacon.userData.ring.scale.setScalar(1+.18*Math.sin(SV3.t*6));
+      const er=D.er||55;if(E.d<er&&!frozen&&!evBlock()){const ok=D.ready?D.ready(E):true;if(ok){E.ph='act';E.ta=E.t;evHudOff();let r=true;try{r=D.engage?D.engage(E):true}catch(e){console.error(e);r=false}if(r===false&&EVD.cur===E)evEnd({ok:false,quiet:1,short:'시작 못 함'})}}
+      else if(E.lim&&E.t>E.lim&&!frozen)evMiss('time');else if(E.lim&&!E.warn&&E.lim-E.t<30){E.warn=1;outNote(`<b>${D.ico} ${D.n} — 30초 남았다</b><div>${E.site.n}까지 약 ${Math.round(E.d)}m.</div>`,2600)}}
+    if(EVD.cur===E)evHud();return}
+  const mc=typeof MIS!=='undefined'&&MIS.cur;if(!(!mc&&typeof ebHud==='function'&&ebHud()))evHudOff();if(evFreq()===3||evBlock()||OUT.siren||mc||(typeof ebBusy==='function'&&ebBusy()))return;EVD.nextT-=dt;if(EVD.nextT<=0)evFire()}
+/* ---------- 상황판(미션 판을 바꾼다) ---------- */
+function evBoard(open){const el=SV3.el;if(!el)return;let p=$('#misPanel');if(!open){if(p)p.remove();return}if(!p){p=document.createElement('div');p.id='misPanel';p.className='mis-panel ev-board';el.appendChild(p)}
+  const E=EVD.cur,R=evRec(),f=evFreq();const n=(G.flags.cache||[]).length;
+  const row=(ico,t,d,st,btn,cls)=>`<div class="mis-row${cls?' '+cls:''}"><span class="mis-ico">${ico}</span><div><b>${t}</b><small>${d}</small>${st?`<em>${st}</em>`:''}</div>${btn||''}</div>`;
+  let h=`<div class="mis-head"><b>🚨 상황판</b><button class="btn sm" data-g3="mclose">닫기</button></div>`;
+  if(E){const D=EVK[E.k];const left=E.lim?E.lim-E.t:0;h+=row(D.ico,`지금 · ${D.n}`,`${E.site.n} · 약 ${Math.round(E.d||0)}m`,E.ph==='go'?(E.lim?`남은 ${fmtT(left)} — 가까이 가면 시작된다`:'가까이 가면 시작된다'):'진행 중',`<div class="ev-btns"><button class="btn sm pri" data-g3="evgo">길 안내</button>${E.ph==='go'?'<button class="btn sm" data-g3="evskip">무시</button>':''}</div>`,'ev-now')}
+  else h+=row('⏳','다음 돌발 상황',f===3?'꺼져 있다 — 아래 빈도에서 켠다':`약 ${Math.max(5,Math.round(EVD.nextT/5)*5)}초 뒤 · 밖에 있는 동안 저절로`,'',f===3?'':'<button class="btn sm pri" data-g3="evnow">지금 바로</button>');
+  if(!E&&typeof owcAvail==='function'&&owcAvail()&&EVK.para){const L=TJ.lobbies&&TJ.lobbies[0];const home=L&&Math.hypot(L[0]-FP3.pos.x,L[1]-FP3.pos.z)<350;h+=row('🪂','공수부대를 지금 부른다',home?'우리 단지 근처 — 101동 현관 방어(수송기·조명탄·바리케이드)':'가까운 빈 땅에 기습 강하 — 낙하산이 내린 뒤 다가가면 교전','','<button class="btn sm" data-g3="evpara">부른다</button>')}
+  if(typeof ebBoardRows==='function')try{h+=ebBoardRows(row)}catch(e){console.error(e)}
+  h+=row('🎁','숨은 비상 물자',"60m 안에 들어오면 '물자 신호'가 뜬다",`${n}/8 찾음`,`<button class="btn sm" data-g3="mgo" data-v="cache"${n>=8?' disabled':''}>가까운 쪽</button>`);
+  const hist=R.hist.slice(-5).reverse();h+=`<div class="ev-rec"><b>기록</b> 대응 ${R.win} · 놓침 ${R.miss}${R.lose?` · 실패 ${R.lose}`:''}${R.saved?` · 구조 ${R.saved}명`:''}${R.bases?` · 기지 폭파 ${R.bases}곳`:''}</div>`;
+  if(hist.length)h+=`<div class="ev-hist">${hist.map(x=>`<span class="${x.ok?'ok':'no'}">${EVK[x.k]?EVK[x.k].ico:'•'} ${x.txt}</span>`).join('')}</div>`;
+  h+=`<div class="ev-fq"><span>돌발 빈도</span>${['적게','보통','자주','끔'].map((t,i)=>`<button class="btn sm${i===f?' pri':''}" data-g3="evfq" data-v="${i}">${t}</button>`).join('')}</div>`;
+  h+=`<p class="mis-note">상황은 받으러 가지 않는다 — 밖에 있으면 저절로 터진다(행동 시간을 쓰지 않는다). 가면 그 자리에서 시작되고, 안 가면 결과가 따로 벌어진다.${eduOn()?' 교육용 모드: 교전 없는 상황만.':''}</p>`;p.innerHTML=h}
+window.misPanel=evBoard;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=evgo],[data-g3=evskip],[data-g3=evnow],[data-g3=evfq],[data-g3=evpara]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
+  if(k==='evgo'){const E=EVD.cur;evBoard(false);if(E){TJ.goal={bx:E.site.x,bz:E.site.z};outNote(`<b>${EVK[E.k].ico} ${E.site.n}</b><div>미니맵 녹색 점·붉은 원 — 약 ${Math.round(E.d||0)}m</div>`,2600)}return}
+  if(k==='evskip'){evBoard(false);if(EVD.cur&&EVD.cur.ph==='go')evMiss('skip');return}
+  if(k==='evpara'){evBoard(false);if(EVD.cur||evBlock()){outNote('<b>지금은 부를 수 없다</b><div>진행 중인 상황·교전이 끝난 뒤에.</div>',2200);return}const L=TJ.lobbies&&TJ.lobbies[0];const home=L&&Math.hypot(L[0]-FP3.pos.x,L[1]-FP3.pos.z)<350;if(!evFire(home?'para101':'para'))evFire('para');return}
+  if(k==='evnow'){evBoard(false);if(!EVD.cur&&!evBlock())evFire();else outNote('<b>지금은 새 상황을 받을 수 없다</b><div>교전·경보·대화가 끝난 뒤에.</div>',2200);return}
+  if(k==='evfq'){const v=+b.dataset.v;store.set('sg.evFreq',v);if(v!==3&&EVD.nextT>140*evFreqK())EVD.nextT=(60+Math.random()*30)*evFreqK();evBoard(true);return}},true);
+/* ---------- 배달·순찰도 저절로(받으러 갈 필요 없음) ---------- */
+EVK.del={n:'긴급 의약품 배달',ico:'📦',col:'#54d6ff',w:()=>typeof MIS!=='undefined'&&MIS.giv&&MIS.giv.del?.9:0,er:5,
+  site(){const g=MIS.giv.del;return g?{x:g.x,z:g.z,n:'검문소 군인(상자 받기)'}:null},
+  announce(E){E.radio='<b>📦 무전 — 검문소</b><div>"다친 사람이 많아요. 의약품 상자 하나만 급히 옮겨 주세요!" 검문소 군인에게 가면 상자를 바로 건넨다.</div>'},
+  engage(E){if(MIS.cur)return false;misStartDel({h:0});if(!MIS.cur)return false;E.mis=1;return true},
+  miss(){trust(-1);return'의약품이 늦게 도착해 대피소 관리자가 한숨을 쉬었다.'}};
+EVK.pat={n:'통신 중계기 긴급 점검',ico:'📡',col:'#ffb224',w:.7,er:1e9,noBeacon:0,
+  site(){const p=FP3.pos;return{x:p.x,z:p.z,n:'지금 있는 곳에서 출발'}},
+  announce(E){E.noGoal=true;E.noBeacon=true;E.radio='<b>📡 무전 — 통신 복구반</b><div>"큰길 중계기 신호가 끊겼어요. 고리 6곳을 지나 돌아오면 재난 방송이 살아납니다!" 지금 자리에서 바로 시작한다.</div>'},
+  engage(E){if(MIS.cur)return false;const g0=MIS.giv.pat;MIS.giv.pat={x:FP3.pos.x,z:FP3.pos.z};misStartPat({h:0});MIS.giv.pat=g0;if(!MIS.cur&&g0){misStartPat({h:0})}if(!MIS.cur)return false;E.mis=1;return true},
+  miss(){return'중계기 점검을 못 했다 — 재난 방송이 끊길 수 있다.'}};
+/* 배달·순찰이 끝나면 상황도 끝 */(function(){const b=window.misDone;window.misDone=function(ok){const E=EVD.cur;const was=E&&E.mis&&typeof MIS!=='undefined'&&MIS.cur;if(was)E.ending=1;const r=b.apply(this,arguments);if(was&&EVD.cur===E)evEnd({ok:!!ok,quiet:1,short:ok?'완료':'시간 초과'});return r}})();
+(function(){const b=window.misClear;window.misClear=function(){const E=EVD.cur;const was=E&&E.mis&&typeof MIS!=='undefined'&&MIS.cur;const r=b.apply(this,arguments);if(was&&EVD.cur===E&&!E.ending){E.ending=1;evEnd({ok:false,quiet:1,short:'그만뒀다'})}return r}})();
+/* ---------- 지도 표식: 지금 상황 자리에 붉은 원(맥동) ---------- */
+(function(){const tm=window.tjMarkers;window.tjMarkers=function(x,toS,scale){const r=tm.apply(this,arguments);try{const E=EVD.cur;if(E&&E.ph==='go'&&!E.noGoal){const [sx,sy]=toS(E.site.x,E.site.z);const D=EVK[E.k];const k=.5+.5*Math.sin(SV3.t*6);
+      x.strokeStyle=D.col||'#ff4a3a';x.lineWidth=2.4*scale;x.globalAlpha=.55+.45*k;x.beginPath();x.arc(sx,sy,(7+5*k)*scale,0,7);x.stroke();x.globalAlpha=1;x.fillStyle=D.col||'#ff4a3a';x.beginPath();x.arc(sx,sy,3.6*scale,0,7);x.fill()}
+    if(typeof ebMarkers==='function')ebMarkers(x,toS,scale)}catch(e){}return r}})();
+/* ---------- 연결 ---------- */
+(function(){const base=window.tjPopulate;window.tjPopulate=function(sc){const r=base.apply(this,arguments);try{EVD.sites=null;EVD.cur=null;EVD.beacon=null;EVD.hudOwn=false;EVD.last=[];EVD.outN=0;EVD.nextT=(42+Math.random()*28)*(evFreqK()||1);
+    /* 미션 주는 사람(받으러 가는 자리)은 없앤다 — 배달·순찰은 돌발 상황으로 */OUT.spots=OUT.spots.filter(s=>s.k!=='mdel'&&s.k!=='mpat')}catch(e){console.error(e)}return r}})();
+(function(){const base=window.tjStep;window.tjStep=function(dt){const r=base.apply(this,arguments);if(OUT.on)try{evStep(dt)}catch(e){console.error(e)}return r}})();
+/* 교전 중에도 시계는 tjStep 밖(owcStep)에서 돈다 — 교전형 상황은 각 모듈이 owcClose에서 끝낸다 */
+(function(){const b=window.outReturn;window.outReturn=function(){const E=EVD.cur;if(E){try{if(E.ph==='go'&&E.t>20)evMiss('time');else{const D=EVK[E.k];try{D.clear&&D.clear(E)}catch(e){}evDrop();EVD.cur=null}}catch(e){console.error(e)}}EVD.cur=null;evBoard(false);evHudOff();const a=$('#evAlert');if(a)a.remove();return b.apply(this,arguments)}})();
+(function(){const ob=window.outBar;window.outBar=function(){const r=ob.apply(this,arguments);const m=document.querySelector('#oBar [data-g3=mlist]');if(m){const hot=!!EVD.cur;const want=`🚨 상황${hot?'<i class="ev-dot"></i>':''}`;if(m._ev!==want){m._ev=want;m.innerHTML=want}m.classList.toggle('ev-hot',hot)}return r}})();
+/* 예전 '저절로 오는 공수부대(한 판 한 번)'는 감독이 맡는다 */(function(){const b=window.paraEligible;if(typeof b!=='function')return;window.paraEligible=function(){if(evFreq()!==3)return false;return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^밖 탐색/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['돌발 상황 — 저절로 터지는 미션',"밖에 나가면 1분쯤 뒤부터, 상황이 끝날 때마다 1~2분 간격으로 돌발 상황이 하나씩 터진다(받으러 갈 필요 없음, 행동 시간도 안 쓴다): 붉은 경보 띠·무전·미니맵 붉은 원·기둥·남은 시간. 가까이 가면 그 자리에서 시작되고, 안 가거나 '무시'하면 결과가 따로 벌어진다(신뢰·사기·물자). 위쪽 '🚨 상황'이 상황판 — 지금 상황 길 안내·무시, 다음 상황 '지금 바로', 적 기지 첩보, 숨은 물자, 기록, 빈도(적게·보통·자주·끔). 교육용 모드는 교전 없는 상황만."])}
+
+/* ===================== 58 · 돌발: 공습 화재 — 연기 속 인명 구조 ===================== */
+/* 상가 1층에서 불: 문·창으로 불길, 지붕 위로 검은 연기 기둥(멀리서도 보인다). 입구 앞에 연기를 마시고 쓰러진 주민 3명.
+   다가가 '일으켜 데리고 나가기' → 따라오다 입구에서 15m 넘게 벗어나면 구조. 연기 속(8.5m)에선 체력이 준다 — '낮은 자세'(느리게, 피해 1/3)·'젖은 수건'(물 1L, 피해 절반).
+   팀원이 있으면 한 명을 대신 데리고 나온다. 150초가 지나면 불길이 확 번진다(남은 사람 구조 실패). 안 가면 소방대가 늦게 도착한다. 교육용 모드에서도 나온다 */
+const EVF={low:false,towel:false};
+const EV_SHOP={cvs:'편의점',pharm:'약국',pub:'호프집',realty:'부동산',academy:'학원',cafe:'카페',mart:'마트'};
+EVK.fire={n:'공습 화재 — 인명 구조',ico:'🔥',col:'#ff8a2a',w:1.3,er:22,
+  site(){const P=TJ_DATA.POI;const p=FP3.pos;const L=(P.shops||[]).map((s,i)=>{const x=s.door[0]+s.n[0]*7,z=s.door[1]+s.n[1]*7;return{s,i,x,z,d:Math.hypot(x-p.x,z-p.z)}}).filter(q=>q.d>80&&q.d<560&&evFree(q.x,q.z,.6));
+    if(!L.length)return null;const q=L[Math.floor(Math.random()*L.length)];const nm=EV_SHOP[q.s.k]||'상가';return{x:q.x,z:q.z,n:`상가 ${nm} 화재`,shop:q.s,nm}},
+  lim(d){return Math.round(clamp(50+d/3,70,200))},
+  announce(E){const s=E.site.shop;const nx=s.n[0],nz=s.n[1],tx=nz,tz=-nx;const B=TJ_DATA.B[s.b];const bh=B?clamp(+B[1]||8,5,40):8;
+    E.F={door:{x:s.door[0],z:s.door[1]},nx,nz,tx,tz,bh,fires:[],puffT:0,ppl:[],saved:0,lost:0,smT:1,tipped:0,assist:0,sf:null};
+    /* 불길: 문·양옆 창 · 지붕 위 연기 기둥 */const F=E.F;for(const [o,y,r] of [[0,1.1,1.25],[2.6,1.5,.95],[-2.4,1.3,.9]]){const x=F.door.x+tx*o+nx*.35,z=F.door.z+tz*o+nz*.35;try{F.fires.push(FX3.fire(new T.Vector3(x,y,z),{sec:E.lim+260,r}))}catch(e){}}
+    /* 낮에도 보이는 불꽃(가산 혼합은 흰 벽 앞에서 사라진다 — 보통 혼합 불꽃을 겹친다) */F.fl=[];F.flG=new T.Group();OUT.scene.add(F.flG);for(const [o,y,r] of [[0,1.15,1.3],[2.6,1.55,1.0],[-2.4,1.35,.95]])for(let k=0;k<3;k++){const m=new T.SpriteMaterial({map:fireTex(),color:k?'#ff6a10':'#ffc040',transparent:true,opacity:.9,depthWrite:false});const sp=new T.Sprite(m);const x=F.door.x+tx*o+nx*(.45+k*.12),z=F.door.z+tz*o+nz*(.45+k*.12);sp.position.set(x,y+k*.35*r,z);sp.scale.setScalar(r*(1.2-k*.2));F.flG.add(sp);F.fl.push({sp,y0:sp.position.y,r:r*(1.2-k*.2),ph:Math.random()*6})}
+    try{raidInit()}catch(e){}F.hot={x:F.door.x+nx*.4,z:F.door.z+nz*.4,r:1.9};OUT.fires.push(F.hot);
+    E.radio=`<b>🔥 무전 — 민방위</b><div>"${E.site.nm} 1층에서 불이 났어요! 입구 앞에 연기를 마시고 쓰러진 사람들이 있대요. 소방차는 한참 걸려요!" 검은 연기 기둥 쪽.</div>`},
+  step(E,dt){const F=E.F;if(!F)return;const tt=SV3.t;for(const f of F.fl||[]){f.sp.scale.setScalar(f.r*(1+Math.sin(tt*9+f.ph)*.14));f.sp.position.y=f.y0+Math.sin(tt*5+f.ph)*.08;f.sp.material.opacity=.75+Math.sin(tt*13+f.ph)*.18;f.sp.material.rotation+=dt*(f.ph>3?.7:-.6)}
+    F.dpT=(F.dpT||0)-dt;if(F.dpT<=0&&RAID.pool){F.dpT=.3;raidPuff(new T.Vector3(F.door.x+F.nx*.6+(Math.random()-.5)*3,2.4+Math.random(),F.door.z+F.nz*.6+(Math.random()-.5)*3),{life:4,s0:1.6,s1:5,op:.55,col:'#24201e',vy:1.6})}
+    /* 지붕 위 연기 기둥 */F.puffT-=dt;if(F.puffT<=0&&RAID.pool){F.puffT=.45;const k=E.ph==='act'?1:.8;raidPuff(new T.Vector3(F.door.x-F.nx*2+(Math.random()-.5)*4,F.bh+1+Math.random()*2,F.door.z-F.nz*2+(Math.random()-.5)*4),{life:10,s0:5*k,s1:20*k,op:.62,col:'#2c2a28',vy:3.2+Math.random()*1.5})}
+    if(E.ph!=='act')return;const p=FP3.pos;E.tl=(E.tl==null?150:E.tl)-dt;
+    /* 연기: 입구 앞 3m가 중심, 8.5m 안 */const sx=F.door.x+F.nx*3,sz=F.door.z+F.nz*3;const ds=Math.hypot(p.x-sx,p.z-sz);const den=ds<8.5?clamp(1-ds/8.5,0,1):0;evSmokeUI(den*(EVF.low?.55:.85));
+    if(den>0&&!OUT.drv){if(!F.tipped){F.tipped=1;outNote('<b>연기 속 — 숨이 막힌다</b><div>연기는 위로 퍼진다: <b>낮은 자세</b>로 움직이고, <b>젖은 수건</b>으로 입과 코를 막는다. 위쪽 띠의 버튼.</div>',4200)}
+      F.smT-=dt*(.5+den);if(F.smT<=0){F.smT=2.5*(EVF.low?2.8:1)*(EVF.towel?2:1);FX=[];hurt('me',2);OUT.fx.push(...FX);try{outStat()}catch(e){}if(Math.random()<.4)try{SND.tone(180+Math.random()*60,.12,'sawtooth',.05)}catch(e){}if(checkOver()){outReturn('dead');return}}}
+    /* 구조된 사람: 입구에서 15m 넘으면 안전 → 모이는 곳으로 걸어가 앉는다 */
+    for(const v of F.ppl){if(v.st==='follow'||v.st==='self'){const q=v.h.root.position;const d=Math.hypot(q.x-F.door.x,q.z-F.door.z);
+        if(v.st==='self'){const dx=v.tx-q.x,dz=v.tz-q.z,l=Math.hypot(dx,dz);if(l>.3){const st=Math.min(l,1.6*dt);const nx2=q.x+dx/l*st,nz2=q.z+dz/l*st;if(!FP3.blocked(nx2,nz2,.26)){q.x=nx2;q.z=nz2}else{q.x+=dz/l*st*.7;q.z-=dx/l*st*.7}v.h.root.rotation.y=Math.atan2(dx,dz)}}
+        if(d>15){v.st='safe';OUT.follow=OUT.follow.filter(f=>f.h!==v.h);F.saved++;evRec().saved++;v.tx=F.safe.x+(Math.random()-.5)*3;v.tz=F.safe.z+(Math.random()-.5)*3;try{v.h.setPose('walk')}catch(e){}
+          try{bubSay&&bubSay(v.h,['살았다… 고마워요.','콜록… 아이고, 고맙습니다.','숨 좀 쉬겠어요…'][F.saved%3],2.4,'')}catch(e){}vib([20,30,20]);outNote(`<b>🔥 구조 ${F.saved}/3</b><div>${v.nm} 씨를 연기 밖으로 데리고 나왔다.</div>`,2200)}}
+      else if(v.st==='safe'){const q=v.h.root.position;const dx=v.tx-q.x,dz=v.tz-q.z,l=Math.hypot(dx,dz);if(l>.35){const st=Math.min(l,1.3*dt);q.x+=dx/l*st;q.z+=dz/l*st;v.h.root.rotation.y=Math.atan2(dx,dz)}else if(v.h.pose!=='sitF'){try{v.h.setPose('sitF')}catch(e){}v.h.root.rotation.y=Math.atan2(F.door.x-q.x,F.door.z-q.z)}}
+      v.h.update(dt)}
+    /* 팀원이 한 명을 대신 데리고 나온다(8초 뒤, 팀원 2명마다 1명) */const tm=typeof tmLive==='function'?tmLive().filter(m=>m.d.st==='ok'):[];if(tm.length&&F.assist<Math.ceil(tm.length/2)&&E.t-E.ta>8+F.assist*10){const v=F.ppl.filter(v=>v.st==='down').sort((a,b)=>Math.hypot(b.h.root.position.x-p.x,b.h.root.position.z-p.z)-Math.hypot(a.h.root.position.x-p.x,a.h.root.position.z-p.z))[0];
+      if(v){F.assist++;const m=tm[(F.assist-1)%tm.length];v.st='self';v.tx=F.safe.x;v.tz=F.safe.z;try{v.h.setPose('limp')}catch(e){}if(v.spot)v.spot.taken=1;OUT.sig='';try{bubSay&&bubSay(m.h,'이분은 제가 모시고 나갈게요!',2.4,'')}catch(e){}outNote(`<b>팀원 ${m.d.nm}</b><div>쓰러진 ${v.nm} 씨를 부축해 데리고 나온다.</div>`,2400)}}
+    if(F.tl!==1&&E.tl<30){F.tl=1;outNote('<b>🔥 불길이 커진다 — 30초!</b><div>곧 확 번진다(플래시오버). 남은 사람을 서둘러.</div>',2600);vib([60,40,60])}
+    const left=F.ppl.filter(v=>v.st==='down'||v.st==='follow'||v.st==='self').length;if(!left){evFireEnd(E,false);return}
+    if(E.tl<=0)evFireEnd(E,true)},
+  engage(E){const F=E.F;const {nx,nz,tx,tz}=F;const sp=[[-1.9,1.5],[1.8,1.2],[3.9,1.9]];let sf=evNear(F.door.x+nx*19,F.door.z+nz*19)||{x:F.door.x+nx*16,z:F.door.z+nz*16};F.safe=sf;
+    sp.forEach(([o,f],i)=>{let x=F.door.x+tx*o+nx*f,z=F.door.z+tz*o+nz*f;if(!pedFree(x,z)){const q=evNear(x,z);if(q){x=q.x;z=q.z}}let h=null;try{h=civHuman(70+i*7+(G.turn%5),i===1?'sleep':'crouch',i===2?'eldF':'civ')}catch(e){h=null}if(!h)return;
+      h.root.position.set(x,0,z);h.root.rotation.y=Math.atan2(nx,nz)+(i-1)*.7;if(i===1){h.root.rotation.z=0}OUT.scene.add(h.root);const nm=typeof npcName==='function'?npcName('fire:'+E.id+':'+i,typeof npcG==='function'?npcG(h):'m'):'주민';
+      const v={h,nm,st:'down',i};const spot={id:'evres:'+E.id+':'+i,k:'evres',x,z,r:2.5,g:'🧯',n:'일으켜 데리고 나가기',s:`${nm} 씨 · 연기를 마셨다`,h:0,warn:1,nomap:1,v};v.spot=spot;OUT.spots.push(spot);F.ppl.push(v)});
+    E.tl=150;F.smT=1;EVF.low=false;EVF.towel=false;if(EVD.beacon&&EVD.beacon.parent)EVD.beacon.parent.remove(EVD.beacon);EVD.beacon=null;if(TJ.goal&&TJ.goal.bx===E.site.x)TJ.goal=null;outNote('<b>🔥 화재 현장</b><div>입구 앞에 쓰러진 사람 3명. 다가가 <b>일으켜 데리고 나가기</b> — 입구에서 15m 밖이 안전하다. 불길 가까이(2m)는 뜨겁다.</div>',4600);OUT.sig='';return true},
+  hud(E){if(E.ph!=='act'||!E.F)return'';const F=E.F;const left=Math.max(0,E.tl||0);return`<b class="ev-h">🔥 화재 구조 ${F.saved}/3</b><i class="${left<30?'late':left<60?'warn':''}">${fmtT(left)}</i><button data-g3="evlow" class="${EVF.low?'on':''}">${EVF.low?'낮은 자세 ✓':'낮은 자세'}</button><button data-g3="evtowel" class="${EVF.towel?'on':''}"${EVF.towel?' disabled':''}>${EVF.towel?'젖은 수건 ✓':'젖은 수건'}</button>`},
+  miss(E){mor(-3);trust(-2);return`${E.site.nm} 화재 — 소방대가 늦게 도착했다. 연기를 마신 주민들이 중태로 이송됐다.`},
+  clear(E){const F=E.F;if(!F)return;evSmokeUI(0);if(F.flG){const g=F.flG;setTimeout(()=>{if(g.parent)g.parent.remove(g)},30000)}EVF.low=false;EVF.towel=false;OUT.fires=OUT.fires.filter(f=>f!==F.hot);OUT.spots=OUT.spots.filter(s=>s.k!=='evres');OUT.follow=OUT.follow.filter(f=>!F.ppl.some(v=>v.h===f.h));OUT.sig='';
+    F.fires.forEach(it=>{if(it&&it.life)it.life=Math.min(it.life,it.t+40)});const keep=F.ppl.filter(v=>v.st==='safe');F.ppl.filter(v=>v.st!=='safe').forEach(v=>{if(v.h.root.parent)v.h.root.parent.remove(v.h.root)});
+    /* 구조된 사람은 1분쯤 그 자리에 앉아 있다가 사라진다 */setTimeout(()=>{keep.forEach(v=>{if(v.h.root.parent)v.h.root.parent.remove(v.h.root)})},60000)}};
+function evFireEnd(E,flash){const F=E.F;const lost=F.ppl.filter(v=>v.st==='down'||v.st==='follow'||v.st==='self');
+  if(flash){try{FX3.explode(new T.Vector3(F.door.x+F.nx*.6,1.6,F.door.z+F.nz*.6),{r:4.5,kind:'fuel',sec:30})}catch(e){}try{raidShake(Math.hypot(FP3.pos.x-F.door.x,FP3.pos.z-F.door.z),.8)}catch(e){}
+    lost.forEach(v=>{v.st='lost';OUT.follow=OUT.follow.filter(f=>f.h!==v.h);if(v.h.root.parent)v.h.root.parent.remove(v.h.root)});const d=Math.hypot(FP3.pos.x-F.door.x,FP3.pos.z-F.door.z);if(d<6){FX=[];hurt('me',8);OUT.fx.push(...FX)}}
+  FX=[];const s=F.saved;if(s>=3){trust(3);mor(4)}else if(s>0){trust(s);mor(s)}else{mor(-3);trust(-1)}const fx=FX.slice();OUT.fx.push(...fx);try{outStat()}catch(e){}
+  const chips=fx.map(x=>`${x.l} ${x.n>0?'+':''}${x.n}${x.u||''}`).join(' · ');
+  const txt=`<b>🔥 ${s>=3?'모두 구했다!':s?`${s}명을 구했다`:'아무도 구하지 못했다'}</b><div>${flash&&lost.length?'불길이 확 번졌다 — 남은 사람은 소방대가 뒤늦게 데리고 나왔다(중태). ':''}연기는 위로 퍼진다: 낮은 자세·젖은 수건, 문손잡이가 뜨거우면 열지 않는다, 엘리베이터 금지, 119. ${chips}</div><small class="src">출처 · 소방청 화재 대피 요령 · 생존 수첩</small>`;
+  evEnd({ok:s>=2,txt,short:`구조 ${s}/3`,ms:7000})}
+function evSmokeUI(k){const el=SV3.el;if(!el)return;let s=$('#evSmoke');if(k<=.01){if(s)s.style.opacity='0';return}if(!s){s=document.createElement('div');s.id='evSmoke';s.className='ev-smoke';el.appendChild(s)}s.style.opacity=k.toFixed(2)}
+/* 낮은 자세: 걷기만(1.5m/s) */(function(){const s0=FP3.step;FP3.step=function(dt){if(EVF.low&&OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)&&!OUT.drv&&!OUT.ride)this.speed=Math.min(this.speed,1.5);return s0.apply(this,arguments)}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=evlow],[data-g3=evtowel]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const E=EVD.cur;if(!E||E.k!=='fire')return;
+  if(b.dataset.g3==='evlow'){EVF.low=!EVF.low;outNote(EVF.low?'<b>낮은 자세</b><div>허리를 숙이고 벽을 따라 — 연기를 덜 마신다(느려진다).</div>':'<b>일어섰다</b>',1800)}
+  else if(!EVF.towel){const w=(G.res&&G.res.water)||0;if(w<1){outNote('<b>물이 없다</b><div>수건을 적실 물(1L)이 필요하다.</div>',2000)}else{FX=[];res('water',-1);OUT.fx.push(...FX);try{outStat()}catch(e){}EVF.towel=true;outNote('<b>젖은 수건으로 입·코를 막았다</b><div>물 1L — 연기를 덜 마신다.</div>',2000)}}
+  EVD.hudT=0;evHud()},true);
+(function(){const od=window.outDo;window.outDo=function(c){if(c&&c.k==='evres'&&!OUT.busy&&!OUT.enc){const v=c.v;if(!v||v.st!=='down')return;v.st='follow';c.taken=1;OUT.sig='';try{v.h.setPose('limp')}catch(e){}
+    OUT.follow.push({h:v.h,sp:2.3,walk:'limp',idle:'nervous',reward:()=>''});try{bubSay&&bubSay(v.h,['콜록… 눈이 안 보여요…','고마워요… 숨이…','다리에 힘이 없어요…'][v.i%3],2.2,'')}catch(e){}if(OUT.me){lifeFace(OUT.me,c.x,c.z)}vib(20);return}return od.apply(this,arguments)}})();
+
+/* ===================== 59 · 돌발 교전 — 공수부대 기습 강하 · 자폭 드론 떼 · 옥상 저격수 · 구호 트럭 탈취 ===================== */
+/* 모두 '같은 배경 교전'(48·49)을 쓴다: 현장 가까이(70~80m) 가면 내가 선 자리에서 1인칭 교전이 시작되고, 팀원·현지 예비군/국군이 합류한다.
+   ① 공수부대: 수송기가 지나가며 낙하산 7개가 그 자리에 내린다 → 착지한 뒤 다가가면 3파(선발조·본대·돌격조, 3분 30초 뒤 기동타격대)
+   ② 드론 떼: 북쪽 하늘에서 3·4·5대 — 사람이 모인 곳·나·팀원을 노리고 내리꽂는다. 쏘아 떨어뜨리거나 '재머'(2번)로 떨어뜨린다. 주민 피해 3명 이상이면 실패
+   ③ 옥상 저격수: 조준경이 번쩍이다 쏜다(한 발 34~40) — 쏘고 나면 난간 뒤로 숨었다가 자리를 옮긴다. 아래에 관측병 2+2
+   ④ 트럭 탈취: 위장한 무장 공작원 4명이 운전사를 인질로 — 95초 안에 제압하지 못하면 승합차로 달아난다. 인질을 맞히면 실패 */
+const EVO={kinds:{praid:1,drone:1,sniper:1,hijack:1},E:null,res:null};
+OWC_E.sniper={n:'저격수',hp:2,aim:2.3,acc:.9,dmg:36,burst:1,gap:1};
+OWC_E.raider={n:'무장 공작원',hp:2,aim:1.25,acc:.64,dmg:12,burst:3,gap:.16};
+OWC_E.raidL={n:'공작조 조장',hp:3,aim:1.05,acc:.72,dmg:14,burst:3,gap:.14};
+OWC_SC.praid={n:'공수부대 기습 강하',sub:'',timer:210,mid:'m7',waves:[{n:'강하 선발조',list:['rifle','rifle','rifle'],say:['예비군 분대장 김태호','낙하산 내린 쪽에서 셋 — 온다! 엄폐!']},
+    {n:'강하 본대',list:['rifle','mg','rifle','elite','rifle'],say:['예비군 분대장 김태호','본대다! 기관총 조심 — 머리 숙여!']},{n:'돌격조',list:['rusher','rifle','rusher','rifle'],surr:1,say:['예비군 분대장 김태호','돌격조! 뛰어온다 — 버텨!']}],
+  allies:[{id:'ev1',n:'김태호',r:'예비군 분대장',look:'rok',lead:1},{id:'ev2',n:'윤석진',r:'예비군',look:'rok',seed:4}],helpers:['','']};
+OWC_SC.drone={n:'자폭 드론 떼 격추',sub:'',timer:0,waves:[{n:'1파 드론 3대',list:[],say:['국군 상병 오태준','드론 셋 — 북쪽 하늘! 쏴요!']},{n:'2파 드론 4대',list:[],say:['국군 상병 오태준','또 온다 — 넷!']},{n:'3파 드론 5대',list:[],say:['국군 상병 오태준','마지막 무리, 다섯! 재머 아껴 둔 거 써요!']}],
+  allies:[{id:'ev3',n:'오태준',r:'국군 상병',look:'rok',lead:1},{id:'ev4',n:'백승민',r:'국군 일병',look:'rok',seed:6}],helpers:['','']};
+OWC_SC.sniper={n:'옥상 저격수 제압',sub:'',timer:0,waves:[{n:'관측병',list:['rifle','rifle'],say:['예비군 이준호','옥상 저격수 — 번쩍이면 엎드려요! 밑에 관측병 둘!']},{n:'지원조',list:['rifle','rifle'],say:['예비군 이준호','건물 옆으로 둘 더!']}],
+  allies:[{id:'ev5',n:'이준호',r:'예비군',look:'rok',lead:1}],helpers:['','']};
+OWC_SC.hijack={n:'구호 트럭 탈환',sub:'',timer:0,waves:[{n:'공작조 넷',list:[],say:['검문소 하사 정민규','트럭 옆에 넷 — 운전사가 잡혀 있어요! 인질 쏘지 마요!']},{n:'지원조',list:['raider','raider'],say:['검문소 하사 정민규','길 쪽에서 둘 더 온다!']}],
+  allies:[{id:'ev6',n:'정민규',r:'검문소 하사',look:'rok',lead:1},{id:'ev7',n:'문태식',r:'국군 일병',look:'rok',seed:9}],helpers:['','']};
+(function(){const b=window.owcLook;window.owcLook=function(type,id){if(type==='sniper')return Object.assign({},look3('elite',id),{gun:'svd'});if(type==='raider'||type==='raidL'){const c=CIV3[(id||1)%CIV3.length];return Object.assign({skin:SKINC[(id||1)%SKINC.length],seed:id||1},c,{gun:'ak',vest:type==='raidL'?'#3a3a32':null})}return b.apply(this,arguments)}})();
+/* ---------- 공용: 지금 내 자리(A)를 지키고 적은 ent 쪽에서 온다 ---------- */
+function evOwcBase(o){const A={x:FP3.pos.x,z:FP3.pos.z};OWC.A=A;const F=owcFlow(A.x,A.z,o.R||210);OWC.F=F;let ent={x:o.ent.x,z:o.ent.z};if(!owcFree(ent.x,ent.z,.45)){const q=owcNearFree(ent.x,ent.z,8);if(q)ent=q}OWC.ent=ent;
+  const tr=owcTrace(F,ent.x,ent.z,900);OWC.tr=tr;let fx=ent.x-A.x,fz=ent.z-A.z;const fl=Math.hypot(fx,fz)||1;fx/=fl;fz/=fl;OWC.face={x:fx,z:fz};const rx=-fz,rz=fx;const ang=Math.atan2(rz,rx);
+  const put=(off,f,k,tw)=>{const x=A.x+rx*off+fx*f,z=A.z+rz*off+fz*f;if(!owcFree(x,z,.6))return null;if(OWC.cov.some(b=>Math.hypot(b.x-x,b.z-z)<2.3))return null;owcCover(k,x,z,ang+(tw||0));return{x,z}};
+  OWC.pSpot={x:A.x,z:A.z,ch:.95};put(0,1.45,o.myCov||'bags',0)||put(.9,1.5,'planter',0)||put(-.9,1.5,'bags',0);put(-2.1,.45,'bags',Math.PI/2);
+  const spots=[];for(const c of [[2.7,.6,'bags',0],[-3.6,.3,'planter',.4],[5.0,-.5,'barrier',-.2],[-6.0,-.9,'bags',.6]]){const q=put(...c);if(q)spots.push({x:q.x-fx*1.05,z:q.z-fz*1.05,ch:.92})}
+  const es=[];const n=o.nSpots==null?9:o.nSpots;for(let k=0;k<tr.length&&es.length<n;k+=3){const p=tr[k];const de=Math.hypot(p.x-A.x,p.z-A.z);if(de<(o.emin||14)||de>(o.emax||75))continue;const q=tr[Math.min(tr.length-1,k+3)];let tx=q.x-p.x,tz=q.z-p.z;const tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
+    for(const side of [-1,1]){for(const off of [3.5,5.5,2.2,8]){const x=p.x-tz*side*off,z=p.z+tx*side*off;if(!owcFree(x,z,1.1))continue;if(es.some(s=>Math.hypot(s.x-x,s.z-z)<5.5))continue;if(!owcLos(x,1.3,z,A.x,1.3,A.z))continue;
+      const dx=A.x-x,dz=A.z-z,dl=Math.hypot(dx,dz)||1;const ux=dx/dl,uz=dz/dl;const kk=['planter','car','barrier','bags'][es.length%4];const cb=owcCover(kk,x+ux*(kk==='car'?1.5:1.05),z+uz*(kk==='car'?1.5:1.05),Math.atan2(-ux,uz));es.push({x,z,de,fd:owcFD(F,x,z),ch:cb.h,cb,used:null,out:false});break}}}
+  OWC.es=es.sort((a,b)=>b.de-a.de);OWC.os=[];FP3.pos.set(A.x,0,A.z);FP3.yaw=Math.atan2(-fx,-fz);FP3.pitch=-.02;OWC.cr=true;OWC.crK=1;owcHG();return{A,F,fx,fz,rx,rz,ang,spots,put}}
+function evOwcAllies(B){const S=OWC.S;S.allies.forEach((A0,i)=>{const sp=B.spots[i]||{x:B.A.x+B.rx*(i?-3:3)-B.fx*1.4,z:B.A.z+B.rz*(i?-3:3)-B.fz*1.4,ch:.9};let x=sp.x,z=sp.z;if(!owcFree(x,z,.4)){const q=owcNearFree(x,z,5);if(q){x=q.x;z=q.z}}let h=null;try{h=makeHuman(owcAllyLook(A0,i))}catch(e){h=null}if(!h)return;
+  h.root.position.set(x,0,z);h.root.rotation.y=Math.atan2(B.fx,B.fz);h.setPose('crouch',true);h.lookKeep=true;owcAdd(h.root);const a={side:'al',id:A0.id,n:A0.n,r:A0.r,lead:!!A0.lead,h,x,z,sp:{x,z,ch:sp.ch||.9},st:'cover',t:.6+i*.5,hp:3,aimP:0,tgt:null,burst:0,shotT:0,cd:0,said:0};OWC.al.push(a);OWC.byH.set(h,a)})}
+/* 현장 무리(인파 거점)가 겁에 질려 흩어진다 */
+function evPanic(x,z,r){if(typeof HUB==='undefined')return;for(const D of HUB.act.values()){if(Math.hypot(D.x-x,D.z-z)>r)continue;D.panic=1;for(const a of D.M){if(a.kind!=='hub')continue;a.kind='hubleave';a.role='leave';const P=a.h.root.position;let dx=P.x-x,dz=P.z-z;const l=Math.hypot(dx,dz)||1;a.lx=dx/l;a.lz=dz/l;a.lT=5+Math.random()*3;a.run=1;try{a.h.setPose('run');a.h.root.position.y=0}catch(e){}}}}
+(function(){const b=window.hubLive;if(typeof b!=='function')return;window.hubLive=function(D,dt){if(D.panic){hubFlee(D,dt);return}return b.apply(this,arguments)}})();
+function evCalm(){if(typeof HUB==='undefined')return;for(const [id,D] of [...HUB.act.entries()])if(D.panic){hubDrop(D);HUB.act.delete(id)}}
+/* ---------- 연결: 짓기 · 결과 · 닫기 · 말 ---------- */
+(function(){const b=window.owcBuild;window.owcBuild=function(kind){if(EVO.kinds[kind]){const f={praid:evBuildPraid,drone:evBuildDrone,sniper:evBuildSniper,hijack:evBuildHijack,base:typeof evBuildBase==='function'?evBuildBase:null}[kind];if(!f)throw new Error('no build '+kind);f();if(typeof tmOwcJoin==='function')tmOwcJoin();return}return b.apply(this,arguments)}})();
+(function(){const b=window.owcStart;window.owcStart=function(kind){const r=b.apply(this,arguments);if(r&&EVO.kinds[kind]){/* 101동 장면용 첫 대사(정문·계단 밑)는 지운다 */const t0=OWC.t;OWC.tm=(OWC.tm||[]).filter(q=>Math.abs(q.t-(t0+3.8))>.01);OWC.say=[];const L=OWC.S.allies[0];const I=EVO.intro||'적이 온다 — 엄폐!';owcSay(L.r+' '+L.n,I,1);EVO.res=null}return r}})();
+(function(){const b=window.owcSay;window.owcSay=function(who,txt,pri){if(OWC.on&&EVO.kinds[OWC.k]&&OWC.S){const A=OWC.S.allies;if(who==='예비군 소대장 박정수')who=A[0].r+' '+A[0].n;else if(who==='정하늘'||who==='이민호')who=A[1]?A[1].n:A[0].n;else if(/^주민\s*$/.test(who))who='주민'}return b.call(this,who,txt,pri)}})();
+(function(){const b=window.owcHud;window.owcHud=function(dt){const r=b.apply(this,arguments);if(OWC.on&&EVO.kinds[OWC.k]&&!OWC.done){if(OWC.wave<0){const ph=$('#owcPh');if(ph&&ph.textContent!=='준비')ph.textContent='준비'}
+    if(OWC.k==='hijack'&&HJ.van&&!HJ.gone){const tm=$('#owcLeft');const left=HJ.esc-HJ.t;if(tm&&left>0){const t=`적 ${OWC.alive==null?0:OWC.alive} · 출발 ${Math.ceil(left)}초`;if(tm.textContent!==t)tm.textContent=t}}}return r}})();
+(function(){const b=window.owcResult;window.owcResult=function(){if(OWC.on&&EVO.kinds[OWC.k]){if(OWC.res0)return;return evOwcResult()}return b.apply(this,arguments)}})();
+(function(){const b=window.owcClose;window.owcClose=function(){const k=OWC.k,mine=OWC.on&&EVO.kinds[k];const res=EVO.res;const r=b.apply(this,arguments);if(mine){try{evOwcAfterClose(k)}catch(e){console.error(e)}const E=EVD.cur;if(E&&E.owc){const C=EVR[k]||{};const ok=!!(res&&res.win);evEnd({ok,short:C.short?C.short(ok,res):ok?'대응':'실패',txt:C.note?C.note(ok,res):`<b>${EVK[E.k].ico} ${ok?'상황 정리':'물러났다'}</b><div>밖 탐색을 이어 간다.</div>`,ms:4200})}}return r}})();
+function evOwcAfterClose(k){if(k==='drone')drnClear();if(k==='sniper')OWC.en.forEach(a=>{if(a.glint&&a.glint.parent)a.glint.parent.remove(a.glint)});if(k==='hijack'&&HJ.van&&HJ.gone){HJ.van.visible=false}evCalm()}
+/* 결과 판: 종류별 문장(EVR) */
+const EVR={};
+function evOwcResult(){const k=OWC.k;const C=EVR[k];const s=OWC.stt;const win=OWC.win,quit=OWC.why==='quit';FX=[];let txt='';try{txt=C.apply(win,quit,s)}catch(e){console.error(e)}
+  if(s.civ||s.surr){trust(-3*(s.civ+s.surr));mor(-2)}const loss=Math.round((OWC.hp0-OWC.hpP)*.4);if(loss>0&&G&&M('me'))try{hurt('me',loss)}catch(e){}
+  const fx=FX.slice();OUT.fx.push(...fx);try{outStat()}catch(e){}OWC.res0={win,quit,txt};EVO.res={win,quit,k,s:Object.assign({},s)};
+  const roe=(s.civ||s.surr)?' <span class="small">투항자·주민을 쐈다 — 교전규칙 위반(신뢰 하락).</span>':'';const el=$('#owcResult');
+  if(el){const acc=s.shots?Math.round(s.hits/s.shots*100):0;el.hidden=false;const st=(C.stats?C.stats(s):[[s.kills,'무력화'],[acc+'%',`명중 (${s.hits}/${s.shots})`],[s.heads,'머리'],[s.dmg,'받은 피해']]).map(q=>`<span><b class="num">${q[0]}</b>${q[1]}</span>`).join('');
+    el.innerHTML=`<div class="sheet"><div class="lead"><div class="badge ${win?'green':'red'}">${ic(win?'shield':'x')}</div><div><div class="eyebrow">돌발 상황 · ${OWC.S.n}${OWC.S.sub?' · '+OWC.S.sub:''}</div><h2>${C.title(win,quit,s)}</h2></div><button class="btn pri owc-go" data-g3="owcclose">밖 탐색 계속</button></div>
+      <div class="owc-stat">${st}</div><p class="result">${txt}${roe}</p>${fxChips(fx)}<div class="lesson ok"><span class="eyebrow">기억할 것</span><div>${C.lesson}</div><span class="src">출처 · ${C.src}</span></div></div>`}
+  if(checkOver())setTimeout(()=>{owcClose();outReturn('dead')},2400)}
+/* 지도 쪽: 상황이 '교전'으로 넘어가면 현장 표식·기둥은 치운다 */
+function evOwcGo(E,kind,intro){EVO.E=E;EVO.intro=intro;OWC_SC[kind].sub=E.site.n;E.owc=1;if(EVD.beacon&&EVD.beacon.parent)EVD.beacon.parent.remove(EVD.beacon);EVD.beacon=null;TJ.goal=null;const ok=owcStart(kind);if(!ok){E.owc=0}return ok}
+/* ===================== ① 공수부대 기습 강하 ===================== */
+const PRD={};
+EVK.para={n:'공수부대 기습 강하',ico:'🪂',col:'#ff4a3a',combat:1,er:72,w:()=>(G.scen==='conv'?2.6:1.8)*(typeof ebEff==='function'?ebEff('para'):1),
+  site(){return evPickSite(s=>s.open,150,540)},lim(d){return Math.round(clamp(60+d/3,85,230))},
+  announce(E){E.radio=`<b>🪂 무전 — 예비군 지휘소</b><div>"탕정 상공에 수송기! <b>${E.site.n}</b>에 낙하산이 내린다 — 예비군·주민 방어조는 그쪽으로!" 붉은 기둥·미니맵 붉은 원.</div>`;prdStart(E);try{SND.siren&&SND.siren(5)}catch(e){}},
+  step(E,dt){prdStep(E,dt);if(E.ph==='go'){const n=PRD.chutes?PRD.chutes.filter(c=>!c.down).length:0;E.wait=!E.landed?`착지까지 약 ${Math.max(1,Math.ceil(PRD.landT-PRD.t))}초${E.d<EVK.para.er?' — 엄폐하고 기다린다':''}`:(n?'':'착지 — 집결 중')}},
+  ready(E){return!!E.landed},
+  engage(E){prdLanded(true);return evOwcGo(E,'praid','낙하산 내린 쪽 — 적이 모인다! 엄폐하고 기다려!')},
+  miss(E){trust(-2);mor(-3);return`공수부대가 ${E.site.n}에서 흩어져 근처 대피소를 습격했다 — 예비군·주민 부상자가 나왔다.`},
+  clear(){prdClear()}};
+/* ①-2 우리 단지 근처(350m 안)면 가끔 '101동 현관 방어'(수송기·조명탄·탐조등·현관 바리케이드 장면) 그대로 */
+EVK.para101={n:'공수부대 강하 — 101동 현관 방어',ico:'🪂',col:'#ff4a3a',combat:1,er:1e9,
+  w(){const L=TJ.lobbies&&TJ.lobbies[0];if(!L)return 0;const d=Math.hypot(L[0]-FP3.pos.x,L[1]-FP3.pos.z);return d<350?.9*(typeof ebEff==='function'?ebEff('para'):1):0},
+  site(){const L=TJ.lobbies[0];return{x:L[0],z:L[1],n:'우리 단지 101동 현관'}},lim(){return 0},
+  announce(E){E.noBeacon=true;E.noGoal=true},
+  engage(E){if(typeof paraStart!=='function'||PARA.on)return false;OUT.paraT=0;paraStart();E.started=1;E.n0=G.flags.paraN||0;return PARA.on},
+  step(E){if(E.ph!=='act'||!E.started)return;if(typeof OWC!=='undefined'&&OWC.on){if(OWC.k==='para'&&OWC.res0)E.win=!!OWC.res0.win;return}if(PARA.on||OUT.enc)return;evEnd({ok:!!E.win,quiet:1,short:E.win?'현관 사수':'현관 방어 실패'})},
+  miss(){return''}};
+function prdStart(E){prdClear();try{paraMats()}catch(e){return}const s=E.site;const a=Math.random()*6.283;const dx=Math.cos(a),dz=Math.sin(a);PRD.p0={x:s.x-dx*520,z:s.z-dz*520};PRD.p1={x:s.x+dx*520,z:s.z+dz*520};PRD.t=0;PRD.dur=34;PRD.chutes=[];PRD.objs=[];
+  const take=o=>{const i=PARA.objs.indexOf(o);if(i>=0)PARA.objs.splice(i,1);PRD.objs.push(o);return o};try{PRD.plane=take(paraPlane());PRD.plane.position.set(PRD.p0.x,135,PRD.p0.z);PRD.plane.lookAt(PRD.p1.x,135,PRD.p1.z)}catch(e){PRD.plane=null}
+  /* 수송기가 현장 위(경로 46~54%)를 지날 때 뛰어내린다 */const r=rng3(E.id*31+G.turn);for(let i=0;i<7;i++){const t0=PRD.dur*.47+i*.38+r()*.2;const u=t0/PRD.dur;let ch=null;try{ch=take(paraChute(i))}catch(e){ch=null}if(!ch)continue;ch.visible=false;
+    PRD.chutes.push({g:ch,t0,x:PRD.p0.x+(PRD.p1.x-PRD.p0.x)*u,z:PRD.p0.z+(PRD.p1.z-PRD.p0.z)*u,tx:s.x+(r()-.5)*26,tz:s.z+(r()-.5)*26,sway:r()*6})}
+  PRD.landT=PRD.dur*.47+7*.38+24;try{paraSound(true)}catch(e){}}
+function prdStep(E,dt){if(!PRD.chutes)return;PRD.t+=dt;const t=PRD.t;const pl=PRD.plane;if(pl){const u=Math.min(1,t/PRD.dur);pl.position.set(PRD.p0.x+(PRD.p1.x-PRD.p0.x)*u,135+Math.sin(t*.6)*2,PRD.p0.z+(PRD.p1.z-PRD.p0.z)*u);if(pl.userData.prop)pl.userData.prop.rotation.z+=dt*40;if(pl.userData.strobe)pl.userData.strobe.material.opacity=(t%1.1)<.09?1:0;
+    if(PARA.snd){const d=pl.position.distanceTo(new T.Vector3(FP3.pos.x,2,FP3.pos.z));PARA.snd.gn.gain.setTargetAtTime(clamp(.2-(d-140)/1700,0,.2),PARA.snd.c.currentTime,.2)}if(u>=1){pl.removeFromParent();PRD.plane=null;try{paraSound(false)}catch(e){}}}
+  let air=0;for(const c of PRD.chutes){const tt=t-c.t0;if(tt<0)continue;if(!c.g.visible)c.g.visible=true;const k=Math.min(1,tt/24);const y=Math.max(0,128-tt*5.3);const x=c.x+(c.tx-c.x)*k+Math.sin(tt*.5+c.sway)*2*(1-k),z=c.z+(c.tz-c.z)*k+Math.cos(tt*.4+c.sway)*1.5*(1-k);c.g.position.set(x,y,z);c.g.rotation.y=tt*.2;
+    if(y<=0&&!c.down){c.down=1;c.g.children[0].scale.set(1.25,.12,1.25);c.g.children[0].position.y=.35;c.g.children[1].visible=false}if(!c.down)air++}
+  if(!E.landed&&t>8&&!air&&PRD.chutes.every(c=>c.down)){E.landed=1;outNote(`<b>🪂 ${E.site.n} — 착지했다</b><div>적이 모여 움직이기 시작한다. 가까이(70m) 가면 교전이 시작된다.</div>`,3000)}}
+function prdLanded(hideBodies){if(!PRD.chutes)return;for(const c of PRD.chutes){if(!c.down){c.down=1;c.g.position.y=0;c.g.children[0].scale.set(1.25,.12,1.25);c.g.children[0].position.y=.35;c.g.children[1].visible=false}if(hideBodies)c.g.children.slice(2).forEach(o=>o.visible=false)}}
+function prdClear(){(PRD.objs||[]).forEach(o=>{if(o.parent)o.parent.remove(o)});PRD.objs=[];PRD.chutes=null;PRD.plane=null;try{paraSound(false)}catch(e){}}
+EVR.praid={title:(w,q)=>w?'공수부대를 막아 냈다':q?'물러섰다':'부상 — 팀원들이 끌어냈다',
+  apply(w,q,s){if(w){trust(3);mor(3);G.flags.paraN=(G.flags.paraN||0)+1}else mor(-3);return w?`강하한 적을 ${s.kills}명 무력화했다.${s.cap?` 투항자 ${s.cap}명은 기동타격대에 넘겼다.`:''} 예비군이 낙하산과 장비를 거둔다.`:q?'적이 흩어져 골목으로 사라졌다 — 기동타격대가 뒤를 쫓는다.':'총에 맞았다 — 팀원·예비군이 끌어내 지혈했다.'},
+  lesson:'공수부대 강하 땐 혼자 맞서지 않는다: 동원된 예비군·군의 지휘를 따르고, 민간인은 건물 안·지하로 대피한다. 투항자·주민은 쏘지 않는다.',src:'예비군법 · 민방위 기본법 · 생존 수첩 교전규칙',
+  short:(ok)=>ok?'강하 저지':'저지 실패',note:(ok)=>`<b>🪂 ${ok?'강하 저지 — 낙하산 회수 중':'공수부대 — 물러났다'}</b><div>예비군이 현장을 정리한다. 밖 탐색을 이어 간다.</div>`};
+function evBuildPraid(){const E=EVO.E;const B=evOwcBase({ent:{x:E.site.x,z:E.site.z},emin:16,emax:88,nSpots:10,R:230});evOwcAllies(B);OWC.t=4.4}
+/* ===================== ② 자폭 드론 떼 ===================== */
+const DRN={list:[],civ:[],wave:-1,waveT:0,spawnQ:[],cas:0,kills:0,jam:2,jamT:0,snd:null,allyT:1,T:null};
+EVK.drone={n:'자폭 드론 떼',ico:'🛸',col:'#ff5a2a',combat:1,er:76,w:()=>1.9*(typeof ebEff==='function'?ebEff('drone'):1),
+  site(){return evPickSite(s=>!!s.crowd,90,480)},lim(d){return Math.round(clamp(45+d/3.2,60,190))},
+  announce(E){E.radio=`<b>🛸 무전 — 방공 감시</b><div>"북쪽 하늘에 자폭 드론 여러 대! <b>${E.site.n}</b> 사람들 쪽으로 온다 — 흩어지게 하고 떨어뜨려요!" 윙— 소리가 나면 지붕·나무 아래로.</div>`;drnSound(true,.25)},
+  step(E,dt){if(E.ph==='go'&&DRN.snd){const k=clamp(1-E.d/600,.15,.6);DRN.snd.g.gain.setTargetAtTime(k*.05,DRN.snd.c.currentTime,.3)}},
+  engage(E){return evOwcGo(E,'drone','드론 소리 — 북쪽 하늘! 조준해서 떨어뜨려요!')},
+  miss(E){mor(-3);trust(-1);return`자폭 드론이 ${E.site.n}에 떨어졌다 — 모여 있던 주민 여러 명이 다쳤다.`},
+  clear(){drnClear()}};
+function drnNorth(){return{x:0,z:-1}}
+function evBuildDrone(){const E=EVO.E;const T0=E.site;const nb=drnNorth();const B=evOwcBase({ent:{x:T0.x+nb.x*70,z:T0.z+nb.z*70},emin:8,emax:30,nSpots:0,myCov:'planter'});evOwcAllies(B);OWC.nade=0;OWC.t=0;
+  drnClear(true);DRN.T={x:T0.x,z:T0.z};if(Math.hypot(T0.x-B.A.x,T0.z-B.A.z)>55){DRN.T={x:B.A.x+B.fx*14,z:B.A.z+B.fz*14}}
+  /* 지켜야 할 주민 6명: 웅크리거나 불안해한다 */for(let i=0;i<6;i++){const a=i/6*6.283;let x=DRN.T.x+Math.cos(a)*(2+i%2*1.6),z=DRN.T.z+Math.sin(a)*(2+i%2*1.6);if(!owcFree(x,z,.35)){const q=owcNearFree(x,z,4);if(!q)continue;x=q.x;z=q.z}let h=null;try{h=civHuman(30+i*5,i%3?'crouch':'nervous',i===4?'eldF':'civ')}catch(e){h=null}if(!h)continue;h.root.position.set(x,0,z);h.root.rotation.y=Math.random()*6.28;owcAdd(h.root);DRN.civ.push({h,x,z,down:0})}
+  DRN.wave=-1;DRN.waveT=3;DRN.jam=2;DRN.cas=0;DRN.kills=0;drnSound(true,.6)}
+function drnMats(){if(DRN.M)return DRN.M;const M={body:mat('#2c2f33',{r:.6,m:.4}),arm:mat('#1c1e21',{r:.7}),war:mat('#5a5f4a',{r:.7}),rot:new T.MeshBasicMaterial({color:'#9aa2aa',transparent:true,opacity:.35,depthWrite:false}),
+  bodyG:GG.box(.42,.14,.42),armG:GG.box(.9,.05,.06),warG:GG.cyl(.08,.08,.36,8),rotG:GG.cyl(.24,.24,.01,14),hitG:new T.SphereGeometry(.85,8,6),hitM:new T.MeshBasicMaterial({visible:false})};return DRN.M=M}
+function drnMake(){const M=drnMats();const g=new T.Group();g.add(new T.Mesh(M.bodyG,M.body));for(const r of [Math.PI/4,-Math.PI/4]){const a=new T.Mesh(M.armG,M.arm);a.rotation.y=r;g.add(a)}const w=new T.Mesh(M.warG,M.war);w.rotation.x=Math.PI/2;w.position.set(0,-.1,.12);g.add(w);
+  const rots=[];for(const [x,z] of [[.32,.32],[-.32,.32],[.32,-.32],[-.32,-.32]]){const r=new T.Mesh(M.rotG,M.rot);r.position.set(x,.06,z);g.add(r);rots.push(r)}const led=PK.sprite(glowTex(),'#ff3a2a',.5,g,{add:1});led.position.set(0,.12,-.2);g.scale.setScalar(1.35);g.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false}});owcAdd(g);
+  const hm=new T.Mesh(M.hitG,M.hitM);g.add(hm);return{g,led,hm}}
+function drnSpawn(i){const nb=drnNorth();const a=Math.atan2(nb.z,nb.x)+(Math.random()-.5)*2.1;const R=190+Math.random()*45;const T0=DRN.T;const m=drnMake();const p=new T.Vector3(T0.x+Math.cos(a)*R,40+Math.random()*18,T0.z+Math.sin(a)*R);m.g.position.copy(p);
+  const r=Math.random();const tg=r<.62?'civ':r<.86?'me':'al';const d={g:m.g,led:m.led,hm:m.hm,p,v:new T.Vector3(),sp:12.5+DRN.wave*1.2+Math.random()*2,alt:p.y,tg,ti:Math.floor(Math.random()*1000),ph:Math.random()*6,dead:false,jam:0,dive:false,px:{dead:false}};
+  const ag={side:'en',type:'drone',dr:d,st:'fly',hp:1,prot:false,h:d.px};d.ag=ag;m.hm.userData.hit={h:d.px,part:'body'};OWC.byH.set(d.px,ag);DRN.list.push(d);OWC.hitDirty=true}
+function drnTgt(d){if(d.tg==='me'&&!OWC.dead)return{x:FP3.pos.x,y:1.2,z:FP3.pos.z};if(d.tg==='al'){const L=OWC.al.filter(a=>!a.gone&&a.st!=='hurt');if(L.length){const a=L[d.ti%L.length];const q=a.h.root.position;return{x:q.x,y:1.1,z:q.z}}}
+  const C=DRN.civ.filter(c=>!c.down);if(C.length){const c=C[d.ti%C.length];return{x:c.x,y:.9,z:c.z}}return{x:DRN.T.x,y:.8,z:DRN.T.z}}
+function drnStep(dt){if(!DRN.T)return;/* 파도: 3·4·5대, 앞 무리를 처리하거나 34초가 지나면 다음 */
+  if(!OWC.done){DRN.waveT-=dt;const alive=DRN.list.filter(d=>!d.dead).length;OWC.alive=alive+DRN.spawnQ.length;const W=OWC.S.waves;
+    if(DRN.spawnQ.length){DRN.qT=(DRN.qT||0)-dt;if(DRN.qT<=0){DRN.qT=.9;DRN.spawnQ.shift();drnSpawn()}}
+    else if(DRN.wave<W.length-1&&(DRN.waveT<=0&&(alive===0||DRN.waveT<-30))){DRN.wave++;OWC.wave=DRN.wave;OWC.waveT=0;const n=[3,4,5][DRN.wave];for(let i=0;i<n;i++)DRN.spawnQ.push(1);owcSay(W[DRN.wave].say[0],W[DRN.wave].say[1],1);owcMsg(`${DRN.wave+1}/3 · ${W[DRN.wave].n}`,2.4);DRN.waveT=5}
+    else if(DRN.wave>=W.length-1&&!alive&&!DRN.spawnQ.length){owcEnd(DRN.cas<=2,'clear')}}
+  /* 드론 */for(const d of DRN.list){if(d.dead)continue;d.ph+=dt;const p=d.p;
+    if(d.jam>0){d.v.y-=9.8*dt;d.v.x*=1-dt*.6;d.v.z*=1-dt*.6;p.addScaledVector(d.v,dt);d.g.rotation.x+=dt*7;d.g.rotation.z+=dt*5;if(p.y<=.35){drnBoom(d,'jam')}d.g.position.copy(p);continue}
+    const t=drnTgt(d);const dx=t.x-p.x,dz=t.z-p.z,dh=Math.hypot(dx,dz);if(!d.dive&&dh<42)d.dive=true;
+    if(!d.dive){const ty=d.alt+Math.sin(d.ph*1.3)*1.5;d.v.set(dx/dh*d.sp+Math.cos(d.ph*1.7)*1.6,(ty-p.y)*1.2,dz/dh*d.sp+Math.sin(d.ph*1.9)*1.6)}
+    else{const dy=t.y-p.y;const L=Math.hypot(dx,dy,dz)||1;const s=d.sp*1.3;d.v.set(dx/L*s,dy/L*s,dz/L*s)}
+    p.addScaledVector(d.v,dt);d.g.position.copy(p);d.g.rotation.y=Math.atan2(d.v.x,d.v.z);d.g.rotation.x=d.dive?.5:.15;d.led.material.opacity=(d.ph%.5)<.25?1:.25;
+    if(Math.hypot(t.x-p.x,t.y-p.y,t.z-p.z)<1.6||p.y<.4)drnBoom(d,'hit')}
+  for(const c of DRN.civ)c.h.update(dt);
+  /* 아군 대공 사격 */DRN.allyT-=dt;if(DRN.allyT<=0&&!OWC.done){DRN.allyT=1.1+Math.random()*.7;const L=OWC.al.filter(a=>!a.gone&&a.st!=='hurt');const D0=DRN.list.filter(d=>!d.dead&&!d.jam);if(L.length&&D0.length){const a=L[Math.floor(Math.random()*L.length)];const P=a.h.root.position;let best=null,bd=82;for(const d of D0){const dd=Math.hypot(d.p.x-P.x,d.p.z-P.z,d.p.y-1.5);if(dd<bd&&owcLos(P.x,1.5,P.z,d.p.x,d.p.y,d.p.z)){bd=dd;best=d}}
+    if(best){const mz=owcMuz(a.h,new T.Vector3()).clone();owcNpcFlash(mz);owcTracer(mz,best.p.clone().add(new T.Vector3((Math.random()-.5)*1.5,(Math.random()-.5),(Math.random()-.5)*1.5)),0);owcShotSnd('rifle',mz);try{a.h.setPose('aim');owcFace(a.h,best.p.x,best.p.z,1,9)}catch(e){}
+      if(Math.random()<.2*(a.accK||1)){drnKill(best,a)}}}}
+  /* 소리: 가장 가까운 드론 거리 */if(DRN.snd){let nd=1e9;for(const d of DRN.list)if(!d.dead)nd=Math.min(nd,d.p.distanceTo(SV3.cam.position));const k=nd<1e8?clamp(1.15-nd/180,.08,1):0;DRN.snd.g.gain.setTargetAtTime(k*.075,DRN.snd.c.currentTime,.15);DRN.snd.o.frequency.setTargetAtTime(170+(k*90),DRN.snd.c.currentTime,.2)}}
+function drnKill(d,by){if(d.dead)return;d.dead=true;d.px.dead=true;OWC.hitDirty=true;DRN.kills++;try{FX3.explode(d.p.clone(),{r:2.2,kind:'small',lite:true})}catch(e){}if(d.g.parent)d.g.parent.remove(d.g);
+  if(by==='me'){OWC.stt.kills++;OWC.stt.hits++;owcFeed('당신 ▸ 자폭 드론 격추','me');owcHitMark(false)}else if(by==='jam'){OWC.stt.kills++;owcFeed('재머 ▸ 드론 추락','me')}else{owcFeed(`${by.n} ▸ 자폭 드론 격추`,'al');if(OWC.t-(by.said||-9)>8){by.said=OWC.t;owcSay(by.r+' '+by.n,'하나 떨어뜨렸다!')}}
+  /* 낮게(8m 아래) 떨어진 파편 */const dm=Math.hypot(FP3.pos.x-d.p.x,FP3.pos.z-d.p.z);if(d.p.y<8&&dm<5.5)owcHurt(9,{x:d.p.x,z:d.p.z},'nade')}
+function drnBoom(d,why){if(d.dead)return;d.dead=true;d.px.dead=true;OWC.hitDirty=true;const p=d.p.clone();p.y=Math.max(.4,p.y);if(d.g.parent)d.g.parent.remove(d.g);try{FX3.explode(p,{r:why==='jam'?3.2:4.4,kind:'small'})}catch(e){}try{SND.boom(true,.7)}catch(e){}sv3Shake(.3);vib([40,30,80]);
+  if(why==='jam'){DRN.kills++;OWC.stt.kills++;owcFeed('재머 ▸ 드론 추락','me')}
+  const R=why==='jam'?4.5:6.8;const dm=Math.hypot(FP3.pos.x-p.x,FP3.pos.z-p.z);if(dm<R+.8){const cov=OWC.cr&&owcCovH(p.x,p.z,FP3.pos.x,FP3.pos.z,1.6)>.6?.4:1;owcHurt((why==='jam'?22:50)*(1-dm/(R+.8))*cov+4,{x:p.x,z:p.z},'nade')}
+  OWC.al.forEach(t=>{if(t.gone||t.st==='hurt')return;const q=t.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)<R*.7){owcAllyHit(t,null);if(why!=='jam')owcAllyHit(t,null)}});
+  for(const c of DRN.civ){if(c.down)continue;if(Math.hypot(c.x-p.x,c.z-p.z)<R*.85){c.down=1;DRN.cas++;try{humanDie(c.h,null)}catch(e){try{c.h.setPose('sleep')}catch(e2){}}owcFeed('주민 피해 — '+DRN.cas+'명','bad')}}
+  if(why==='hit'&&DRN.cas>=3&&!DRN.casSaid){DRN.casSaid=1;owcSay('국군 상병 오태준','주민이 다쳤어요 — 더 빨리 떨어뜨려야 해요!',1)}}
+function drnJam(){if(!OWC.on||OWC.k!=='drone'||OWC.done)return;if(DRN.jam<=0){owcMsg('재머를 다 썼다',1.4,1);return}DRN.jam--;const n=DRN.list.filter(d=>!d.dead&&!d.jam&&Math.hypot(d.p.x-FP3.pos.x,d.p.z-FP3.pos.z)<95);n.forEach(d=>{d.jam=1;d.v.multiplyScalar(.5)});
+  const r=$('#evJamN');if(r)r.textContent=DRN.jam;owcMsg(n.length?`재머 — 드론 ${n.length}대 신호 끊김! 추락한다`:'재머 — 95m 안에 드론이 없다',1.8);vib([20,20,20,20,60]);
+  try{const sp=PK.sprite(glowTex(),'#8fd6ff',2,OUT.scene,{add:1});sp.position.set(FP3.pos.x,1.4,FP3.pos.z);FX3.add(sp,.6,(u,it)=>{it.el.scale.setScalar(2+u*60);it.el.material.opacity=.6*(1-u)})}catch(e){}
+  try{if(SND.on){const c=SND.ac();const len=.5;const b=c.createBuffer(1,c.sampleRate*len,c.sampleRate);const ch=b.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=(Math.random()*2-1)*(1-i/ch.length);const s=c.createBufferSource();s.buffer=b;const g=c.createGain();g.gain.value=.06;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=2400;s.connect(f);f.connect(g);g.connect(c.destination);s.start()}}catch(e){}}
+function drnSound(on,vol){try{const c=SND.ac();if(!c||!SND.on)return;if(on&&!DRN.snd){const o=c.createOscillator(),o2=c.createOscillator(),f=c.createBiquadFilter(),g=c.createGain(),lfo=c.createOscillator(),lg=c.createGain();o.type='sawtooth';o2.type='sawtooth';o.frequency.value=190;o2.frequency.value=203;f.type='bandpass';f.frequency.value=900;f.Q.value=.8;g.gain.value=0;lfo.frequency.value=7;lg.gain.value=12;lfo.connect(lg);lg.connect(o.frequency);
+    o.connect(f);o2.connect(f);f.connect(g);g.connect(c.destination);o.start();o2.start();lfo.start();DRN.snd={o,o2,lfo,g,c};g.gain.setTargetAtTime((vol||.3)*.03,c.currentTime,.5)}else if(!on&&DRN.snd){const S=DRN.snd;S.g.gain.setTargetAtTime(0,S.c.currentTime,.3);setTimeout(()=>{try{S.o.stop();S.o2.stop();S.lfo.stop()}catch(e){}},1200);DRN.snd=null}}catch(e){}}
+function drnClear(keepSnd){DRN.list.forEach(d=>{if(d.g.parent)d.g.parent.remove(d.g);if(d.px)d.px.dead=true});DRN.list=[];DRN.civ.forEach(c=>{if(c.h.root.parent)c.h.root.parent.remove(c.h.root)});DRN.civ=[];DRN.spawnQ=[];DRN.T=null;if(!keepSnd)drnSound(false)}
+(function(){const b=window.owcWaves;window.owcWaves=function(dt){if(OWC.k==='drone'){OWC.waveT+=dt;return}return b.apply(this,arguments)}})();
+(function(){const b=window.owcAgents;window.owcAgents=function(dt){const r=b.apply(this,arguments);if(OWC.k==='drone')try{drnStep(dt)}catch(e){console.error(e)}if(OWC.k==='hijack')try{hjStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.owcHitList;window.owcHitList=function(){const r=b.apply(this,arguments);if(OWC.k==='drone')for(const d of DRN.list)if(!d.dead)OWC.hitList.push(d.hm);return r}})();
+(function(){const b=window.owcHitPerson;window.owcHitPerson=function(hit,pt,d){const a=OWC.byH.get(hit.h);if(a&&a.type==='drone'){drnKill(a.dr,'me');return}if(a&&a.host){hjHostageHit(a,pt);return}return b.apply(this,arguments)}})();
+(function(){const b=window.owcMarks;window.owcMarks=function(){const r=b.apply(this,arguments);if(OWC.k==='drone'&&OWC.mkT%2===0){const el=$('#owcMarks');if(el){const cam=SV3.cam,W=SV3.vw,H=SV3.vh;const out=[];const v=new T.Vector3();for(const d of DRN.list){if(d.dead)continue;v.copy(d.p).project(cam);if(v.z>1||v.z<-1)continue;const sx=(v.x+1)/2*W,sy=(1-v.y)/2*H;if(sx<-20||sx>W+20||sy<-20||sy>H+20)continue;out.push(`<i class="dr${d.dive?' warn':''}" style="left:${sx.toFixed(0)}px;top:${sy.toFixed(0)}px">${Math.round(d.p.distanceTo(cam.position))}m</i>`)}if(out.length)el.insertAdjacentHTML('beforeend',out.join(''))}}
+  if(OWC.k==='sniper'&&OWC.mkT%2===0){const el=$('#owcMarks');const sn=OWC.en.find(a=>a.type==='sniper'&&a.st!=='down'&&!a.gone&&a.svis);if(el&&sn){const v=new T.Vector3();const hd=evSnHead(sn);v.set(hd.x,hd.y+.55,hd.z).project(SV3.cam);if(v.z<1&&v.z>-1){const sx=(v.x+1)/2*SV3.vw,sy=(1-v.y)/2*SV3.vh;el.insertAdjacentHTML('beforeend',`<i class="en${sn.st==='aim'&&sn.tgt==='me'?' warn':''}" style="left:${sx.toFixed(0)}px;top:${sy.toFixed(0)}px"></i>`)}}}return r}})();
+(function(){const b=window.owcUI;window.owcUI=function(){const r=b.apply(this,arguments);try{if(OWC.k==='drone'){const it=document.querySelector('#owcUI .owc-items');if(it&&!it.querySelector('[data-g3=evjam]')){it.insertAdjacentHTML('beforeend',`<button class="owc-it ev-jam" data-g3="evjam">📡<i class="num" id="evJamN">${DRN.jam}</i><span>재머</span></button>`)}}}catch(e){}return r}})();
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-g3=evjam]');if(!b)return;e.preventDefault();e.stopPropagation();drnJam()},true);
+EVR.drone={title:(w,q)=>w?(DRN.cas?'드론 떼를 막았다(피해 있음)':'드론 떼를 모두 떨어뜨렸다'):q?'물러섰다':DRN.cas>=3?'막지 못했다 — 주민 피해':'부상',
+  apply(w,q,s){if(w){trust(DRN.cas?2:4);mor(DRN.cas?2:4)}else{mor(-3);trust(-1)}return w?`드론 ${DRN.kills}대를 떨어뜨렸다${DRN.cas?` — 그래도 주민 ${DRN.cas}명이 다쳐 국군 의무병이 옮긴다`:' — 다친 주민이 없다'}.`:`주민 ${DRN.cas}명이 다쳤다. 사람이 모인 곳이 표적이 됐다.`},
+  stats:s=>[[DRN.kills,'격추'],[DRN.cas,'주민 피해'],[2-DRN.jam,'재머'],[s.dmg,'받은 피해']],
+  lesson:'드론 소리(윙—)가 들리면 탁 트인 곳을 피해 지붕·나무 아래로 들어가고, 한곳에 모이지 않게 흩어진다. 자폭 드론은 사람이 모인 곳을 노린다. 전파 방해는 군·경 장비 — 민간은 신고(112).',src:'국방부 · 행정안전부 민방위 · 생존 수첩',
+  short:(ok)=>ok?`드론 격추 ${DRN.kills}`:'드론 피해',note:(ok)=>`<b>🛸 ${ok?'하늘이 조용해졌다':'드론 공격 — 피해가 났다'}</b><div>국군이 떨어진 드론 잔해를 수거한다.</div>`};
+/* ===================== ③ 옥상 저격수 ===================== */
+EVK.sniper={n:'옥상 저격수',ico:'🎯',col:'#ff4a3a',combat:1,er:82,w:()=>G.turn>=1?1.7:0,
+  site(){const p=FP3.pos;const L=evSites().filter(s=>s.crowd||s.plaza).map(s=>Object.assign({},s,{d:Math.hypot(s.x-p.x,s.z-p.z)})).filter(s=>s.d>100&&s.d<520);for(let i=L.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[L[i],L[j]]=[L[j],L[i]]}
+    for(const s of L){const pr=evSnPerch(s);if(pr){s.perch=pr;return s}}return null},
+  lim(d){return Math.round(clamp(45+d/3.2,60,200))},
+  announce(E){E.radio=`<b>🎯 무전 — 경찰 상황실</b><div>"<b>${E.site.n}</b>에 총성 — 옥상 저격수! 주민 한 명이 쓰러졌어요. 탁 트인 곳을 뛰지 말고 엄폐물 사이로!"</div>`;evPanic(E.site.x,E.site.z,45);
+    try{const h=civHuman(55+(E.id%5),'sleep','civ');h.root.position.set(E.site.x+3,0,E.site.z+2);h.root.rotation.y=Math.random()*6;OUT.scene.add(h.root);E.vic=h}catch(e){}try{SFX.shot('rifle',{d:Math.max(60,E.d),az:0})}catch(e){}},
+  engage(E){return evOwcGo(E,'sniper','옥상 저격수 — 번쩍이는 곳! 머리 숙이고 엄폐물 사이로!')},
+  miss(E){mor(-2);trust(-1);return`${E.site.n} 저격 — 경찰 특공대가 한참 뒤 제압했다. 그 사이 주민이 더 다쳤다.`},
+  clear(E){if(E.vic&&E.vic.root.parent)E.vic.root.parent.remove(E.vic.root);evCalm()}};
+function evSnPerch(s){const B=TJ_DATA.B;let best=null,bs=1e9;for(const b of B){const h=+b[1]||0;if(h<9||h>48)continue;const p=b[4];if(!p||p.length<6)continue;let cx=0,cz=0;const n=p.length/2;for(let i=0;i<p.length;i+=2){cx+=p[i];cz+=p[i+1]}cx/=n;cz/=n;const dc=Math.hypot(cx-s.x,cz-s.z);if(dc>120||dc<12)continue;
+    for(let i=0;i<p.length;i+=2){const ax=p[i],az=p[i+1],bx=p[(i+2)%p.length],bz=p[(i+3)%p.length];const L2=(bx-ax)**2+(bz-az)**2;if(L2<9)continue;const t=clamp(((s.x-ax)*(bx-ax)+(s.z-az)*(bz-az))/L2,.15,.85);const ex=ax+(bx-ax)*t,ez=az+(bz-az)*t;const d=Math.hypot(ex-s.x,ez-s.z);if(d<24||d>88)continue;
+      const ix=cx-ex,iz=cz-ez,il=Math.hypot(ix,iz)||1;const px=ex+ix/il*.55,pz=ez+iz/il*.55;if(!owcLos(px,h+1.45,pz,s.x,1.3,s.z))continue;const sc=Math.abs(d-52)+Math.abs(h-15)*.6;
+      if(sc<bs){const L=Math.sqrt(L2);const ux=(bx-ax)/L,uz=(bz-az)/L;bs=sc;best={x:px,z:pz,y:h,cx,cz,ux,uz,ox:-ix/il,oz:-iz/il}}}}return best}
+function evBuildSniper(){const E=EVO.E;const pr=E.site.perch;const gx=pr.x+pr.ox*7,gz=pr.z+pr.oz*7;const B=evOwcBase({ent:{x:gx,z:gz},emin:12,emax:80,nSpots:8,R:220});evOwcAllies(B);OWC.t=3.2;OWC.nade=1;
+  const a=owcSpawn('sniper',{at:{x:pr.x,z:pr.z}});if(a){if(a.spot){a.spot.used=null;a.spot=null}a.roofY=pr.y;a.h.root.position.y=pr.y;a.st='scan';a.t=2.2;a.perch=pr;a.moves=3;try{a.h.setPose('kneel',true)}catch(e){}
+    const g=PK.sprite(glowTex(),'#fff6d0',1,OUT.scene,{add:1});g.material.opacity=0;OWC.obj.push(g);a.glint=g}}
+function evSnHead(a){const P=a.h.root.position;return{x:P.x,y:a.roofY+(a.st==='scan'?1.15:1.5),z:P.z}}
+function evSnLosTo(a,tp){const e=evSnHead(a);return owcLos(e.x,e.y,e.z,tp.x,tp.y,tp.z)}
+function evSnPick(a){const C=[];if(!OWC.dead)C.push('me');OWC.al.forEach(t=>{if(!t.gone&&t.st!=='hurt')C.push(t)});let best=null,bs=1e9;for(const t of C){const tp=t==='me'?owcMeHead():{x:t.h.root.position.x,y:1.1,z:t.h.root.position.z};const P=a.h.root.position;const d=Math.hypot(tp.x-P.x,tp.z-P.z);if(d>210)continue;if(!evSnLosTo(a,tp))continue;const s=d*(t==='me'?.6:1)+Math.random()*25;if(s<bs){bs=s;best=t}}return best}
+function evSnGlint(a,k){const g=a.glint;if(!g)return;if(k<=0||a.st==='down'){g.material.opacity=0;return}const hd=evSnHead(a);g.position.set(hd.x,hd.y+.05,hd.z);const cam=SV3.cam.position;const d=Math.hypot(cam.x-hd.x,cam.z-hd.z);g.scale.setScalar((.5+k*1.4)*clamp(d/45,.6,2.4));g.material.opacity=clamp(.35+k*.65,0,1)*(.75+.25*Math.sin(OWC.t*40))}
+function evSnMove(a){const pr=a.perch;const o=(Math.random()<.5?-1:1)*(2.5+Math.random()*3);const x=pr.x+pr.ux*o,z=pr.z+pr.uz*o;a.h.root.position.x=x;a.h.root.position.z=z;a.moves--}
+(function(){const b=window.owcEnemy;window.owcEnemy=function(a,dt){if(a.type==='sniper')return evSnAI(a,dt);return b.apply(this,arguments)}})();
+function evSnAI(a,dt){const h=a.h,P=h.root.position;h.update(dt);a.t-=dt;a.flinch=Math.max(0,(a.flinch||0)-dt*3);a.supp=Math.max(0,(a.supp||0)-dt);
+  if(a.st==='down'){P.y=a.roofY;evSnGlint(a,0);return}if(a.st==='retreat'){a.gone=1;h.root.visible=false;evSnGlint(a,0);return}
+  a.vis=false;a.losT-=dt;if(a.losT<=0){a.losT=.3;const c=SV3.cam.position;const hd=evSnHead(a);a.svis=a.st!=='duck'&&owcLos(c.x,c.y,c.z,hd.x,hd.y,hd.z);if(a.svis)a.seen=OWC.t}
+  if(a.st==='duck'){P.y=a.roofY-1.05;if(h.pose!=='crouch')h.setPose('crouch');evSnGlint(a,0);if(a.t<=0){if(a.moves>0&&Math.random()<.55)evSnMove(a);P.y=a.roofY;a.st='scan';a.t=.6+Math.random()*.8;h.setPose('kneel')}return}
+  if(a.st==='scan'||a.st==='walk'||a.st==='cover'){a.st=a.st==='scan'?'scan':'scan';P.y=a.roofY;if(h.pose!=='kneel')h.setPose('kneel');evSnGlint(a,0);if(a.t<=0){const t=evSnPick(a);if(t){a.tgt=t;a.st='aim';a.aimP=0;a.ck=0;h.setPose('aim')}else a.t=.7}return}
+  if(a.st==='hide'){a.st='duck';a.t=1.2;return}
+  if(a.st==='aim'){const t=a.tgt;const ok=t==='me'?!OWC.dead&&!OWC.done:t&&!t.gone&&t.st!=='hurt';if(!ok){a.st='scan';a.t=.4;return}const tp=t==='me'?owcMeHead():{x:t.h.root.position.x,y:1.1,z:t.h.root.position.z};owcFace(h,tp.x,tp.z,dt,6);
+    a.ck-=dt;if(a.ck<=0){a.ck=.35;if(!evSnLosTo(a,tp)){a.st='scan';a.t=.5;evSnGlint(a,0);return}}
+    const k=(OWC.diffK||1)*(a.flinch>0?.45:1)*(a.supp>0?.55:1)*(G&&G.diff==='train'?.75:G&&G.diff==='hard'?1.15:1);a.aimP+=dt/(OWC_E.sniper.aim/k);evSnGlint(a,t==='me'?a.aimP:a.aimP*.45);
+    if(t==='me'&&a.aimP>.3&&!a.warned){a.warned=1;owcMsg('번쩍! — 저격수가 나를 노린다. 엄폐!',1.4,1);vib([30,30,30])}
+    if(a.aimP>=1){evSnShot(a,t,tp);a.st='duck';a.t=1.9+Math.random()*1.5;a.warned=0}return}
+  a.st='scan';a.t=.5}
+function evSnShot(a,t,tp){const hd=evSnHead(a);const mz=new T.Vector3(hd.x,hd.y-.1,hd.z);owcNpcFlash(mz);try{SFX.shot('rifle',{d:Math.hypot(mz.x-FP3.pos.x,mz.z-FP3.pos.z),az:0})}catch(e){}
+  let p=.62*owcDiff()*1.15;if(t==='me'){if(OWC.sprint)p*=.45;else if(FP3.moving>.3)p*=.7;const ch=owcCovH(hd.x,hd.z,tp.x,tp.z,2.4);if(OWC.cr&&ch>.6)p*=.28;else if(ch>.6)p*=.65}else p*=.7;
+  const hit=Math.random()<p;const end=hit?new T.Vector3(tp.x,tp.y-.3,tp.z):new T.Vector3(tp.x+(Math.random()-.5)*2.4,Math.max(0,tp.y-.6+(Math.random()-.4)*1.4),tp.z+(Math.random()-.5)*2.4);owcTracer(mz,end,1);
+  if(hit){if(t==='me')owcHurt(OWC_E.sniper.dmg*(.85+Math.random()*.3)*(G&&G.diff==='train'?.7:1),{x:hd.x,z:hd.z},'en');else{owcAllyHit(t,a);owcAllyHit(t,a)}}else{if(t==='me')try{bSnap()}catch(e){}owcImpact(end,'#c9c2b2',null)}}
+/* 사격 팀원은 옥상 쪽으로 제압 사격(저격수 조준을 늦춘다) */
+(function(){const b=window.owcAgents;window.owcAgents=function(dt){const r=b.apply(this,arguments);if(OWC.k==='sniper'&&!OWC.done){OWC.supT=(OWC.supT||3)-dt;if(OWC.supT<=0){OWC.supT=4.5+Math.random()*2;const sn=OWC.en.find(a=>a.type==='sniper'&&a.st!=='down'&&!a.gone);const L=OWC.al.filter(a=>!a.gone&&a.st!=='hurt');if(sn&&L.length){const a=L.find(x=>x.accK>1)||L[Math.floor(Math.random()*L.length)];const P=a.h.root.position;const hd=evSnHead(sn);
+      if(owcLos(P.x,1.5,P.z,hd.x,hd.y,hd.z)){const mz=owcMuz(a.h,new T.Vector3()).clone();owcNpcFlash(mz);owcTracer(mz,new T.Vector3(hd.x+(Math.random()-.5)*1.6,hd.y+(Math.random()-.3),hd.z+(Math.random()-.5)*1.6),0);owcShotSnd('rifle',mz);sn.supp=2.2;sn.aimP=Math.max(0,sn.aimP-.3);
+        if(Math.random()<.08*(a.accK||1)){sn.hp-=1;sn.flinch=1;if(sn.hp<=0)owcKill(sn,a,null,false)}if(OWC.t-(a.said||-9)>10){a.said=OWC.t;owcSay(a.r+' '+a.n,'옥상 쪽으로 쏴서 붙잡아 둘게요 — 지금 움직여요!')}}}}}return r}})();
+EVR.sniper={title:(w,q)=>w?'저격수를 제압했다':q?'물러섰다':'저격당했다 — 팀원들이 끌어냈다',
+  apply(w,q,s){if(w){trust(3);mor(3)}else mor(-2);return w?'옥상 저격수와 관측병을 제압했다. 쓰러졌던 주민은 의무병이 데려갔다.':q?'저격수가 옥상을 옮겨 다닌다 — 경찰 특공대가 맡는다.':'한 발에 쓰러졌다 — 팀원·예비군이 엄폐물 뒤로 끌어내 지혈했다.'},
+  lesson:'저격이 시작되면 탁 트인 곳을 뛰지 말고 엄폐물 사이를 짧게 끊어 움직인다. 위협을 먼저 없애거나 피한 뒤에 쓰러진 사람을 구한다(위험한 곳에서는 안전 확보가 먼저). 번쩍임(조준경)은 위험 신호.',src:'경찰청 대테러 · 전술적 응급처치(TCCC) 원칙 · 생존 수첩',
+  short:(ok)=>ok?'저격수 제압':'저격 피해',note:(ok)=>`<b>🎯 ${ok?'저격수 제압':'저격 — 물러났다'}</b><div>${ok?'광장에 사람들이 조심스럽게 돌아온다.':'경찰 특공대가 건물을 둘러싼다.'}</div>`};
+/* ===================== ④ 구호 트럭 탈취(인질) ===================== */
+const HJ={van:null,gone:false,esc:95,t:0};
+EVK.hijack={n:'구호 트럭 탈취 — 인질',ico:'🚚',col:'#ff4a3a',combat:1,er:74,w:()=>G.turn>=4&&TJ_DATA.POI.truck?1.6:0,
+  site(){const P=TJ_DATA.POI;const t=P.truck;if(!t)return null;const n=[-t.t[1],t.t[0]];const x=t.p[0]+n[0]*5,z=t.p[1]+n[1]*5;const d=Math.hypot(x-FP3.pos.x,z-FP3.pos.z);if(d<80||d>650)return null;return{x,z,n:'검문소 구호 트럭'}},
+  lim(d){return Math.round(clamp(42+d/3.2,60,180))},
+  announce(E){E.radio=`<b>🚚 무전 — 검문소</b><div>"구호 트럭에 무장 괴한! 운전사를 인질로 잡고 구호품을 승합차로 옮긴다 — 곧 달아나요!" 인질은 절대 쏘지 않는다.</div>`;hjProps(E);evPanic(E.site.x,E.site.z,40)},
+  engage(E){return evOwcGo(E,'hijack','트럭 옆 넷 — 운전사가 잡혀 있어요! 인질 쏘지 마요!')},
+  miss(E){trust(-1);mor(-2);try{res('food',-1)}catch(e){}return'공작조가 구호품을 싣고 달아났다 — 운전사는 풀려났지만 다음 배급이 줄었다.'},
+  clear(){if(HJ.van&&HJ.van.parent)HJ.van.parent.remove(HJ.van);HJ.van=null;(HJ.fig||[]).forEach(h=>{if(h.root.parent)h.root.parent.remove(h.root)});HJ.fig=[];evCalm()}};
+function hjProps(E){const t=TJ_DATA.POI.truck;const ux=t.t[0],uz=t.t[1],nx=-uz,nz=ux;const vx=t.p[0]-ux*8.6+nx*.4,vz=t.p[1]-uz*8.6+nz*.4;HJ.vx=vx;HJ.vz=vz;HJ.ux=ux;HJ.uz=uz;HJ.tx=t.p[0];HJ.tz=t.p[1];HJ.gone=false;HJ.t=0;
+  const g=new T.Group();g.position.set(vx,0,vz);g.rotation.y=Math.atan2(ux,uz);const body=mat('#d8dcdf',{r:.6,m:.2}),dark=mat('#22262a',{r:.5}),tire=mat('#1a1a1a',{r:.9});MM(GG.box(1.9,1.75,4.6,.12),body,0,1.18,0,{p:g});MM(GG.box(1.8,.62,1.1),dark,0,1.62,1.62,{p:g,cast:false});MM(GG.box(1.92,.5,3.2),dark,0,1.62,-.5,{p:g,cast:false});
+  for(const [x,z] of [[.86,1.45],[-.86,1.45],[.86,-1.45],[-.86,-1.45]])MM(GG.cyl(.36,.36,.24,12),tire,x,.36,z,{p:g,rz:Math.PI/2});const door=MM(GG.box(.04,1.3,1.2),dark,-.97,1.1,-1.3,{p:g,cast:false});OUT.scene.add(g);HJ.van=g;
+  /* 상자를 옮기는 둘·인질 */HJ.fig=[];for(let i=0;i<2;i++){let h=null;try{h=makeHuman(owcLook('raider',300+i))}catch(e){}if(!h)continue;h.root.position.set(vx+nx*1.5-ux*(1+i*1.4),0,vz+nz*1.5-uz*(1+i*1.4));h.setPose(i?'carry':'aim',true);OUT.scene.add(h.root);HJ.fig.push(h)}
+  try{const h=civHuman(88,'crouch','civ');h.root.position.set(t.p[0]+nx*1.8,0,t.p[1]+nz*1.8);OUT.scene.add(h.root);HJ.fig.push(h)}catch(e){}}
+function evBuildHijack(){const E=EVO.E;(HJ.fig||[]).forEach(h=>{if(h.root.parent)h.root.parent.remove(h.root)});HJ.fig=[];const B=evOwcBase({ent:{x:HJ.vx-HJ.ux*10,z:HJ.vz-HJ.uz*10},emin:8,emax:45,nSpots:6,R:200});evOwcAllies(B);OWC.t=3;OWC.nade=1;HJ.t=0;HJ.said=0;HJ.hostDead=0;HJ.gone=false;HJ.host=null;
+  /* 트럭·승합차는 엄폐물(총알을 막는다) */const ang=Math.atan2(HJ.uz,HJ.ux);const tb=owcObb(HJ.tx,HJ.tz,ang,3.4,1.25,2.6,'car');OWC.cov.push(tb);const vb=owcObb(HJ.vx,HJ.vz,ang,2.3,.98,1.95,'car');OWC.cov.push(vb);HJ.tb=tb;HJ.vb=vb;
+  for(const [b,hw,hd] of [[tb,3.4,1.25],[vb,2.3,.98]]){const ex=Math.abs(b.c)*hw+Math.abs(b.s)*hd,ez=Math.abs(b.s)*hw+Math.abs(b.c)*hd;const bx=new T.Box3(new T.Vector3(b.x-ex,0,b.z-ez),new T.Vector3(b.x+ex,2.5,b.z+ez));FP3.boxes.push(bx);OWC.pboxes.push(bx)}
+  /* 인질: 승합차 옆에 웅크린 운전사 */let hx=HJ.vx+(-HJ.uz)*1.6*hjFar(B.A,HJ.vx,HJ.vz)+HJ.ux*1.2,hz=HJ.vz+HJ.ux*1.6*hjFar(B.A,HJ.vx,HJ.vz)+HJ.uz*1.2;if(!owcFree(hx,hz,.35)){const q=owcNearFree(hx,hz,4);if(q){hx=q.x;hz=q.z}}
+  let h=null;try{h=makeHuman(owcLook('civ',88))}catch(e){h=null}if(h){h.root.position.set(hx,0,hz);h.setPose('crouch',true);owcFace(h,B.A.x,B.A.z);owcAdd(h.root);const a={side:'en',type:'civ',id:888,h,st:'hostage',t:0,hp:1,prot:true,host:1,seen:-9,losT:0,vis:false};OWC.en.push(a);OWC.byH.set(h,a);OWC.hitDirty=true;HJ.host=a}}
+function hjFar(A,x,z){const nx=-HJ.uz,nz=HJ.ux;return((A.x-x)*nx+(A.z-z)*nz)>0?-1:1}
+/* 첫 파도: 트럭·승합차 둘레 '먼 쪽'에 넷 */(function(){const b=window.owcWave;window.owcWave=function(i){if(OWC.k==='hijack'&&i===0){const W=OWC.S.waves[0];OWC.wave=0;OWC.waveT=0;owcSay(W.say[0],W.say[1],1);owcMsg(`1/2 · ${W.n}`,2.4);const A=OWC.A;const C=[];
+    for(const [cx,cz,hw,hd] of [[HJ.tx,HJ.tz,3.4,1.25],[HJ.vx,HJ.vz,2.3,.98]]){for(const [u,v] of [[1,0],[-1,0],[0,1],[0,-1],[.7,1],[-.7,1],[.7,-1],[-.7,-1]]){const ox=HJ.ux*u*(hw+.9)+(-HJ.uz)*v*(hd+.9),oz=HJ.uz*u*(hw+.9)+HJ.ux*v*(hd+.9);const x=cx+ox,z=cz+oz;if(!owcFree(x,z,.4))continue;const far=((x-cx)*(A.x-cx)+(z-cz)*(A.z-cz))<0;C.push({x,z,far,c:[cx,cz]})}}
+    C.sort((a,b)=>(b.far-a.far)||Math.random()-.5);const pick=[];for(const c of C){if(pick.length>=4)break;if(pick.some(q=>Math.hypot(q.x-c.x,q.z-c.z)<2.2))continue;pick.push(c)}
+    pick.forEach((c,k)=>OWC.q.push(()=>{const spot={x:c.x,z:c.z,ch:1.45,cb:null,de:Math.hypot(c.x-A.x,c.z-A.z),fd:0,used:null,out:false,tmp:1};const a=owcSpawn(k===0?'raidL':'raider',{at:{x:c.x,z:c.z},spot});if(a){a.st='cover';a.t=.6+k*.4;a.h.setPose('crouch')}}));return}return b.apply(this,arguments)}})();
+function hjStep(dt){if(!HJ.van)return;if(OWC.done){if(HJ.gone){HJ.go=(HJ.go||0)+dt;const sp=Math.min(14,HJ.go*5);HJ.van.position.x+=HJ.ux*sp*dt;HJ.van.position.z+=HJ.uz*sp*dt}return}HJ.t+=dt;const left=HJ.esc-HJ.t;
+  if(left<25&&!HJ.said){HJ.said=1;owcSay('검문소 하사 정민규','승합차 시동 걸었어요 — 25초!',1);owcMsg('승합차 출발까지 25초',2,1)}
+  if(left<=0&&!HJ.gone){const alive=OWC.en.filter(a=>!a.prot&&a.st!=='down'&&!a.gone);if(alive.length){HJ.gone=true;alive.forEach(a=>{a.gone=1;a.h.root.visible=false});if(HJ.host&&HJ.host.st!=='down'){HJ.host.gone=1;HJ.host.h.root.visible=false}OWC.hitDirty=true;HJ.go=0;owcMsg('승합차가 달아났다!',2.4,1);owcLater(2.6,()=>owcEnd(false,'escape'))}}
+  if(HJ.gone&&HJ.van){HJ.go=(HJ.go||0)+dt;const sp=Math.min(14,HJ.go*5);HJ.van.position.x+=HJ.ux*sp*dt;HJ.van.position.z+=HJ.uz*sp*dt;if(HJ.vb){OWC.cov=OWC.cov.filter(b=>b!==HJ.vb);HJ.vb=null}}}
+function hjHostageHit(a,pt){if(a.st==='down')return;owcBlood(pt);a.st='down';a.hp=0;try{humanDie(a.h,null)}catch(e){}OWC.stt.civ++;OWC.hitDirty=true;HJ.hostDead=1;owcMsg('인질이 맞았다!',2.4,1);owcSay('검문소 하사 정민규','사격 중지! 인질이 맞았어요!',1)}
+EVR.hijack={title:(w,q,s)=>HJ.hostDead?'인질이 다쳤다 — 실패':w?'트럭을 되찾고 운전사를 구했다':HJ.gone?'승합차가 달아났다':q?'물러섰다':'부상',
+  apply(w,q,s){if(HJ.hostDead){mor(-4);return'공작조는 제압했지만 운전사가 총에 맞아 의무병이 옮겼다. 인질이 있으면 쏘지 않는 것이 먼저다.'}if(w){trust(4);mor(3);res('food',1);return'공작원을 모두 제압했다. 운전사가 풀려나 손을 떨며 고맙다고 한다 — 되찾은 구호품 일부를 받았다.'}mor(-2);return HJ.gone?'공작조가 구호품을 싣고 달아났다. 운전사는 길가에 내려졌다.':'총에 맞았다 — 검문소 국군이 끌어냈다.'},
+  stats:s=>[[s.kills,'제압'],[HJ.hostDead?'부상':HJ.gone?'끌려감':'구출','인질'],[s.hits+'/'+s.shots,'명중'],[s.dmg,'받은 피해']],
+  lesson:'인질이 있으면 무리하게 들이치지 않는다 — 거리를 두고 신고(112)하고, 쏜다면 명확한 무장 위협에만. 인질을 방패로 쓰면 쏘지 않는다. 구호품 강탈은 경찰·군이 맡는다.',src:'경찰청 대테러 대응 · 생존 수첩 교전규칙',
+  short:(ok)=>HJ.hostDead?'인질 피해':ok?'트럭 탈환':HJ.gone?'달아남':'실패',note:(ok)=>`<b>🚚 ${ok&&!HJ.hostDead?'구호 트럭 탈환':'구호 트럭 — 상황 종료'}</b><div>검문소가 다시 배급 줄을 세운다.</div>`};
+if(typeof HELP84!=='undefined'){const j=HELP84.findIndex(h=>/공수부대 강하는 언제/.test(h[0]));if(j>=0)HELP84[j]=['공수부대 강하는 언제 오나',"돌발 상황으로 저절로 온다(재래식 공습에서 더 자주) — 우리 단지 근처면 '101동 현관 방어'(수송기·조명탄·바리케이드), 그 밖이면 광장·운동장·산업단지 같은 빈 땅에 기습 강하. 기다리기 싫으면 위쪽 '🚨 상황' → '🪂 공수부대를 지금 부른다'."]}
+if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^돌발 상황/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['돌발 교전 4가지',"🪂 공수부대 기습 강하(수송기·낙하산 → 착지 뒤 70m 안 → 3파) · 🛸 자폭 드론 떼(3·4·5대, 쏘거나 '재머' 2번으로 떨어뜨린다 — 주민 피해 3명이면 실패) · 🎯 옥상 저격수(조준경이 번쩍이면 엄폐 — 쏘고 나면 숨었다 자리를 옮긴다, 사격 팀원이 제압 사격) · 🚚 구호 트럭 탈취(95초 안에, 인질을 맞히면 실패). 모두 그 자리 1인칭 교전 — 팀원·현지 예비군/국군이 합류한다."])}
+
+/* ===================== 60 · 적 기지 — 첩보 → 수색 → 기습 → 폭약 설치 → 기폭 ===================== */
+/* 첩보(돌발 상황 '🛰 적 기지 첩보'): 생포한 간첩 진술·드론 정찰 사진·주민 제보 → 넓힌 지도 바깥 4곳 중 하나, 정확한 자리 대신 반경 60m 수색 구역(미니맵 파란 점선 원).
+   수색: 구역에 들어가면 흔적 3개(군화 발자국·전투식량 봉지·끊긴 통신선)가 기지 쪽으로 이어진다 — 흔적 2개 또는 26m 안이면 '기지 발견'.
+   기습: 34m 안(또는 '기습 개시') → 같은 배경 1인칭 교전(경계병 3~5 + 증원 2, 국군 공병 하사 합류) → 이기면 폭약(C-4) 설치 3곳(2초씩) → 30m 밖에서 '기폭'.
+   폭파 효과: 드론 발사 기지 → 자폭 드론 떼가 줄어든다 · 특작 은신처·무전 중계소 → 공수부대 강하가 줄어든다 · 탄약 보급소 → 모든 교전 돌발이 조금 줄어든다. 진행은 저장된다 */
+const EB_DEF=[
+  {id:'ind',n:'특작부대 은신처',ico:'🏚',area:'탕정일반산업단지 창고 뒤',c:[300,560],eff:'para',effN:'공수부대 강하가 줄어든다',tg:['탄약 상자','무전 장비','침투 장비 더미'],g:['rifle','rifle','mg','elite'],cp:'tent'},
+  {id:'for',n:'자폭 드론 발사 기지',ico:'🛸',area:'북쪽 숲 가장자리',c:[-300,-880],eff:'drone',effN:'자폭 드론 떼가 줄어든다',tg:['드론 발사대','드론 상자','관제 안테나'],g:['rifle','rifle','elite','rifle'],cp:'drone'},
+  {id:'riv',n:'무전 중계소',ico:'📡',area:'곡교천 강변 둔치',c:[-680,740],eff:'para',effN:'공수부대 강하가 줄어든다',tg:['중계 안테나','발전기','암호 장비'],g:['rifle','mg','rifle'],cp:'radio'},
+  {id:'cam',n:'탄약 보급소',ico:'💣',area:'대학 캠퍼스 뒤 공터',c:[980,-160],eff:'all',effN:'교전 돌발이 조금 줄어든다',tg:['탄약 더미','연료통','포탄 상자'],g:['rifle','rifle','mg','elite','rifle'],cp:'ammo'}];
+const EB={list:[],sc:null,plant:null,want:null,spy0:0,hudT:0};
+function ebState(){const F=G.flags;if(!F.eb||typeof F.eb!=='object')F.eb={};return F.eb}
+function ebDef(id){return EB_DEF.find(d=>d.id===id)}
+function ebEff(kind){const S=ebState();let k=1;for(const d of EB_DEF){const s=S[d.id];if(!s||s.st!=='done')continue;if(d.eff===kind)k*=kind==='drone'?.3:.55;if(d.eff==='all')k*=.85}return k}
+function ebBusy(){const p=FP3.pos;return EB.list.some(B=>(B.st==='cleared'||B.st==='armed')&&Math.hypot(B.x-p.x,B.z-p.z)<170)||!!EB.plant}
+/* 자리: 기준점 둘레에서 반지름 6m가 빈 곳(같은 기준점이면 늘 같은 자리) */
+function ebSpot(d){const R=TJ_DATA.R;for(const rad of [6.5,4.5])for(let r=0;r<=170;r+=6)for(let a=0;a<(r?Math.max(8,Math.round(r/2)):1);a++){const t=a/(r?Math.max(8,Math.round(r/2)):1)*6.283;const x=d.c[0]+Math.cos(t)*r,z=d.c[1]+Math.sin(t)*r;if(Math.abs(x)>R-40||Math.abs(z)>R-40)continue;if(owcFree(x,z,rad))return{x,z}}return null}
+function ebRng(id){let h=((G.seed>>>0)||7)^0x9e37;for(const ch of id)h=Math.imul(h^ch.charCodeAt(0),2654435761)>>>0;return rng3(h%100000)}
+/* ---------- 첩보(돌발 상황 목록에 들어간다) ---------- */
+EVK.intel={n:'적 기지 첩보',ico:'🛰',col:'#54a8ff',info:1,er:0,
+  w(){if(typeof owcAvail!=='function'||!owcAvail())return 0;const S=ebState();const left=EB_DEF.filter(d=>!S[d.id]);if(!left.length)return 0;if(EB.want)return 8;const known=EB_DEF.filter(d=>S[d.id]&&S[d.id].st!=='done').length;if(known>=2)return 0;return EVD.n>=1&&!EB_DEF.some(d=>S[d.id])?3.5:.9},
+  site(){const S=ebState();const L=EB_DEF.filter(d=>!S[d.id]);if(!L.length)return null;const p=FP3.pos;L.sort((a,b)=>Math.hypot(a.c[0]-p.x,a.c[1]-p.z)-Math.hypot(b.c[0]-p.x,b.c[1]-p.z));const d=L[Math.random()<.7?0:Math.floor(Math.random()*L.length)];const sp=ebSpot(d);if(!sp)return null;
+    const r=ebRng(d.id);const a=r()*6.283,o=30+r()*16;return{x:sp.x+Math.cos(a)*o,z:sp.z+Math.sin(a)*o,n:d.area,def:d,bx:sp.x,bz:sp.z}},
+  lim(){return 0},
+  announce(E){const d=E.site.def;const src=EB.want==='spy'||(G.flags.spyCap||0)>0&&Math.random()<.5?'spy':Math.random()<.5?'drone':'tip';EB.want=null;const S=ebState();
+    S[d.id]={st:'intel',src,ox:E.site.x,oz:E.site.z,bx:E.site.bx,bz:E.site.bz,cl:[],pl:[]};E.noBeacon=true;
+    const st={spy:'생포한 간첩이 지도에 표시한 자리',drone:'정찰 드론 사진(위장망·안테나)',tip:'주민 제보("밤마다 불빛과 발전기 소리")'}[src];
+    E.radio=`<b>🛰 첩보 — 국군 정보과</b><div>${st}: <b>${d.area}</b>에 <b>북한군 ${d.n}</b> 추정. 반경 60m 수색 → 확인되면 폭파 협조 요청 — 공병 폭약(C-4) 3개를 받는다. 상황판·미니맵 파란 점선 원. ${d.effN} 효과.</div>`;
+    try{ebBuild(d.id)}catch(e){console.error(e)}},
+  step(E){if(E.t>7){const g={bx:E.site.x,bz:E.site.z};evEnd({ok:true,quiet:1,short:'첩보 입수'});if(!TJ.goal)TJ.goal=g}},
+  miss(){return''}};
+/* ---------- 기지 짓기(장면) ---------- */
+function ebBuild(id){const d=ebDef(id),S=ebState()[id];if(!d||!S||S.st==='done'||!OUT.scene)return null;if(EB.list.some(B=>B.id===id))return null;const sp={x:S.bx,z:S.bz};if(sp.x==null)return null;
+  const r=ebRng(id+'r');const rot=r()*6.283;const g=new T.Group();g.position.set(sp.x,0,sp.z);g.rotation.y=rot;OUT.scene.add(g);const c=Math.cos(rot),s=Math.sin(rot);const W=(lx,lz)=>({x:sp.x+lx*c+lz*s,z:sp.z-lx*s+lz*c});
+  const olive=mat('#5a5e3e',{r:.95}),olive2=mat('#4a4e34',{r:.95}),wood=mat('#7a6040',{r:.9}),dark=mat('#2a2c28',{r:.8}),metal=mat('#6a6e70',{r:.6,m:.3});
+  /* 위장망: 기둥 4 + 늘어진 망 */const net=new T.Mesh(new T.PlaneGeometry(9,7,6,5),new T.MeshStandardMaterial({map:ebNetTex(),transparent:true,alphaTest:.35,side:T.DoubleSide,roughness:1,color:'#8a8a6a'}));net.rotation.x=-Math.PI/2;net.position.set(0,2.5,0);
+  const pa=net.geometry.attributes.position;for(let i=0;i<pa.count;i++){const x=pa.getX(i),y=pa.getY(i);pa.setZ(i,-.35*Math.cos(x*.7)*Math.cos(y*.9)-.2)}net.geometry.computeVertexNormals();g.add(net);for(const [x,z] of [[-4,-3],[4,-3],[-4,3],[4,3]])MM(GG.cyl(.05,.05,2.6,6),wood,x,1.3,z,{p:g});
+  /* 천막 2 */for(const [x,z,ry] of [[-2.6,-1.2,.1],[2.4,1.4,-.2]]){const t=MM(new T.CylinderGeometry(1.25,1.25,2.6,3,1),olive,x,.62,z,{p:g});t.rotation.z=Math.PI/2;t.rotation.y=ry}
+  /* 상자 더미 */const crate=GG.box(.9,.6,.6,.03);for(const [x,z,y] of [[.6,-2.2,.3],[1.5,-2.2,.3],[1.05,-2.2,.9],[-3.4,2.0,.3]])MM(crate,y>.5?olive2:wood,x,y,z,{p:g});
+  /* 모래주머니 반원 */try{const sb=PK.sandbags(3.4,.9,g);sb.position.set(0,0,4.6);sb.rotation.y=0}catch(e){}
+  /* 종류별 핵심 시설 = 폭파 목표 */const T3=[];const tgt=(lx,lz,n)=>{const w=W(lx,lz);T3.push({lx,lz,x:w.x,z:w.z,n})};
+  if(d.cp==='drone'){const rack=new T.Group();rack.position.set(-.6,0,1.6);g.add(rack);MM(GG.box(2.4,.08,1.0),metal,0,.9,0,{p:rack,rx:-.35});for(const sx of [-1.1,1.1])MM(GG.box(.08,.9,.08),metal,sx,.45,-.3,{p:rack});for(let i=0;i<3;i++){const dm=MM(GG.box(.42,.12,.42),dark,-.75+i*.75,1.08,.05,{p:rack,rx:-.35});}
+    tgt(-.6,1.6,d.tg[0]);tgt(1.05,-2.2,d.tg[1]);MM(GG.cyl(.05,.07,6.5,6),metal,3.4,3.25,-2.4,{p:g});MM(GG.box(.9,.5,.06),metal,3.4,6.3,-2.4,{p:g});tgt(3.4,-2.4,d.tg[2])}
+  else if(d.cp==='radio'){MM(GG.cyl(.06,.1,9,6),metal,-.4,4.5,1.2,{p:g});for(const a of [0,2.1,4.2])MM(GG.cyl(.012,.012,9.4,4),dark,-.4+Math.cos(a)*1.6,4.4,1.2+Math.sin(a)*1.6,{p:g,rx:Math.sin(a)*.17,rz:-Math.cos(a)*.17,cast:false});tgt(-.4,1.2,d.tg[0]);
+    MM(GG.box(1.2,.8,.8,.04),olive2,2.6,.4,-1.6,{p:g});MM(GG.cyl(.06,.06,.5,6),dark,2.9,1.0,-1.6,{p:g});tgt(2.6,-1.6,d.tg[1]);MM(GG.box(.8,.5,.6),dark,-3.2,.85,-1.0,{p:g});tgt(-3.0,-1.0,d.tg[2])}
+  else if(d.cp==='ammo'){for(let i=0;i<6;i++)MM(crate,olive2,-.9+(i%3)*.95,.3+Math.floor(i/3)*.6,1.6,{p:g});tgt(0,1.6,d.tg[0]);for(let i=0;i<4;i++)MM(GG.cyl(.3,.3,.9,10),mat('#3a4a2a',{r:.7}),2.8+(i%2)*.65,.45,-1.4+Math.floor(i/2)*.65,{p:g});tgt(3.1,-1.1,d.tg[1]);
+    for(let i=0;i<3;i++)MM(GG.box(1.1,.35,.45),wood,-3.0,.18+i*.36,-.6,{p:g});tgt(-3.0,-.6,d.tg[2])}
+  else{for(let i=0;i<4;i++)MM(crate,olive2,-.5+(i%2)*.95,.3+Math.floor(i/2)*.6,1.8,{p:g});tgt(0,1.8,d.tg[0]);MM(GG.box(.7,.45,.5),dark,2.7,.25,-.5,{p:g});MM(GG.cyl(.02,.02,2.2,4),metal,2.9,1.3,-.5,{p:g});tgt(2.7,-.5,d.tg[1]);MM(GG.box(1.3,.4,.8),olive,-3.0,.2,-.4,{p:g});tgt(-3.0,-.4,d.tg[2])}
+  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  /* 흔적 3: 수색 원 중심 쪽에서 기지로 */const dx=S.ox-sp.x,dz=S.oz-sp.z,dl=Math.hypot(dx,dz)||1;const ux=dx/dl,uz=dz/dl;const clues=[];[[54,'군화 발자국 — 진흙에 북한군 군화 무늬가 찍혀 있다. 안쪽으로 이어진다.'],[42,'버려진 전투식량 봉지 — 북한 글씨. 아직 기름기가 마르지 않았다.'],[31,'끊긴 철조망과 통신선 — 안테나 쪽으로 이어진다.']].forEach(([o,t],i)=>{const side=(i%2?1:-1)*(3+r()*3);let x=sp.x+ux*o-uz*side,z=sp.z+uz*o+ux*side;const q=owcFree(x,z,.5)?{x,z}:owcNearFree(x,z,6)||{x,z};
+    const cg=new T.Group();cg.position.set(q.x,0,q.z);OUT.scene.add(cg);if(i===0){for(let k=0;k<5;k++){MM(GG.pl(.16,.3),mat('#2a241c',{r:1}),(k%2?.15:-.15),.02,-k*.55,{p:cg,rx:-Math.PI/2,cast:false})}}else if(i===1){MM(GG.box(.28,.04,.18),mat('#9a8a5a',{r:.8}),0,.03,0,{p:cg});MM(GG.box(.2,.03,.14),mat('#6a6a5a',{r:.8}),.4,.02,.2,{p:cg})}else{MM(GG.cyl(.015,.015,2.4,4),dark,0,.05,0,{p:cg,rz:Math.PI/2,cast:false})}
+    const gl=PK.sprite(glowTex(),'#7fc0ff',1.4,cg,{add:1,op:0});gl.position.y=.5;clues.push({x:q.x,z:q.z,t,g:cg,gl,found:S.cl.includes(i),i})});
+  const B={id,d,S,x:sp.x,z:sp.z,g,rot,tg:T3,clues,guards:[],c4:[],st:S.st};EB.list.push(B);if(S.st==='intel'||S.st==='found')ebGuards(B);if(S.st==='cleared'||S.st==='armed')ebPlantSpots(B);(S.pl||[]).forEach(i=>ebC4(B,i));return B}
+function ebNetTex(){if(TEX.ebNet)return TEX.ebNet;const c=cvs(128,128),x=c.getContext('2d'),r=rng3(17);x.clearRect(0,0,128,128);const col=['#4c5232','#5e5a3a','#3c4228','#6a6440'];for(let i=0;i<260;i++){x.fillStyle=col[i%4];x.beginPath();x.ellipse(r()*128,r()*128,3+r()*7,2+r()*5,r()*3,0,7);x.fill()}x.strokeStyle='rgba(40,40,30,.8)';x.lineWidth=1;for(let i=0;i<=128;i+=8){x.beginPath();x.moveTo(i,0);x.lineTo(i,128);x.stroke();x.beginPath();x.moveTo(0,i);x.lineTo(128,i);x.stroke()}
+  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(3,2);return TEX.ebNet=t}
+function ebGuards(B){B.guards.forEach(h=>{if(h.root.parent)h.root.parent.remove(h.root)});B.guards=[];const n=Math.min(3,B.d.g.length);for(let i=0;i<n;i++){let h=null;try{h=makeHuman(owcLook(B.d.g[i],400+i+B.id.length))}catch(e){h=null}if(!h)continue;const a=i/n*6.283+.4;const x=B.x+Math.cos(a)*4.6,z=B.z+Math.sin(a)*4.6;h.root.position.set(x,0,z);h.root.rotation.y=a+Math.PI*.5;try{h.setPose(i===1?'look':'idle',true)}catch(e){}OUT.scene.add(h.root);B.guards.push(h)}B.pat=0}
+function ebPlantSpots(B){OUT.spots=OUT.spots.filter(s=>!(s.k==='ebplant'&&s.B===B));B.tg.forEach((t,i)=>{if((B.S.pl||[]).includes(i))return;const q=owcNearFree(t.x,t.z,3)||{x:t.x,z:t.z};OUT.spots.push({id:'ebp:'+B.id+':'+i,k:'ebplant',x:q.x,z:q.z,r:2.6,g:'💣',n:'폭약 설치 — '+t.n,s:'2초 · 공병 C-4',h:0,warn:1,nomap:1,B,i})});OUT.sig=''}
+function ebC4(B,i){const t=B.tg[i];if(!t)return;const g=new T.Group();g.position.set(t.x,.5,t.z);MM(GG.box(.26,.1,.16),mat('#c8b890',{r:.8}),0,0,0,{p:g});const led=PK.sprite(glowTex(),'#ff2a1a',.35,g,{add:1});led.position.set(0,.08,0);OUT.scene.add(g);B.c4.push({g,led,i})}
+/* ---------- 매 프레임 ---------- */
+function ebStep(dt){if(!OUT.on||!TJ.world)return;const p=FP3.pos;const S=ebState();
+  if((G.flags.spyCap||0)>EB.spy0){EB.spy0=G.flags.spyCap;if(EB_DEF.some(d=>!S[d.id])){EB.want='spy';if(!EVD.cur&&EVD.nextT>12)EVD.nextT=12}}
+  if(EB.plant){const P=EB.plant;P.t-=dt;FP3.mv.x=FP3.mv.y=0;if(P.t<=0){EB.plant=null;OUT.busy=false;FP3.lock=false;const B=P.B;B.S.pl=[...new Set([...(B.S.pl||[]),P.i])];ebC4(B,P.i);try{bxBell&&bxBell(1)}catch(e){}vib([20,30,20]);
+      const left=B.tg.length-B.S.pl.length;if(left<=0){B.S.st=B.st='armed';outNote('<b>💣 폭약 3개 설치 완료</b><div><b>30m 밖</b>으로 물러나 위쪽 띠의 <b>기폭</b>을 누른다. 건물·엄폐물 뒤가 안전하다.</div>',5000)}else outNote(`<b>💣 설치 ${B.S.pl.length}/${B.tg.length}</b><div>남은 목표: ${B.tg.filter((t,i)=>!B.S.pl.includes(i)).map(t=>t.n).join(' · ')}</div>`,2600);try{save()}catch(e){}}}
+  for(const B of EB.list){const d=Math.hypot(B.x-p.x,B.z-p.z);B.d0=d;
+    for(const c of B.clues){if(c.found){c.gl.material.opacity=0;continue}const dc=Math.hypot(c.x-p.x,c.z-p.z);c.gl.material.opacity=B.st==='intel'&&dc<26?.25+.25*Math.sin(SV3.t*4+c.i):0;if(B.st==='intel'&&dc<4.2){c.found=true;B.S.cl=[...new Set([...(B.S.cl||[]),c.i])];vib(20);try{bxBell&&bxBell(1)}catch(e){}outNote(`<b>🔎 흔적 ${B.S.cl.length}/3</b><div>${c.t}</div>`,3800)}}
+    if(B.st==='intel'&&((B.S.cl||[]).length>=2||d<26)){B.st=B.S.st='found';vib([40,30,40]);outNote(`<b>${B.d.ico} 적 기지 발견 — ${B.d.n}</b><div>위장망 아래 경계병이 보인다. 엄폐하며 다가가 <b>34m 안</b>이면 기습이 시작된다(또는 '기습 개시'). 국군 공병 하사가 따라붙는다.</div>`,5200);try{save()}catch(e){}}
+    /* 경계병: 한 명은 천천히 돈다 */if(B.guards.length&&d<220){B.pat+=dt;B.guards.forEach((h,i)=>{if(i===0){const a=B.pat*.25;const x=B.x+Math.cos(a)*5.2,z=B.z+Math.sin(a)*5.2;h.root.rotation.y=Math.atan2(x-h.root.position.x,z-h.root.position.z);h.root.position.set(x,0,z);if(h.pose!=='walk')try{h.setPose('walk')}catch(e){}}else if(d<60)lifeFace(h,p.x,p.z);h.update(dt)})}
+    if(B.st==='found'){if(!B.goSpot){B.goSpot={id:'ebgo:'+B.id,k:'ebgo',x:B.x,z:B.z,r:62,g:'⚔',n:'기습 개시',s:`${B.d.n} · 경계병 ${Math.min(5,B.d.g.length)}명 · 1인칭 교전`,h:0,warn:1,nomap:1,B};OUT.spots.push(B.goSpot);OUT.sig=''}}else if(B.goSpot){OUT.spots=OUT.spots.filter(s=>s!==B.goSpot);B.goSpot=null;OUT.sig=''}
+    if(B.st==='found'&&d<34&&!OUT.drv&&!OUT.ride&&!evBlock()&&!EVD.cur)ebAssault(B);
+    B.c4.forEach(c=>{c.led.material.opacity=(SV3.t*2%1)<.5?1:.2})}}
+function ebAssault(B){if(typeof owcAvail!=='function'||!owcAvail())return false;EB.cur=B;OWC_SC.base.sub=B.d.n;OWC_SC.base.waves[0].n=`경계병 ${Math.min(5,B.d.g.length)}`;EVO.intro=`${B.d.n} — 경계병이 있다! 엄폐하고 하나씩!`;B.guards.forEach(h=>{if(h.root.parent)h.root.parent.remove(h.root)});B.guards=[];
+  const ok=owcStart('base');if(!ok){ebGuards(B);EB.cur=null}return ok}
+/* ---------- 교전: 경계병은 기지 둘레 엄폐물 뒤에서 시작 ---------- */
+OWC_SC.base={n:'적 기지 기습',sub:'',timer:0,waves:[{n:'경계병',list:[],say:['국군 공병 하사 최도윤','경계병 — 엄폐하고 하나씩 처리해요!']},{n:'증원',list:['rifle','rifle'],say:['국군 공병 하사 최도윤','천막 쪽에서 둘 더 나온다!']}],
+  allies:[{id:'eb1',n:'최도윤',r:'국군 공병 하사',look:'rok',lead:1}],helpers:['','']};
+EVO.kinds.base=1;
+function evBuildBase(){const B=EB.cur;const Bs=evOwcBase({ent:{x:B.x,z:B.z},emin:10,emax:55,nSpots:7,R:200});evOwcAllies(Bs);OWC.t=3.4;OWC.nade=2;
+  /* 기지 시설을 엄폐물로 */const ang=-B.rot;for(const t of B.tg){const ob=owcObb(t.x,t.z,ang,1.0,.6,1.1,'bags');OWC.cov.push(ob)}const nb=owcObb(B.x,B.z,ang,1.4,1.3,1.4,'bags');OWC.cov.push(nb)}
+(function(){const b=window.owcWave;window.owcWave=function(i){if(OWC.k==='base'&&i===0&&EB.cur){const B=EB.cur;const W=OWC.S.waves[0];OWC.wave=0;OWC.waveT=0;owcSay(W.say[0],W.say[1],1);owcMsg(`1/2 · ${W.n}`,2.4);const A=OWC.A;const L=B.d.g.slice(0,5);
+    L.forEach((type,k)=>OWC.q.push(()=>{const a0=k/L.length*6.283+.4;let x=B.x+Math.cos(a0)*4.2,z=B.z+Math.sin(a0)*4.2;/* 내 쪽에서 먼 쪽으로 반 m */const fx=x-A.x,fz=z-A.z,fl=Math.hypot(fx,fz)||1;x+=fx/fl*.5;z+=fz/fl*.5;if(!owcFree(x,z,.4)){const q=owcNearFree(x,z,4);if(q){x=q.x;z=q.z}}
+      const spot={x,z,ch:1.1,cb:null,de:Math.hypot(x-A.x,z-A.z),fd:0,used:null,out:false,tmp:1};const a=owcSpawn(type,{at:{x,z},spot});if(a){a.st='cover';a.t=.5+k*.5;a.h.setPose('crouch')}}));return}return b.apply(this,arguments)}})();
+EVR.base={title:(w,q)=>w?'경계병 제압 — 폭약을 설치하라':q?'물러섰다':'부상 — 공병 하사가 끌어냈다',
+  apply(w,q,s){if(w){mor(2);return`기지 경계병 ${s.kills}명을 제압했다. 공병 하사가 C-4 3개를 건넨다 — 목표 3곳에 설치하고 30m 밖에서 기폭.`}mor(-2);return q?'기지에서 물러났다. 경계병이 다시 자리를 잡는다 — 다시 기습할 수 있다.':'총에 맞았다 — 공병 하사가 엄폐물 뒤로 끌어내 지혈했다.'},
+  lesson:'적 시설·폭발물은 군 공병의 몫이다. 민간인은 수상한 시설·물건을 보면 다가가지 말고 위치만 신고한다(112·국번 없이 1337 군사 신고). 폭파는 충분히 떨어져 엄폐한 뒤에.',src:'국방부 · 국가정보원 · 생존 수첩',
+  stats:s=>[[s.kills,'제압'],[(s.shots?Math.round(s.hits/s.shots*100):0)+'%','명중'],[s.heads,'머리'],[s.dmg,'받은 피해']]};
+(function(){const b=window.owcClose;window.owcClose=function(){const mine=OWC.on&&OWC.k==='base';const res=EVO.res;const r=b.apply(this,arguments);if(mine&&EB.cur){const B=EB.cur;EB.cur=null;if(res&&res.win){B.st=B.S.st='cleared';B.S.pl=B.S.pl||[];ebPlantSpots(B);outNote(`<b>${B.d.ico} 기지 장악</b><div>💣 표시 3곳에 다가가 <b>폭약 설치</b>(2초씩). 그다음 30m 밖에서 기폭.</div>`,5200)}else{B.st=B.S.st='found';ebGuards(B);outNote('<b>기지에서 물러났다</b><div>경계병이 다시 자리를 잡았다. 준비되면 다시 34m 안으로.</div>',3600)}try{save()}catch(e){}}return r}})();
+(function(){const od=window.outDo;window.outDo=function(c){if(c&&c.k==='ebplant'&&!OUT.busy&&!OUT.enc){const B=c.B;if(!B||B.st!=='cleared'||EB.plant)return;c.taken=1;OUT.sig='';OUT.busy=true;FP3.lock=true;EB.plant={B,i:c.i,t:2.1};if(OUT.me){lifeFace(OUT.me,c.x,c.z);try{OUT.me.setPose('crouch')}catch(e){}}outNote(`<b>💣 설치 중 — ${B.tg[c.i].n}</b><div>기폭선을 감고 뇌관을 꽂는다…</div>`,2000);return}
+  if(c&&c.k==='ebgo'&&!OUT.busy&&!OUT.enc){const B=c.B;if(B&&B.st==='found')ebAssault(B);return}return od.apply(this,arguments)}})();
+/* ---------- 기폭 ---------- */
+function ebBoom(B){if(!B||B.st!=='armed')return;const d=Math.hypot(B.x-FP3.pos.x,B.z-FP3.pos.z);if(d<30){outNote(`<b>너무 가깝다 — ${Math.round(d)}m</b><div>30m 밖으로 물러난 뒤 기폭한다.</div>`,2200);return}
+  B.st=B.S.st='done';try{SND.boom(true,1)}catch(e){}vib([200,80,260,60,180]);
+  B.tg.forEach((t,i)=>setTimeout(()=>{if(!OUT.on)return;try{FX3.explode(new T.Vector3(t.x,1,t.z),{r:6.5,kind:'fuel',sec:45})}catch(e){}try{raidFlash(new T.Vector3(t.x,5,t.z),30,'#ffd9a0',.8)}catch(e){}try{raidShake(Math.hypot(t.x-FP3.pos.x,t.z-FP3.pos.z),1.1)}catch(e){}
+    for(let k=0;k<4;k++)try{raidPuff(new T.Vector3(t.x+(Math.random()-.5)*6,3+k*4,t.z+(Math.random()-.5)*6),{life:12,s0:6,s1:22,op:.6,col:'#2a2826',vy:2.5})}catch(e){}},i*380));
+  for(let k=0;k<7;k++)setTimeout(()=>{if(!OUT.on)return;const t=B.tg[k%B.tg.length];try{FX3.explode(new T.Vector3(t.x+(Math.random()-.5)*4,.8+Math.random()*2,t.z+(Math.random()-.5)*4),{r:2,kind:'small'})}catch(e){}try{SND.boom(false,.4)}catch(e){}},1400+k*520+Math.random()*300);
+  setTimeout(()=>{if(B.g&&B.g.parent){B.g.children.forEach(o=>{if(o.isMesh&&o.material&&o.material.color)o.material=mat('#1e1c1a',{r:1})});B.g.scale.y=.45}B.c4.forEach(c=>{if(c.g.parent)c.g.parent.remove(c.g)});B.c4=[]},900);
+  FX=[];trust(4);mor(5);const fx=FX.slice();OUT.fx.push(...fx);try{outStat()}catch(e){}const R=evRec();R.bases++;R.hist.push({k:'intel',ok:true,txt:`기지 폭파 · ${B.d.n}`,turn:G.turn});if(R.hist.length>10)R.hist.splice(0,R.hist.length-10);
+  const chips=fx.map(x=>`${x.l} ${x.n>0?'+':''}${x.n}${x.u||''}`).join(' · ');setTimeout(()=>outNote(`<b>${B.d.ico} ${B.d.n} 폭파!</b><div>${B.d.effN}. 국군이 잔해를 확인한다. ${chips}</div>`,6000),1800);EB.list=EB.list.filter(x=>x!==B);try{save()}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=ebboom],[data-g3=ebgo]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const id=b.dataset.v;const B=EB.list.find(x=>x.id===id);
+  if(b.dataset.g3==='ebboom'){ebBoom(B);return}evBoard(false);const S=ebState()[id];if(!S)return;const tx=S.st==='intel'?S.ox:S.bx,tz=S.st==='intel'?S.oz:S.bz;TJ.goal={bx:tx,bz:tz};outNote(`<b>${ebDef(id).ico} ${ebDef(id).area}</b><div>미니맵 녹색 점 — 약 ${Math.round(Math.hypot(tx-FP3.pos.x,tz-FP3.pos.z))}m. ${S.st==='intel'?'파란 점선 원 안에서 흔적을 찾는다.':''}</div>`,3000)},true);
+/* ---------- 위쪽 띠(지금 돌발 상황이 없을 때) ---------- */
+function ebHud(){const p=FP3.pos;let best=null,bd=1e9;for(const B of EB.list){const d=B.st==='intel'?Math.hypot(B.S.ox-p.x,B.S.oz-p.z):B.d0;if(B.st==='intel'&&d>75)continue;if(B.st!=='intel'&&d>260)continue;if(d<bd){bd=d;best=B}}if(!best)return false;const B=best;let h='';
+  if(B.st==='intel'){const n=(B.S.cl||[]).length;h=`<b class="ev-h">🔎 수색 · ${B.d.n}</b><span>흔적 ${n}/3</span><small>파란 원 안 — 빛나는 흔적을 따라간다</small>`}
+  else if(B.st==='found')h=`<b class="ev-h">${B.d.ico} 적 기지 발견</b><span>${Math.round(B.d0)}m</span><small>34m 안이면 기습</small>`;
+  else if(B.st==='cleared')h=`<b class="ev-h">💣 폭약 설치 ${(B.S.pl||[]).length}/${B.tg.length}</b><small>💣 표시에 다가가 설치</small>`;
+  else if(B.st==='armed'){const d=Math.round(B.d0);h=`<b class="ev-h">💣 기폭 준비</b><span class="${d<30?'warn':''}">${d}m</span><button data-g3="ebboom" data-v="${B.id}"${d<30?' disabled':''}>${d<30?'30m 밖으로':'기폭'}</button>`}
+  if(!h)return false;EB.hudT-=1;if(EB.hudT>0&&EVD.hudOwn)return true;EB.hudT=3;EVD.hudOwn=true;EVD._h=1;try{misHud(h)}finally{EVD._h=0}const el=$('#misHud');if(el)el.classList.add('ev');return true}
+/* ---------- 상황판·지도 ---------- */
+function ebBoardRows(row){const S=ebState();let h='';for(const d of EB_DEF){const s=S[d.id];if(!s)continue;const st={intel:'첩보 — 수색 구역',found:'발견 — 기습 대기',cleared:'장악 — 폭약 설치',armed:'설치 완료 — 기폭 대기',done:'폭파 완료'}[s.st]||'';const p=FP3.pos;const tx=s.st==='intel'?s.ox:s.bx,tz=s.st==='intel'?s.oz:s.bz;
+  h+=row(d.ico,`적 기지 · ${d.n}`,`${d.area} · 약 ${Math.round(Math.hypot(tx-p.x,tz-p.z))}m · ${d.effN}`,st,s.st==='done'?'':`<button class="btn sm" data-g3="ebgo" data-v="${d.id}">길 안내</button>`,s.st==='done'?'ev-done':'')}return h}
+function ebMarkers(x,toS,scale){const S=ebState();for(const d of EB_DEF){const s=S[d.id];if(!s)continue;if(s.st==='intel'){const [cx,cy]=toS(s.ox,s.oz);const [ex]=toS(s.ox+60,s.oz);const r=Math.abs(ex-cx);x.save();x.setLineDash([5*scale,4*scale]);x.strokeStyle='#54a8ff';x.lineWidth=2*scale;x.beginPath();x.arc(cx,cy,Math.max(6*scale,r),0,7);x.stroke();x.restore();x.fillStyle='#54a8ff';x.font=`${Math.round(11*scale)}px sans-serif`;x.textAlign='center';x.fillText('?',cx,cy+4*scale)}
+  else{const [sx,sy]=toS(s.bx,s.bz);if(s.st==='done'){x.strokeStyle='#8a8f96';x.lineWidth=2*scale;x.beginPath();x.moveTo(sx-4*scale,sy-4*scale);x.lineTo(sx+4*scale,sy+4*scale);x.moveTo(sx+4*scale,sy-4*scale);x.lineTo(sx-4*scale,sy+4*scale);x.stroke()}else{x.fillStyle='#ff4a3a';x.strokeStyle='#0a0c10';x.lineWidth=1.6*scale;x.fillRect(sx-4.5*scale,sy-4.5*scale,9*scale,9*scale);x.strokeRect(sx-4.5*scale,sy-4.5*scale,9*scale,9*scale)}}}}
+/* ---------- 연결 ---------- */
+(function(){const base=window.tjPopulate;window.tjPopulate=function(sc){const r=base.apply(this,arguments);try{EB.list=[];EB.plant=null;EB.cur=null;EB.spy0=G.flags.spyCap||0;const S=ebState();for(const d of EB_DEF){const s=S[d.id];if(s&&s.st!=='done')ebBuild(d.id)}}catch(e){console.error(e)}return r}})();
+(function(){const base=window.tjStep;window.tjStep=function(dt){const r=base.apply(this,arguments);if(OUT.on&&!(typeof APT!=='undefined'&&APT.on))try{ebStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){if(EB.plant){EB.plant=null;OUT.busy=false;FP3.lock=false}EB.list=[];EB.cur=null;return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^돌발 교전/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['적 기지 — 첩보·수색·폭파',"돌발 상황 '🛰 적 기지 첩보'(생포한 간첩·정찰 드론·주민 제보)로 넓힌 지도 바깥 4곳(산업단지 창고 뒤·북쪽 숲·곡교천 둔치·캠퍼스 뒤) 중 한 곳의 수색 구역(파란 점선 원)이 생긴다. 원 안에서 빛나는 흔적 3개를 따라가 기지를 찾고(흔적 2개 또는 26m 안), 34m 안이면 기습(1인칭 교전, 국군 공병 하사 합류). 이기면 💣 3곳에 폭약 설치(2초씩) → 30m 밖에서 위쪽 띠 '기폭'. 폭파하면 드론 떼·공수부대 강하가 줄어든다. 진행은 저장된다."])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
