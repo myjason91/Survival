@@ -1197,6 +1197,32 @@ body.fs-l .bx-how,body.fs-l .bx-opp small{font-size:14.5px}
 .owc-it.ev-jam{border-color:rgba(120,200,255,.55);font-size:16px}
 .owc-it.ev-jam span{font-size:9.5px}
 .sv3.owc-on .ev-alert,.sv3.owc-on .ev-smoke{display:none!important}
+/* ---------- v9.3 PC판: 키보드·마우스 ---------- */
+body.pc #app{max-width:640px}
+body.pc button,body.pc .btn,body.pc .choice{cursor:pointer}
+body.pc .b-rothint{display:none!important}
+body.pc .b-fps,body.pc .sv3{cursor:default}
+body.pc-lock .b-fps,body.pc-lock .sv3{cursor:none}
+.pc-lock{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);z-index:9;max-width:min(92%,560px);text-align:center;font:600 12.5px/1.35 system-ui,sans-serif;padding:7px 14px;border-radius:12px;background:rgba(6,8,11,.82);color:#dfe6ec;border:1px solid rgba(255,178,36,.45);pointer-events:none;white-space:nowrap;transition:opacity .4s}
+.pc-lock b{color:#ffd27a}.pc-lock.dim{opacity:.42}
+.pc-xh{position:absolute;left:50%;top:50%;z-index:7;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.4);pointer-events:none;transition:width .12s,height .12s,margin .12s}
+.pc-xh.pick{width:18px;height:18px;margin:-9px 0 0 -9px;border-color:#ffb224}
+.pc-xh small{position:absolute;top:22px;left:50%;transform:translateX(-50%);white-space:nowrap;font:800 12px/1.2 system-ui,sans-serif;color:#ffd27a;background:rgba(6,8,11,.78);padding:3px 9px;border-radius:8px}
+body.pc [data-pck]::after{content:attr(data-pck);position:absolute;right:-6px;top:-8px;z-index:3;font:800 9.5px/1 system-ui,sans-serif;padding:3px 5px;border-radius:6px;background:#ffb224;color:#101418;box-shadow:0 1px 3px rgba(0,0,0,.55);pointer-events:none;letter-spacing:.02em;white-space:nowrap}
+body.pc .tj-mini[data-pck]::after{right:4px;top:4px}
+body.pc .fr-act[data-pck]::after{right:auto;left:-6px;top:-7px}
+body.pc .owc-fb[data-pck]::after,body.pc .b-fire[data-pck]::after,body.pc #bFireB[data-pck]::after{right:2px;top:-4px}
+.pc-guide .sheet{max-width:760px}
+.pc-keys{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px;max-height:min(62vh,560px);overflow:auto;padding-right:4px}
+@media (max-width:640px){.pc-keys{grid-template-columns:1fr}}
+.pc-g .s4-sec{margin-top:8px}
+.pc-k{display:grid;grid-template-columns:minmax(132px,38%) 1fr;gap:8px;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+.pc-k kbd{font:800 11.5px/1.2 ui-monospace,Menlo,Consolas,monospace;color:#ffd27a;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-bottom-width:2px;border-radius:6px;padding:3px 7px;white-space:normal;word-break:keep-all}
+.pc-k span{color:#cfd6dc}
+.pc-tag{margin:2px 0 0}
+body.pc .owc-help{width:min(760px,calc(100% - 300px));bottom:150px}
+.owc-on .pc-lock{bottom:112px}
+.pc-xh{width:12px;height:12px;margin:-6px 0 0 -6px}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -9428,7 +9454,7 @@ function bComposer(t){const r=R3.r;if(!r)return;if(BS.comp){BS.comp.dispose&&BS.
     comp.addPass(vg);BS.vigPass=vg;comp.addPass(new T.OutputPass());BS.comp=comp;comp.setSize(BS.vw||960,BS.vh||540)}catch(e){BS.comp=null}}
 function bUnmount(){if(BS&&BS.comp){try{BS.comp.dispose()}catch(e){}BS.comp=null}document.body.classList.remove('fps');window.removeEventListener('resize',bResize);const r=R3.r;if(r&&r.domElement.parentNode)r.domElement.parentNode.removeChild(r.domElement);if(BS&&BS.W&&BS.cam)BS.W.scene.remove(BS.cam)}
 function bLocal(sx,sy){if(BS.rot)return{x:sy,y:BS.vh-sx};const F=$('#bFight');if(!F)return{x:sx,y:sy};const rc=F.getBoundingClientRect();return{x:sx-rc.left,y:sy-rc.top}}
-function bResize(){const F=$('#bFight'),wrap=$('#b3dWrap');if(!F||!wrap||!BS||!BS.cam)return;const port=window.innerWidth<window.innerHeight;BS.rot=port;F.classList.toggle('rot',port);
+function bResize(){const F=$('#bFight'),wrap=$('#b3dWrap');if(!F||!wrap||!BS||!BS.cam)return;const port=window.innerWidth<window.innerHeight&&!(typeof pcOn==='function'&&pcOn());BS.rot=port;F.classList.toggle('rot',port);
   const w=port?window.innerHeight:window.innerWidth,h=port?window.innerWidth:window.innerHeight;BS.vw=w;BS.vh=h;F.style.width=w+'px';F.style.height=h+'px';
   const r=R3.r;if(r){r.setSize(w,h,false);r.domElement.style.width=w+'px';r.domElement.style.height=h+'px'}BS.cam.aspect=w/h;BS.cam.updateProjectionMatrix();if(BS.comp){BS.comp.setSize(w,h);if(BS.bloomPass)BS.bloomPass.setSize(w,h)}
   const ov=$('#bOv');if(ov)ov.setAttribute('viewBox',`0 0 ${w} ${h}`);const rh=$('#bRot');if(rh)rh.hidden=!(port&&!document.fullscreenElement)}
@@ -10519,7 +10545,7 @@ function sv3Composer(t){const r=R3.r;if(SV3.comp){try{SV3.comp.dispose()}catch(e
     const vg=new T.ShaderPass({uniforms:{tDiffuse:{value:null},str:{value:.38},dark:{value:0}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
       fragmentShader:'uniform sampler2D tDiffuse;uniform float str;uniform float dark;varying vec2 vUv;void main(){vec4 c=texture2D(tDiffuse,vUv);vec2 d=vUv-.5;float v=1.0-str*dot(d,d)*2.2;c.rgb*=v;c.rgb=(c.rgb-.5)*1.05+.5;c.rgb*=1.0-dark;gl_FragColor=c;}'});
     comp.addPass(vg);SV3.vigPass=vg;comp.addPass(new T.OutputPass());SV3.comp=comp;comp.setSize(SV3.vw||960,SV3.vh||540)}catch(e){SV3.comp=null}}
-function sv3Resize(){const el=$('#sv3');if(!el||!SV3.cam)return;const port=window.innerWidth<window.innerHeight;SV3.rot=port;el.classList.toggle('rot',port);
+function sv3Resize(){const el=$('#sv3');if(!el||!SV3.cam)return;/* v9.3: PC 조작이면 세로 창이어도 돌리지 않는다 */const port=window.innerWidth<window.innerHeight&&!(typeof pcOn==='function'&&pcOn());SV3.rot=port;el.classList.toggle('rot',port);
   const w=port?window.innerHeight:window.innerWidth,h=port?window.innerWidth:window.innerHeight;SV3.vw=w;SV3.vh=h;el.style.width=w+'px';el.style.height=h+'px';
   const r=R3.r;if(r){r.setSize(w,h,false);r.domElement.style.width=w+'px';r.domElement.style.height=h+'px'}SV3.cam.aspect=w/h;SV3.cam.updateProjectionMatrix();if(SV3.comp){SV3.comp.setSize(w,h);if(SV3.bloomPass)SV3.bloomPass.setSize(w,h)}
   const rh=$('#sv3Rot');if(rh)rh.hidden=!(port&&!document.fullscreenElement)}
@@ -11306,7 +11332,7 @@ function vAlert3(){
   if(SV3.el){sv3Unmount();if(UI.screen==='title'&&document.fullscreenElement)bFullscreen(false)}return base()}})();
 /* 3D 화면 안의 버튼을 누르면 전체화면·가로 고정 (사용자 동작이 필요) */
 /* 게임 시작·이어하기·3D 화면의 버튼을 누르면 전체화면 + 가로 고정 (사용자 동작 안에서만 가능). iOS는 가로 잠금을 지원하지 않아 CSS 회전으로 대체된다 */
-document.addEventListener('click',e=>{if(document.fullscreenElement||!HAS3D)return;const t=e.target.closest('[data-a=setup],[data-a=resume],[data-a=start],[data-a=battle],[data-a=b-start],#sv3 button, #sv3 [data-a], #gGo, [data-a=alert-go]');if(!t)return;const now=Date.now();if(now-(window._fsT||0)<2000)return;window._fsT=now;bFullscreen(true);setTimeout(sv3Resize,200);setTimeout(sv3Resize,700)},true);
+document.addEventListener('click',e=>{if(document.fullscreenElement||!HAS3D)return;/* v9.3: PC 조작이면 자동 전체화면을 하지 않는다(F11·멈춤 메뉴) */if(typeof pcOn==='function'&&pcOn())return;const t=e.target.closest('[data-a=setup],[data-a=resume],[data-a=start],[data-a=battle],[data-a=b-start],#sv3 button, #sv3 [data-a], #gGo, [data-a=alert-go]');if(!t)return;const now=Date.now();if(now-(window._fsT||0)<2000)return;window._fsT=now;bFullscreen(true);setTimeout(sv3Resize,200);setTimeout(sv3Resize,700)},true);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=toggle-3d]');if(!b)return;const v=!store.get('sg.3d',true);store.set('sg.3d',v);toast(v?'3D 화면으로 본다':'2D 화면으로 본다');const o=$('#ov');if(o)o.remove();render()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=perf3]');if(!b)return;const v=+b.dataset.v;cbSet('sel',Object.assign(cbGet('sel',{}),{perf:v}));const o=$('#ov');if(o)o.querySelectorAll('[data-a=perf3]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.v===v));if(!v)perfHud(false)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=qual3]');if(!b)return;const v=b.dataset.v;cbSet('sel',Object.assign(cbGet('sel',{}),{qual:v}));if(v==='auto'){store.del('sg.qtierSet');SV3.qualDone=0}const o=$('#ov');if(o){o.querySelectorAll('[data-a=qual3]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===v))}if(SV3.el)sv3SetQual(v==='auto'?store.get('sg.qtier','high'):v,true);toast('3D 화질: '+b.textContent.trim())});
@@ -13230,7 +13256,7 @@ function perfStartup(){try{const m=performance.getEntriesByName('sot-title')[0];
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.2';
+const APP_VER='9.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -15393,10 +15419,11 @@ function evSites(){if(EVD.sites)return EVD.sites;const P=TJ_DATA.POI;const L=[];
 function evPickSite(filter,dmin,dmax){const p=FP3.pos;let L=evSites().filter(filter||(()=>true)).map(s=>Object.assign({},s,{d:Math.hypot(s.x-p.x,s.z-p.z)}));let C=L.filter(s=>s.d>=(dmin||110)&&s.d<=(dmax||480));
   if(!C.length)C=L.filter(s=>s.d>=60&&s.d<=900);if(!C.length)return null;return C[Math.floor(Math.random()*C.length)]}
 /* ---------- 감독 ---------- */
-function evPick(force){const W=[];const combat=typeof owcAvail==='function'&&owcAvail();for(const k in EVK){const D=EVK[k];if(D.noPick&&k!==force)continue;if(D.combat&&!combat)continue;let w=force?(k===force?1:0):(typeof D.w==='function'?D.w():(D.w||0));if(w<=0)continue;
+function evPick(force,ex){const W=[];const combat=typeof owcAvail==='function'&&owcAvail();for(const k in EVK){const D=EVK[k];if(ex&&ex[k])continue;if(D.noPick&&k!==force)continue;if(D.combat&&!combat)continue;let w=force?(k===force?1:0):(typeof D.w==='function'?D.w():(D.w||0));if(w<=0)continue;
     if(!force){const li=EVD.last.lastIndexOf(k);if(li>=0&&li===EVD.last.length-1)w=0;else if(li>=0)w*=.35;if(!EVD.outN&&(k==='del'||k==='pat'))w*=.15}if(w>0)W.push([k,w])}
   let s=0;W.forEach(q=>s+=q[1]);if(!s)return null;let r=Math.random()*s;for(const [k,w] of W){r-=w;if(r<=0)return k}return W[W.length-1][0]}
-function evFire(force){const k=evPick(force);if(!k){EVD.nextT=25;return false}const D=EVK[k];let site=null;try{site=D.site?D.site():evPickSite()}catch(e){console.error(e)}if(!site){EVD.nextT=20;return false}
+/* v9.3: 고른 종류가 자리를 못 잡으면(트럭이 너무 가깝거나 멀 때 등) 20초를 기다리지 않고 다른 종류를 바로 다시 고른다(최대 3번) */
+function evFire(force){const ex={};let k=null,D=null,site=null;for(let i=0;i<3;i++){k=evPick(force,ex);if(!k)break;D=EVK[k];site=null;try{site=D.site?D.site():evPickSite()}catch(e){console.error(e)}if(site||force)break;ex[k]=1}if(!k){EVD.nextT=25;return false}if(!site){EVD.nextT=20;return false}
   const p=FP3.pos;const d=Math.hypot(site.x-p.x,site.z-p.z);const lim=D.lim?D.lim(d,site):Math.round(clamp(48+d/3.1,70,210));
   const E={k,id:++EVD.n,t:0,ph:'go',site,d,d0:d,lim,warn:0};EVD.cur=E;EVD.outN=(EVD.outN||0)+1;EVD.last.push(k);if(EVD.last.length>3)EVD.last.shift();
   try{D.announce&&D.announce(E)}catch(e){console.error(e)}if(EVD.cur!==E)return true;
@@ -15755,7 +15782,7 @@ EVR.sniper={title:(w,q)=>w?'저격수를 제압했다':q?'물러섰다':'저격�
   short:(ok)=>ok?'저격수 제압':'저격 피해',note:(ok)=>`<b>🎯 ${ok?'저격수 제압':'저격 — 물러났다'}</b><div>${ok?'광장에 사람들이 조심스럽게 돌아온다.':'경찰 특공대가 건물을 둘러싼다.'}</div>`};
 /* ===================== ④ 구호 트럭 탈취(인질) ===================== */
 const HJ={van:null,gone:false,esc:95,t:0};
-EVK.hijack={n:'구호 트럭 탈취 — 인질',ico:'🚚',col:'#ff4a3a',combat:1,er:74,w:()=>G.turn>=4&&TJ_DATA.POI.truck?1.6:0,
+EVK.hijack={n:'구호 트럭 탈취 — 인질',ico:'🚚',col:'#ff4a3a',combat:1,er:74,w:()=>{const t=TJ_DATA.POI.truck;if(!(G.turn>=4&&t))return 0;/* v9.3: 트럭이 80m 안이거나 650m 밖이면 애초에 고르지 않는다 */const n=[-t.t[1],t.t[0]];const d=Math.hypot(t.p[0]+n[0]*5-FP3.pos.x,t.p[1]+n[1]*5-FP3.pos.z);return d<80||d>650?0:1.6},
   site(){const P=TJ_DATA.POI;const t=P.truck;if(!t)return null;const n=[-t.t[1],t.t[0]];const x=t.p[0]+n[0]*5,z=t.p[1]+n[1]*5;const d=Math.hypot(x-FP3.pos.x,z-FP3.pos.z);if(d<80||d>650)return null;return{x,z,n:'검문소 구호 트럭'}},
   lim(d){return Math.round(clamp(42+d/3.2,60,180))},
   announce(E){E.radio=`<b>🚚 무전 — 검문소</b><div>"구호 트럭에 무장 괴한! 운전사를 인질로 잡고 구호품을 승합차로 옮긴다 — 곧 달아나요!" 인질은 절대 쏘지 않는다.</div>`;hjProps(E);evPanic(E.site.x,E.site.z,40)},
@@ -15906,6 +15933,241 @@ function ebMarkers(x,toS,scale){const S=ebState();for(const d of EB_DEF){const s
 (function(){const base=window.tjStep;window.tjStep=function(dt){const r=base.apply(this,arguments);if(OUT.on&&!(typeof APT!=='undefined'&&APT.on))try{ebStep(dt)}catch(e){console.error(e)}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(){if(EB.plant){EB.plant=null;OUT.busy=false;FP3.lock=false}EB.list=[];EB.cur=null;return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^돌발 교전/.test(h[0]));HELP84.splice(i>=0?i+1:HELP84.length,0,['적 기지 — 첩보·수색·폭파',"돌발 상황 '🛰 적 기지 첩보'(생포한 간첩·정찰 드론·주민 제보)로 넓힌 지도 바깥 4곳(산업단지 창고 뒤·북쪽 숲·곡교천 둔치·캠퍼스 뒤) 중 한 곳의 수색 구역(파란 점선 원)이 생긴다. 원 안에서 빛나는 흔적 3개를 따라가 기지를 찾고(흔적 2개 또는 26m 안), 34m 안이면 기습(1인칭 교전, 국군 공병 하사 합류). 이기면 💣 3곳에 폭약 설치(2초씩) → 30m 밖에서 위쪽 띠 '기폭'. 폭파하면 드론 떼·공수부대 강하가 줄어든다. 진행은 저장된다."])}
+
+/* ===================== 61 · PC판 1차(v9.3): 키보드·마우스 조작 · 포인터 잠금 · 데스크톱 화면 ===================== */
+/* 같은 코드·같은 주소. 마우스·호버 기기(노트북·데스크톱)면 저절로 켜지고(설정·정보 → PC 조작: 자동/켬/끔), 터치 조작은 그대로 둔 채 키보드·마우스를 얹는다.
+   걷기: W A S D(화살표) 이동 · Shift 달리기 · Space 점프 · F 주먹 · E(1·2·3) 행동 · M 큰 지도 · Tab 상황판 · T 팀 · Esc 멈춤/닫기 · 마우스 둘러보기(화면 클릭 → 포인터 잠금, Esc로 풀기)
+   교전: 좌클릭 사격 · 우클릭 조준(누르는 동안/전환) · R 재장전 · C 앉기 · Space 점프 · G 수류탄 · 1~4 아이템 · 드론: 마우스 기수·좌클릭/Space 폭파·Q 조종 끝
+   운전·탈것: W/S 가속·브레이크 · A/D 핸들 · H 경적 · V 시점 · E 내리기 · 마우스 둘러보기(멈추면 앞으로) · 격투: 좌클릭 잽·우클릭 스트레이트·L 보디·Shift 가드·Space 피하기·Q 물러섬
+   카드: 1~9 선택지 · Enter 주황 버튼 · Esc 닫기. 자동 테스트(webdriver)는 __pcTest로 켜고 PC.testLock으로 잠금 없이 마우스 이동을 흉내 낸다 */
+const PC={on:null,kb:false,keys:Object.create(null),drove:false,locked:false,lockEl:null,testLock:false,lookT:0,badgeT:0,hintT:0,fire:false,ads:false,guard:false,bfire:false,xhT:0,fsTip:false};
+const PC_SENS=[[.35,'아주 느리게'],[.6,'느리게'],[1,'보통'],[1.5,'빠르게'],[2.2,'아주 빠르게']];
+const PC_MOVE={KeyW:1,ArrowUp:1,KeyS:1,ArrowDown:1,KeyA:1,ArrowLeft:1,KeyD:1,ArrowRight:1};
+function pcPref(){const v=store.get('sg.pc','auto');return v==='on'||v==='off'?v:'auto'}
+function pcDetect(){try{if(typeof window.__pcTest==='boolean')return window.__pcTest;const ua=navigator.userAgent||'';if(/Android|iPhone|iPad|iPod/i.test(ua)&&!/Windows NT/i.test(ua))return false;return !!(window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches)}catch(e){return false}}
+function pcOn(){if(PC.on==null)pcApply();return !!PC.on}
+function pcApply(){const p=pcPref();const was=PC.on;PC.on=p==='on'?true:p==='off'?false:(PC.kb||pcDetect());try{document.body.classList.toggle('pc',PC.on)}catch(e){}
+  /* PC 첫 실행: 내장 그래픽(2017 LG gram 급)을 기준으로 처음 화질은 '중간'에서 재기 시작한다(4초 측정 뒤 올리거나 내린다) */if(PC.on&&!store.get('sg.qtierSet',false)&&store.get('sg.qtier',null)==null)store.set('sg.qtier','mid');
+  if(was!=null&&was!==PC.on){if(!PC.on)pcUnlock();pcRelease();try{if(SV3.el)sv3Resize()}catch(e){}try{if(typeof BS!=='undefined'&&BS&&typeof bResize==='function')bResize()}catch(e){}}return PC.on}
+function pcSens(){return +store.get('sg.pcSens',1)||1}
+function pcAdsHold(){return store.get('sg.pcAdsHold',true)!==false}
+/* ---------- 상태 ---------- */
+function pcBF(){return typeof BS!=='undefined'&&!!BS&&UI.screen==='bfight'}
+function pcSceneEl(){if(SV3.el)return SV3.el;if(pcBF())return $('#bFight');return null}
+function pcUiOpen(){if(document.querySelector('.overlay'))return true;const q=s=>{const el=$(s);return !!(el&&!el.hidden)};
+  return q('#oEnc')||q('#tjBig')||q('#misPanel')||q('#tmPanel')||q('#owcPause')||q('#owcResult')||q('#gResult')||!!(typeof TJB!=='undefined'&&TJB.on)}
+function pcLockable(){if(pcUiOpen())return false;if(pcBF())return !(BS.paused||BS.done||BS.prompt);if(!SV3.el||SV3.kind==='alert')return false;if(FP3.lock)return false;return true}
+function pcInField(e){const t=e.target;return !!(t&&t.closest&&t.closest('input,textarea,select,[contenteditable=true]'))}
+function pcVehicle(){try{if(typeof OUT!=='undefined'&&OUT.on&&(OUT.drv||OUT.ride))return true;if(typeof OWC!=='undefined'&&OWC.on&&OWC.D)return true;if(typeof BS!=='undefined'&&BS&&BS.drone)return true}catch(e){}return false}
+function pcMv(){const k=PC.keys;return{x:((k.KeyD||k.ArrowRight)?1:0)-((k.KeyA||k.ArrowLeft)?1:0),y:((k.KeyW||k.ArrowUp)?1:0)-((k.KeyS||k.ArrowDown)?1:0)}}
+/* ---------- 포인터 잠금 ---------- */
+function pcLock(el){el=el||pcSceneEl();if(!el||!el.isConnected)return;PC.lockEl=el;try{const p=el.requestPointerLock({unadjustedMovement:true});if(p&&p.catch)p.catch(()=>{try{el.requestPointerLock()}catch(e){}})}catch(e){try{el.requestPointerLock()}catch(x){}}}
+function pcUnlock(){try{if(document.pointerLockElement)document.exitPointerLock()}catch(e){}}
+function pcRelease(){PC.keys=Object.create(null);if(PC.drove){FP3.mv.x=FP3.mv.y=0;try{if(pcBF()){BS.in.mv.x=BS.in.mv.y=0}}catch(e){}PC.drove=false}
+  if(PC.fire){PC.fire=false;try{if(typeof OWC!=='undefined'&&OWC.on){OWC.fire=false;const fb=$('#owcFire');if(fb)fb.classList.remove('on')}}catch(e){}}
+  if(PC.ads){PC.ads=false;try{if(typeof OWC!=='undefined'&&OWC.on&&pcAdsHold()){OWC.ads=false;owcBtn()}}catch(e){}try{if(pcBF()&&pcAdsHold()){BS.in.ads=false;const ab=$('#bAdsB');if(ab)ab.classList.remove('on')}}catch(e){}}
+  if(PC.bfire){PC.bfire=false;try{const fb=$('#bFireB');if(fb)fb.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerType:'mouse'}))}catch(e){}}
+  if(PC.guard){PC.guard=false;try{if(typeof BR!=='undefined'&&BR.on){BR.me.guard=false;const g=document.querySelector('[data-br=guard]');if(g)g.classList.remove('on')}}catch(e){}}
+  if(FP3.ptr&&FP3.ptr.pc)delete FP3.ptr.pc}
+document.addEventListener('pointerlockchange',()=>{PC.locked=!!document.pointerLockElement;try{document.body.classList.toggle('pc-lock',PC.locked)}catch(e){}if(!PC.locked){PC.fire=false;PC.ads=false;PC.bfire=false;PC.guard=false;pcRelease()}PC.hintT=0;pcHint()});
+document.addEventListener('pointerlockerror',()=>{PC.locked=false});
+/* 마우스로 장면을 누르면: 안 잠겼으면 잠그고, 잠겼으면 동작(사격·줍기·격투). 버튼·카드·판은 그대로 둔다(터치 처리기로 가지 않게 여기서 멈춘다) */
+const PC_CTRL='button,a,input,select,textarea,label,.overlay,.sv3-panel,[data-a],[data-g3],[data-b],[data-br],[data-s4],.b-pick,.tip84,.out-enc,.mis-panel,.tm-panel,#tjBig,.tj-big,.bx-panel,.owc-pause,.owc-res';
+document.addEventListener('pointerdown',e=>{if(!pcOn()||e.pointerType!=='mouse')return;const sc=pcSceneEl();if(!sc||!sc.contains(e.target))return;if(e.target.closest(PC_CTRL))return;
+  e.preventDefault();e.stopPropagation();try{SND.ac()}catch(x){}
+  if(!PC.locked&&!PC.testLock){if(pcLockable())pcLock(sc);return}
+  pcMouseDown(e.button)},true);
+document.addEventListener('pointerup',e=>{if(!pcOn()||e.pointerType!=='mouse')return;pcMouseUp(e.button)},true);
+document.addEventListener('mousemove',e=>{if(!pcOn()||!(PC.locked||PC.testLock))return;const dx=e.movementX||0,dy=e.movementY||0;if(!dx&&!dy)return;pcLook(dx,dy)});
+function pcLook(dx,dy){const inv=store.get('sg.pcInvY',false)?-1:1;const sens=pcSens();
+  if(pcBF()){if(BS.paused||BS.prompt||BS.done||BS.count>0)return;const s=.0022*sens*(BS.in.ads?.55:1)*(BS.assist&&BS.aimOn?.6:1);BS.P.yaw-=dx*s;BS.P.pitch=clamp(BS.P.pitch-dy*s*inv,-1.1,1.1);return}
+  if(!SV3.el||FP3.lock||pcUiOpen())return;
+  if(typeof OWC!=='undefined'&&OWC.on&&OWC.D){const D=OWC.D;if(D.boom==null&&!D.lost&&D.batt>0){const s=.0021*sens;D.yaw-=dx*s;D.pitch=clamp(D.pitch-dy*s*inv,-1.1,1.1)}return}
+  const owc=typeof OWC!=='undefined'&&OWC.on&&!OWC.done;const s=.0022*sens*(owc?(OWC.ads?.55:1)*(OWC.aimOn?.6:1):1);
+  FP3.yaw-=dx*s;FP3.pitch=clamp(FP3.pitch-dy*s*inv,-1.2,1.2);PC.lookT=performance.now()}
+function pcSetAds(on){if(pcBF()){if(BS.done)return;BS.in.ads=!!on;const ab=$('#bAdsB');if(ab)ab.classList.toggle('on',BS.in.ads);return}
+  if(typeof OWC!=='undefined'&&OWC.on&&!OWC.done&&!OWC.paused){OWC.ads=!!on;owcBtn()}}
+function pcMouseDown(btn){const br=typeof BR!=='undefined'&&BR.on&&!BR.end;
+  if(br){if(btn===0)brInput('jab');else if(btn===2)brInput('cross');else if(btn===1)brInput('body');return}
+  if(pcBF()){if(BS.paused||BS.done||BS.prompt||BS.count>0)return;
+    if(btn===0){if(BS.drone){fpvBoom(BS.drone.pos.clone());return}const fb=$('#bFireB');if(fb){PC.bfire=true;fb.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerType:'mouse',button:0}))}}
+    else if(btn===2){if(pcAdsHold()){PC.ads=true;pcSetAds(true)}else pcSetAds(!BS.in.ads)}
+    else if(btn===1)bSwitch();return}
+  if(typeof OWC!=='undefined'&&OWC.on&&!OWC.done){if(OWC.paused)return;
+    if(OWC.D){if(btn===0){const D=OWC.D;if(D.boom==null)owcDrBoom(D.pos.clone())}return}
+    if(btn===0){OWC.fire=true;PC.fire=true;const fb=$('#owcFire');if(fb)fb.classList.add('on')}
+    else if(btn===2){if(pcAdsHold()){PC.ads=true;pcSetAds(true)}else pcSetAds(!OWC.ads)}
+    else if(btn===1)owcThrow();return}
+  if(UI.screen==='grab'&&typeof FP3.onTap==='function'&&!FP3.lock){if(btn===0)FP3.onTap(0,0);return}
+  if(btn===0)pcDeckMin()}
+function pcMouseUp(btn){if(btn===0){if(PC.fire){PC.fire=false;try{if(typeof OWC!=='undefined')OWC.fire=false}catch(e){}const fb=$('#owcFire');if(fb)fb.classList.remove('on')}
+    if(PC.bfire){PC.bfire=false;const fb=$('#bFireB');if(fb)fb.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerType:'mouse',button:0}))}}
+  else if(btn===2&&PC.ads){PC.ads=false;if(pcAdsHold())pcSetAds(false)}}
+/* ---------- 매 프레임: 눌린 키 → 이동 벡터, 잠금·안내·키 표식 ---------- */
+function pcDeckMin(){if(UI.screen!=='shelter')return;const d=$('#sv3Panel');if(d&&d.classList.contains('sv3-deck')&&!d.classList.contains('min')){d.classList.add('min');const t=d.querySelector('.deck-tg');if(t)t.textContent='▴ 펼치기'}}
+function pcFrame(){if(!pcOn())return;const bf=pcBF();const tgt=bf?BS.in.mv:FP3.mv;const m=pcMv();
+  if(m.x||m.y){let ok=bf?!(BS.paused||BS.prompt||BS.count>0||BS.done):!FP3.lock;if(ok&&pcUiOpen())ok=false;
+    if(ok){const L=Math.hypot(m.x,m.y);const run=!!(PC.keys.ShiftLeft||PC.keys.ShiftRight)||pcVehicle();const g=run?1:.62;tgt.x=m.x/L*g;tgt.y=m.y/L*g;PC.drove=true;if(!bf)pcDeckMin()}
+    else if(PC.drove){tgt.x=tgt.y=0;PC.drove=false}}
+  else if(PC.drove){tgt.x=tgt.y=0;PC.drove=false}
+  /* 운전·탈것 둘러보기: 마우스를 멈추면 0.7초 뒤 앞으로 돌아온다(42·45가 FP3.ptr의 look 포인터를 본다) */
+  if(!bf){if(PC.lookT&&performance.now()-PC.lookT<700){if(!FP3.ptr.pc)FP3.ptr.pc={role:'look',pc:1}}else if(FP3.ptr.pc)delete FP3.ptr.pc}
+  if(PC.locked&&pcUiOpen())pcUnlock();
+  pcHint();pcBadges();pcXh()}
+(function(){const b=window.sv3Loop;window.sv3Loop=function(now){try{pcFrame()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.bLoop;window.bLoop=function(now){try{pcFrame()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.sv3Unmount;window.sv3Unmount=function(){pcUnlock();pcRelease();const h=$('#pcLock');if(h)h.remove();return b.apply(this,arguments)}})();
+(function(){const b=window.bUnmount;if(typeof b!=='function')return;window.bUnmount=function(){pcUnlock();pcRelease();return b.apply(this,arguments)}})();
+/* '화면을 클릭하면 마우스로 둘러보기' 안내(잠글 수 있는데 안 잠겼을 때, 4초 뒤 흐려짐) */
+function pcHint(){const now=performance.now();if(now-PC.hintT<250)return;PC.hintT=now;const sc=pcSceneEl();let h=$('#pcLock');const want=!!sc&&pcLockable()&&!PC.locked&&!PC.testLock;
+  if(!want){if(h&&!h.hidden)h.hidden=true;return}
+  const m=pcBF()||(typeof OWC!=='undefined'&&OWC.on)?'조준':'둘러보기';
+  if(!h||h.parentNode!==sc){if(h)h.remove();h=document.createElement('div');h.id='pcLock';h.className='pc-lock';sc.appendChild(h);h._t=now}
+  if(h.dataset.m!==m){h.dataset.m=m;h.innerHTML=`<b>화면을 클릭</b>하면 마우스로 ${m} · <b>Esc</b> 마우스 풀기 · <b>F1</b> 키 안내`;h._t=now}
+  if(h.hidden){h.hidden=false;h._t=now}h.classList.toggle('dim',now-h._t>4000)}
+/* 1인칭 줍기 화면(처음 60초): 가운데 점 — 물건에 맞으면 커지고 이름이 뜬다 */
+function pcXh(){const sc=SV3.el;const want=!!sc&&UI.screen==='grab'&&(PC.locked||PC.testLock)&&typeof FP3.onTap==='function'&&typeof GR3!=='undefined';let x=$('#pcXh');
+  if(!want){if(x)x.hidden=true;return}if(!x||x.parentNode!==sc){if(x)x.remove();x=document.createElement('div');x.id='pcXh';x.className='pc-xh';x.innerHTML='<small hidden></small>';sc.appendChild(x)}x.hidden=false;
+  const now=performance.now();if(now-PC.xhT<120)return;PC.xhT=now;let name='';try{const hit=sv3Pick(0,0,GR3.tapList||[]);if(hit){let o=hit.object;while(o){if(o.userData.item){name=typeof itemName==='function'?itemName(o.userData.item):'물건';break}if(o.userData.fam){name='가족 깨우기';break}o=o.parent}}}catch(e){}
+  x.classList.toggle('pick',!!name);const s=x.firstChild;if(s){if(name){s.textContent='클릭 · '+name;s.hidden=false}else s.hidden=true}}
+/* 버튼 위 키 표식 */
+const PC_BADGE=[['#sv3Jump','Space'],['#sv3Punch','F'],['[data-g3=oact][data-i="0"]','E'],['[data-g3=oact][data-i="1"]','2'],['[data-g3=oact][data-i="2"]','3'],['[data-g3=aact][data-i="0"]','E'],['[data-g3=aact][data-i="1"]','2'],['[data-g3=aact][data-i="2"]','3'],['[data-g3=aptx]','X'],['[data-g3=fact][data-i="0"]','E'],['[data-g3=fact][data-i="1"]','2'],['[data-g3=fact][data-i="2"]','3'],
+  ['[data-g3=tjmap]','M'],['[data-g3=mlist]','Tab'],['[data-g3=tmbtn]','T'],['[data-a=menu]','Esc'],['[data-g3=fpdhorn]','H'],['[data-g3=fpdcam]','V'],['[data-g3=evlow]','C'],['[data-g3=evtowel]','X'],['[data-g3=ebboom]','B'],
+  ['[data-g3=owcfire]','좌클릭'],['[data-g3=owcads]','우클릭'],['[data-g3=owcrel]','R'],['[data-g3=owccr]','C'],['[data-g3=owcjp]','Space'],['[data-g3=owcmed]','1'],['[data-g3=owcnade]','2'],['[data-g3=owcdrone]','3'],['[data-g3=evjam]','4'],['[data-g3=owcdrboom]','좌클릭'],['[data-g3=owcdrq]','Q'],['[data-g3=owcmenu]','Esc'],
+  ['[data-br=jab]','좌클릭'],['[data-br=cross]','우클릭'],['[data-br=body]','L'],['[data-br=guard]','Shift'],['[data-br=dodge]','Space'],['[data-br=quit]','Q'],
+  ['#bFireB','좌클릭'],['#bAdsB','우클릭'],['#bCrouch','C'],['[data-a=b-rel]','R'],['[data-a=b-jump]','Space'],['[data-a=b-sw]','Tab'],['[data-a=b-view]','V'],['[data-a=b-nade]','G'],['[data-a=b-fpv]','X'],['[data-a=b-menu]','Esc'],['[data-a=fpv-boom]','좌클릭'],['[data-a=fpv-abort]','Q']];
+function pcBadges(){const now=performance.now();if(now-PC.badgeT<300)return;PC.badgeT=now;const root=pcSceneEl();if(!root)return;
+  for(const [sel,key] of PC_BADGE){let els;try{els=root.querySelectorAll(sel)}catch(e){continue}for(const el of els){if(el.dataset.pck===key)continue;el.dataset.pck=key;try{if(getComputedStyle(el).position==='static')el.style.position='relative'}catch(e){}}}}
+/* ---------- 키 ---------- */
+function pcBtn(sel){const sc=pcSceneEl();return (sc&&sc.querySelector(sel))||document.querySelector(sel)}
+function pcPress(el){if(!el||el.disabled)return false;try{const o={bubbles:true,cancelable:true,pointerType:'mouse',button:0,isPrimary:true};el.dispatchEvent(new PointerEvent('pointerdown',o));el.dispatchEvent(new PointerEvent('pointerup',o));el.click()}catch(e){try{el.click()}catch(x){}}return true}
+function pcChoiceButtons(){/* 맨 위(가장 나중) 선택지 묶음 */const all=[...document.querySelectorAll('.choices')].filter(c=>{if(c.closest('[hidden]'))return false;const r=c.getBoundingClientRect();return r.width>0&&r.height>0});const c=all[all.length-1];if(!c)return[];return[...c.querySelectorAll('button:not([disabled])')]}
+function pcEsc(){const sg=$('#pcGuide');if(sg){sg.remove();return true}
+  if($('#set84')){s4Close();return true}
+  const ov=$('#ov');if(ov){const b=ov.querySelector('[data-a=close-ov],[data-a=b-resume]');if(b)b.click();else ov.remove();return true}
+  const o2=document.querySelector('.overlay');if(o2){const b=o2.querySelector('[data-a=close-ov],[data-a=b-resume],[data-s4=close]');if(b){b.click();return true}}
+  if(typeof TJB!=='undefined'&&TJB.on){tjBigClose();return true}
+  if($('#misPanel')){if(typeof evBoard==='function')evBoard(false);else if(typeof misPanel==='function')misPanel(false);return true}
+  if($('#tmPanel')){if(typeof tmPanel==='function')tmPanel(false);return true}
+  const op=$('#owcPause');if(op&&!op.hidden){owcPause(false);return true}
+  if(typeof OWC!=='undefined'&&OWC.on&&!OWC.done){owcPause(true);return true}
+  if(pcBF()){const b=document.querySelector('[data-a=b-menu]');if(b&&!BS.done){pcPress(b);return true}return false}
+  if(SV3.el){const b=SV3.el.querySelector('[data-a=menu]');if(b){pcPress(b);return true}}
+  return false}
+window.addEventListener('keydown',e=>{const c=e.code;if(!c)return;
+  /* 자동 감지에서 꺼진 채 걷기 키를 누르면(키보드 달린 태블릿 등) PC 조작을 켠다 */if(!pcOn()){if(pcPref()==='auto'&&PC_MOVE[c]&&!pcInField(e)&&(SV3.el||pcBF())){PC.kb=true;pcApply();toast('키보드를 감지했다 — PC 조작을 켠다 (설정·정보 → PC 조작에서 끌 수 있다)',3400)}else return}
+  if(pcInField(e))return;PC.keys[c]=1;if(e.repeat){if(PC_MOVE[c]||c==='Space')e.preventDefault();return}
+  if(c==='Escape'){if(document.pointerLockElement)return;/* 잠긴 채면 브라우저가 먼저 푼다 */if(pcEsc())e.preventDefault();return}
+  if(c==='F1'||(c==='Slash'&&e.shiftKey)){e.preventDefault();pcGuide(!$('#pcGuide'));return}
+  /* 열려 있는 판은 같은 키로 닫는다(Tab 상황판 · M 큰 지도 · T 팀) — 초점 이동(Tab)은 막는다 */
+  if(c==='Tab'&&$('#misPanel')){e.preventDefault();if(typeof evBoard==='function')evBoard(false);else if(typeof misPanel==='function')misPanel(false);return}
+  if(c==='KeyM'&&typeof TJB!=='undefined'&&TJB.on){tjBigClose();return}
+  if(c==='KeyT'&&$('#tmPanel')){if(typeof tmPanel==='function')tmPanel(false);return}
+  const uiOpen=pcUiOpen();
+  if(uiOpen){/* 카드·창: 숫자로 선택지, Enter로 주황 버튼 */if(c==='Tab')e.preventDefault();
+    if(/^Digit[1-9]$/.test(c)){const L=pcChoiceButtons();const b=L[+c.slice(5)-1];if(b){e.preventDefault();b.click()}return}
+    if(c==='Enter'){const ae=document.activeElement;if(ae&&ae.tagName==='BUTTON')return;/* 초점 잡힌 버튼은 브라우저가 누른다 */const o=[...document.querySelectorAll('.overlay')].pop();const b=o&&(o.querySelector('.btn.pri:not([disabled])')||o.querySelector('button:not([disabled])'));if(b){e.preventDefault();b.click()}return}
+    if(c==='Space'&&(SV3.el||pcBF()))e.preventDefault();return}
+  const bf=pcBF(),owc=typeof OWC!=='undefined'&&OWC.on&&!OWC.done,br=typeof BR!=='undefined'&&BR.on&&!BR.end;
+  if(PC_MOVE[c]&&(SV3.el||bf))e.preventDefault();
+  if(c==='Space'&&(SV3.el||bf)){e.preventDefault();
+    if(br){e.stopImmediatePropagation();brInput('dodge');return}
+    if(owc&&!OWC.paused){e.stopImmediatePropagation();if(OWC.D){const D=OWC.D;if(D.boom==null)owcDrBoom(D.pos.clone());return}if(OWC.cr){OWC.cr=false;owcBtn()}else FP3.jump();return}
+    if(bf&&BS.drone){e.stopImmediatePropagation();fpvBoom(BS.drone.pos.clone());return}
+    return/* 걷기 점프·계단·전투 점프는 기존 처리기가 맡는다 */}
+  if(br){if(c==='KeyJ')brInput('jab');else if(c==='KeyK')brInput('cross');else if(c==='KeyL')brInput('body');else if(c==='ShiftLeft'||c==='ShiftRight'){if(!PC.guard){PC.guard=true;BR.me.guard=true;const g=document.querySelector('[data-br=guard]');if(g)g.classList.add('on')}}else if(c==='KeyQ'){e.stopImmediatePropagation();brInput('quit')}return}
+  if(bf){if(BS.paused||BS.done)return;
+    if(c==='KeyR')bReload();else if(c==='KeyC')pcPress($('#bCrouch'));else if(c==='KeyG')pcPress(pcBtn('[data-a=b-nade]'));else if(c==='Tab'){e.preventDefault();if(BS.drone)return;bSwitch()}
+    else if(c==='KeyV'){if(typeof tpsSet==='function')tpsSet(!BS.tps)}else if(c==='KeyX'){if(BS.drone){pcPress(pcBtn('[data-a=fpv-abort]'))}else pcPress(pcBtn('[data-a=b-fpv]'))}
+    else if(c==='KeyQ'&&BS.drone)pcPress(pcBtn('[data-a=fpv-abort]'));return}
+  if(owc){if(OWC.paused)return;
+    if(OWC.D){if(c==='KeyQ'){e.stopImmediatePropagation();pcPress(pcBtn('[data-g3=owcdrq]'))}return}
+    if(c==='Digit1')owcMed();else if(c==='Digit2')owcThrow();else if(c==='Digit3')pcPress(pcBtn('[data-g3=owcdrone]'));else if(c==='Digit4')pcPress(pcBtn('[data-g3=evjam]'));
+    else if(c==='Tab'){e.preventDefault()}/* 교전 중엔 상황판 없음 */return}
+  if(!SV3.el)return;
+  /* 밖·대피소·집: 행동 버튼·지도·상황판·팀 */
+  const acts=[...document.querySelectorAll('#oActs [data-g3=oact],[data-g3=aact],[data-g3=fact]')].filter(b=>!b.disabled);
+  if(c==='KeyE'){if(acts[0]){e.preventDefault();pcPress(acts[0])}else if(UI.screen==='grab'&&typeof FP3.onTap==='function'&&!FP3.lock)FP3.onTap(0,0);return}
+  if(/^Digit[1-9]$/.test(c)){const i=+c.slice(5)-1;if(acts.length){if(acts[i])pcPress(acts[i]);return}const L=pcChoiceButtons();if(L[i]){e.preventDefault();L[i].click()}return}
+  if(c==='KeyM'){pcPress(pcBtn('[data-g3=tjmap]'));return}
+  if(c==='Tab'){e.preventDefault();pcPress(pcBtn('[data-g3=mlist]'));return}
+  if(c==='KeyT'){pcPress(pcBtn('[data-g3=tmbtn]'));return}
+  if(c==='KeyH'){pcPress(pcBtn('[data-g3=fpdhorn]'));return}
+  if(c==='KeyV'){pcPress(pcBtn('[data-g3=fpdcam]'));return}
+  if(c==='KeyX'){pcPress(pcBtn('[data-g3=evtowel]')||document.querySelector('[data-g3=aptx]'));return}
+  if(c==='KeyC'){pcPress(pcBtn('[data-g3=evlow]'));return}
+  if(c==='KeyB'){pcPress(pcBtn('[data-g3=ebboom]'));return}
+},true);
+window.addEventListener('keydown',e=>{/* 2D 화면(첫 화면·설정·이동): 숫자 선택지 · Enter */if(!pcOn()||SV3.el||pcBF()||pcInField(e)||pcUiOpen())return;const c=e.code;
+  if(/^Digit[1-9]$/.test(c)){const L=pcChoiceButtons();const b=L[+c.slice(5)-1];if(b){e.preventDefault();b.click()}}
+  else if(c==='Enter'){const ae=document.activeElement;if(ae&&ae.tagName==='BUTTON')return;const b=document.querySelector('#app .btn.pri:not([disabled])');if(b&&b.getBoundingClientRect().height>0){e.preventDefault();b.click()}}},true);
+window.addEventListener('keyup',e=>{const c=e.code;if(!c)return;delete PC.keys[c];if(!pcOn())return;
+  if((c==='ShiftLeft'||c==='ShiftRight')&&PC.guard){PC.guard=false;try{if(typeof BR!=='undefined'&&BR.on){BR.me.guard=false;const g=document.querySelector('[data-br=guard]');if(g)g.classList.remove('on')}}catch(x){}}},true);
+window.addEventListener('blur',()=>{pcRelease()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pcRelease()});
+/* 버튼을 마우스로 누른 뒤 Space·Enter가 그 버튼을 다시 누르지 않게 초점을 뺀다 */
+document.addEventListener('click',e=>{if(!pcOn())return;const b=e.target.closest('button');if(b&&(b.closest('#sv3')||b.closest('#bFight')))setTimeout(()=>{try{if(document.activeElement===b)b.blur()}catch(x){}},0)},true);
+/* ---------- 키 안내 창 ---------- */
+const PC_KEYS=[['걷기·탐색',[['W A S D / ←↑↓→','이동'],['Shift','달리기(누르는 동안)'],['Space','점프 · 담장·차 짚고 넘기'],['F','주먹'],['E · 1 2 3','행동 버튼(가까운 표식)'],['마우스','둘러보기 — 화면을 클릭하면 마우스를 잡고, Esc로 푼다'],['M','큰 지도'],['Tab','상황판(돌발 상황·첩보·기록)'],['T','팀'],['Esc','멈춤 메뉴 · 창 닫기'],['F1','이 안내']]],
+  ['교전(밖 탐색 장면 그대로)',[['좌클릭','사격(누르면 연사)'],['우클릭','조준(누르는 동안 — 설정에서 전환식으로)'],['R','재장전'],['C','앉기 · 모래주머니 뒤 엄폐'],['Space','점프 · 일어서기'],['G · 휠클릭','수류탄'],['1 · 2 · 3 · 4','구급 · 수류탄 · 정찰 드론 · 재머'],['Q','조준 전환(한 번 눌러)'],['Esc','교전 멈춤']]],
+  ['드론 조종',[['W / S','속도'],['A / D','선회'],['마우스','기수'],['좌클릭 · Space','폭파'],['Q','조종 끝(추락)']]],
+  ['운전·탈것',[['W / S','가속 / 브레이크·후진'],['A / D','핸들'],['마우스','둘러보기(멈추면 앞으로 돌아온다)'],['H','경적·벨'],['V','1인칭 / 3인칭'],['E','내리기']]],
+  ['격투·복싱',[['좌클릭 · J','잽'],['우클릭 · K','스트레이트'],['휠클릭 · L','보디'],['Shift','가드(누르는 동안)'],['Space','피하기'],['Q','물러선다']]],
+  ['전투 화면(설정 "전투 화면"일 때)',[['W A S D · 마우스','이동 · 조준'],['좌클릭 · 우클릭','사격 · 조준경'],['R · C · Space · G','재장전 · 앉기 · 점프 · 수류탄'],['Tab','무기 바꾸기'],['V','1인칭 / 3인칭'],['X','자폭 드론 · 조종 끝']]],
+  ['카드 화면',[['1 ~ 9','선택지 고르기'],['Enter','주황 버튼(계속)'],['Esc','창 닫기 · 멈춤'],['F11','브라우저 전체화면']]]];
+const PC_HELP='화면을 클릭하면 마우스를 잡아 둘러보고(Esc로 풀기), W A S D로 걷고 Shift로 달린다. Space 점프 · F 주먹 · E(또는 1·2·3) 행동 · M 큰 지도 · Tab 상황판 · T 팀 · Esc 멈춤. 교전: 좌클릭 사격 · 우클릭 조준 · R 재장전 · C 앉기 · G 수류탄 · 1~4 아이템. 운전: W/S 가속·브레이크 · A/D 핸들 · H 경적 · V 시점 · E 내리기. 격투: 좌클릭 잽 · 우클릭 스트레이트 · L 보디 · Shift 가드 · Space 피하기. 카드: 숫자로 고르고 Enter로 계속. F1 = 키 안내.';
+function pcGuide(open){let o=$('#pcGuide');if(!open){if(o)o.remove();return}if(o)return;pcUnlock();o=document.createElement('div');o.className='overlay pc-guide';o.id='pcGuide';
+  o.innerHTML=`<div class="sheet"><div class="ov-head"><h2>⌨ 키보드·마우스</h2><button class="btn pri" data-pc="close">닫기 <small>Esc</small></button></div>
+    <p class="small mut">PC 조작은 지금 <b>${pcOn()?'켜짐':'꺼짐'}</b> — 설정·정보 → PC 조작에서 자동/켬/끔, 마우스 감도·상하 반전·렌더 배율을 바꾼다. 터치 조작도 그대로 쓸 수 있다.</p>
+    <div class="pc-keys">${PC_KEYS.map(g=>`<div class="pc-g"><div class="s4-sec">${g[0]}</div>${g[1].map(k=>`<div class="pc-k"><kbd>${k[0]}</kbd><span>${k[1]}</span></div>`).join('')}</div>`).join('')}</div></div>`;
+  o.addEventListener('click',e=>{if(e.target===o||e.target.closest('[data-pc=close]'))o.remove()});document.body.appendChild(o)}
+/* ---------- 설정·정보 / 멈춤 메뉴 / 첫 화면 / 조작법 / 말풍선 ---------- */
+(function(){const b=window.s4Html;window.s4Html=function(){let h=b.apply(this,arguments);if(S4.conf)return h;
+  if(S4.view==='help'){const sec=`<div class="s4-sec">PC 키보드·마우스${pcOn()?'':' <span class="small mut">(지금 꺼짐 — 설정의 PC 조작에서 켠다)</span>'}</div><p class="s4-p">${PC_HELP}</p>`;return h.replace('<div class="s4-scroll">','<div class="s4-scroll">'+sec)}
+  if(S4.view==='main'){const sc=store.get('sg.pcScale',1);const seg=`<div class="s4-sec">PC 조작 <span class="small mut">키보드·마우스 — 지금 ${pcOn()?'켜짐':'꺼짐'}</span></div>
+    ${s4Seg('pc','PC 조작','자동: 마우스·호버 기기(노트북·데스크톱)면 켠다',[['auto','자동'],['on','켬'],['off','끔']],pcPref())}
+    ${s4Seg('pcsens','마우스 감도','',PC_SENS,pcSens())}
+    ${s4Seg('pcinv','상하 반전','마우스를 밀면 아래를 본다',[[0,'끔'],[1,'켬']],store.get('sg.pcInvY',false)?1:0)}
+    ${s4Seg('pcads','조준(우클릭)','',[[1,'누르는 동안'],[0,'한 번 눌러 전환']],pcAdsHold()?1:0)}
+    ${s4Seg('pcscale','렌더 배율','PC에서 그리는 해상도 — 내장 그래픽(LG gram 급)이면 85%가 부드럽다',[[.7,'70%'],[.85,'85%'],[1,'100%'],['dpr','기기 배율 그대로']],sc==='dpr'?'dpr':String(+sc||1))}
+    <div class="row"><button class="btn ghost" data-pc="guide">⌨ 키 안내 (F1)</button></div>`;return h.replace('<div class="s4-sec">점검·정보</div>',seg+'<div class="s4-sec">점검·정보</div>')}
+  return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt][data-k^=pc],[data-pc=guide],[data-pc=fs]');if(!b)return;
+  if(b.dataset.pc==='guide'){e.preventDefault();e.stopImmediatePropagation();pcGuide(true);return}
+  if(b.dataset.pc==='fs'){e.preventDefault();e.stopImmediatePropagation();const on=!document.fullscreenElement;try{bFullscreen(on)}catch(x){}setTimeout(()=>{b.innerHTML=`${ic('phone')} 전체화면 ${document.fullscreenElement?'끄기':'켜기'} <small class="mut">F11</small>`},400);return}
+  const k=b.dataset.k,v=b.dataset.v;
+  if(k==='pc'){store.set('sg.pc',v);PC.kb=false;pcApply();toast(PC.on?'PC 조작 켜짐 — 화면을 클릭하면 마우스를 잡는다 · F1 키 안내':'PC 조작 꺼짐 — 터치 조작만 쓴다',3000)}
+  else if(k==='pcsens')store.set('sg.pcSens',+v);else if(k==='pcinv')store.set('sg.pcInvY',v==='1');else if(k==='pcads')store.set('sg.pcAdsHold',v==='1');
+  else if(k==='pcscale'){store.set('sg.pcScale',v==='dpr'?'dpr':+v);try{if(SV3.el)drsApply('s');if(pcBF())drsApply('b')}catch(x){}}
+  /* s4Re()는 36의 처리기가 이어서 한다 */},true);
+(function(){const b=window.menuOverlay;window.menuOverlay=function(){const r=b.apply(this,arguments);if(!pcOn())return r;const g=$('#ov .ov-grid');if(g&&!g.querySelector('[data-pc]')){
+  const f=document.createElement('button');f.className='btn ghost';f.dataset.pc='fs';f.innerHTML=`${ic('phone')} 전체화면 ${document.fullscreenElement?'끄기':'켜기'} <small class="mut">F11</small>`;g.appendChild(f);
+  const k=document.createElement('button');k.className='btn ghost';k.dataset.pc='guide';k.innerHTML=`${ic('book')} 키보드·마우스 안내 <small class="mut">F1</small>`;g.appendChild(k)}return r}})();
+(function(){const b=window.vTitle;window.vTitle=function(){let h=b.apply(this,arguments);if(!pcOn())return h;
+  h=h.replace(/(<button class="btn ghost s4-tbtn"[\s\S]*?<\/button>)/,`$1<button class="btn ghost" data-pc="guide">⌨ PC 조작 안내</button>`);
+  h=h.replace('<p class="tagline">','<p class="s4-edu pc-tag">PC 조작 켜짐 · W A S D 이동 · 마우스 둘러보기 · Esc 메뉴 · F1 키 안내</p><p class="tagline">');return h}})();
+/* 조작 말풍선·도움말을 PC 문구로 */
+const PC_TIP={grab:['처음 60초','W A S D로 걷고(Shift 달리기) 마우스로 둘러본다 — 화면을 한 번 클릭하면 마우스를 잡는다. 가운데 점을 물건에 맞추고 클릭(또는 E)하면 챙긴다. 가족 깨우기·가스·두꺼비집도 같다.'],
+  descent:['계단 대피','Space(또는 ↓)를 누르고 있으면 내려가고, 떼면 멈춘다. 옆 사람·가족과 속도를 맞춘다.'],
+  shelter:['대피소','아래 카드에서 고른다(숫자 키 1~9도 된다). W A S D로 걸어 다니고 마우스로 둘러본다. 위쪽 띠는 가족 체력·물·식량·사기·신뢰다.'],
+  outside:['밖 탐색','W A S D 이동 · Shift 달리기 · 마우스 둘러보기(화면 클릭으로 잡기). 표식(! ?)에 다가가면 행동 버튼 — E 또는 1·2·3. M 큰 지도 · Tab 상황판 · Esc 메뉴. 길가 자전거·킥보드·차를 탈 수 있다.'],
+  ride:['자전거·킥보드·오토바이','W 가속 · S 브레이크 · A D 핸들 · 마우스로 둘러보면 멈출 때 뒤로 돌아온다 · H 벨 · V 시점 · E 내리기'],
+  drive:['운전','W 가속 · S 브레이크·후진 · A D 핸들 · H 경적 · V 1인칭/3인칭 · E 내리기'],
+  battle:['전투','W A S D 이동, 마우스로 조준 — 좌클릭 사격, 우클릭 조준경. R 재장전 · C 앉기 · Space 점프 · G 수류탄 · Tab 무기 · V 시점.'],
+  fpv:['자폭 드론','W/S 속도 · A/D 선회 · 마우스로 기수 · 좌클릭 또는 Space로 폭파. 배터리 30초 — 그동안 내 몸은 무방비다.'],
+  brawl:['맨손 격투','좌클릭 잽 · 우클릭 스트레이트 · L 보디 · Shift 가드(누르는 동안) · Space 피하기. 상대 \'!\' 뒤에 막거나 피하면 반격할 틈이 생긴다.'],
+  apt:['빈집 수색','곳마다 15분이 든다. 표식 앞에서 E(또는 1·2·3)로 뒤지고, X로 현관 앞으로 돌아간다.']};
+(function(){const b=window.tip84;window.tip84=function(k,host){if(!pcOn()||!PC_TIP[k])return b.apply(this,arguments);const o=TIP84[k];TIP84[k]=PC_TIP[k];try{return b.apply(this,arguments)}finally{TIP84[k]=o}}})();
+(function(){const b=window.owcUI;window.owcUI=function(){const r=b.apply(this,arguments);if(pcOn()){const h=$('#owcHelp');if(h)h.textContent='W A S D 이동 · 마우스 조준(화면 클릭으로 잡기) · 좌클릭 사격 · 우클릭 조준 · R 재장전 · C 앉기(모래주머니 뒤 엄폐) · G 수류탄 · 1~4 아이템'+(OWC.auto?' · 적 위에 조준점이 머물면 자동사격':'')+' · 주민·흰 천에는 쏘지 않는다'}return r}})();
+(function(){const b=window.tjDriveStart;if(typeof b!=='function')return;window.tjDriveStart=function(){const r=b.apply(this,arguments);if(pcOn()&&OUT.drv)outNote(`<b>시동이 걸렸다</b><div>W 가속 · S 브레이크·후진 · A D 핸들 · H 경적 · V 시점 · E 내리기.${OUT.follow.length?' 동행한 사람도 함께 탔다.':''}</div>`,4200);return r}})();
+(function(){const b=window.rideStart;if(typeof b!=='function')return;window.rideStart=function(v){const r=b.apply(this,arguments);if(pcOn()&&OUT.ride){const K=RIDE_K[OUT.ride.kind];outNote(`<b>${K.n}에 올라탔다</b><div>W 가속 · S 브레이크 · A D 핸들 · H 벨 · V 시점 · E 내리기.${OUT.ride.kind==='bike'?'':' 실제로는 안전모를 꼭 쓴다.'}</div>`,4200)}return r}})();
+/* ---------- 화면·성능: 렌더 배율 상한(기기 배율 1.25 → 1.0) × 설정 배율 ---------- */
+(function(){const b=window.drsBase;if(typeof b!=='function')return;window.drsBase=function(kind){const r=b.apply(this,arguments);if(!pcOn())return r;const sc=store.get('sg.pcScale',1);if(sc==='dpr')return r;return Math.min(r,1)*(+sc||1)}})();
+(function(){const b=window.sv3SetQual;window.sv3SetQual=function(){const r=b.apply(this,arguments);if(pcOn())try{drsApply('s')}catch(e){}return r}})();
+(function(){const b=window.bSetQual;if(typeof b!=='function')return;window.bSetQual=function(){const r=b.apply(this,arguments);if(pcOn())try{drsApply('b')}catch(e){}return r}})();
+/* 첫 3D 화면: 전체화면 안내 한 번(자동 전체화면은 PC에서 끔 — F11 또는 멈춤 메뉴) */
+(function(){const b=window.sv3Mount;window.sv3Mount=function(){const r=b.apply(this,arguments);if(pcOn()&&!PC.fsTip&&!store.get('sg.pcFsTip',false)&&!(navigator.webdriver&&!window.__tipsTest)){PC.fsTip=true;store.set('sg.pcFsTip',true);setTimeout(()=>{try{toast('PC 조작 켜짐 — 화면을 클릭하면 마우스를 잡는다 · F1 키 안내 · F11 전체화면',4200)}catch(e){}},900)}return r}})();
+pcApply();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
