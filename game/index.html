@@ -1202,7 +1202,7 @@ body.pc #app{max-width:640px}
 body.pc button,body.pc .btn,body.pc .choice{cursor:pointer}
 body.pc .b-rothint{display:none!important}
 body.pc .b-fps,body.pc .sv3{cursor:default}
-body.pc-lock .b-fps,body.pc-lock .sv3{cursor:none}
+body.pc-locked .b-fps,body.pc-locked .sv3{cursor:none}
 .pc-lock{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);z-index:9;max-width:min(92%,560px);text-align:center;font:600 12.5px/1.35 system-ui,sans-serif;padding:7px 14px;border-radius:12px;background:rgba(6,8,11,.82);color:#dfe6ec;border:1px solid rgba(255,178,36,.45);pointer-events:none;white-space:nowrap;transition:opacity .4s}
 .pc-lock b{color:#ffd27a}.pc-lock.dim{opacity:.42}
 .pc-xh{position:absolute;left:50%;top:50%;z-index:7;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.4);pointer-events:none;transition:width .12s,height .12s,margin .12s}
@@ -12618,7 +12618,7 @@ function tjDrivePre(dt){const D=OUT.drv;if(!D)return;const car=D.car;D.t+=dt;con
     if(d<1.8&&Math.abs(D.v)>2.5){rbxDie(h,null);h.root.rotation.order='YXZ';h.root.rotation.set(-Math.PI/2,D.yaw+Math.PI/2,0);h.root.position.y=.08;a.kind='dead';G.flags.ranOver=(G.flags.ranOver||0)+1;FX=[];mor(-12);trust(-2);OUT.fx.push(...FX);outStat();sv3Shake(1.0);SND.boom(false,.45);vib([80,40,120]);outNote('<b>사람을 쳤다</b><div>사기 −12 · 이웃 신뢰 −2. 사람이 있는 길에서는 천천히.</div>',3600);D.v*=.4}
     else if(d<6&&Math.abs(D.v)>6&&h.pose!=='run'&&a.kind!=='rok'&&a.kind!=='inj')h.setPose('run')})}
 function tjDrivePost(dt){const D=OUT.drv;if(!D)return;const car=D.car,cam=SV3.cam;const cy=D.yaw+FP3.yaw;const dist=7.2,hgt=3.0;const tx=car.position.x-Math.sin(cy)*dist,tz=car.position.z-Math.cos(cy)*dist;
-  if(!D.cam){D.cam=new T.Vector3(tx,hgt,tz)}const k=Math.min(1,dt*4);D.cam.x+=(tx-D.cam.x)*k;D.cam.z+=(tz-D.cam.z)*k;D.cam.y+=(hgt-FP3.pitch*2-D.cam.y)*k;cam.position.copy(D.cam);cam.lookAt(car.position.x+Math.sin(cy)*6,1.0,car.position.z+Math.cos(cy)*6);
+  if(!D.cam){D.cam=new T.Vector3(tx,hgt,tz)}const k=Math.min(1,dt*4);D.cam.x+=(tx-D.cam.x)*k;D.cam.z+=(tz-D.cam.z)*k;D.cam.y+=(Math.max(1.3,hgt-FP3.pitch*2)-D.cam.y)*k;cam.position.copy(D.cam);cam.lookAt(car.position.x+Math.sin(cy)*6,1.0,car.position.z+Math.cos(cy)*6);
   cam.rotation.z+=SV3.shake*Math.sin(SV3.t*37)*.02}
 /* 세운 차의 충돌: 비스듬히 선 차를 축 정렬 상자 하나로 감싸면 옆자리까지 막혀(내린 사람이 상자 안에 갇힌다) — 차 길이를 따라 작은 상자 3개로 */
 function tjCarBoxes(car){const y=car.rotation.y,fx=Math.sin(y),fz=Math.cos(y);return [-1.35,0,1.35].map(k=>{const cx=car.position.x+fx*k,cz=car.position.z+fz*k;return new T.Box3(new T.Vector3(cx-.82,0,cz-.82),new T.Vector3(cx+.82,1.5,cz+.82))})}
@@ -13256,7 +13256,7 @@ function perfStartup(){try{const m=performance.getEntriesByName('sot-title')[0];
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.3';
+const APP_VER='9.3.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13792,7 +13792,7 @@ function ridePre(dt){const R=OUT.ride;if(!R)return;const K=RIDE_K[R.kind],M=R.me
 function ridePost(dt){const R=OUT.ride;if(!R)return;const K=RIDE_K[R.kind],M=R.mesh;if(RIDE.rider)try{rideRig(RIDE.rider,R,dt)}catch(e){}
   /* 둘러보기를 놓으면 카메라가 천천히 뒤로 돌아온다 */let looking=false;for(const k in FP3.ptr){if(FP3.ptr[k].role==='look'){looking=true;break}}if(!looking&&Math.abs(R.v)>1.5)FP3.yaw*=Math.max(0,1-dt*1.2);
   const cam=SV3.cam;const cy=R.yaw+FP3.yaw;let dist=K.cd;let tx=M.position.x-Math.sin(cy)*dist,tz=M.position.z-Math.cos(cy)*dist;for(let k=0;k<5&&FP3.blocked(tx,tz,.3);k++){dist*=.8;tx=M.position.x-Math.sin(cy)*dist;tz=M.position.z-Math.cos(cy)*dist}
-  if(!R.cam)R.cam=new T.Vector3(tx,K.ch,tz);const kk=Math.min(1,dt*5);R.cam.x+=(tx-R.cam.x)*kk;R.cam.z+=(tz-R.cam.z)*kk;R.cam.y+=(K.ch-FP3.pitch*1.6-R.cam.y)*kk;
+  if(!R.cam)R.cam=new T.Vector3(tx,K.ch,tz);const kk=Math.min(1,dt*5);R.cam.x+=(tx-R.cam.x)*kk;R.cam.z+=(tz-R.cam.z)*kk;R.cam.y+=(Math.max(1.05,K.ch-FP3.pitch*1.6)-R.cam.y)*kk;
   cam.position.copy(R.cam);cam.lookAt(M.position.x+Math.sin(cy)*3.5,1.0,M.position.z+Math.cos(cy)*3.5);cam.rotation.z+=SV3.shake*Math.sin(SV3.t*37)*.02}
 
 /* ---------- 연결 ---------- */
@@ -13985,6 +13985,7 @@ function fpdFov(sp,fp,dt){const k=Math.min(1,Math.max(0,(sp-4)/14));const want=(
 function fpdFovReset(){const cam=SV3.cam;FPD.fov=62;if(cam&&Math.abs(cam.fov-62)>.01){cam.fov=62;cam.updateProjectionMatrix()}}
 function fpdLookBack(dt){/* 둘러보기를 놓으면 앞으로 돌아온다 */let looking=false;for(const k in FP3.ptr){if(FP3.ptr[k].role==='look'){looking=true;break}}if(!looking){FP3.yaw*=Math.max(0,1-dt*2.2);FP3.pitch+=(-.08-FP3.pitch)*Math.min(1,dt*1.5)}FP3.yaw=clamp(FP3.yaw,-1.9,1.9)}
 (function(){const base=window.tjDrivePost;if(typeof base!=='function')return;window.tjDrivePost=function(dt){const r=base.apply(this,arguments);const D=OUT.drv;if(!D)return r;const car=D.car;const fp=FPD.mode==='fp';const ck=fpdCockpit(car);ck.visible=fp;
+  if(!fp)fpdLookBack(dt);
   if(fp){fpdLookBack(dt);car.updateMatrixWorld(true);const e=car.localToWorld(_fv[0].set(.38,1.16,-.2));const cam=SV3.cam;cam.position.copy(e);cam.rotation.order='YXZ';const sh=SV3.shake||0;cam.rotation.set(clamp(FP3.pitch*.7,-.5,.35)-.05+(car.rotation.x||0)+sh*Math.sin(SV3.t*47)*.02,D.yaw+Math.PI+FP3.yaw,-(car.rotation.z||0)+sh*Math.sin(SV3.t*37)*.02)}
   if(car.userData.wheel)car.userData.wheel.rotation.z=-(D.steer||0)*3;FPD.clT-=dt;if(fp&&FPD.clT<=0){FPD.clT=.12;fpdClusterDraw(car,Math.abs(D.v)*3.6,Math.min(1,Math.abs(D.v)/16+Math.max(0,FP3.mv.y)*.2))}
   fpdFov(Math.abs(D.v),fp,dt);return r}})();
@@ -13998,7 +13999,7 @@ function fpdVM(kind){const sc=OUT.scene;if(!sc)return null;const k='vm_'+kind;if
   if(kind==='kick')MM(GG.box(.09,.03,.05,.01),mat('#101214',{r:.3,e:'#3a8aff',ei:.6}),0,.02,.01,{p:g,cast:false,recv:false});
   g.visible=false;sc.add(g);FPD[k]=g;return g}
 function fpdVMHide(){for(const k of ['vm_bike','vm_kick','vm_moto'])if(FPD[k])FPD[k].visible=false}
-(function(){const base=window.ridePost;if(typeof base!=='function')return;window.ridePost=function(dt){const r=base.apply(this,arguments);const R=OUT.ride;if(!R)return r;const h=RIDE.rider;const fp=FPD.mode==='fp';
+(function(){const base=window.ridePost;if(typeof base!=='function')return;window.ridePost=function(dt){const r=base.apply(this,arguments);const R=OUT.ride;if(!R)return r;const h=RIDE.rider;const fp=FPD.mode==='fp';if(!fp)fpdLookBack(dt);
   if(h&&h.b&&h.b.head){const want=fp?.001:1;if(Math.abs(h.b.head.scale.x-want)>1e-4)h.b.head.scale.setScalar(want)}
   if(fp&&h&&h.b&&h.b.head){fpdLookBack(dt);const M=R.mesh;M.updateMatrixWorld(true);h.b.head.getWorldPosition(_fv[0]);const fwd=_fv[1].set(0,0,1).applyQuaternion(M.quaternion),up=_fv[2].set(0,1,0).applyQuaternion(M.quaternion);
     const cam=SV3.cam;cam.position.copy(_fv[0]).addScaledVector(up,.07).addScaledVector(fwd,.1);cam.rotation.order='YXZ';const sp=Math.abs(R.v);const jit=R.kind==='moto'&&sp>11?(sp-11)*.0018:0;
@@ -15969,7 +15970,7 @@ function pcRelease(){PC.keys=Object.create(null);if(PC.drove){FP3.mv.x=FP3.mv.y=
   if(PC.bfire){PC.bfire=false;try{const fb=$('#bFireB');if(fb)fb.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,pointerType:'mouse'}))}catch(e){}}
   if(PC.guard){PC.guard=false;try{if(typeof BR!=='undefined'&&BR.on){BR.me.guard=false;const g=document.querySelector('[data-br=guard]');if(g)g.classList.remove('on')}}catch(e){}}
   if(FP3.ptr&&FP3.ptr.pc)delete FP3.ptr.pc}
-document.addEventListener('pointerlockchange',()=>{PC.locked=!!document.pointerLockElement;try{document.body.classList.toggle('pc-lock',PC.locked)}catch(e){}if(!PC.locked){PC.fire=false;PC.ads=false;PC.bfire=false;PC.guard=false;pcRelease()}PC.hintT=0;pcHint()});
+document.addEventListener('pointerlockchange',()=>{PC.locked=!!document.pointerLockElement;try{document.body.classList.toggle('pc-locked',PC.locked)}catch(e){}if(!PC.locked){PC.fire=false;PC.ads=false;PC.bfire=false;PC.guard=false;pcRelease()}PC.hintT=0;pcHint()});
 document.addEventListener('pointerlockerror',()=>{PC.locked=false});
 /* 마우스로 장면을 누르면: 안 잠겼으면 잠그고, 잠겼으면 동작(사격·줍기·격투). 버튼·카드·판은 그대로 둔다(터치 처리기로 가지 않게 여기서 멈춘다) */
 const PC_CTRL='button,a,input,select,textarea,label,.overlay,.sv3-panel,[data-a],[data-g3],[data-b],[data-br],[data-s4],.b-pick,.tip84,.out-enc,.mis-panel,.tm-panel,#tjBig,.tj-big,.bx-panel,.owc-pause,.owc-res';
