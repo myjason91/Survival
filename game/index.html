@@ -1271,6 +1271,8 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .hero-card:disabled{opacity:.42;cursor:default}.hero-card .hero-ico{font-size:22px;line-height:1}.hero-card b{font-size:13px}.hero-card small{font-size:10px;color:#cfd6e0}.hero-card em{font-style:normal;font-size:9.5px;line-height:1.25;color:#e8dcb0;margin-top:2px}
 .hero-chip{display:inline-flex;align-items:center;gap:4px;background:#2a2140;border:1px solid #8f6cff;color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;margin-right:4px}
 @media(max-width:700px){.hero-grid{grid-template-columns:repeat(2,1fr)}}
+/* v9.7: 폰 가로(높이 520px 이하)에선 히어로 카드를 세로 목록으로 */
+@media(max-height:520px){.hero-grid{display:flex;flex-direction:column;gap:4px}.hero-card{flex-direction:row;align-items:center;text-align:left;min-height:0;padding:6px 10px;gap:8px}.hero-card .hero-ico{font-size:20px}.hero-card b{font-size:12.5px;white-space:nowrap}.hero-card small{white-space:nowrap}.hero-card em{margin:0 0 0 auto;max-width:50%;text-align:right}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13328,7 +13330,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.6';
+const APP_VER='9.7';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13664,8 +13666,9 @@ const VLT={hintT:-1e9,n:0};
   x.fillStyle='#fff';x.fillRect(0,0,N,N);x.strokeStyle='#000';x.lineWidth=1.6;x.lineCap='round';for(const [a,b] of D.FENCE){x.beginPath();x.moveTo(a[0]+R,a[1]+R);x.lineTo(b[0]+R,b[1]+R);x.stroke()}
   const d=x.getImageData(0,0,N,N).data;const f=new Uint8Array(N*N);for(let i=0;i<N*N;i++)f[i]=d[i*4]<160?1:0;O.fen=f}catch(e){}return O}})();
 /* 그 자리의 장애물 종류: 0 빈 곳 · 2 넘을 수 없음(건물·물·높은 것) · {h} 넘을 수 있는 높이 */
-function vltKind(x,z){let low=0;
-  for(const b of FP3.boxes||[]){if(x+.2>b.min.x&&x-.2<b.max.x&&z+.2>b.min.z&&z-.2<b.max.z){if(b.max.y>1.85)return 2;low=Math.max(low,b.max.y)}}
+function vltMaxH(){return 1.85}/* v9.7: 후크 히어로가 올린다 */
+function vltKind(x,z){let low=0;const mh=vltMaxH();
+  for(const b of FP3.boxes||[]){if(x+.2>b.min.x&&x-.2<b.max.x&&z+.2>b.min.z&&z-.2<b.max.z){if(b.max.y>mh)return 2;low=Math.max(low,b.max.y)}}
   const O=FP3.occ;if(O){const n=O.n,i=Math.floor((x-O.x0)/O.cs),j=Math.floor((z-O.z0)/O.cs);if(i<0||j<0||i>=n||j>=n)return 2;const k=j*n+i;if(O.b[k]){if(O.fen&&O.fen[k])low=Math.max(low,1.6);else return 2}}
   if(FP3.bounds){const B=FP3.bounds;if(x<B[0]||x>B[2]||z<B[1]||z>B[3])return 2}
   return low>0?{h:low}:0}
@@ -17023,11 +17026,15 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&OPN.on)OP
 TEAM.max=4;
 TM_SLOT.length=0;TM_SLOT.push({n:'왼쪽 앞',u:-2.1,f:2.4,face:-.62},{n:'오른쪽 앞',u:2.1,f:2.4,face:.62},{n:'왼쪽 뒤',u:-1.7,f:-2.8,face:Math.PI+.5},{n:'오른쪽 뒤',u:1.7,f:-2.8,face:Math.PI-.5});
 const FAM_SLOT={sp:{n:'내 옆',u:.95,f:-.6,face:0},kid:{n:'내 뒤',u:-.8,f:-1.1,face:0},kid2:{n:'내 뒤',u:.2,f:-1.7,face:0},eld:{n:'내 뒤',u:-.3,f:-1.5,face:0}};
+/* v9.7: 1인칭 총기 모드에선 가족은 더 뒤로, 팀 앞 둘은 옆으로(시야·사선 비움) */
+const FAM_SLOT_FP={sp:{n:'내 뒤',u:1.1,f:-2.3,face:0},kid:{n:'내 뒤',u:-1.0,f:-2.6,face:0},kid2:{n:'내 뒤',u:.3,f:-3.1,face:0},eld:{n:'내 뒤',u:-.4,f:-2.9,face:0}};
+const TM_SLOT_FP=[{n:'왼쪽 옆',u:-2.9,f:.4,face:-1.2},{n:'오른쪽 옆',u:2.9,f:.4,face:1.2}];
+function grpGunFp(){return typeof GUN!=='undefined'&&!!GUN.on&&!!GUN.fp}
 const FAM={list:[],on:false,hid:false,uiT:0,t:0};
 const GRP={brd:null,vlt:[],carry:[],pc:null,uiT:0};
 (function(){const b=window.tmFreeSlot;window.tmFreeSlot=function(){return [0,1,2,3].find(s=>!tmLive().some(m=>m.slot===s))}})();
 /* 대형 자리: 팀원은 슬롯, 가족은 m.S */
-(function(){const b=window.tmMove;window.tmMove=function(m,dt,C){if(m.vault){grpVaultMove(m,dt);return}if(m.carry||m.carried)return;return b.apply(this,arguments)}})();
+(function(){const b=window.tmMove;window.tmMove=function(m,dt,C){if(m.vault){grpVaultMove(m,dt);return}if(m.carry||m.carried)return;if(!m.S&&m.slot<2&&grpGunFp()){m.S=TM_SLOT_FP[m.slot];try{return b.apply(this,arguments)}finally{m.S=null}}return b.apply(this,arguments)}})();
 /* ---------- 가족 동행 ---------- */
 function famOutOn(){return store.get('sg.famOut',true)!==false}
 function famKinds(){if(!G||!G.fam)return[];return G.fam.filter(m=>m.id!=='me'&&!m.crit&&m.hp>20).slice(0,2)}
@@ -17042,7 +17049,7 @@ function famStep(dt){if(!OUT.on||!FAM.list.length)return;FAM.t+=dt;/* v9.5.1: �
   if(hide)return;
   /* 팀원이 없으면 tmStep이 머리 방향·속도·발자취를 갱신하지 않으니 여기서 */if(!TEAM.list.length){if(!TEAM.lp)TEAM.lp={x:p.x,z:p.z};const ix=dt>1e-4?1/dt:0;const vx=(p.x-TEAM.lp.x)*ix,vz=(p.z-TEAM.lp.z)*ix;TEAM.lp.x=p.x;TEAM.lp.z=p.z;if(Math.hypot(vx,vz)<=18){const k=Math.min(1,dt*4);TEAM.hv.x+=(vx-TEAM.hv.x)*k;TEAM.hv.z+=(vz-TEAM.hv.z)*k;const ls0=Math.hypot(TEAM.hv.x,TEAM.hv.z);if(ls0>.6){const want=Math.atan2(TEAM.hv.x,TEAM.hv.z);let dy=want-TEAM.head;dy=Math.atan2(Math.sin(dy),Math.cos(dy));TEAM.head+=dy*Math.min(1,dt*(ls0>3?3:2))}}const T0=TEAM.trail;const last=T0[T0.length-1];if(!last||Math.hypot(p.x-last.x,p.z-last.z)>.6){T0.push({x:p.x,z:p.z});if(T0.length>140)T0.shift()}}
   const H=TEAM.head,ls=Math.hypot(TEAM.hv.x,TEAM.hv.z);const C={p,ls,H,fx:Math.sin(H),fz:Math.cos(H),rx:-Math.cos(H),rz:Math.sin(H)};
-  for(const a of FAM.list){if(a.d.st==='kia'||a.carried||a.carry)continue;a.h.update(dt);/* 가족은 뛰지 않고 걷는다(아이·어르신은 더 느리게) */const sp0=FP3.speed;try{tmMove(a,dt,C);if(a.v>a.ms){a.v=a.ms}}catch(e){console.error(e)}
+  const fpS=grpGunFp();for(const a of FAM.list){if(a.d.st==='kia'||a.carried||a.carry)continue;a.S=(fpS?FAM_SLOT_FP:FAM_SLOT)[a.fk]||a.S;a.h.update(dt);/* 가족은 뛰지 않고 걷는다(아이·어르신은 더 느리게) */const sp0=FP3.speed;try{tmMove(a,dt,C);if(a.v>a.ms){a.v=a.ms}}catch(e){console.error(e)}
     /* 멀리 처지면 서서 부른다 */const far=Math.hypot(a.h.root.position.x-p.x,a.h.root.position.z-p.z);if(far>22&&FAM.t-(a.callT||-99)>12){a.callT=FAM.t;try{bubSay(a.h,a.fk==='sp'?'여보, 같이 가요!':a.fk==='eld'?'천천히… 천천히 가자':'엄마 아빠 기다려!',2.6,'vic')}catch(e){}}
     if(far>60)tmPlace(a,2)}
   FAM.uiT-=dt;if(FAM.uiT<=0){FAM.uiT=.6;famUI()}}
@@ -17325,10 +17332,10 @@ if(typeof HELP84!=='undefined'){HELP84.push(['돌발 상황 15종(v9.7)','기존
    능력: 가디언 = 내가 맞는 피해를 방패로 막는다(밖 65%·교전 50%) · 엑소 = 중상자를 번쩍 들어 2배 빠르게 후송, 치료 6초 · 후크 = 담 넘기가 2배 빠르고 일행도 바로 따라 넘는다 · 올빼미 = 60m 안 적·물건을 8초마다 표시, 밤엔 총소리에 적이 절반만 반응한다 */
 const HERO_DEF=[
  {id:'guard',nm:'가디언',ico:'🛡',role:'방패 수호자',av:'m_8',suit:'#1d3f8e',suit2:'#c9d0da',acc:'#f4c542',glow:'#ffd866',power:'육각 방패 — 내가 맞을 피해를 앞에서 막는다(밖 65%·교전 50%)',desc:'포탄 파편도 튕겨내는 육각 방패. 늘 내 앞에서 걷는다.',line:'제 뒤에 서세요!',cape:1},
- {id:'exo',nm:'엑소',ico:'🤖',role:'구조 외골격',av:'f_8',suit:'#2b2f35',suit2:'#ff7a1a',acc:'#4df3ff',glow:'#4df3ff',power:'강화 외골격 — 쓰러진 사람을 번쩍 들어 2배 빠르게 후송(치료 6초)',desc:'잔해를 들어 올리고 사람을 업고 달린다.',line:'제가 업을게요!'},
- {id:'hook',nm:'후크',ico:'🪝',role:'갈고리 로프 구조대원',av:'m_20',suit:'#1f5e3a',suit2:'#1b1b1b',acc:'#ffd84a',glow:'#ffe57a',power:'갈고리 로프 — 담·울타리를 2배 빠르게 넘고 일행도 바로 따라 넘는다',desc:'로프 한 줄이면 어디든 오른다.',line:'로프 갑니다!'},
+ {id:'exo',nm:'엑소',ico:'🤖',role:'구조 외골격',av:'f_8',suit:'#2b2f35',suit2:'#ff7a1a',acc:'#4df3ff',glow:'#4df3ff',power:'강화 외골격 — 쓰러진 사람을 번쩍 들어 2배 빠르게 후송(치료 6초) · 교전 땐 탄창 1개',desc:'잔해를 들어 올리고 사람을 업고 달린다.',line:'제가 업을게요!'},
+ {id:'hook',nm:'후크',ico:'🪝',role:'갈고리 로프 구조대원',av:'m_20',suit:'#1f5e3a',suit2:'#1b1b1b',acc:'#ffd84a',glow:'#ffe57a',power:'갈고리 로프 — 담·울타리를 2배 빠르게, 3m 벽까지 넘고 일행도 바로 따라 넘는다 · 교전 땐 재장전 30% 빠름',desc:'로프 한 줄이면 어디든 오른다.',line:'로프 갑니다!'},
  {id:'kid',nm:'리틀 레인저',ico:'🧢',role:'꼬마 구조대원 + 동물 친구',av:'mc_1',suit:'#1f3b73',suit2:'#ff8a1f',acc:'#ffd23f',glow:'#8fe3ff',power:'어깨 친구(새·병아리·미니 로봇 중 설정) — 위험한 사람이 다가오면 먼저 알려주고, 60m 안 물건을 찾아준다',desc:'모자 쓴 꼬마 구조대원. 어깨 위 친구가 늘 먼저 본다.',line:'내가 먼저 갈게!',pet:'bird',kid:1},
- {id:'owl',nm:'올빼미',ico:'🦉',role:'야간 정찰자',av:'f_14',suit:'#2b1e5e',suit2:'#8f6cff',acc:'#ffb347',glow:'#ffb347',power:'야간 투시 — 60m 안 적·물건이 8초마다 표시되고, 밤엔 적이 나를 늦게 알아챈다',desc:'밤에도 다 보인다. 소리 없이 앞장선다.',line:'제가 먼저 볼게요.',cape:1}];
+ {id:'owl',nm:'올빼미',ico:'🦉',role:'야간 정찰자',av:'f_14',suit:'#2b1e5e',suit2:'#8f6cff',acc:'#ffb347',glow:'#ffb347',power:'야간 투시 — 60m 안 적·물건이 8초마다 표시되고(교전 중에도), 밤엔 적이 나를 늦게 알아챈다',desc:'밤에도 다 보인다. 소리 없이 앞장선다.',line:'제가 먼저 볼게요.',cape:1}];
 const HERO={cur:null,t:0,uiT:0,fx:[],marks:[],scanT:0,blockT:-9,noteT:-9,texs:{}};
 function heroDef(id){return HERO_DEF.find(d=>d.id===id)}
 function heroDay(){return Math.floor(Math.max(0,(G&&G.turn)||0)/4)}
@@ -17424,7 +17431,8 @@ function heroStep(dt){const a=HERO.cur;heroFxStep(dt);if(!a||!OUT.on)return;HERO
   if(a.d.st==='kia')return;
   /* 착지 */const E=a.ent;if(E){if(E.ph==='drop'){E.t+=dt;const u=Math.min(1,E.t/.8);h.root.position.y=E.y0*(1-u)*(1-u);if(u>=1){E.ph='land';E.t=0;h.root.position.y=0;sv3Shake(.35);heroDust(h.root.position);try{SFX.step('concrete')}catch(e){}try{bubSay(h,a.D.line,2.6,'')}catch(e){}}return}
     if(E.ph==='land'){E.t+=dt;h.update(dt);if(E.t>.75){a.ent=null;try{h.setPose('idle',true)}catch(e){}}return}}
-  /* 교전·운전·건물 안에서는 숨는다 */const hide=heroBusy();if(hide!==!!a.hid){a.hid=hide;if(!(GRP.brd&&GRP.brd.ph==='in'))h.root.visible=!hide;if(!hide&&!a.carry){const S=a.S,H=TEAM.head;h.root.position.set(p.x+Math.sin(H)*S.f-Math.cos(H)*S.u,0,p.z+Math.cos(H)*S.f+Math.sin(H)*S.u);a.v=0}}
+  /* 교전 중: 내 옆 엄폐 자리에 선다 */if(typeof OWC!=='undefined'&&OWC.on&&a.owc){heroOwcStep(dt);return}
+  /* 운전·건물 안에서는 숨는다 */const hide=heroBusy();if(hide!==!!a.hid){a.hid=hide;if(!(GRP.brd&&GRP.brd.ph==='in'))h.root.visible=!hide;if(!hide&&!a.carry){const S=a.S,H=TEAM.head;h.root.position.set(p.x+Math.sin(H)*S.f-Math.cos(H)*S.u,0,p.z+Math.cos(H)*S.f+Math.sin(H)*S.u);a.v=0}}
   if(hide)return;
   /* 팀원·가족이 없으면 머리 방향·발자취·TEAM.t를 여기서 갱신 */if(!TEAM.list.length&&!(typeof FAM!=='undefined'&&FAM.list.length)){TEAM.t+=dt;if(!TEAM.lp)TEAM.lp={x:p.x,z:p.z};const ix=dt>1e-4?1/dt:0;const vx=(p.x-TEAM.lp.x)*ix,vz=(p.z-TEAM.lp.z)*ix;TEAM.lp.x=p.x;TEAM.lp.z=p.z;if(Math.hypot(vx,vz)<=18){const k=Math.min(1,dt*4);TEAM.hv.x+=(vx-TEAM.hv.x)*k;TEAM.hv.z+=(vz-TEAM.hv.z)*k;const ls0=Math.hypot(TEAM.hv.x,TEAM.hv.z);if(ls0>.6){const want=Math.atan2(TEAM.hv.x,TEAM.hv.z);let dy=want-TEAM.head;dy=Math.atan2(Math.sin(dy),Math.cos(dy));TEAM.head+=dy*Math.min(1,dt*(ls0>3?3:2))}}const T0=TEAM.trail;const last=T0[T0.length-1];if(!last||Math.hypot(p.x-last.x,p.z-last.z)>.6){T0.push({x:p.x,z:p.z});if(T0.length>140)T0.shift()}}
   /* 부축 중(엑소): 2배 속도·치료 6초 */if(a.carry){const C=a.carry;if(C.ph==='walk'&&C.safe){const Pc=h.root.position;const dx=C.safe.x-Pc.x,dz=C.safe.z-Pc.z,d=Math.hypot(dx,dz);if(d>3.6){const sp=1.25;const nx=Pc.x+dx/d*sp*dt,nz=Pc.z+dz/d*sp*dt;if(!FP3.blocked(nx,nz,.26)){Pc.x=nx;Pc.z=nz}}}else if(C.ph==='to'){const Pc=h.root.position,Pi=C.inj.h.root.position;const dx=Pi.x-Pc.x,dz=Pi.z-Pc.z,d=Math.hypot(dx,dz);if(d>1.2){const sp=4.4;const nx=Pc.x+dx/d*sp*dt,nz=Pc.z+dz/d*sp*dt;if(!FP3.blocked(nx,nz,.26)){Pc.x=nx;Pc.z=nz}}}else if(C.ph==='treat')C.t+=dt*2.33;heroCape(a,dt);return}
@@ -17474,7 +17482,18 @@ function heroUI(){const b=$('#oBar');if(!b||!OUT.on)return;let t=b.querySelector
 /* ---------- 걸이 ---------- */
 (function(){const b=window.tmStep;window.tmStep=function(dt){const r=b.apply(this,arguments);try{heroStep(dt)}catch(e){console.error(e)}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(){try{heroClear()}catch(e){}return b.apply(this,arguments)}})();
-(function(){const b=window.tmOwcJoin;if(typeof b!=='function')return;window.tmOwcJoin=function(){try{if(HERO.cur)HERO.cur.h.root.visible=false}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 교전(같은 배경 OWC)에 함께 선다 — 리틀 레인저(아이)는 뒤에 숨는다 ---------- */
+function heroOwcJoin(){const a=HERO.cur;if(!a||a.d.st==='kia'||!OWC.on)return;const h=a.h;if(a.hk==='kid'||a.ent){h.root.visible=false;a.owc=null;return}
+  const F=OWC.face||{x:0,z:1},ps=OWC.pSpot||OWC.A||{x:FP3.pos.x,z:FP3.pos.z};const rx=-F.z,rz=F.x;const o=a.hk==='guard'?1.7:-1.7,bk=a.hk==='guard'?.2:-1.0;let x=ps.x+rx*o+F.x*bk,z=ps.z+rz*o+F.z*bk;
+  if(typeof owcFree==='function'&&!owcFree(x,z,.4)&&typeof owcNearFree==='function'){const q=owcNearFree(x,z,5);if(q){x=q.x;z=q.z}}
+  h.root.position.set(x,0,z);h.root.rotation.y=Math.atan2(F.x,F.z);h.root.visible=true;try{h.setPose(a.hk==='guard'?'idle':'crouch',true)}catch(e){}a.owc={x,z,yaw:Math.atan2(F.x,F.z),t:0,gave:0};a.hid=true;
+  const D=a.D;try{if(typeof owcLater==='function')owcLater(1.6,()=>{if(!OWC.on||OWC.done)return;if(a.hk==='exo'&&typeof OWC_W!=='undefined'){const n=OWC_W.mag||20;OWC.res=(OWC.res||0)+n;if(typeof owcAmmoUI==='function')owcAmmoUI();owcSay(D.nm,`탄창 하나 더 드릴게요! (+${n})`,1)}else if(a.hk==='guard')owcSay(D.nm,'오른쪽은 제 방패가 막습니다!',1);else if(a.hk==='hook')owcSay(D.nm,'탄창은 제가 바로 넘겨드려요 — 재장전 빨라요!',1);else if(a.hk==='owl')owcSay(D.nm,'적 위치, 붉게 찍어 드릴게요.',1)})}catch(e){}}
+function heroOwcStep(dt){const a=HERO.cur;if(!a||!a.owc||!OWC.on)return;const h=a.h,O=a.owc;O.t+=dt;h.update(dt);h.root.position.set(O.x,0,O.z);h.root.rotation.y=O.yaw;heroPetStep(a,dt);
+  if(a.hk==='hook'&&OWC.reload>0)OWC.reload=Math.max(0,OWC.reload-dt*.43);/* 재장전 30% 빠름 */
+  if(a.hk==='owl'){HERO.scanT-=dt;if(HERO.scanT<=0){HERO.scanT=6;heroMarksClear();let n=0;(OWC.en||[]).forEach(e=>{if(!e||!e.h||e.civ||e.prot||e.hp<=0||e.gone||e.dead)return;const q=e.h.root.position;if(Math.hypot(q.x-FP3.pos.x,q.z-FP3.pos.z)>80)return;n++;const m=new T.Mesh(GG.sph(.17,8),new T.MeshStandardMaterial({color:'#ff6a4a',emissive:'#ff6a4a',emissiveIntensity:1.8,transparent:true,opacity:.95}));m.castShadow=false;m.position.set(q.x,2.35,q.z);OUT.scene.add(m);HERO.marks.push({m,n:{h:e.h,get dead(){return e.hp<=0||!!e.gone||!!e.dead}},t:0})})}heroMarksStep(dt)}}
+(function(){const b=window.tmOwcJoin;if(typeof b!=='function')return;window.tmOwcJoin=function(){const r=b.apply(this,arguments);try{heroOwcJoin()}catch(e){console.error(e)}return r}})();
+(function(){const b=window.owcStep;if(typeof b!=='function')return;window.owcStep=function(dt){const r=b.apply(this,arguments);try{heroOwcStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.owcClose;if(typeof b!=='function')return;window.owcClose=function(){try{const a=HERO.cur;if(a&&a.owc){a.owc=null;heroMarksClear();HERO.scanT=0}}catch(e){}return b.apply(this,arguments)}})();
 /* 히어로 시안(스튜디오 캡처용): 4인이 나란히 선 장면 */
 function heroStudio(sc,champ){const L=[];const list=HERO_DEF.slice();if(champ)list.push({id:'champ',champ:1});const n=list.length;list.forEach((D,i)=>{let h=null;if(D.champ){h=makeHumanRBX(RBX_LOOK.me,{pose:'idle',seed:9});if(h)heroChampSuit(h)}else h=heroMake(D);if(!h)return;h.root.position.set((i-(n-1)/2)*1.12,0,D.kid?.35:0);h.root.rotation.y=(i-(n-1)/2)*-.1;try{h.setPose('idle',true)}catch(e){}sc.add(h.root);L.push(h)});return L}
 if(typeof HELP84!=='undefined'){HELP84.push(['탕정 히어로즈(v9.6)','상황판(🚨)에서 하루 1회 히어로를 부른다 — 하늘에서 내려와 내 앞에서 함께 걷는다(이번 외출 동안). 가디언은 내가 맞는 피해를 방패로 막고, 엑소는 쓰러진 사람을 번쩍 들어 2배 빠르게 후송하며, 후크는 담 넘기를 2배 빠르게 하고 일행도 바로 따라 넘게 한다. 올빼미는 60m 안 위험한 사람·물건을 8초마다 붉게 표시하고 밤엔 적이 총소리를 늦게 알아챈다.'])}
@@ -17500,6 +17519,9 @@ function heroChampOn(){return store.get('sg.meLook','')==='champ'}
 /* 설정: 리틀 레인저 어깨 친구(종류·이름) — 기기에만 저장 */
 function heroPetRows(){if(typeof s4Seg!=='function')return '';const nm=heroPetName();return s4Seg('heropet','리틀 레인저 어깨 친구','새·병아리·미니 로봇 중 하나 — 다음 호출부터',[['bird','하늘색 새'],['chick','노란 병아리'],['bot','미니 로봇']],store.get('sg.heroPet','bird'))+`<div class="seg"><div class="seg-label">친구 이름 <span class="small mut">${nm?nm+' — 경고 말풍선에 쓴다':'아직 없음 (아이가 지어주면 좋다)'}</span></div><button class="btn sm" data-g3="heropetname">${nm?'바꾸기':'이름 짓기'}</button></div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=heropetname]');if(!b)return;e.preventDefault();e.stopPropagation();let v=null;try{v=window.prompt('어깨 친구 이름 (12자까지)',heroPetName())}catch(x){}if(v==null)return;const c=(typeof clean==='function'?clean(v):String(v)).trim().slice(0,12);store.set('sg.heroPetName',c);toast(c?`친구 이름: ${c}`:'이름을 지웠다');try{const p=document.querySelector('[data-s4=v][data-v="ctl"]');if(typeof s4Render==='function')s4Render()}catch(x){}},true);
+
+/* 후크: 3m 담·벽까지 넘는다(건물 안으로는 아님) */
+(function(){const b=window.vltMaxH;if(typeof b!=='function')return;window.vltMaxH=function(){return heroActive('hook')?3.0:b.apply(this,arguments)}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
