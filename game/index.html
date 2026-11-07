@@ -6313,7 +6313,7 @@ function newGame(o){
   const my=o.fam==='my'?getMy():null;
   if(my){
     if(my.sp.on)fam.push({id:'sp',n:(my.sp.n||'배우자').slice(0,8),k:'adult',hp:100,c:[]});
-    my.kids.slice(0,2).forEach((x,i)=>fam.push({id:i?'kid2':'kid',n:(x.n||(my.kids.length>1?(i?'둘째':'첫째'):'아이')).slice(0,8),k:'kid',hp:100,c:[]}));
+    my.kids.slice(0,2).forEach((x,i)=>fam.push({id:i?'kid2':'kid',n:(x.n||(my.kids.length>1?(i?'둘째':'첫째'):'아이')).slice(0,8),k:'kid',g:x.g==='f'||x.g==='m'?x.g:'',a:clamp(Math.round(+x.a||0),0,17),hp:100,c:[]}));
     if(my.eld.on)fam.push({id:'eld',n:(my.eld.n||'어르신').slice(0,8),k:'eld',hp:100,c:[]});
     const sh=(my.sh||[]).filter(x=>x&&x.n).map(x=>({n:String(x.n).slice(0,40),k:SHK[x.k]?x.k:'ground',m:clamp(+x.m||1,1,60)}));
     home={floor:clamp(Math.round(+my.floor||12),1,60),dong:DONG_OK(my.dong),sh:sh.length?sh:home.sh,meet:(my.meet||'').slice(0,40)};
@@ -7584,7 +7584,7 @@ function vFamily(){
   return `<div class="hud"><button class="iconbtn" data-a="my-back" aria-label="뒤로">${ic('back')}</button><div class="hclk"><div class="eyebrow">우리 가족·우리 집</div><div class="sub">이 폰에만 저장된다</div></div><span class="sp"></span></div>
   <p class="small mut" style="margin:0">게임 속 가족 이름·층수·대피소가 실제 우리 집처럼 바뀐다. 입력한 내용은 이 폰에만 남고, 게임 코드나 공개 저장소에는 올라가지 않는다.</p>
   <div class="fcard"><div class="seg-label">배우자</div><div class="seg-opts">${tg('sp','1','함께 산다','',m.sp.on)}${tg('sp','0','없음','',!m.sp.on)}</div>${m.sp.on?inp('my-sp','sp.n',m.sp.n,'부를 이름 (예: 여보)'):''}</div>
-  <div class="fcard"><div class="seg-label">아이</div><div class="seg-opts">${[0,1,2].map(n=>tg('kids',n,n?n+'명':'없음','',m.kids.length===n)).join('')}</div>${m.kids.map((k,i)=>inp('my-kid'+i,'kids.'+i+'.n',k.n,m.kids.length>1?(i?'둘째 이름':'첫째 이름'):'아이 이름')).join('')}</div>
+  <div class="fcard"><div class="seg-label">아이</div><div class="seg-opts">${[0,1,2].map(n=>tg('kids',n,n?n+'명':'없음','',m.kids.length===n)).join('')}</div>${m.kids.map((k,i)=>{const g=k.g==='f'||k.g==='m'?k.g:(i?'f':'m');return inp('my-kid'+i,'kids.'+i+'.n',k.n,m.kids.length>1?(i?'둘째 이름':'첫째 이름'):'아이 이름')+`<div class="seg-opts">${tg('kg'+i,'m','아들','',g==='m')}${tg('kg'+i,'f','딸','',g==='f')}</div><label class="frow" for="my-kida${i}"><span>만 나이</span>${inp('my-kida'+i,'kids.'+i+'.a',k.a||'','살',1)}<span>살 · 게임 속 키·옷차림에 쓴다</span></label>`}).join('')}</div>
   <div class="fcard"><div class="seg-label">어르신 (함께 사는 부모님)</div><div class="seg-opts">${tg('eld','0','없음','',!m.eld.on)}${tg('eld','1','함께 산다','계단이 느리다',m.eld.on)}</div>${m.eld.on?inp('my-eld','eld.n',m.eld.n,'부를 이름 (예: 어머니)'):''}</div>
   <div class="fcard"><label class="frow" for="my-floor"><span class="seg-label" style="flex:1">우리 집 층수</span>${inp('my-floor','floor',m.floor,'층',1)}<span>층</span></label><span class="small faint">계단으로 내려갈 층 수가 된다.</span></div>
   <div class="fcard"><div class="seg-label">우리 동 <span class="small faint">우리 단지 8개 동 가운데</span></div><div class="seg-opts k4">${[101,102,103,104,105,106,107,108].map(n=>tg('dong',n,n+'동','',DONG_OK(m.dong)===n)).join('')}</div><span class="small faint">밖에서 집으로 드나드는 현관·현관 방어·빈집 표시가 이 동을 따른다. 이 기기에만 저장된다.</span></div>
@@ -7595,12 +7595,13 @@ function vFamily(){
 }
 function myOpt(k,v){const m=myDraft();
   if(k==='sp')m.sp.on=v==='1';else if(k==='eld')m.eld.on=v==='1';
-  else if(k==='kids'){const n=+v;while(m.kids.length<n)m.kids.push({n:''});m.kids.length=n}
+  else if(k==='kids'){const n=+v;while(m.kids.length<n)m.kids.push({n:'',g:m.kids.length?'f':'m',a:''});m.kids.length=n}
+  else if(k==='kg0'||k==='kg1'){const i=+k[2];if(m.kids[i])m.kids[i].g=v==='f'?'f':'m'}
   else if(k==='dong')m.dong=DONG_OK(v);
   else if(k==='sh0k'||k==='sh1k'){const i=+k[2];(m.sh[i]||(m.sh[i]={n:'',k:'park',m:3})).k=v}}
 function myImport(){const m=myDraft();const hb=readHandbookPlaces();hb.sh.forEach((s,i)=>{m.sh[i]={n:clean(s.n),k:s.k,m:s.m}});if(hb.meet)m.meet=clean(hb.meet)}
 function mySave(){const m=myDraft();
-  m.sp.n=clean(m.sp.n,8);m.eld.n=clean(m.eld.n,8);m.kids.forEach(k=>k.n=clean(k.n,8));m.meet=clean(m.meet,40);
+  m.sp.n=clean(m.sp.n,8);m.eld.n=clean(m.eld.n,8);m.kids.forEach((k,i)=>{k.n=clean(k.n,8);k.g=k.g==='f'||k.g==='m'?k.g:(i?'f':'m');const a=Math.round(+k.a||0);k.a=a>0?clamp(a,1,17):''});m.meet=clean(m.meet,40);
   m.floor=clamp(Math.round(+m.floor||1),1,60);m.dong=DONG_OK(m.dong);m.sh=m.sh.slice(0,2).map(s=>({n:clean(s.n,40),k:SHK[s.k]?s.k:'ground',m:clamp(Math.round(+s.m||1),1,60)}));
   store.set('sg.my',m);UI.setup=UI.setup||defaultSetup();UI.setup.fam='my';store.set('sg.setup',UI.setup);toast('저장했다. 다음 훈련부터 우리 가족으로 시작한다.');setScreen('setup')}
 document.addEventListener('input',e=>{const el=e.target.closest('[data-my]');if(!el||UI.screen!=='family')return;const m=myDraft();
@@ -10644,8 +10645,11 @@ function famLook(m){const k=m.k;const sd=(m.id.length*7+(m.n||'').length*3)%97;
   return{top:'#5d6f87',bot:'#2d3440',skin:SKINC[0],head:'short',hair:'#1d1a17',seed:sd}}
 function civLook(i){const c=CIV3[i%CIV3.length];return Object.assign({skin:SKINC[(i*3)%SKINC.length],seed:i},c,{life:0,carry:0})}
 /* 가족 아바타 선택: 배우자·아이·어르신 (이름에 따라 성별 추정, 아니면 기본값) */
-function famAvatar(m){const n=m.n||'';if(m.id==='sp')return /남편|아빠|아버지|신랑/.test(n)?'m_12':'f_5';if(m.id==='kid')return /딸|공주|이|아/.test(n)&&/딸/.test(n)?'fc_1':'mc_1';if(m.id==='kid2')return 'fc_1';if(m.k==='eld')return /아버지|아빠|할아버지|장인|시아버|아버님/.test(n)?'m_3':'f_14';return 'm_8'}
-function famHuman(m,pose){if(RBX.ok){const h=makeHumanRBX(famAvatar(m),{pose:pose||'idle',seed:m.id.length*3});if(h){h.root.userData.fam=m.id;h.fam=m;return h}}const h=makeHuman(famLook(m));if(m.k==='kid')h.root.scale.setScalar(.64);h.setPose(pose||'idle',true);h.root.userData.fam=m.id;return h}
+/* v10.1.1: 아이 성별·나이 — 판의 가족(g·a) → 이 기기 가족 설정 → 이름('딸') → 기본(첫째 아들 5세 · 둘째 딸 3세). 사용자: 첫째 아이가 밖에서 계속 여자아이 모형으로 나온다(만 5세 남자아이) */
+function famKidInfo(m){m=m||{};const i=m.id==='kid2'?1:0;let g=m.g,a=+m.a||0;try{const my=store.get('sg.my',null);const k=my&&Array.isArray(my.kids)&&my.kids[i];if(k){if(g!=='m'&&g!=='f'&&(k.g==='m'||k.g==='f'))g=k.g;if(!a&&+k.a)a=+k.a}}catch(e){}if(g!=='m'&&g!=='f')g=/딸/.test(m.n||'')?'f':(i?'f':'m');if(!a)a=i?3:5;return{g,a:clamp(Math.round(a),1,17)}}
+function famKidScale(a){/* 아이 모형은 약 1.45m(초등 고학년) — 만 나이 키(76+6.6×나이 cm)에 맞춘다 */return clamp((76+6.6*a)/145,.6,1)}
+function famAvatar(m){const n=m.n||'';if(m.id==='sp')return /남편|아빠|아버지|신랑/.test(n)?'m_12':'f_5';if(m.id==='kid'||m.id==='kid2')return famKidInfo(m).g==='f'?'fc_1':'mc_1';if(m.k==='eld')return /아버지|아빠|할아버지|장인|시아버|아버님/.test(n)?'m_3':'f_14';return 'm_8'}
+function famHuman(m,pose){if(RBX.ok){const h=makeHumanRBX(famAvatar(m),{pose:pose||'idle',seed:m.id.length*3});if(h){h.root.userData.fam=m.id;h.fam=m;if(m.k==='kid'){try{h.root.scale.setScalar(famKidScale(famKidInfo(m).a))}catch(e){}if(m.id==='kid'&&typeof famRanger==='function')try{famRanger(h,m)}catch(e){console.error(e)}}return h}}const h=makeHuman(famLook(m));if(m.k==='kid')h.root.scale.setScalar(.64);h.setPose(pose||'idle',true);h.root.userData.fam=m.id;return h}
 /* 주민: 실사 아바타가 있으면 그것으로 (kind: 'civ'|'kid'|'medic'|'police'|'rok'|'us'|'kpa'|'me') */
 function civHuman(i,pose,kind){kind=kind||'civ';if(RBX.ok){let k;if(kind==='civ'){const L=RBX_LOOK.civ;k=L[i%L.length]}else if(kind==='kid')k=i%2?'fc_1':'mc_1';else k=RBX_LOOK[kind]||RBX_LOOK.civ[0];const h=makeHumanRBX(k,{pose:pose||'idle',seed:i,variant:kind==='rok'?'rok':kind==='kpa'?'kpa':null});if(h){h.kind=kind;return h}}
   const h=makeHuman(civLook(i));if(kind==='kid')h.root.scale.setScalar(.62);h.setPose(pose||'idle',true);return h}
@@ -13412,7 +13416,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.1';
+const APP_VER='10.1.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13543,7 +13547,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='help'){s4Open('help');return}
   if(a==='close'){s4Close();return}
   if(a==='v'){S4.view=b.dataset.v;S4.conf=null;s4Re();return}
-  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='crowd'){store.set('sg.crowd',+v);toast(v==='2'?'거리 인파 많이(2배) — 다음 외출부터':'거리 인파 보통')}else if(k==='aptview'){store.set('sg.aptView',v==='1');toast(v==='1'?'창밖 실경 켬 — 다음에 들어갈 때부터':'창밖 실경 끔 — 그림판으로')}else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
+  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='crowd'){store.set('sg.crowd',+v);toast(v==='2'?'거리 인파 많이(2배) — 다음 외출부터':'거리 인파 보통')}else if(k==='aptview'){store.set('sg.aptView',v==='1');toast(v==='1'?'창밖 실경 켬 — 다음에 들어갈 때부터':'창밖 실경 끔 — 그림판으로')}else if(k==='kidlook'){store.set('sg.kidLook',v==='plain'?'plain':'ranger');toast(v==='plain'?'아이 겉모습: 평상복 — 다음 장면부터':'아이 겉모습: 레인저 차림 — 다음 장면부터')}else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
     else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
@@ -17124,7 +17128,7 @@ const GRP={brd:null,vlt:[],carry:[],pc:null,uiT:0};
 function famOutOn(){return store.get('sg.famOut',true)!==false}
 function famKinds(){if(!G||!G.fam)return[];return G.fam.filter(m=>m.id!=='me'&&!m.crit&&m.hp>20).slice(0,2)}
 function famSpawn(sc){famClear();if(!OUT.on||OUT.mode!=='free'||!famOutOn()||!RBX.ok)return;const st=typeof tjStartPt==='function'?tjStartPt():{x:FP3.pos.x,z:FP3.pos.z,yaw:FP3.yaw};const H=st.yaw!=null?st.yaw+Math.PI:0;
-  famKinds().forEach((fm,i)=>{const fk=fm.id;let h=null;try{h=civHuman(fk==='kid'?1:fk==='kid2'?2:0,'idle',fk==='sp'?'sp':fk==='eld'?'eldF':'kid')}catch(e){h=null}if(!h)return;sc.add(h.root);const S=FAM_SLOT[fk]||FAM_SLOT.kid;const x=st.x+Math.sin(H)*S.f-Math.cos(H)*S.u,z=st.z+Math.cos(H)*S.f+Math.sin(H)*S.u;const q=(typeof pedFree==='function'&&pedFree(x,z))?{x,z}:{x:st.x-Math.sin(H)*(1+i),z:st.z-Math.cos(H)*(1+i)};h.root.position.set(q.x,0,q.z);h.root.rotation.y=H;
+  famKinds().forEach((fm,i)=>{const fk=fm.id;let h=null;try{h=famHuman(fm,'idle')/* v10.1.1: 예전 civHuman(1,'kid')는 첫째를 늘 여자아이 모형으로 만들었다 */}catch(e){h=null}if(!h)return;sc.add(h.root);const S=FAM_SLOT[fk]||FAM_SLOT.kid;const x=st.x+Math.sin(H)*S.f-Math.cos(H)*S.u,z=st.z+Math.cos(H)*S.f+Math.sin(H)*S.u;const q=(typeof pedFree==='function'&&pedFree(x,z))?{x,z}:{x:st.x-Math.sin(H)*(1+i),z:st.z-Math.cos(H)*(1+i)};h.root.position.set(q.x,0,q.z);h.root.rotation.y=H;
     const a={h,kind:'fam',fk,nm:fm.n,d:{st:'ok',nm:fm.n,hp:fm.hp,role:'가족'},S,slot:9,order:i,v:0,stuck:0,pT:0,still:0,mode:'fam',tagL:'👨‍👩‍👧 '+fm.n,fam:1,ms:fk==='kid'||fk==='kid2'?4.4:fk==='eld'?2.2:5.8};FAM.list.push(a);OUT.npcs.push(a)});
   FAM.on=FAM.list.length>0;FAM.hid=false;if(FAM.on)outNote(`<b>👨‍👩‍👧 가족이 함께 나왔다</b><div>${FAM.list.map(a=>a.nm).join('·')} — 내 옆·뒤에 붙어 걷는다. 다치면 가족 체력이 깎인다. 팀 화면(👥)에서 동행을 끌 수 있다.</div>`,4200)}
 function famClear(){FAM.list.forEach(a=>{if(a.h&&a.h.root.parent)a.h.root.parent.remove(a.h.root)});OUT.npcs=(OUT.npcs||[]).filter(a=>!FAM.list.includes(a));FAM.list=[];FAM.on=false}
@@ -17618,6 +17622,18 @@ function heroRangerOwn(){const v=store.get('sg.rangerName','');if(v)return Strin
 function heroRangerName(){const n=(typeof clean==='function'?clean(heroRangerOwn()):heroRangerOwn()).trim().slice(0,8);return n?n+' 레인저':'리틀 레인저'}
 try{const D=HERO_DEF.find(d=>d.id==='kid');if(D)Object.defineProperty(D,'nm',{configurable:true,enumerable:true,get(){return heroRangerName()}})}catch(e){}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=herorangername]');if(!b)return;e.preventDefault();e.stopPropagation();let v=null;try{v=window.prompt('레인저 이름 (아이 이름, 8자까지) — 이 기기에만 저장',heroRangerOwn())}catch(x){}if(v==null)return;const c=(typeof clean==='function'?clean(v):String(v)).trim().slice(0,8);store.set('sg.rangerName',c);toast(`이름: ${heroRangerName()}`);try{if(typeof s4Re==='function')s4Re()}catch(x){}},true);
+/* ---------- v10.1.1 첫째 아이 = 레인저 차림(밖 동행·집·대피소 어디서나) ---------- */
+/* 사용자: 첫째 아이가 계속 여자아이로 나온다(만 5세 남자아이) · 아이 캐릭터는 아예 '○○ 레인저'로. 실존 작품 캐릭터를 베끼지 않은 우리 디자인(남색 구조대 옷·주황 반사 조끼·헤드램프 모자·노란 배낭·어깨 친구).
+   성별·나이는 이 기기 가족 설정(아들/딸 · 만 나이)에서 — 공개 코드에는 이름·나이가 없다. 설정 '아이 겉모습'에서 평상복으로 */
+function kidLookOn(){return store.get('sg.kidLook','ranger')!=='plain'}
+function famRanger(h,m){if(!kidLookOn()||!h||!h.b)return;const D=heroDef('kid');if(!D)return;heroKidSuit(h,D);try{heroPet(h,D)}catch(e){}h.ranger=1}
+/* 레인저 히어로 = 우리 아이: 같은 성별·키, 따라오던 아이가 그 자리에서 레인저로(둘이 겹쳐 보이지 않게) */
+(function(){const b=window.heroMake;window.heroMake=function(D){if(!D||!D.kid)return b.apply(this,arguments);const m=(typeof M==='function'&&M('kid'))||{id:'kid',n:''};const I=famKidInfo(m);const av0=D.av;D.av=I.g==='f'?'fc_1':'mc_1';let h=null;try{h=b.apply(this,arguments)}finally{D.av=av0}if(h)try{h.root.scale.setScalar(famKidScale(I.a))}catch(e){}return h}})();
+function famKidFollower(){return typeof FAM!=='undefined'?FAM.list.find(a=>a.fk==='kid'&&a.d.st!=='kia'&&a.h&&a.h.root.visible):null}
+(function(){const b=window.heroCall;window.heroCall=function(id,o){const D=heroDef(id);const f=D&&D.kid&&!(o&&o.at)?famKidFollower():null;if(f){o=Object.assign({},o||{},{at:{x:f.h.root.position.x,z:f.h.root.position.z}})}const r=b.call(this,id,o);if(r&&f){f.heroHide=1;f.h.root.visible=false;const a=HERO.cur;if(a){a.famKid=f;try{a.h.root.rotation.y=f.h.root.rotation.y}catch(e){}}outNote(`<b>${D.ico} ${heroName(D)} 출동!</b><div>함께 걷던 아이가 그 자리에서 레인저가 됐다. ${D.power}.</div>`,4200)}return r}})();
+(function(){const b=window.heroClear;window.heroClear=function(){const a=HERO.cur;const f=a&&a.famKid;const P=a&&a.h?a.h.root.position.clone():null;const r=b.apply(this,arguments);if(f){f.heroHide=0;if(P&&!FAM.hid){f.h.root.position.set(P.x,0,P.z);f.h.root.visible=true;f.v=0}}return r}})();
+(function(){const b=window.famStep;if(typeof b!=='function')return;window.famStep=function(dt){const r=b.apply(this,arguments);try{for(const a of FAM.list){if(a.heroHide){a.h.root.visible=false;continue}if(a.h.heroPet&&a.h.root.visible)heroPetStep(a,dt)}}catch(e){}return r}})();
+/* 설정 › '아이 겉모습' */(function(){const b=window.heroPetRows;window.heroPetRows=function(){let h='';try{h=b.apply(this,arguments)}catch(e){}return s4Seg('kidlook','아이 겉모습','첫째 아이가 밖·집에서 입는 옷 — 다음 장면부터',[['ranger','레인저 차림'],['plain','평상복']],kidLookOn()?'ranger':'plain')+h}})();
 
 /* ===================== 72 · v9.8 아파트 안에서 창밖 실경 + 실내 점프·사격 ===================== */
 /* 들어간 세대의 창문 너머로 실제 지도(마을)가 보인다 — 밖 장면(OUT.scene)을 실내 장면의 자식으로 붙이고, 건물 위치·층 높이·정면 방향의 역변환을 걸어 둔다(창밖 그림판은 숨김, 하늘·안개는 밖 장면 것).
