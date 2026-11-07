@@ -1406,6 +1406,12 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .camp-cred{height:132px;overflow:hidden;border-radius:12px;background:rgba(0,0,0,.28);position:relative;-webkit-mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
 .camp-roll{display:grid;gap:3px;text-align:center;font-size:12.5px;padding:132px 10px;animation:campRoll 26s linear infinite}.camp-roll .sp{height:8px}@keyframes campRoll{from{transform:translateY(0)}to{transform:translateY(-100%)}}
 /* v10.3 시점 단추: 1인칭·3인칭 두 줄 — 지금 시점을 밝게 */.fpd-cam small{display:grid;line-height:1.08;font-size:9.5px;white-space:nowrap}.fpd-cam small b{color:#ffd84a;font-weight:900}.fpd-cam small i{font-style:normal;font-weight:700;opacity:.5}
+/* v10.4 팀원 운전 · 조수석 */
+.chf-hud{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);z-index:8;display:grid;gap:5px;justify-items:center;padding:7px 10px;border-radius:14px;background:rgba(6,14,20,.86);border:1px solid rgba(255,216,74,.55);color:#eef4f8;font-size:12.5px;box-shadow:0 4px 16px rgba(0,0,0,.45);pointer-events:auto;max-width:calc(100% - 24px)}
+.chf-top{display:flex;align-items:center;gap:8px;white-space:nowrap}.chf-top b{color:#ffd84a}.chf-top span{color:#cfe3ef}.chf-top i{font-style:normal;font-weight:800;color:#fff}
+.chf-say{font-size:12px;color:#fff6d8;max-width:420px;text-align:center;line-height:1.35}
+.chf-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.chf-btns button{font:800 12px var(--sans);padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}.chf-btns button.pri{background:#ffb224;color:#1a1200;border-color:#ffb224}
+.sv3.chf-on #adHud,.sv3.chf-on .sv3-hint{display:none}.chf-note b{color:#ffd84a}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -10234,7 +10240,7 @@ function bSmokeDeploy(){const d=bAimDir(0).clone();d.y=0;d.normalize();const c=B
 function bFlareDeploy(){const d=bAimDir(0).clone();d.y=0;d.normalize();BS.flareP=BS.P.pos.clone().addScaledVector(d,14);BS.flareP.y+=20;BS.flareSp.visible=true}
 function bEnvStep(dt){
   if(BS.smokeT>0){const op=Math.min(.85,BS.smokeT/2);BS.smokeSp.forEach((s,i)=>{s.material.opacity=op;s.position.y+=dt*.08;s.material.rotation+=dt*.1*(i%2?1:-1)})}else BS.smokeSp.forEach(s=>{s.visible=false});
-  if(BS.flareT>0){const p=BS.flareP;p.y=Math.max(6,p.y-dt*1.1);BS.flareL.position.copy(p);BS.flareL.intensity=70*Math.min(1,BS.flareT/2);BS.flareSp.position.copy(p);BS.flareSp.material.opacity=Math.min(1,BS.flareT/2)}else{BS.flareL.intensity=0;BS.flareSp.visible=false}
+  if(BS.flareT>0&&BS.flareP){const p=BS.flareP;p.y=Math.max(6,p.y-dt*1.1);BS.flareL.position.copy(p);BS.flareL.intensity=70*Math.min(1,BS.flareT/2);BS.flareSp.position.copy(p);BS.flareSp.material.opacity=Math.min(1,BS.flareT/2)}else{BS.flareL.intensity=0;BS.flareSp.visible=false}
 }
 /* ---------- 매 프레임 그리기 ---------- */
 function bRender(dt){
@@ -13469,7 +13475,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.3';
+const APP_VER='10.4';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -18977,6 +18983,107 @@ function rcClear(){const R=OUT.ride;if(!R||!R.mesh)return;const M=R.mesh.positio
    원인(재현): 대피소에서 동작 카드(이야기·문자 확인 등)의 몸짓이 끝나기 전에 '밖 탐색'으로 나가면 대피소 몸짓 상태(LIFE.cho)가 남는다 →
    점프·주먹 단추는 '대피소 몸짓 중이면 무시'라서 밖에 있는 내내 막혔다(걷기는 그 값을 안 봐서 됐다). 고침: 나갈 때 비우고, 두 단추는 대피소 안에서만 그 값을 본다(16·47) */
 (function(){const b=window.startOutside;window.startOutside=function(o){try{if(typeof LIFE!=='undefined'){LIFE.cho=null;if(LIFE.me&&LIFE.me.sleeping)LIFE.me.sleeping=false}}catch(e){}return b.apply(this,arguments)}})();
+
+/* ===================== 81 · v10.4 팀원 운전 · 조수석 동승 ===================== */
+/* 사용자 요청(2026-11-07): "팀원 중 사전에 운전자를 팀 내에서 지정할 수 있게 해 주시면, 그 운전자가 차를 타고 운전하고, 저는 조수석에 타서 팀원이 운전하는 모습을 볼 수 있도록"
+   · "팀원은 사전에 위치이동으로 찍힌 곳으로 운전을 수행하는 시스템"
+   ① 팀 화면에서 팀원 한 명을 '🚗 운전 담당'으로 정한다(판에 저장 — 다음 외출에도 그대로).
+   ② 큰 지도 '🧭 위치 이동'을 켜고 걷는 중에 지도를 누르면(도착 방법 '🚗 OO 운전') 목적지만 찍고, 가장 가까운 차의 조수석 쪽으로 달려간다.
+   ③ 차 옆 '조수석에 타기 — OO 운전' → 운전 담당은 운전석 문으로 걸어가 타고, 나는 조수석, 나머지 일행은 뒷문으로. 다 타면 찍어 둔 곳으로 도로를 따라 운전(v9.9 자동 운전 경로).
+   ④ 시점: 조수석(왼쪽에 운전대를 잡은 팀원 — 두 손이 핸들을 따라 돈다) ↔ 3인칭. 화면 어디를 끌어도 둘러보기(조수석이라 조이스틱 없음).
+   ⑤ 단추: 세워 줘 · 다시 출발 · 목적지(지도) · 내가 운전. 도착하면 "도착했습니다" — '차에서 내리기'로 모두 내린다.
+   ⑥ 운전 담당이 크게 다치면 차를 세우고 내가 운전석으로 옮겨 탄다 */
+const CHF={on:false,m:null,car:null,seated:false,dest:null,how:'car',t:0,sayT:0,look:.5,prevMode:null,go:false,req:null,lastSay:'',sayLeft:0,arr:false,uiT:0,turnT:0};
+/* 운전석 자리(차 좌표: +x 왼쪽·+z 앞) — 실사 인물이 앉으면 눈높이가 1.16m(운전석 카메라)와 맞게 낮춘다(천장 1.29m에 머리가 가리지 않게) */const CHF_SEAT={x:.38,y:-.15,z:-.22};const _cv=[0,1,2,3,4,5,6,7,8].map(()=>new T.Vector3());
+function chfDrv(){if(typeof tmLive!=='function')return null;return tmLive().find(m=>m.d&&m.d.drv&&m.d.st!=='crit'&&m.d.st!=='away'&&m.d.st!=='kia'&&!m.carried&&!m.carry)||null}
+function chfOn(){return !!(CHF.on&&typeof OUT!=='undefined'&&OUT.drv&&CHF.m)}
+function chfSay(t){CHF.lastSay=t;CHF.sayLeft=3.2;try{if(CHF.m&&CHF.m.h&&CHF.seated)bubSay(CHF.m.h,t,2.8,'')}catch(e){}chfHud(true)}
+/* ---------- ① 팀 화면: 운전 담당 ---------- */
+(function(){const b=window.tmPanel;if(typeof b!=='function')return;window.tmPanel=function(open){const r=b.apply(this,arguments);try{const p=$('#tmPanel');if(!p||!open)return r;
+  p.querySelectorAll('[data-g3=tmkick]').forEach(k=>{const acts=k.parentNode;if(!acts||acts.querySelector('[data-g3=tmdrv]'))return;const d=tmData().find(x=>x.id===k.dataset.id);if(!d)return;const bt=document.createElement('button');bt.className='btn sm'+(d.drv?' pri':'');bt.dataset.g3='tmdrv';bt.dataset.id=d.id;bt.textContent=d.drv?'🚗 운전 담당':'🚗 운전 맡기기';acts.insertBefore(bt,k)});
+  if(!p.querySelector('.chf-note')){const dm=tmData().find(d=>d.drv&&d.st!=='kia');const n=document.createElement('p');n.className='mis-note chf-note';n.innerHTML=dm?`🚗 운전 담당 <b>${dm.nm}</b> — 차 옆 '조수석에 타기'를 누르면 ${dm.nm} 씨가 운전하고 나는 조수석에 탄다. 목적지는 큰 지도 '🧭 위치 이동'으로 미리 찍어 둔다.`:'🚗 팀원 한 명에게 운전을 맡기면, 그 팀원이 운전하고 나는 조수석에 탄다(목적지는 큰 지도 \'🧭 위치 이동\').';const head=p.querySelector('.mis-head');if(head&&head.nextSibling)p.insertBefore(n,head.nextSibling);else p.appendChild(n)}}catch(e){}return r}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=tmdrv]');if(!b||typeof OUT==='undefined'||!OUT.on)return;e.preventDefault();e.stopPropagation();const L=tmData();const d=L.find(x=>x.id===b.dataset.id);if(!d)return;const on=!d.drv;L.forEach(x=>{x.drv=0});if(on)d.drv=1;save();
+  try{tmPanel(true)}catch(x){}toast(on?`🚗 ${d.nm} 씨가 운전을 맡는다 — 차 옆 '조수석에 타기'`:'운전 담당을 풀었다',2400);try{const m=TEAM.list.find(m=>m.d===d);if(on&&m)bubSay(m.h,mrPick(['운전은 맡겨 주세요.','길은 제가 알아요. 타세요!','안전 운전할게요.']),2.4,'')}catch(x){}},true);
+/* ---------- ② 큰 지도: 도착 방법 · 목적지 찍기 ---------- */
+function chfDoor(dc,sd){const c=dc.car,y=c.rotation.y;const lx=Math.cos(y),lz=-Math.sin(y),fx=Math.sin(y),fz=Math.cos(y);const L=1.75*sd;return{x:c.position.x+lx*L+fx*.35,z:c.position.z+lz*L+fz*.35}}
+function chfNearCar(){const done=G.outDone||{};let best=null,bd=260;for(const dc of (OUT.dcars||[])){if(!dc||!dc.car||done['dead:drv:'+dc.i])continue;if(OUT.drv&&OUT.drv.dc===dc)continue;const q=chfDoor(dc,-1);const d=Math.hypot(q.x-FP3.pos.x,q.z-FP3.pos.z);if(d<bd){bd=d;best={dc,d,q}}}return best}
+function chfMapTools(){const tools=document.querySelector('#tjBig .tjb-tools');if(!tools)return;let bt=tools.querySelector('[data-g3=chfhow]');const dm=chfDrv();const show=!!dm&&!OUT.drv&&!OUT.ride;if(!show){if(bt)bt.remove();return}
+  if(!bt){bt=document.createElement('button');bt.dataset.g3='chfhow';const mv=tools.querySelector('[data-g3=tjmove]');tools.insertBefore(bt,mv?mv.nextSibling:tools.firstChild)}const t=CHF.how==='run'?'🏃 달려서':`🚗 ${dm.d.nm} 운전`;if(bt.textContent!==t)bt.textContent=t;bt.classList.toggle('on',CHF.how!=='run')}
+(function(){const b=window.tjBigOpen;window.tjBigOpen=function(){const r=b.apply(this,arguments);try{chfMapTools();if(chfDrv()&&!OUT.drv&&!OUT.ride&&TJB.move&&CHF.how!=='run'){const sub=document.querySelector('#tjBig .tjb-sub');if(sub)sub.textContent=`🧭 위치 이동 — 누른 곳을 목적지로 찍고 ${chfDrv().d.nm} 씨가 운전한다`}}catch(e){console.error(e)}return r}})();
+document.addEventListener('click',e=>{const bt=e.target.closest('[data-g3=chfhow]');if(!bt)return;e.preventDefault();e.stopPropagation();CHF.how=CHF.how==='run'?'car':'run';chfMapTools();const dm=chfDrv();
+  if(CHF.how!=='run'&&!TJB.move){TJB.move=true;const mb=document.querySelector('[data-g3=tjmove]');if(mb)mb.classList.add('on')}
+  const sub=document.querySelector('#tjBig .tjb-sub');if(sub&&TJB.move)sub.textContent=CHF.how==='run'?'🧭 위치 이동 — 갈 곳을 누르면 바로 출발':`🧭 위치 이동 — 누른 곳을 목적지로 찍고 ${dm?dm.d.nm+' 씨가':'팀원이'} 운전한다`;
+  toast(CHF.how==='run'?'위치 이동: 달려서 간다':`위치 이동: 목적지를 찍으면 가까운 차로 가서 ${dm?dm.d.nm+' 씨가':'팀원이'} 운전한다`,2400)},true);
+(function(){const b=window.tjBigTap;window.tjBigTap=function(e){try{if(TJB.move&&!TJB.pin&&OUT.on&&!OUT.enc&&!OUT.drv&&!OUT.ride&&CHF.how!=='run'&&chfDrv()){const S=tjBigSize();if(S){const rc=S.cv.getBoundingClientRect();const lx=SV3.rot?(e.clientY-rc.top):(e.clientX-rc.left),ly=SV3.rot?(rc.right-e.clientX):(e.clientY-rc.top);const wx=TJB.cx+(lx-S.w/2)*TJB.mpp,wz=TJB.cz+(ly-S.h/2)*TJB.mpp;tjBigClose();chfMark(wx,wz);return}}}catch(x){console.error(x)}return b.apply(this,arguments)}})();
+function chfMark(x,z){const dm=chfDrv();if(!dm)return false;CHF.dest={x,z};CHF.arr=false;TJ.goal={bx:x,bz:z,chf:1};const d0=Math.round(Math.hypot(x-FP3.pos.x,z-FP3.pos.z));const c=chfNearCar();
+  if(c){const dd=Math.round(c.d);CHF.walkTo=c.dc;try{if(dd>2.5&&typeof arStart==='function')arStart(c.q.x,c.q.z)}catch(e){}outNote(`<b>🚗 목적지를 찍었다 — ${d0}m</b><div>가까운 차(${dd}m)의 조수석 쪽으로 간다. 차 옆 '조수석에 타기'를 누르면 ${dm.d.nm} 씨가 운전한다.</div>`,4600);try{bubSay(dm.h,mrPick(['저 차로 가요. 제가 몰게요!','차 키는 꽂혀 있을 거예요.','타세요, 금방 가요.']),2.4,'')}catch(e){}}
+  else outNote(`<b>🚗 목적지를 찍었다 — ${d0}m</b><div>근처에 탈 수 있는 차가 없다. 길가 차를 찾아 '조수석에 타기'를 누르면 ${dm.d.nm} 씨가 여기로 운전한다.</div>`,4600);return true}
+/* ---------- ③ 차 옆 '조수석에 타기' ---------- */
+(function(){const base=window.tjPopulate;window.tjPopulate=function(sc){const r=base.apply(this,arguments);try{const done=G.outDone||{};(OUT.dcars||[]).forEach(dc=>{if(done['dead:drv:'+dc.i])return;OUT.spots.push({id:'chf:'+dc.i,k:'chauf',dc,lx:-1.75,lz:.35,x:0,z:0,r:2.0,g:'▶',n:'조수석에 타기',s:'운전 담당 팀원이 운전한다',h:0,nomap:1})});tjSpotsFollow()}catch(e){console.error(e)}return r}})();
+(function(){const oc=window.outCands;window.outCands=function(){const L=oc.apply(this,arguments);try{if(!Array.isArray(L))return L;const dm=chfDrv();const done=G.outDone||{};
+  return L.filter(c=>{if(!c)return false;if(c.k==='drive'&&c.dc&&done['dead:drv:'+c.dc.i])return false;if(c.k!=='chauf')return true;if(!dm||OUT.drv||OUT.ride||!c.dc||done['dead:drv:'+c.dc.i])return false;
+    c.n=`조수석에 타기 — ${dm.d.nm} 운전`;c.s=CHF.dest?`찍어 둔 곳(${Math.round(Math.hypot(CHF.dest.x-FP3.pos.x,CHF.dest.z-FP3.pos.z))}m)으로 바로 출발`:'목적지는 타고 나서 지도에서 찍는다';return true})}catch(e){return L}}})();
+(function(){const od=window.outDo;window.outDo=function(c){if(c&&c.k==='chauf'){chfBoard(c);return}return od.apply(this,arguments)}})();
+function chfBoard(c){const dm=chfDrv();if(!dm){toast('운전 담당이 없다 — 팀 화면에서 정한다',2200);return}CHF.req=dm;try{tjDriveStart(c)}finally{CHF.req=null}}
+(function(){const b=window.tjDriveStart;window.tjDriveStart=function(c){const want=CHF.req;const r=b.apply(this,arguments);try{if(want&&OUT.drv)chfBegin(want)}catch(e){console.error(e)}return r}})();
+function chfBegin(m){const D=OUT.drv;Object.assign(CHF,{on:true,m,car:D.car,seated:false,t:0,go:false,sayT:4,arr:false,uiT:0,turnT:4,prevMode:FPD.mode,look:.62});FPD.mode='fp';D.chf=1;FP3.yaw=0;FP3.pitch=-.06;
+  /* 문: 운전 담당 → 운전석(왼쪽 앞) · 나머지 → 뒷문 */const B=GRP.brd;if(B&&B.list){const doors=grpDoors(D.car);let k=2;B.list.forEach(q=>{if(q.a===m)q.door=doors[0];else{q.door=doors[k];k=k>=5?2:k+1}})}
+  if(SV3.el)SV3.el.classList.add('chf-on');chfSeatBack(D.car,true);const j=$('#sv3Joy');if(j)j.hidden=true;
+  outNote(`<b>🚗 ${m.d.nm} 씨가 운전석에 탄다</b><div>나는 조수석. ${CHF.dest?`찍어 둔 곳(${Math.round(Math.hypot(CHF.dest.x-D.car.position.x,CHF.dest.z-D.car.position.z))}m)으로 출발한다.`:'어디로 갈지 지도에서 찍으면 출발한다.'} 화면을 끌어 둘러본다.</div>`,4200);chfHud(true)}
+/* 운전석 등받이(조수석에서 보면 운전 담당 뒤) */
+function chfSeatBack(car,on){const ck=car.userData.cock||(typeof fpdCockpit==='function'?fpdCockpit(car):null);if(!ck)return;let s=car.userData.chfSeat;if(!s&&on){s=new T.Group();MM(GG.box(.5,.58,.12,.05),mat('#24282d',{r:.7}),0,0,0,{p:s,cast:false});MM(GG.box(.3,.2,.1,.04),mat('#24282d',{r:.7}),0,.42,0,{p:s,cast:false});s.position.set(.38,1.0,-.62);s.rotation.x=-.12;ck.add(s);car.userData.chfSeat=s}if(s)s.visible=!!on}
+/* ---------- ④ 매 프레임: 운전 담당 자리·손 · 조수석 카메라 · 출발 ---------- */
+/* 차 물리 앞: 손 운전 막기 · 운전석에 앉은 팀원은 '사람을 치면' 판정에서 뺀다(전엔 차 안의 운전 담당을 매 프레임 친 것으로 셌다) */
+(function(){const b=window.tjDrivePre;window.tjDrivePre=function(dt){let A=null;try{if(chfOn()&&!ADRV.on){const D=OUT.drv;FP3.mv.x=0;FP3.mv.y=Math.abs(D.v)>.3?(D.v>0?-1:1):0}if(CHF.on&&CHF.m&&CHF.m.h){A=(OUT.npcs||[]).filter(a=>a.h===CHF.m.h);A.forEach(a=>{a._chfLy=a.lying;a.lying=true})}}catch(e){}
+  try{return b.apply(this,arguments)}finally{if(A)A.forEach(a=>{a.lying=a._chfLy;delete a._chfLy})}}})();
+(function(){const b=window.adUserInput;if(typeof b!=='function')return;window.adUserInput=function(){if(chfOn())return false;return b.apply(this,arguments)}})();
+(function(){const b=FP3.down;if(typeof b!=='function')return;FP3.down=function(e){const r=b.apply(this,arguments);try{if(chfOn()){for(const k in this.ptr){const q=this.ptr[k];if(q.role==='move')q.role='look'}const j=$('#sv3Joy');if(j)j.hidden=true}}catch(x){}return r}})();
+(function(){const b=window.tjDrivePost;window.tjDrivePost=function(dt){const r=b.apply(this,arguments);try{if(CHF.on)chfStep(dt)}catch(e){console.error(e)}return r}})();
+function chfStep(dt){const D=OUT.drv;if(!D||!CHF.m){chfEnd();return}const m=CHF.m,h=m.h,car=D.car;CHF.t+=dt;if(!(dt>0))dt=0;
+  if(m.d.st==='crit'||m.d.st==='kia'||m.d.st==='away'){chfSwap('hurt');return}
+  const B=GRP.brd;const q=B&&B.list?B.list.find(q=>q.a===m):null;
+  if(!CHF.seated&&(!q||q.st==='done')){CHF.seated=true;try{h.setPose('sit',true)}catch(e){}chfSay(mrPick(['꽉 잡으세요.','출발할게요. 벨트 매세요!','운전은 맡겨 주세요.']))}
+  if(CHF.seated){car.updateMatrixWorld(true);const P=car.localToWorld(_cv[0].set(CHF_SEAT.x,CHF_SEAT.y,CHF_SEAT.z));h.root.position.copy(P);h.root.rotation.set(0,D.yaw,0);h.root.visible=true;if(h.pose!=='sit'){try{h.setPose('sit',true)}catch(e){}}h.update(dt);h.root.updateMatrixWorld(true);try{chfHands(h,car,D)}catch(e){}}
+  /* 다 타면 0.7초 뒤 출발(장면 시간 — 멈춤·느린 기기에서도 같은 박자) */if(CHF.seated&&!GRP.brd&&!CHF.go){CHF.go=true;CHF.goT=.7}if(CHF.goT>0){CHF.goT-=dt;if(CHF.goT<=0){CHF.goT=0;try{if(CHF.dest&&!ADRV.on&&!ADRV.job)adStart(CHF.dest.x,CHF.dest.z);else if(!CHF.dest&&!ADRV.on)chfSay('어디로 갈까요? 지도에서 찍어 주세요.')}catch(e){console.error(e)}}}
+  /* 조수석 카메라: 운전 담당이 왼쪽에 보이게 살짝 왼쪽을 본다 · 끌면 둘러보기(놓으면 돌아온다) */
+  if(FPD.mode==='fp'){const cam=SV3.cam;const e=car.localToWorld(_cv[1].set(-.33,1.15,-.5));cam.position.copy(e);cam.rotation.order='YXZ';const sh=SV3.shake||0;cam.rotation.set(clamp(FP3.pitch*.7,-.5,.35)-.06+(car.rotation.x||0)+sh*Math.sin(SV3.t*47)*.02,D.yaw+Math.PI+FP3.yaw+CHF.look,-(car.rotation.z||0)+sh*Math.sin(SV3.t*37)*.02)}
+  if(CHF.sayLeft>0)CHF.sayLeft-=dt;CHF.sayT-=dt;if(CHF.sayT<=0&&CHF.seated){CHF.sayT=10+Math.random()*9;chfChat(D)}
+  CHF.turnT-=dt;if(ADRV.on&&ADRV.path&&CHF.turnT<=0){const t=chfTurnAhead(D);if(t){CHF.turnT=7;chfSay(t)}}
+  CHF.uiT-=dt;if(CHF.uiT<=0){CHF.uiT=.3;chfHud()}}
+/* 두 손을 운전대 3시·9시에(핸들이 돌면 손도 함께) */
+function chfHands(h,car,D){const wh=car.userData.wheel;if(!wh||!h.b||!h.b.shR||!h.b.handL||typeof ikArm!=='function')return;wh.updateMatrixWorld(true);const L=brLen(h);
+  /* 손은 핸들을 따라 ±35°까지만 돌고(더 꺾으면 손이 미끄러진다) */const w=wh.parent;const a=clamp(wh.rotation.z,-.6,.6),ca=Math.cos(a)*.155,sa=Math.sin(a)*.155;w.updateMatrixWorld(true);const tl=w.localToWorld(_cv[2].set(ca,sa,0)),tr=w.localToWorld(_cv[3].set(-ca,-sa,0));const up=_cv[4].set(0,1,0),lf=_cv[5].set(Math.cos(D.yaw),0,-Math.sin(D.yaw)),fw=_cv[6].set(Math.sin(D.yaw),0,Math.cos(D.yaw));
+  const sL=h.b.shL.getWorldPosition(_cv[7]);const pL=_cv[8].copy(sL).addScaledVector(lf,.32).addScaledVector(up,-.42).addScaledVector(fw,.06);ikArm(h.b.shL,h.b.elL,h.b.handL,tl,pL,L.L1L,L.L2L);h.root.updateMatrixWorld(true);
+  const sR=h.b.shR.getWorldPosition(_cv[7]);const pR=_cv[8].copy(sR).addScaledVector(lf,-.32).addScaledVector(up,-.42).addScaledVector(fw,.06);ikArm(h.b.shR,h.b.elR,h.b.handR,tr,pR,L.L1R,L.L2R);h.root.updateMatrixWorld(true)}
+/* 앞 12~28m 길이 꺾이면 "좌회전/우회전합니다" */
+function chfTurnAhead(D){const P=ADRV.path;if(!P||P.length<3)return '';const V={x:D.car.position.x,z:D.car.position.z};let a=null,b=null,acc=0,prev=V;for(let i=ADRV.k;i<P.length;i++){acc+=Math.hypot(P[i].x-prev.x,P[i].z-prev.z);prev=P[i];if(a==null&&acc>=4)a=P[i];if(acc>=24){b=P[i];break}}
+  if(!a||!b)return '';const h0=D.yaw,h1=Math.atan2(b.x-a.x,b.z-a.z);let d=h1-h0;d=Math.atan2(Math.sin(d),Math.cos(d));if(Math.abs(d)<.7)return '';return d>0?'좌회전합니다.':'우회전합니다.'}
+function chfChat(D){const sp=Math.abs(D.v);let L;if(ADRV.job)L=['길 찾는 중이에요…','이 시간엔 큰길이 나아요.'];else if(ADRV.on){const t=ADRV.tgt;const left=t?Math.round(Math.hypot(t.x-D.car.position.x,t.z-D.car.position.z)):0;L=[`${left}m 남았어요.`,'신호등이 다 꺼졌네요. 천천히 갈게요.','사람 보이면 비켜 갈게요.','버려진 차가 많아요. 조심해서 갈게요.',sp>9?'조금 밟을게요, 꽉 잡으세요.':'괜찮아요, 금방 가요.']}else if(CHF.arr)L=['내릴 때 뒤에 차 오는지 보세요.','여기서 기다릴까요?'];else L=['어디로 갈까요? 지도에서 찍어 주세요.','세워 뒀어요. 출발하려면 말씀하세요.'];chfSay(mrPick(L))}
+/* 앞에 사람이 있으면 줄이고 경적(자동 운전 전체 — 팀원 운전이든 내 자동 운전이든 사람을 치지 않게) */
+(function(){const b=window.adControl;if(typeof b!=='function')return;window.adControl=function(dt){const r=b.apply(this,arguments);try{if(ADRV.on&&OUT.drv&&!ADRV.job)chfPedGuard(dt)}catch(e){}return r}})();
+function chfPedGuard(dt){const D=OUT.drv,car=D.car;const sp=D.v;CHF.hornT=Math.max(0,(CHF.hornT||0)-dt);if(sp<.4)return;const fx=Math.sin(D.yaw),fz=Math.cos(D.yaw);const look=5+sp*1.7;let near=1e9,side=false;
+  const L=(OUT.npcs||[]).concat((typeof PED!=='undefined'&&PED.list)||[]);for(const a of L){const h=a&&a.h;if(!h||!h.root.visible||a.lying||h.pose==='dead'||a.kind==='dead')continue;const dx=h.root.position.x-car.position.x,dz=h.root.position.z-car.position.z;if(a.kind==='team'||(typeof TEAM!=='undefined'&&TEAM.list.some(m=>m.h===h)))continue;/* 옆에서 다가오는 사람: 차 가운데 3.2m 안이면 사람을 다치게 하는 속도(2.5m/s) 아래로 */if(dx*dx+dz*dz<10.2)side=true;const fw=dx*fx+dz*fz;if(fw<.3||fw>look)continue;if(Math.abs(dx*fz-dz*fx)>2.5)continue;if(fw<near)near=fw}
+  if(side&&D.v>2.1)FP3.mv.y=-1;
+  if(near===1e9)return;const want=Math.max(0,(near-3.6)*.8);if(D.v>want)FP3.mv.y=-1;if(CHF.hornT<=0&&near<look*.85){CHF.hornT=2.6;try{fpdHorn()}catch(e){}if(chfOn()&&Math.random()<.6)chfSay(mrPick(['비켜 주세요!','사람 있어요 — 천천히 갈게요.','잠깐만요, 지나갈게요.']))}}
+/* ---------- ⑤ 단추 ---------- */
+function chfHud(force){const sc=SV3.el;let h=$('#chfHud');if(!chfOn()||!sc||OUT.mapOpen){if(h&&(!chfOn()||!sc))h.remove();else if(h)h.hidden=true;return}
+  if(!h||h.parentNode!==sc){if(h)h.remove();h=document.createElement('div');h.id='chfHud';h.className='chf-hud';sc.appendChild(h)}h.hidden=false;const D=OUT.drv;const nm=CHF.m.d.nm;let st,dist='';
+  if(!CHF.seated||GRP.brd)st='타는 중';else if(ADRV.job)st='길 찾는 중';else if(ADRV.on){st='운전 중';const t=ADRV.tgt;if(t)dist=Math.round(Math.hypot(t.x-D.car.position.x,t.z-D.car.position.z))+'m'}else if(CHF.arr)st='도착';else st=CHF.dest?'세워 둠':'목적지를 찍어 주세요';
+  const btns=ADRV.on||ADRV.job?'<button data-g3="chfstop">세워 줘</button>':(CHF.dest&&!CHF.arr?'<button class="pri" data-g3="chfgo">다시 출발</button>':'');
+  const html=`<div class="chf-top"><b>🚗 ${nm} 운전</b><span>${st}</span>${dist?`<i class="num">${dist}</i>`:''}</div>${CHF.sayLeft>0&&CHF.lastSay?`<div class="chf-say">“${CHF.lastSay}”</div>`:''}<div class="chf-btns">${btns}<button data-g3="chfmap">🗺 목적지</button><button data-g3="chfself">내가 운전</button></div>`;
+  if(force||h._h!==html){h._h=html;h.innerHTML=html}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=chfstop],[data-g3=chfgo],[data-g3=chfmap],[data-g3=chfself]');if(!b)return;e.preventDefault();e.stopPropagation();if(!chfOn())return;const k=b.dataset.g3;
+  if(k==='chfstop'){adStop('cancel');chfSay('네, 세울게요.')}else if(k==='chfgo'){if(CHF.dest)adStart(CHF.dest.x,CHF.dest.z)}else if(k==='chfmap'){TJB.move=true;try{tjBigOpen()}catch(x){console.error(x)}const mb=document.querySelector('[data-g3=tjmove]');if(mb)mb.classList.add('on');const sub=document.querySelector('#tjBig .tjb-sub');if(sub)sub.textContent=`🧭 목적지 — 누르면 ${CHF.m.d.nm} 씨가 그리로 운전한다`}else if(k==='chfself')chfSwap('me');chfHud(true)},true);
+/* 지도에서 찍으면(차 안) 그곳이 목적지 · 도착·막힘 말 */
+(function(){const b=window.adStart;window.adStart=function(x,z){const r=b.apply(this,arguments);try{if(r&&chfOn()){CHF.dest={x,z};CHF.arr=false;if(CHF.seated)chfSay(mrPick(['알겠습니다, 그리로 갈게요.','네, 출발합니다.','길 찾아볼게요.']));const n=$('#oNote');if(n&&/자동 운전/.test(n.textContent)){n.innerHTML=`<b>🚗 ${CHF.m.d.nm} 씨가 운전한다</b><div>목적지까지 약 ${Math.round(Math.hypot(x-OUT.drv.car.position.x,z-OUT.drv.car.position.z))}m — 세우려면 '세워 줘'.</div>`}chfHud(true)}}catch(e){}return r}})();
+(function(){const b=window.adStop;window.adStop=function(why){const was=ADRV.on;const r=b.apply(this,arguments);try{if(chfOn()&&was){if(why==='arrive'){CHF.arr=true;CHF.dest=null;if(TJ.goal&&TJ.goal.chf)TJ.goal=null;chfSay(mrPick(['도착했습니다.','다 왔어요. 조심히 내리세요.','여기예요. 뒤에 차 오는지 보고 내리세요.']));outNote(`<b>🚗 도착했다</b><div>${CHF.m.d.nm} 씨가 차를 세웠다. '차에서 내리기'를 누르면 다 같이 내린다.</div>`,3600)}else if(why==='stuck')chfSay('길이 꽉 막혔네요. 다른 곳을 찍어 주세요.')}chfHud(true)}catch(e){}return r}})();
+/* ---------- ⑥ 자리 바꾸기 · 끝 ---------- */
+function chfSwap(why){const m=CHF.m;const D=OUT.drv;try{if(ADRV.on)adStop()}catch(e){}if(m&&m.h){m.h.root.visible=false;try{m.h.setPose('idle',true)}catch(e){}}CHF.on=false;if(D)D.chf=0;if(CHF.prevMode)FPD.mode=CHF.prevMode;if(SV3.el)SV3.el.classList.remove('chf-on');const h=$('#chfHud');if(h)h.remove();if(CHF.car)chfSeatBack(CHF.car,false);
+  outNote(why==='hurt'?`<b>${m?m.d.nm+' 씨가':'운전 담당이'} 크게 다쳤다</b><div>차를 세우고 내가 운전석으로 옮겨 탔다 — 왼쪽 조이스틱으로 몬다.</div>`:'<b>자리를 바꿨다 — 이제 내가 운전한다</b><div>왼쪽 조이스틱 위=가속 · 아래=브레이크 · 좌우=핸들.</div>',3600);CHF.m=null;CHF.car=null}
+function chfEnd(){if(!CHF.on&&!CHF.m)return;const m=CHF.m;CHF.on=false;if(CHF.prevMode)FPD.mode=CHF.prevMode;if(SV3.el)SV3.el.classList.remove('chf-on');const h=$('#chfHud');if(h)h.remove();if(CHF.car)chfSeatBack(CHF.car,false);if(m&&m.h){try{if(m.h.pose==='sit')m.h.setPose('idle',true)}catch(e){}}CHF.m=null;CHF.car=null;CHF.seated=false}
+(function(){const b=window.tjDriveEnd;window.tjDriveEnd=function(){const was=CHF.on;const m=CHF.m;const car=OUT.drv&&OUT.drv.car;const r=b.apply(this,arguments);try{if(was){/* 나는 조수석 쪽(오른쪽)으로 내린다 */if(car){const y=car.rotation.y;const lx=Math.cos(y),lz=-Math.sin(y);for(const d of [2.1,2.6]){const x=car.position.x-lx*d,z=car.position.z-lz*d;if(!FP3.blocked(x,z,.35)){FP3.pos.set(x,0,z);if(OUT.me)OUT.me.root.position.set(x,0,z);break}}}chfEnd();if(m&&m.h){m.h.root.visible=true;try{bubSay(m.h,mrPick(['다음에도 불러 주세요.','차는 여기 세워 둘게요.']),2.2,'')}catch(e){}}}else chfEnd()}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{chfEnd();CHF.dest=null}catch(e){}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['팀원 운전 · 조수석(v10.4)','팀 화면에서 팀원에게 \'🚗 운전 맡기기\' → 큰 지도 \'🧭 위치 이동\'을 켜고 도착 방법 \'🚗 OO 운전\'으로 갈 곳을 누르면 목적지가 찍히고 가까운 차로 달려간다 → 차 옆 \'조수석에 타기\' → 운전 담당은 운전석, 나는 조수석, 일행은 뒷자리 → 찍어 둔 곳까지 도로를 따라 운전한다. 조수석에서는 화면을 끌어 둘러보고, \'세워 줘\'·\'다시 출발\'·\'🗺 목적지\'·\'내가 운전\'. 도착하면 \'차에서 내리기\'.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
