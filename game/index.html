@@ -1273,6 +1273,11 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 @media(max-width:700px){.hero-grid{grid-template-columns:repeat(2,1fr)}}
 /* v9.7: 폰 가로(높이 520px 이하)에선 히어로 카드를 세로 목록으로 */
 @media(max-height:520px){.hero-grid{display:flex;flex-direction:column;gap:4px}.hero-card{flex-direction:row;align-items:center;text-align:left;min-height:0;padding:6px 10px;gap:8px}.hero-card .hero-ico{font-size:20px}.hero-card b{font-size:12.5px;white-space:nowrap}.hero-card small{white-space:nowrap}.hero-card em{margin:0 0 0 auto;max-width:50%;text-align:right}}
+/* ---------- v9.9 히어로즈 사무소 계약판 ---------- */
+.hoff-panel{width:min(640px,calc(100% - 24px))}.hoff-panel .hero-grid{grid-template-columns:repeat(3,1fr)}.hoff-card{cursor:default}
+.hoff-btns{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;justify-content:center}.hoff-btns .btn{font-size:11px;padding:4px 8px;min-height:0}.hoff-btns .btn.dis{opacity:.45}
+.hoff-note{margin:8px 2px 0;color:#cfe0ff}
+@media(max-height:520px){.hoff-panel .hero-grid{display:flex;flex-direction:column}.hoff-card{flex-wrap:wrap}.hoff-card em{max-width:none;flex:1 1 40%}.hoff-btns{margin:0 0 0 auto}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -12031,7 +12036,7 @@ function outStep(dt){if(!OUT.on)return;const me=OUT.me;const mv=FP3.mv;const len
     if(a.kind==='walk'){h.root.position.z-=a.sp*dt;if(h.root.position.z<-280)h.root.position.z=30}
     else if(a.kind==='rok'){const d=Math.hypot(p.x-h.root.position.x,p.z-h.root.position.z);h.look=d<8?new T.Vector3(p.x,1.5,p.z):null}
     else if(a.kind==='loot')outLooter(a,dt)});
-  /* 따라오는 사람(구조) */OUT.follow.forEach((f,i)=>{const h=f.h;const back=1.4+i*.9;const tx=p.x+Math.sin(FP3.yaw)*back+Math.cos(FP3.yaw)*.6*(i%2?1:-1),tz=p.z+Math.cos(FP3.yaw)*back-Math.sin(FP3.yaw)*.6*(i%2?1:-1);const ddx=tx-h.root.position.x,ddz=tz-h.root.position.z;const d=Math.hypot(ddx,ddz);
+  /* 따라오는 사람(구조) — v9.9: OUT.npcs에서 빠져 있어 h.update가 안 돌던 것(자세는 바뀌어도 동작이 멈춰 미끄러져 보임) */OUT.follow.forEach((f,i)=>{const h=f.h;try{h.update(dt)}catch(e){}const back=1.4+i*.9;const tx=p.x+Math.sin(FP3.yaw)*back+Math.cos(FP3.yaw)*.6*(i%2?1:-1),tz=p.z+Math.cos(FP3.yaw)*back-Math.sin(FP3.yaw)*.6*(i%2?1:-1);const ddx=tx-h.root.position.x,ddz=tz-h.root.position.z;const d=Math.hypot(ddx,ddz);
     if(d>.5){const sp=Math.min(f.sp,d*2.4);const nx=h.root.position.x+ddx/d*sp*dt,nz=h.root.position.z+ddz/d*sp*dt;if(!FP3.blocked(nx,nz,.3)){h.root.position.x=nx;h.root.position.z=nz}h.root.rotation.y=Math.atan2(ddx,ddz);if(h.pose!==f.walk)h.setPose(f.walk)}else if(h.pose!==f.idle)h.setPose(f.idle)});
   /* 불·공습·조명·효과 */outFire(dt);outSiren(dt);townLights(p.x,p.z);if(TOWN.pool)TOWN.pool.forEach(l=>{l.intensity*=OUT.lampK==null?1:OUT.lampK});(TOWN.signals||[]).forEach(s=>{s.material.emissiveIntensity=(Math.floor(SV3.t*1.5)%2)?2.2:.2});
   if(G.scen==='conv'&&!OUT.siren){OUT.boomT-=dt;if(OUT.boomT<=0){OUT.boomT=18+Math.random()*22;FX3.explode(new T.Vector3(120+Math.random()*160,18+Math.random()*30,-360-Math.random()*80),{r:12,kind:'far',ground:0});sv3Shake(.2);SND.boom(false,.3);vib(25)}}
@@ -13330,7 +13335,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.8';
+const APP_VER='9.9';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13439,6 +13444,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
     <div class="s4-sec">게임 방식</div>
     ${typeof heroPetRows==='function'?heroPetRows():''}
     ${typeof aptwRows==='function'?aptwRows():''}
+    ${s4Seg('crowd','거리 인파','밖 탐색 때 거리 사람 수 — 많이 = 2배(저사양 폰은 보통 권장), 다음 외출부터',[['1','보통'],['2','많이']],String(typeof crowdFactor==='function'?crowdFactor():1))}
     ${typeof heroChampOn==='function'?s4Seg('melook','내 모습 (밖 3인칭·대피소)','챔피언 룩: 긴 코트·금 견장·엠블럼·대장 완장 — 다음 장면부터',[['std','보통'],['champ','챔피언']],store.get('sg.meLook','std')):''}
     ${s4Seg('pace','화면 움직임','끊겨 보이면 30fps로 고르게 고정 — 자동은 장면마다 재서 정한다',[['auto','자동'],['30','30 고정'],['60','최대']],paceMode())}
     ${s4Seg('owc','실제 지도 교전','공수부대 강하 때 밖 탐색 장면 그대로 싸울지, 전투 화면으로 넘어갈지',[[1,'같은 배경'],[0,'전투 화면']],store.get('sg.owc',true)!==false?1:0)}
@@ -13460,7 +13466,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='help'){s4Open('help');return}
   if(a==='close'){s4Close();return}
   if(a==='v'){S4.view=b.dataset.v;S4.conf=null;s4Re();return}
-  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='aptview'){store.set('sg.aptView',v==='1');toast(v==='1'?'창밖 실경 켬 — 다음에 들어갈 때부터':'창밖 실경 끔 — 그림판으로')}else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
+  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='crowd'){store.set('sg.crowd',+v);toast(v==='2'?'거리 인파 많이(2배) — 다음 외출부터':'거리 인파 보통')}else if(k==='aptview'){store.set('sg.aptView',v==='1');toast(v==='1'?'창밖 실경 켬 — 다음에 들어갈 때부터':'창밖 실경 끔 — 그림판으로')}else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
     else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
@@ -13730,7 +13736,8 @@ function pedPick(x,z,rmin,rmax,avoid){const S=pedSegs();const c0=Math.floor(x/40
   if(!cand.length)return null;let fx=0,fz=0;if(avoid&&SV3.cam){const d=SV3.cam.getWorldDirection(new T.Vector3());const l=Math.hypot(d.x,d.z)||1;fx=d.x/l;fz=d.z/l}
   for(let k=0;k<18;k++){const i=cand[Math.floor(Math.random()*cand.length)];const s=S[i];const u=Math.random()*s.L;const px=s.ax+s.tx*u,pz=s.az+s.tz*u;const d=Math.hypot(px-x,pz-z);if(d<rmin||d>rmax)continue;
     if(avoid&&d<95&&((px-x)*fx+(pz-z)*fz)/d>.3)continue;return{i,u}}return null}
-function pedCount(){const q=SV3.qt||'high';/* v9.1: 북적이게 — 20→24 / 13→16 / 7→9, 대신 보이는 반경 안에 모아 둔다 */let n=q==='low'?9:q==='mid'?16:24;if(OUT.tod==='night')n=Math.round(n*.55);else if(OUT.tod==='dawn')n=Math.round(n*.8);
+function crowdFactor(){const q=SV3.qt||'high';const v=+store.get('sg.crowd',q==='low'?1:2);return v===2?2:1}
+function pedCount(){const q=SV3.qt||'high';/* v9.1: 북적이게 — 20→24 / 13→16 / 7→9, 대신 보이는 반경 안에 모아 둔다 */let n=q==='low'?9:q==='mid'?16:24;/* v9.9: 설정 '거리 인파' — 중·상은 기본 2배 */n=Math.round(n*crowdFactor());if(OUT.tod==='night')n=Math.round(n*.55);else if(OUT.tod==='dawn')n=Math.round(n*.8);
   /* 핵: 첫 24시간(4턴 전)은 낙진 때문에 30%, 그 뒤엔 구호품을 받으러 나와 80% */if(G.scen==='nuke')n=Math.round(n*(G.turn<4?.3:.8));else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)n=Math.round(n*.3);return Math.max(2,n)}
 function pedAt(a){const s=PED.segs[a.seg];const nx=-s.tz,nz=s.tx;const q=a._q||(a._q={x:0,z:0,dx:0,dz:0});q.x=s.ax+s.tx*a.s+nx*a.lat;q.z=s.az+s.tz*a.s+nz*a.lat;q.dx=s.tx*a.dir;q.dz=s.tz*a.dir;return q}/* v8.6: 매 프레임 새 객체를 만들지 않는다(GC 멈칫 줄이기) */
 function pedMk(sc,i,kind,mode,pk){const h=civHuman(i,mode==='stand'?mrPick(['idle','phone','talk','listen','look','nervous']):mode==='run'?'run':(i%3?'walk':'walkFast'),kind);if(!h)return null;if(kind==='civ'&&i%2===0&&typeof civProps==='function')try{civProps(h,i)}catch(e){}
@@ -17419,12 +17426,12 @@ function heroPetStep(a,dt){const P=a.h.heroPet;if(!P)return;P.t+=dt;const v=a.v|
   else{const bd=P.parts.body;bd.position.y=.22+Math.sin(P.t*2.4)*.03;bd.rotation.y+=dt*.6;for(const k in P.parts)if(k[0]==='r')P.parts[k].rotation.y+=dt*30}}
 /* ---------- 호출·착지·동행 ---------- */
 function heroMake(D){const h=makeHumanRBX(D.av,{pose:'idle',seed:70+HERO_DEF.indexOf(D)});if(!h)return null;h.kind='hero';try{heroSuit(h,D)}catch(e){console.error(e)}return h}
-function heroCall(id){const D=heroDef(id);if(!D)return false;if(!OUT.on){toast('밖에 나갔을 때 부를 수 있다');return false}if(HERO.cur){toast(`${HERO.cur.D.ico} ${HERO.cur.nm}이(가) 이미 함께 있다`);return false}if(heroUsedToday()){toast('오늘은 이미 불렀다 — 내일 다시');return false}if(!heroAvail())return false;
-  const h=heroMake(D);if(!h)return false;const p=FP3.pos;const H=FP3.yaw+Math.PI;let x=p.x+Math.sin(H)*6.5,z=p.z+Math.cos(H)*6.5;if(!pedFree(x,z)){let f=false;for(const r of [5,4,7])for(let a=0;a<Math.PI*2&&!f;a+=Math.PI/6){const ax=p.x+Math.sin(H+a)*r,az=p.z+Math.cos(H+a)*r;if(pedFree(ax,az)){x=ax;z=az;f=true}}}
-  h.root.position.set(x,26,z);h.root.rotation.y=Math.atan2(p.x-x,p.z-z);OUT.scene.add(h.root);try{h.setPose('crouch',true)}catch(e){}
-  const nm=heroName(D);const a={h,kind:'hero',hk:D.id,D,nm,d:{st:'ok',nm,hp:100,role:'히어로'},S:{n:'앞 가운데',u:0,f:3.3,face:0},slot:8,order:0,v:0,stuck:0,pT:0,still:0,mode:'hero',tagL:D.ico+' '+nm,hero:1,ms:D.kid?5.2:6.6,ent:{ph:'drop',t:0,y0:26}};
-  HERO.cur=a;OUT.npcs.push(a);G.flags.heroDay=heroDay();G.flags.heroCalls=(G.flags.heroCalls||0)+1;HERO.scanT=0;
-  outNote(`<b>${D.ico} ${nm} 출동!</b><div>${D.power}. 이번 외출 동안 함께 다닌다(하루 1회).</div>`,4600);try{SFX.step('concrete')}catch(e){}try{vib([60,40,120])}catch(e){}heroUI();return true}
+function heroCall(id,o){o=o||{};const D=heroDef(id);if(!D)return false;if(!OUT.on){toast('밖에 나갔을 때 부를 수 있다');return false}if(HERO.cur){toast(`${HERO.cur.D.ico} ${HERO.cur.nm}이(가) 이미 함께 있다`);return false}if(!o.force&&heroUsedToday()){toast('오늘은 이미 불렀다 — 내일 다시');return false}if(!(OUT.on&&!heroBusy()&&RBX.ok&&OUT.scene))return false;
+  const h=heroMake(D);if(!h)return false;const p=FP3.pos;const H=FP3.yaw+Math.PI;let x=p.x+Math.sin(H)*6.5,z=p.z+Math.cos(H)*6.5;if(o.at){x=o.at.x;z=o.at.z}else if(!pedFree(x,z)){let f=false;for(const r of [5,4,7])for(let a=0;a<Math.PI*2&&!f;a+=Math.PI/6){const ax=p.x+Math.sin(H+a)*r,az=p.z+Math.cos(H+a)*r;if(pedFree(ax,az)){x=ax;z=az;f=true}}}
+  h.root.position.set(x,o.at?0:26,z);h.root.rotation.y=Math.atan2(p.x-x,p.z-z);OUT.scene.add(h.root);try{h.setPose(o.at?'idle':'crouch',true)}catch(e){}
+  const nm=heroName(D);const a={h,kind:'hero',hk:D.id,D,nm,d:{st:'ok',nm,hp:100,role:'히어로'},S:{n:'앞 가운데',u:0,f:3.3,face:0},slot:8,order:0,v:0,stuck:0,pT:0,still:0,mode:'hero',tagL:D.ico+' '+nm,hero:1,ms:D.kid?5.2:6.6,ent:o.at?null:{ph:'drop',t:0,y0:26},contract:!!o.contract};
+  HERO.cur=a;OUT.npcs.push(a);if(!o.force)G.flags.heroDay=heroDay();G.flags.heroCalls=(G.flags.heroCalls||0)+1;HERO.scanT=0;
+  if(!o.quiet)outNote(`<b>${D.ico} ${nm} ${o.contract?'— 경호 계약으로 합류':'출동!'}</b><div>${D.power}. ${o.contract?'계약 기간 동안 외출마다 함께 다닌다.':'이번 외출 동안 함께 다닌다(하루 1회).'}</div>`,4600);try{SFX.step('concrete')}catch(e){}try{vib([60,40,120])}catch(e){}heroUI();return true}
 function heroClear(){const a=HERO.cur;if(!a)return;if(a.carry){const C=a.carry;C.inj.carried=null;if(C.inj.d.st==='crit')C.inj.bleed=60;GRP.carry=GRP.carry.filter(x=>x!==C)}if(a.h&&a.h.root.parent)a.h.root.parent.remove(a.h.root);OUT.npcs=(OUT.npcs||[]).filter(x=>x!==a);HERO.cur=null;heroMarksClear();heroUI()}
 function heroDust(p){const sc=OUT.scene;if(!sc)return;for(let i=0;i<12;i++){const a=i/12*Math.PI*2;const m=new T.Mesh(GG.sph(.16,7),new T.MeshStandardMaterial({color:'#b9b2a6',transparent:true,opacity:.75,roughness:1}));m.position.set(p.x+Math.cos(a)*.5,.2,p.z+Math.sin(a)*.5);m.castShadow=false;sc.add(m);HERO.fx.push({m,t:0,vx:Math.cos(a)*3.2,vz:Math.sin(a)*3.2})}}
 function heroFxStep(dt){if(!HERO.fx.length)return;HERO.fx=HERO.fx.filter(f=>{f.t+=dt;const m=f.m;m.position.x+=f.vx*dt;m.position.z+=f.vz*dt;m.position.y+=dt*.6;const k=Math.max(0,1-f.t/.9);m.scale.setScalar(.6+f.t*2.2);m.material.opacity=.75*k;if(f.t>.9){if(m.parent)m.parent.remove(m);m.material.dispose();return false}return true})}
@@ -17549,7 +17556,7 @@ function aptwOff(){if(!APTW.on)return;const S=OUT.scene,sc=APTW.sc;try{if(S&&sc&
 (function(){const s=window.gunOwStart,e=window.gunOwEnd;if(typeof s!=='function'||typeof e!=='function')return;window.gunOwStart=function(){const was=APTW.on,sc=APTW.sc;aptwOff();const r=s.apply(this,arguments);if(!GUN.ow&&was&&sc)aptwOn(sc);return r};window.gunOwEnd=function(){const r=e.apply(this,arguments);try{if(APT.on&&SV3.scene&&!APTW.on)aptwOn(SV3.scene)}catch(x){}return r}})();
 /* 실내 1인칭 무기 */
 (function(){const b=window.gunFpOk;window.gunFpOk=function(){if(APTW.on&&typeof OUT!=='undefined'&&OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)&&!(typeof BR!=='undefined'&&BR.on))return true;return b.apply(this,arguments)}})();
-(function(){const b=window.tjAptStep;if(typeof b!=='function')return;window.tjAptStep=function(dt){const r=b.apply(this,arguments);try{if(APT.on&&APTW.on&&!OUT.enc&&!OUT.busy){if(GUN.on)gunStep(dt);else if(GUN.eq&&!GUN.sheathed&&gunFpOk()&&G.eq===GUN.eq)gunEquip(GUN.eq,true)}}catch(e){console.error(e)}return r}})();
+(function(){const b=window.tjAptStep;if(typeof b!=='function')return;window.tjAptStep=function(dt){const r=b.apply(this,arguments);try{if(APT.on&&APTW.on){if(GUN.on)gunStep(dt);else if(!OUT.enc&&!OUT.busy&&GUN.eq&&!GUN.sheathed&&gunFpOk()&&G.eq===GUN.eq)gunEquip(GUN.eq,true)}}catch(e){console.error(e)}return r}})();
 /* 광선: 실내 벽·가구(AABB)에 먼저 막히고, 창 너머는 밖 좌표로 땅·벽을 본다 */
 function aptwRayBox(o,d,b){let t0=0,t1=Infinity;for(const k of ['x','y','z']){const dk=d[k];if(Math.abs(dk)<1e-9){if(o[k]<b.min[k]||o[k]>b.max[k])return null;continue}let ta=(b.min[k]-o[k])/dk,tb=(b.max[k]-o[k])/dk;if(ta>tb){const s=ta;ta=tb;tb=s}t0=Math.max(t0,ta);t1=Math.min(t1,tb);if(t0>t1)return null}return t0>0?t0:(t1>0?0:null)}
 /* 자기 건물의 높이 격자 안에 있는 동안은 건너뛴다(최대 40m) */
@@ -17574,6 +17581,178 @@ function aptwRayExit(o,d,b){let t1=Infinity;for(const k of ['x','y','z']){const 
 /* 설정: 창밖 실경(저사양 폰은 끌 수 있다) */
 function aptwRows(){if(typeof s4Seg!=='function')return '';return s4Seg('aptview','아파트 창밖 실경','들어간 세대 창문 너머로 실제 마을을 그린다(폰이 느리면 끔)',[['1','켬'],['0','끔']],store.get('sg.aptView',true)!==false?'1':'0')}
 if(typeof HELP84!=='undefined'){HELP84.push(['아파트 안(v9.8)','아무 아파트에 들어가면 창문 너머로 실제 마을이 보인다. 안에서도 점프(⤒·Space)할 수 있고, 배낭에서 총을 장착해 창문으로 밖의 위협을 쏠 수 있다(벽·가구에는 막힌다, 발사기는 실내 불가). 주민에게 쏘면 밖에서처럼 큰 벌을 받는다.'])}
+
+/* ===================== 73 · v9.9 아파트에 팀원도 함께 — 들어와서 흩어져 뒤지고(한 사람당 한 곳), 찾은 것은 그대로 내 것 · 가족은 현관 쪽에서 기다린다 ===================== */
+/* 사용자 요청(2026-11-07): "아파트에 들어갈 때 팀원들도 다 같이 이동시켜주시고" — 상가 동반 파밍(67)과 같은 틀. 나갈 때 밖 장면의 현관 앞으로 되돌린다 */
+const APTT={team:[],fam:[],on:false};
+function apttIn(sc){APTT.team=[];APTT.fam=[];if(!sc||typeof TEAM==='undefined')return;const ex=[hpX(60),hpZ(126)];
+  const L=tmLive().filter(m=>(m.d.st==='ok'||m.d.st==='hurt')&&!m.carry&&!m.carried);L.forEach((m,i)=>{const h=m.h;if(!h)return;sc.add(h.root);h.root.position.set(ex[0]+.9+Math.floor(i/2)*.8,0,ex[1]+(i%2?-.7:.7));h.root.rotation.y=-Math.PI/2;h.root.visible=true;try{h.setPose('idle')}catch(e){}APTT.team.push({m,h,st:'wait',t:1.2+i*1.1,tgt:null,stuck:0,side:1,done:0})});
+  if(typeof FAM!=='undefined')FAM.list.forEach((a,i)=>{if(a.d.st!=='ok'&&a.d.st!=='hurt')return;if(a.carried||a.carry)return;sc.add(a.h.root);a.h.root.position.set(ex[0]+.3,0,ex[1]+(i%2?1.3:-1.3));a.h.root.rotation.y=-Math.PI/2;a.h.root.visible=true;try{a.h.setPose('idle')}catch(e){}APTT.fam.push(a)});
+  APTT.on=APTT.team.length>0||APTT.fam.length>0;if(APTT.team.length)outNote(`<b>팀원 ${APTT.team.length}명이 같이 들어왔다</b><div>흩어져 뒤진다 — 찾은 건 내 배낭으로. ${APTT.fam.length?'가족은 현관 쪽에서 기다린다.':''}</div>`,3200)}
+function apttOut(){const B=APT.back||{x:FP3.pos.x,z:FP3.pos.z,yaw:0};const nx=-Math.sin(B.yaw),nz=-Math.cos(B.yaw);/* 현관 앞(밖) */
+  APTT.team.forEach((t,i)=>{const h=t.h;if(OUT.scene)OUT.scene.add(h.root);h.root.position.set(B.x-nx*(1.5+i*.7)+(i%2?.7:-.7),0,B.z-nz*(1.5+i*.7));h.root.rotation.y=B.yaw;try{h.setPose('idle')}catch(e){}t.m.v=0});
+  APTT.fam.forEach((a,i)=>{const h=a.h;if(OUT.scene)OUT.scene.add(h.root);h.root.position.set(B.x-nx*(2.4+i*.6)+(i%2?.5:-.5),0,B.z-nz*(2.4+i*.6));h.root.rotation.y=B.yaw;a.v=0});
+  if(typeof TEAM!=='undefined'){TEAM.trail=[{x:FP3.pos.x,z:FP3.pos.z}];TEAM.lp={x:FP3.pos.x,z:FP3.pos.z}}APTT.team=[];APTT.fam=[];APTT.on=false}
+function apttBlocked(x,z){for(const b of FP3.boxes||[]){if(x+.25>b.min.x&&x-.25<b.max.x&&z+.25>b.min.z&&z-.25<b.max.z)return true}const B=FP3.bounds;if(B&&(x<B[0]||x>B[2]||z<B[1]||z>B[3]))return true;return false}
+function apttRoll(c,m){const L=APT_LOOT[c.k]||[];if(OUT.apt&&OUT.apt.visited&&Math.random()<.7)return '텅 비었어요';let acc=0,hit=null;const rr=Math.random();for(const q of L){acc+=q[2];if(rr<acc){hit=q;break}}if(!hit)return '쓸 만한 게 없네요';const got=outGive(hit[0],hit[1]);return got?got+' 찾았어요!':'찾았는데 배낭이 꽉 찼어요'}
+function apttStep(dt){if(!APTT.on)return;APTT.fam.forEach(a=>{try{a.h.update(dt);const d=Math.hypot(FP3.pos.x-a.h.root.position.x,FP3.pos.z-a.h.root.position.z);if(d<6)lifeFace(a.h,FP3.pos.x,FP3.pos.z)}catch(e){}});
+  for(const t of APTT.team){const h=t.h;h.update(dt);t.t-=dt;const P=h.root.position;
+    if(t.st==='wait'){if(t.t<=0){if(t.done>=1){t.st='done';continue}const c=(APT.spots||[]).filter(c=>!c.taken&&APT_LOOT[c.k]&&!APTT.team.some(o=>o!==t&&o.tgt===c)).sort(()=>Math.random()-.5)[0];if(!c){t.st='done';continue}t.tgt=c;t.st='go';try{h.setPose('walk')}catch(e){}}continue}
+    if(t.st==='go'){const c=t.tgt;if(!c||c.taken){t.st='wait';t.t=.5;t.tgt=null;continue}const dx=c.x-P.x,dz=c.z-P.z;const d=Math.hypot(dx,dz);if(d<.6){t.st='search';t.t=2.6;try{h.setPose('crouch')}catch(e){}continue}const sp=1.6;let nx=P.x+dx/d*sp*dt,nz=P.z+dz/d*sp*dt;
+      if(!apttBlocked(nx,nz)){P.x=nx;P.z=nz;t.stuck=0}else{t.stuck+=dt;const sx=-dz/d,sz=dx/d;const ax=P.x+sx*sp*dt*t.side,az=P.z+sz*sp*dt*t.side;if(!apttBlocked(ax,az)){P.x=ax;P.z=az}else t.side=-t.side;if(t.stuck>3){t.st='wait';t.t=.4;t.tgt=null;t.stuck=0}}
+      h.root.rotation.y=Math.atan2(dx,dz);continue}
+    if(t.st==='search'){if(t.t<=0){const c=t.tgt;t.tgt=null;t.done++;try{h.setPose('idle')}catch(e){}if(c&&!c.taken){c.taken=1;APT.sig='';const msg=apttRoll(c,t.m);try{bubSay(h,msg,2.6,'')}catch(e){}outStat()}t.st='wait';t.t=.8}continue}}}
+(function(){const b=window.vApt3;if(typeof b!=='function')return;window.vApt3=function(){const r=b.apply(this,arguments);try{if(APT.on&&SV3.scene&&!OUT.apt.lobby)apttIn(SV3.scene)}catch(e){console.error(e)}return r};SV3.views.apt=window.vApt3})();
+(function(){const b=window.tjAptLeave;if(typeof b!=='function')return;window.tjAptLeave=function(){const was=APTT.on;const r=b.apply(this,arguments);try{if(was)apttOut()}catch(e){console.error(e)}return r}})();
+(function(){const b=window.tjAptStep;if(typeof b!=='function')return;window.tjAptStep=function(dt){const r=b.apply(this,arguments);try{if(APT.on)apttStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{if(APTT.on){APTT.team=[];APTT.fam=[];APTT.on=false}}catch(e){}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined'){HELP84.push(['아파트 팀 동반(v9.9)','아무 아파트에 들어가면 팀원이 같이 들어와 한 사람당 한 곳씩 뒤지고, 찾은 것은 내 배낭·물자로 들어온다. 가족은 현관 쪽에서 기다린다.'])}
+
+/* ===================== 74 · v9.9 지도 '위치 이동' 모드 + 자동 운전(차·자전거·킥보드·오토바이) ===================== */
+/* 사용자 요청(2026-11-07): "미니맵 클릭 시 '해당 위치 이동' 버튼을 먼저 누른 다음, 지도의 특정 point를 클릭 시 자동으로 뛰거나, 운전하여 해당 위치로 이동"
+   큰 지도에 '🧭 위치 이동' 버튼 — 켜고 지도를 누르면 확인 없이 바로 간다: 걷는 중이면 자동 달리기(62), 차·탈것을 타고 있으면 도로망을 따라 자동 운전.
+   도로망: TJ_DATA.roads(보행로 제외)를 6m 간격으로 잘게 나눈 점들 + 다른 도로의 4m 안 점끼리 이음(교차로·T자) → A*. 운전은 앞을 내다보는 추종(pure pursuit) — 굽은 길·도착 전엔 속도를 줄이고,
+   끼이면 1.3초 후진 후 다시(3번 끼이면 멈춤). 조이스틱·WASD를 움직이거나 '멈춤'을 누르면 바로 손 운전으로 돌아온다 */
+const ADRV={on:false,path:null,k:0,tgt:null,stuck:0,stuckN:0,rev:0,hudT:0,end:false,G:null};
+/* 차 길찾기: 2m 격자(1200×1200) — 막힌 칸은 1m 점유 격자 + 길 위 장애물(버려진 차·바리케이드)을 1m 부풀려(차 반폭) 막고,
+   도로 칸은 비용 1, 길 밖(잔디·공터)은 2.4 — 도로를 따라가되 도로가 끊긴 곳(물·울타리)은 열린 땅으로 돌아간다. A*는 프레임마다 5ms씩 나눠 계산 */
+function adGrid(){const O=TJ.occ;if(!O)return null;const S=(typeof TOWN!=='undefined'&&TOWN.solids)||[];const key=OUT.scene&&OUT.scene.uuid+':'+S.length;if(ADRV.CG&&ADRV.CG.key===key)return ADRV.CG;
+  const N=O.n;const occ=O.b.slice();/* 장애물 상자 → 1m 칸 */for(const b of S){if(b.max.y<.4)continue;const i0=Math.max(0,Math.floor(b.min.x-O.x0)),i1=Math.min(N-1,Math.floor(b.max.x-O.x0)),j0=Math.max(0,Math.floor(b.min.z-O.z0)),j1=Math.min(N-1,Math.floor(b.max.z-O.z0));for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++)occ[j*N+i]=1}
+  const n=Math.floor(N/2);const g=new Uint8Array(n*n);for(let j=0;j<n;j++)for(let i=0;i<n;i++){let bl=0;for(let y=2*j-1;y<=2*j+2&&!bl;y++){if(y<0||y>=N){bl=1;break}for(let x=2*i-1;x<=2*i+2;x++){if(x<0||x>=N||occ[y*N+x]){bl=1;break}}}g[j*n+i]=bl}
+  /* 도로 칸 */const rd=new Uint8Array(n*n);for(const [t,w,p] of TJ_DATA.roads){if(t===3)continue;const hw=w/2;for(let k=0;k+3<p.length;k+=2){const ax=p[k],az=p[k+1],bx=p[k+2],bz=p[k+3];const vx=bx-ax,vz=bz-az,L2=vx*vx+vz*vz||1;
+    const i0=Math.max(0,Math.floor((Math.min(ax,bx)-hw-O.x0)/2)),i1=Math.min(n-1,Math.floor((Math.max(ax,bx)+hw-O.x0)/2)),j0=Math.max(0,Math.floor((Math.min(az,bz)-hw-O.z0)/2)),j1=Math.min(n-1,Math.floor((Math.max(az,bz)+hw-O.z0)/2));
+    for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const x=O.x0+i*2+1,z=O.z0+j*2+1;let u=((x-ax)*vx+(z-az)*vz)/L2;u=u<0?0:u>1?1:u;if(Math.hypot(ax+vx*u-x,az+vz*u-z)<=hw)rd[j*n+i]=1}}}
+  return ADRV.CG={key,n,g,rd,x0:O.x0,z0:O.z0}}
+function adCell(x,z){const C=ADRV.CG;return[Math.floor((x-C.x0)/2),Math.floor((z-C.z0)/2)]}
+function adWorld(i,j){const C=ADRV.CG;return{x:C.x0+i*2+1,z:C.z0+j*2+1}}
+function adFree(i,j,R){const C=ADRV.CG,n=C.n,g=C.g;const ok=(a,b)=>a>=0&&b>=0&&a<n&&b<n&&!g[b*n+a];if(ok(i,j))return[i,j];for(let r=1;r<=(R||14);r++){for(let a=-r;a<=r;a++){if(ok(i+a,j-r))return[i+a,j-r];if(ok(i+a,j+r))return[i+a,j+r]}for(let b=-r+1;b<r;b++){if(ok(i-r,j+b))return[i-r,j+b];if(ok(i+r,j+b))return[i+r,j+b]}}return null}
+function adJob(sx,sz,tx,tz){const C=adGrid();if(!C)return null;const n=C.n;const s=adFree(...adCell(sx,sz),4),t=adFree(...adCell(tx,tz),14);if(!s||!t)return null;
+  const N=n*n;const Gc=new Float32Array(N).fill(1e30),par=new Int32Array(N).fill(-1),cl=new Uint8Array(N);const heap=[],hf=[];const push=(k,f)=>{heap.push(k);hf.push(f);let i=heap.length-1;while(i>0){const p=(i-1)>>1;if(hf[p]<=hf[i])break;[heap[p],heap[i]]=[heap[i],heap[p]];[hf[p],hf[i]]=[hf[i],hf[p]];i=p}};
+  const pop=()=>{const k=heap[0];const lk=heap.pop(),lf=hf.pop();if(heap.length){heap[0]=lk;hf[0]=lf;let i=0;for(;;){const l=2*i+1,r=l+1;let m=i;if(l<heap.length&&hf[l]<hf[m])m=l;if(r<heap.length&&hf[r]<hf[m])m=r;if(m===i)break;[heap[m],heap[i]]=[heap[i],heap[m]];[hf[m],hf[i]]=[hf[i],hf[m]];i=m}}return k};
+  const ti=t[0],tj=t[1];const H=(i,j)=>{const dx=Math.abs(i-ti),dz=Math.abs(j-tj);return Math.max(dx,dz)+.4142*Math.min(dx,dz)};const s0=s[1]*n+s[0];Gc[s0]=0;push(s0,H(s[0],s[1]));
+  return{n,G:Gc,par,cl,heap,hf,push,pop,H,ti,tj,s:s0,t:tj*n+ti,done:false,path:null,exp:0,best:s0,bestH:H(s[0],s[1]),tx,tz}}
+function adJobStep(J,budget){const C=ADRV.CG;const t0=performance.now();const {n,G:Gc,par,cl,heap,push,pop,H}=J;const g=C.g,rd=C.rd;
+  while(heap.length){if(J.exp%64===0&&performance.now()-t0>budget)return false;const c=pop();if(cl[c])continue;cl[c]=1;J.exp++;if(c===J.t){J.done=true;J.reach=1;break}
+    const ci=c%n,cj=(c/n)|0;const hc=H(ci,cj);if(hc<J.bestH){J.bestH=hc;J.best=c}const gc=Gc[c];
+    for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const ni=ci+di,nj=cj+dj;if(ni<0||nj<0||ni>=n||nj>=n)continue;const k=nj*n+ni;if(g[k]||cl[k])continue;if(di&&dj&&(g[cj*n+ni]||g[nj*n+ci]))continue;
+      const ng=gc+(di&&dj?1.4142:1)*(rd[k]?1:2.4);if(ng<Gc[k]){Gc[k]=ng;par[k]=c;push(k,ng+H(ni,nj))}}
+    if(J.exp>600000)break}
+  J.done=true;/* 끝까지 못 가면 가장 가까이 간 칸으로 */const end=J.reach?J.t:J.best;const pts=[];let c=end;while(c>=0&&c!==J.s){pts.push(adWorld(c%n,(c/n)|0));c=par[c]}pts.reverse();J.path=pts;J.partial=!J.reach;return true}
+/* 직선으로 가도 되는 구간 합치기 — 막힌 칸이 없고, 원래 길보다 길 밖 칸을 더 밟지 않을 때만 */
+function adSmooth(from,pts){const C=ADRV.CG;const n=C.n;const cellAt=(x,z)=>{const i=Math.floor((x-C.x0)/2),j=Math.floor((z-C.z0)/2);return(i<0||j<0||i>=n||j>=n)?-1:j*n+i};
+  const line=(a,b)=>{const d=Math.hypot(b.x-a.x,b.z-a.z);const m=Math.max(1,Math.ceil(d/1));let off=0;for(let k=0;k<=m;k++){const x=a.x+(b.x-a.x)*k/m,z=a.z+(b.z-a.z)*k/m;const c=cellAt(x,z);if(c<0||C.g[c])return -1;if(!C.rd[c])off++}return off};
+  const offRun=(i0,i1)=>{let o=0;for(let k=i0;k<=i1;k++){const c=cellAt(pts[k].x,pts[k].z);if(c>=0&&!C.rd[c])o++}return o};
+  const out=[];let a=from,ai=-1;let i=0;while(i<pts.length){let j=i;for(let k=Math.min(pts.length-1,i+14);k>i;k--){const o=line(a,pts[k]);if(o>=0&&o<=offRun(i,k)){j=k;break}}out.push(pts[j]);a=pts[j];ai=j;i=j+1}return out}
+function adVeh(){if(OUT.drv)return{kind:'car',get x(){return OUT.drv.car.position.x},get z(){return OUT.drv.car.position.z},get yaw(){return OUT.drv.yaw},get v(){return OUT.drv.v}};if(OUT.ride)return{kind:OUT.ride.kind,get x(){return OUT.ride.mesh.position.x},get z(){return OUT.ride.mesh.position.z},get yaw(){return OUT.ride.yaw},get v(){return OUT.ride.v}};return null}
+function adStart(x,z){const V=adVeh();if(!V)return false;if(!adGrid())return false;const J=adJob(V.x,V.z,x,z);if(!J){outNote('<b>그쪽으로는 차로 갈 수 없다</b><div>길·공터 가까이를 눌러 보자.</div>',2600);return false}
+  ADRV.on=true;ADRV.job=J;ADRV.path=null;ADRV.k=0;ADRV.want={x,z};ADRV.tgt={x,z};ADRV.stuck=0;ADRV.stuckN=0;ADRV.rev=0;ADRV.end=false;ADRV.replan=0;TJ.goal={bx:x,bz:z,auto:1};
+  outNote(`<b>${V.kind==='car'?'🚗 자동 운전':'🚲 자동 주행'}</b><div>길을 찾는 중… 약 ${Math.round(Math.hypot(x-V.x,z-V.z))}m. 조이스틱을 움직이면 멈춘다.</div>`,2200);adHud();return true}
+/* 길을 다 찾으면 경로를 다듬어 달린다 */
+function adJobDone(){const J=ADRV.job;ADRV.job=null;const V=adVeh();if(!V){adStop();return}if(!J.path||!J.path.length){outNote('<b>차로 가는 길을 못 찾았다</b>',2200);adStop();return}
+  const pts=adSmooth({x:V.x,z:V.z},J.path);if(!J.partial)pts.push({x:ADRV.want.x,z:ADRV.want.z});ADRV.path=pts;ADRV.k=0;ADRV.tgt=pts[pts.length-1];TJ.goal={bx:ADRV.tgt.x,bz:ADRV.tgt.z,auto:1};
+  let L=0;let a={x:V.x,z:V.z};for(const q of pts){L+=Math.hypot(q.x-a.x,q.z-a.z);a=q}ADRV.len=Math.round(L);if(J.partial)outNote('<b>차로 갈 수 있는 가장 가까운 곳까지 간다</b><div>그 뒤는 걸어서.</div>',2400)}
+/* 끼였을 때: 그 자리 주변 칸을 막고 지금 자리에서 다시 찾는다 */
+function adReplan(){const V=adVeh();const C=ADRV.CG;if(!V||!C||ADRV.replan>=3)return false;ADRV.replan++;const P=ADRV.path;const q=P&&P[Math.min(P.length-1,ADRV.k)];if(q){const [i,j]=adCell(q.x,q.z);for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){const a=i+di,b=j+dj;if(a>=0&&b>=0&&a<C.n&&b<C.n)C.g[b*C.n+a]=1}}
+  const J=adJob(V.x,V.z,ADRV.want.x,ADRV.want.z);if(!J)return false;ADRV.job=J;ADRV.path=null;ADRV.rev=1.0;outNote('<b>길이 막혀 돌아간다</b><div>다른 길을 찾는 중.</div>',1800);return true}
+function adStop(why){const was=ADRV.on;ADRV.on=false;ADRV.path=null;ADRV.job=null;if(TJ.goal&&TJ.goal.auto)TJ.goal=null;FP3.mv.x=0;FP3.mv.y=0;adHud();
+  if(was&&why==='arrive')outNote('<b>🚗 도착했다</b><div>지도에서 누른 자리 가까이.</div>',2200);else if(was&&why==='stuck')outNote('<b>길이 막혔다</b><div>여기서부터는 손으로 몰자.</div>',2400)}
+function adUserInput(){for(const k in FP3.ptr){if(FP3.ptr[k].role==='move')return true}if(typeof PC!=='undefined'&&typeof PC_MOVE!=='undefined'){for(const k in PC_MOVE)if(PC.keys[k])return true}return false}
+/* 핵심: 앞을 내다보는 추종 → FP3.mv(조향·가속)를 만든다 */
+function adControl(dt){if(!ADRV.on)return;const V=adVeh();if(!V){adStop();return}if(adUserInput()){adStop('cancel');return}if(OUT.enc||OUT.mapOpen){FP3.mv.x=0;FP3.mv.y=0;return}
+  const sp=Math.abs(V.v);if(ADRV.job){FP3.mv.x=0;FP3.mv.y=sp>.3?(V.v>0?-1:1):0;if(adJobStep(ADRV.job,8)&&ADRV.job&&ADRV.job.done)adJobDone();ADRV.hudT-=dt;if(ADRV.hudT<=0){ADRV.hudT=.3;adHud()}return}
+  const P=ADRV.path;if(!P||!P.length){adStop();return}const Ld=clamp(5+sp*.5,5,14);
+  /* 지나간 점 넘기기 */while(ADRV.k<P.length-1){const q=P[ADRV.k];const d=Math.hypot(q.x-V.x,q.z-V.z);const n=P[ADRV.k+1];const dn=Math.hypot(n.x-V.x,n.z-V.z);if(d<Ld*.6||dn<d)ADRV.k++;else break}
+  let T=P[P.length-1];for(let i=ADRV.k;i<P.length;i++){if(Math.hypot(P[i].x-V.x,P[i].z-V.z)>=Ld){T=P[i];break}}
+  const fin=P[P.length-1];const left=Math.hypot(fin.x-V.x,fin.z-V.z)+(P.length-1-ADRV.k)*0;let rem=0;for(let i=ADRV.k;i<P.length-1;i++)rem+=Math.hypot(P[i+1].x-P[i].x,P[i+1].z-P[i].z);rem+=Math.hypot(P[ADRV.k].x-V.x,P[ADRV.k].z-V.z);
+  if(ADRV.end||rem<4.5||(ADRV.k>=P.length-1&&left<4.5)){ADRV.end=true;FP3.mv.x=0;FP3.mv.y=sp>.3?(V.v>0?-1:1):0;if(sp<=.3)adStop('arrive');return}
+  const want=Math.atan2(T.x-V.x,T.z-V.z);let e=want-V.yaw;e=Math.atan2(Math.sin(e),Math.cos(e));
+  /* 앞쪽 20m 굽은 정도 → 목표 속도 */let turn=0;let acc=0,prevA=null;for(let i=ADRV.k;i<P.length-1&&acc<22;i++){const a=Math.atan2(P[i+1].x-P[i].x,P[i+1].z-P[i].z);if(prevA!=null){let d=a-prevA;d=Math.atan2(Math.sin(d),Math.cos(d));turn+=Math.abs(d)}prevA=a;acc+=Math.hypot(P[i+1].x-P[i].x,P[i+1].z-P[i].z)}
+  const vmax=V.kind==='car'?11:V.kind==='moto'?10:V.kind==='kick'?5.5:6.5;let vt=Math.max(V.kind==='car'?3.2:2.2,vmax-(vmax-3)*Math.min(1,turn/1.1));vt=Math.min(vt,1.2+rem*.55);if(Math.abs(e)>1.0)vt=Math.min(vt,2.5);
+  /* 끼임 → 후진 */if(ADRV.rev>0){ADRV.rev-=dt;FP3.mv.y=-1;FP3.mv.x=clamp(e*1.6,-1,1);return}
+  if(sp<.4&&vt>1){ADRV.stuck+=dt;if(ADRV.stuck>2.4){ADRV.stuck=0;ADRV.stuckN++;if(ADRV.stuckN>5){adStop('stuck');return}if(ADRV.stuckN%2===0&&adReplan())return;ADRV.rev=1.3;return}}else ADRV.stuck=Math.max(0,ADRV.stuck-dt*.5);
+  FP3.mv.x=clamp(-e*(V.kind==='car'?2.0:1.6),-1,1);const dv=vt-V.v;FP3.mv.y=clamp(dv*.45+(dv>0?.15:-.05),-1,1);
+  ADRV.hudT-=dt;if(ADRV.hudT<=0){ADRV.hudT=.3;adHud()}}
+function adHud(){const sc=SV3.el;let h=$('#adHud');if(!ADRV.on||!sc){if(h)h.remove();return}if(!h||h.parentNode!==sc){if(h)h.remove();h=document.createElement('div');h.id='adHud';h.className='mis-hud ar-hud';h.innerHTML='<b>🚗 <span id="adTxt">자동 운전 · 조이스틱을 움직이면 멈춘다</span></b><i class="num" id="adD"></i><button data-g3="adstop">멈춤</button>';sc.appendChild(h)}
+  const V=adVeh();const t=ADRV.tgt;const d=V&&t?Math.round(Math.hypot(t.x-V.x,t.z-V.z)):0;const e=$('#adD');if(e){const s=d+'m';if(e.textContent!==s)e.textContent=s}const tx=$('#adTxt');if(tx){const s=ADRV.job?'길 찾는 중':'자동 운전 · 조이스틱을 움직이면 멈춘다';if(tx.textContent!==s)tx.textContent=s}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=adstop]');if(!b)return;e.preventDefault();e.stopPropagation();adStop('cancel')},true);
+/* 차: tjDrivePre 앞에서 조향·가속을 넣는다 · 탈것: ridePre 앞에서 */
+(function(){const b=window.tjDrivePre;if(typeof b!=='function')return;window.tjDrivePre=function(dt){try{if(ADRV.on&&OUT.drv)adControl(dt)}catch(e){console.error(e);adStop()}return b.apply(this,arguments)}})();
+(function(){const b=window.ridePre;if(typeof b!=='function')return;window.ridePre=function(dt){try{if(ADRV.on&&OUT.ride)adControl(dt)}catch(e){console.error(e);adStop()}return b.apply(this,arguments)}})();
+(function(){const b=window.tjDriveEnd;if(typeof b!=='function')return;window.tjDriveEnd=function(){if(ADRV.on)adStop();return b.apply(this,arguments)}})();
+(function(){const b=window.rideEnd;if(typeof b!=='function')return;window.rideEnd=function(){if(ADRV.on)adStop();return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{if(ADRV.on)adStop()}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 큰 지도: '🧭 위치 이동' 버튼 ---------- */
+(function(){const b=window.tjBigOpen;window.tjBigOpen=function(){const r=b.apply(this,arguments);try{const tools=document.querySelector('#tjBig .tjb-tools');if(tools&&!tools.querySelector('[data-g3=tjmove]')){const bt=document.createElement('button');bt.dataset.g3='tjmove';bt.id='tjMoveB';bt.textContent='🧭 위치 이동';if(TJB.move)bt.classList.add('on');tools.insertBefore(bt,tools.firstChild)}
+    const sub=document.querySelector('#tjBig .tjb-sub');if(sub&&TJB.move)sub.textContent='🧭 위치 이동 — 갈 곳을 누르면 바로 출발'}catch(e){console.error(e)}return r}})();
+document.addEventListener('click',e=>{const bt=e.target.closest('[data-g3=tjmove]');if(!bt)return;e.preventDefault();e.stopPropagation();TJB.move=!TJB.move;bt.classList.toggle('on',TJB.move);const sub=document.querySelector('#tjBig .tjb-sub');if(sub)sub.textContent=TJB.move?'🧭 위치 이동 — 갈 곳을 누르면 바로 출발':'탕정면 일대 · 내 위치 ▲ · 대피소 입구 ●';
+  if(TJB.move){const how=OUT.drv?'도로를 따라 자동 운전':OUT.ride?'도로를 따라 자동 주행':'달려서';toast(`위치 이동 켬 — 지도를 누르면 ${how}으로 간다`,2200)}},true);
+(function(){const b=window.tjBigTap;window.tjBigTap=function(e){if(!TJB.move||TJB.pin||!OUT.on||OUT.enc)return b.apply(this,arguments);const S=tjBigSize();if(!S)return b.apply(this,arguments);const rc=S.cv.getBoundingClientRect();const lx=SV3.rot?(e.clientY-rc.top):(e.clientX-rc.left),ly=SV3.rot?(rc.right-e.clientX):(e.clientY-rc.top);const wx=TJB.cx+(lx-S.w/2)*TJB.mpp,wz=TJB.cz+(ly-S.h/2)*TJB.mpp;
+  tjBigClose();if(OUT.drv||OUT.ride){adStart(wx,wz)}else{if(typeof arStart==='function')arStart(wx,wz)}}})();
+if(typeof HELP84!=='undefined'){HELP84.push(['지도 위치 이동(v9.9)','미니맵을 눌러 큰 지도를 열고 \'🧭 위치 이동\'을 켠 뒤 갈 곳을 누르면 확인 없이 바로 간다 — 걸을 땐 길을 찾아 달려가고, 차·자전거·킥보드·오토바이를 타고 있으면 도로를 따라 자동으로 몬다(굽은 길·도착 전엔 속도를 줄이고, 끼이면 후진해서 다시). 조이스틱·WASD를 움직이거나 \'멈춤\'을 누르면 바로 손 운전.'])}
+
+/* 차에 타면 잠시 뒤 길찾기 격자를 미리 만든다(처음 누를 때 멈칫하지 않게) */
+(function(){const b=window.tjDriveStart;if(typeof b!=='function')return;window.tjDriveStart=function(){const r=b.apply(this,arguments);try{setTimeout(()=>{try{if(OUT.on&&OUT.drv)adGrid()}catch(e){}},900)}catch(e){}return r}})();
+
+/* ===================== 75 · v9.9 탕정 히어로즈 사무소 — 마을 광장의 건물 · 히어로 경호 계약(1일·2일) ===================== */
+/* 사용자 요청(2026-11-07): "히어로는 마을 한가운데에 히어로 샵을 만들어서 여기에 가서 영웅 계약할 수 있게(예: 2일간 경호 계약)". 상표 이름(어벤져스)은 쓰지 않는다.
+   지중해마을 광장(POI.vgreen) 가까운 빈 땅(도로·광장 거점과 떨어진 7×6m)에 사무소 건물 — 흰 벽·남색 띠·간판·히어로 엠블럼 깃발 5장·빛나는 유리문, 앞에 히어로 5인이 서 있다.
+   문 앞 '🦸 경호 계약'에서 히어로·기간을 고른다: 1일 = 현금 봉투 1(없으면 물 3L), 2일 = 현금 봉투 2(없으면 물 6L). 계약한 히어로는 바로 걸어와 합류하고, 계약 기간 동안 외출마다 처음부터 함께 나온다(하루 1회 호출 제한과 별개).
+   계약은 판 저장(G.flags.heroK = {id, until}) — 1일 = 4턴 */
+const HOFF={pos:null,sc:null,grp:null,hs:[],built:null};
+function hoffFind(){const P=TJ_DATA.POI;const vg=P.vgreen||[P.shops[0].door[0],P.shops[0].door[1]];const O=TJ.occ;if(!O)return null;
+  const free=(x,z)=>{const i=Math.floor(x-O.x0),j=Math.floor(z-O.z0);if(i<0||j<0||i>=O.n||j>=O.n)return false;return !O.b[j*O.n+i]};
+  const roadD=(x,z)=>{let bd=1e9;for(const [t,w,p] of TJ_DATA.roads){if(t===3)continue;for(let k=0;k+3<p.length;k+=2){const ax=p[k],az=p[k+1],bx=p[k+2],bz=p[k+3];const vx=bx-ax,vz=bz-az;const L2=vx*vx+vz*vz||1;let u=((x-ax)*vx+(z-az)*vz)/L2;u=Math.max(0,Math.min(1,u));const d=Math.hypot(ax+vx*u-x,az+vz*u-z)-w/2;if(d<bd)bd=d}}return bd};
+  for(let r=16;r<=60;r+=4)for(let a=0;a<360;a+=15){const ang=a*Math.PI/180;const cx=vg[0]+Math.sin(ang)*r,cz=vg[1]+Math.cos(ang)*r;let ok=true;for(let dx=-5;dx<=5&&ok;dx+=1)for(let dz=-5;dz<=5&&ok;dz+=1)if(!free(cx+dx,cz+dz))ok=false;if(!ok)continue;if(roadD(cx,cz)<6)continue;
+    /* 정면은 광장을 본다 */const fy=Math.atan2(vg[0]-cx,vg[1]-cz);return{x:cx,z:cz,yaw:fy,vg}}return null}
+function hoffSignTex(){const c=document.createElement('canvas');c.width=1024;c.height=200;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,0,200);g.addColorStop(0,'#14234f');g.addColorStop(1,'#0b1430');x.fillStyle=g;x.fillRect(0,0,1024,200);x.strokeStyle='#f4c542';x.lineWidth=10;x.strokeRect(8,8,1008,184);
+  x.fillStyle='#f4c542';x.font='900 92px system-ui,"Noto Sans KR",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('탕정 히어로즈 사무소',512,92);x.fillStyle='#cfe0ff';x.font='700 34px system-ui,sans-serif';x.fillText('경호 계약 · 구조 지원 · 24시간',512,160);return mkTex(c)}
+function hoffBuild(sc){const L=hoffFind();if(!L)return;HOFF.pos=L;HOFF.sc=sc;const g=new T.Group();g.position.set(L.x,0,L.z);g.rotation.y=L.yaw;g.name='heroOffice';sc.add(g);HOFF.grp=g;
+  const wall=mat('#eef1f4',{r:.85}),navy=mat('#1b2f6b',{r:.6,m:.1}),gold=mat('#f4c542',{r:.4,m:.4}),dark=mat('#20242b',{r:.7}),glass=new T.MeshStandardMaterial({color:'#9fd6ff',emissive:'#6fb8ff',emissiveIntensity:.9,roughness:.1,metalness:.2,transparent:true,opacity:.75});
+  /* 몸통 7×5×4.2 · 지붕 띠 · 기단 */MM(GG.box(7,4.2,5),wall,0,2.1,0,{p:g});MM(GG.box(7.3,.5,5.3),navy,0,4.35,0,{p:g});MM(GG.box(7.4,.18,5.4),gold,0,4.66,0,{p:g,cast:false});MM(GG.box(7.6,.25,5.6),dark,0,.12,0,{p:g,cast:false});
+  /* 간판(정면 +z) */const sg=MM(GG.pl(6.2,1.2),mat('#ffffff',{map:hoffSignTex(),e:'#ffffff',ei:.35,r:.5}),0,3.45,2.53,{p:g,cast:false});
+  /* 유리문(빛남) + 문틀 */MM(GG.box(1.8,2.4,.08),glass,0,1.3,2.52,{p:g,cast:false});MM(GG.box(2.1,.14,.2),gold,0,2.56,2.55,{p:g,cast:false});for(const s of [-1,1])MM(GG.box(.12,2.5,.2),gold,s*.98,1.3,2.55,{p:g,cast:false});
+  /* 창 2 */for(const s of [-1,1]){MM(GG.box(1.6,1.2,.06),glass,s*2.5,1.9,2.52,{p:g,cast:false});MM(GG.box(1.7,.08,.12),dark,s*2.5,1.28,2.55,{p:g,cast:false})}
+  /* 엠블럼 깃발 5장(정면 위) */HERO_DEF.forEach((D,i)=>{const fx=(i-2)*1.25;MM(GG.cyl(.025,.025,1.1,6),dark,fx,4.95,2.4,{p:g,cast:false});const fl=MM(GG.pl(.55,.55),mat('#ffffff',{map:heroEmblem(D),r:.6,side:T.DoubleSide}),fx+.3,5.15,2.4,{p:g,cast:false});fl.rotation.z=Math.PI/6*0;});
+  /* 문 앞 빛 */const pl=new T.PointLight('#ffd98a',OUT.tod==='night'||OUT.tod==='dawn'?6:2,10,1.6);pl.position.set(0,3,3.6);g.add(pl);
+  /* 충돌 상자 */g.updateMatrixWorld(true);const bx=new T.Box3().setFromCenterAndSize(new T.Vector3(L.x,2.1,L.z),new T.Vector3(1,4.2,1));const c=Math.abs(Math.cos(L.yaw)),s=Math.abs(Math.sin(L.yaw));bx.setFromCenterAndSize(new T.Vector3(L.x,2.1,L.z),new T.Vector3(7*c+5*s,4.2,7*s+5*c));if(typeof TOWN!=='undefined'&&TOWN.solids)TOWN.solids.push(bx);HOFF.box=bx;
+  /* 점유 격자에도 (보행자·자동 달리기) */const O=TJ.occ;if(O){for(let i=Math.floor(bx.min.x-O.x0);i<=Math.floor(bx.max.x-O.x0);i++)for(let j=Math.floor(bx.min.z-O.z0);j<=Math.floor(bx.max.z-O.z0);j++){if(i>=0&&j>=0&&i<O.n&&j<O.n)O.b[j*O.n+i]=1}if(typeof ARUN!=='undefined')ARUN.grid=null}
+  /* 문 앞 좌표(정면 +z 방향 3.6m) */const fx=Math.sin(L.yaw),fz=Math.cos(L.yaw);HOFF.door={x:L.x+fx*3.6,z:L.z+fz*3.6,yaw:L.yaw};HOFF.built=G.turn;hoffHeroes()}
+/* 사무소 앞에 선 히어로들(계약·호출 중인 히어로는 빠진다) */
+function hoffHeroes(){const g=HOFF.grp;if(!g)return;HOFF.hs.forEach(o=>{if(o.h.root.parent)o.h.root.parent.remove(o.h.root)});HOFF.hs=[];if(!RBX.ok)return;
+  HERO_DEF.forEach((D,i)=>{if(HERO.cur&&HERO.cur.hk===D.id)return;const h=heroMake(D);if(!h)return;const lx=(i-2)*1.5,lz=4.6+Math.abs(i-2)*-.35;const v=new T.Vector3(lx,0,lz).applyAxisAngle(new T.Vector3(0,1,0),HOFF.pos.yaw);h.root.position.set(HOFF.pos.x+v.x,0,HOFF.pos.z+v.z);h.root.rotation.y=HOFF.pos.yaw+(i-2)*-.12;try{h.setPose('idle',true)}catch(e){}HOFF.sc.add(h.root);HOFF.hs.push({D,h})})}
+function hoffStep(dt){if(!HOFF.hs.length)return;const p=FP3.pos;if(!HOFF.pos)return;const d=Math.hypot(HOFF.pos.x-p.x,HOFF.pos.z-p.z);if(d>140)return;for(const o of HOFF.hs){o.h.update(dt);if(d<12)try{lifeFace(o.h,p.x,p.z)}catch(e){}}if(typeof heroPetStep==='function')for(const o of HOFF.hs)if(o.h.heroPet)heroPetStep({h:o.h,v:0},dt)}
+/* ---------- 계약 ---------- */
+function hoffK(){const k=G&&G.flags&&G.flags.heroK;if(!k)return null;if(G.turn>=k.until)return null;return k}
+function hoffDaysLeft(k){return Math.max(0,(k.until-G.turn)/4)}
+function hoffPrice(days){const cash=G.inv.cash||0;return cash>=days?{k:'cash',n:days,t:`현금 봉투 ${days}`}:{k:'water',n:days*3,t:`물 ${days*3}L`}}
+function hoffCanPay(pr){return pr.k==='cash'?(G.inv.cash||0)>=pr.n:(G.res.water||0)>=pr.n}
+function hoffPanel(open){const el=SV3.el;let p=$('#hoffPanel');if(!open){if(p)p.remove();return}if(!el)return;if(!p){p=document.createElement('div');p.id='hoffPanel';p.className='mis-panel hoff-panel';el.appendChild(p)}
+  const k=hoffK();let h=`<div class="mis-head"><b>🦸 탕정 히어로즈 사무소</b><button class="btn sm" data-g3="hoffx">닫기</button></div><p class="mis-note">경호 계약: 계약 기간 동안 외출할 때마다 처음부터 함께 다닌다(하루 1회 호출과 별개). 1일 = 현금 봉투 1 (없으면 물 3L).</p>`;
+  if(k){const D=heroDef(k.id);h+=`<div class="mis-row ev-now"><span class="mis-ico">${D.ico}</span><div><b>계약 중 · ${heroName(D)}</b><small>남은 기간 약 ${hoffDaysLeft(k).toFixed(1)}일</small></div><button class="btn sm" data-g3="hoffend">계약 끝내기</button></div>`}
+  h+='<div class="hero-grid">';for(const D of HERO_DEF){const p1=hoffPrice(1),p2=hoffPrice(2);const on=k&&k.id===D.id;h+=`<div class="hero-card hoff-card" style="--c:${D.suit};--a:${D.acc}"><span class="hero-ico">${D.ico}</span><b>${heroName(D)}</b><small>${D.role}</small><em>${D.power}</em>
+    <div class="hoff-btns"><button class="btn sm${hoffCanPay(p1)?'':' dis'}" data-g3="hoffk" data-v="${D.id}" data-d="1"${on||!hoffCanPay(p1)?' disabled':''}>1일 · ${p1.t}</button><button class="btn sm pri${hoffCanPay(p2)?'':' dis'}" data-g3="hoffk" data-v="${D.id}" data-d="2"${on||!hoffCanPay(p2)?' disabled':''}>2일 · ${p2.t}</button></div></div>`}
+  p.innerHTML=h+'</div>'}
+function hoffHire(id,days){const D=heroDef(id);if(!D)return false;const pr=hoffPrice(days);if(!hoffCanPay(pr)){toast('값이 모자란다');return false}
+  if(pr.k==='cash')G.inv.cash=(G.inv.cash||0)-pr.n;else{FX=[];res('water',-pr.n);OUT.fx.push(...FX)}outStat();
+  G.flags.heroK={id,until:G.turn+days*4,since:G.turn};hoffPanel(false);
+  /* 지금 함께 있는 다른 히어로는 돌려보낸다 · 앞에 서 있던 그 히어로가 걸어온다 */if(HERO.cur&&HERO.cur.hk!==id)heroClear();
+  const st=HOFF.hs.find(o=>o.D.id===id);let at=null;if(st){at={x:st.h.root.position.x,z:st.h.root.position.z};if(st.h.root.parent)st.h.root.parent.remove(st.h.root);HOFF.hs=HOFF.hs.filter(o=>o!==st)}
+  if(!HERO.cur)heroCall(id,{force:true,at:at||{x:HOFF.door.x,z:HOFF.door.z},contract:true});else HERO.cur.contract=true;
+  try{bubSay(HERO.cur&&HERO.cur.h,days>1?'이틀 동안 제가 지킵니다!':'오늘 하루, 맡겨 주세요!',2.6,'')}catch(e){}
+  logDecision({id:'hero-k',title:`히어로 경호 계약 — ${D.nm} ${days}일`,lesson:'위기에선 도움을 혼자 구하기보다 믿을 수 있는 사람과 약속(계약)을 맺어 역할을 나누는 편이 오래 버틴다.',src:'생존 수첩',guide:'now',choices:[{t:'계약했다',ok:true}]},{t:'계약했다'},true);return true}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=hoffx],[data-g3=hoffk],[data-g3=hoffend]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
+  if(k==='hoffx'){hoffPanel(false);FP3.lock=false;return}if(k==='hoffend'){G.flags.heroK=null;if(HERO.cur&&HERO.cur.contract)heroClear();hoffPanel(false);FP3.lock=false;toast('계약을 끝냈다');hoffHeroes();return}
+  if(k==='hoffk'){FP3.lock=false;hoffHire(b.dataset.v,+b.dataset.d)}},true);
+/* ---------- 걸이: 장면 만들 때 사무소 · 문 앞 행동 · 외출 시작 때 계약 히어로 합류 ---------- */
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(sc){const r=b.apply(this,arguments);try{hoffBuild(sc)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outCands;window.outCands=function(){const L=b.apply(this,arguments);try{if(OUT.on&&HOFF.door&&!OUT.drv&&!OUT.ride&&HOFF.sc===OUT.scene){const k=hoffK();L.push({id:'hoff',k:'hoff',x:HOFF.door.x,z:HOFF.door.z,r:3.2,g:'🦸',n:'히어로즈 사무소 — 경호 계약',s:k?`계약 중: ${heroDef(k.id).nm} · ${hoffDaysLeft(k).toFixed(1)}일`:'1일·2일 경호 · 현금 봉투 또는 물',h:0,nomap:0})}}catch(e){}return L}})();
+(function(){const b=window.outDo;window.outDo=function(c){if(c&&c.k==='hoff'&&!OUT.busy&&!OUT.enc){FP3.lock=true;FP3.mv.x=FP3.mv.y=0;hoffPanel(true);return}return b.apply(this,arguments)}})();
+(function(){const b=window.tmStep;window.tmStep=function(dt){const r=b.apply(this,arguments);try{hoffStep(dt)}catch(e){}return r}})();
+(function(){const b=window.startOutside;window.startOutside=function(o){const r=b.apply(this,arguments);try{const k=hoffK();if(k&&OUT.on)setTimeout(()=>{try{if(OUT.on&&!HERO.cur&&hoffK())heroCall(k.id,{force:true,contract:true});hoffHeroes()}catch(e){console.error(e)}},1400)}catch(e){}return r}})();
+(function(){const b=window.heroClear;window.heroClear=function(){const r=b.apply(this,arguments);try{if(OUT.on&&HOFF.sc===OUT.scene)hoffHeroes()}catch(e){}return r}})();
+/* 상황판: 계약 줄 */
+(function(){const b=window.heroRows;if(typeof b!=='function')return;window.heroRows=function(row){let h=b.apply(this,arguments);try{const k=hoffK();const d=HOFF.pos?Math.round(Math.hypot(HOFF.pos.x-FP3.pos.x,HOFF.pos.z-FP3.pos.z)):null;h=`<p class="mis-note hoff-note">🏢 히어로즈 사무소(지중해마을 광장${d!=null?' · '+d+'m':''}) — ${k?`계약 중: ${heroDef(k.id).ico} ${heroDef(k.id).nm} · 약 ${hoffDaysLeft(k).toFixed(1)}일 남음`:'가서 1일·2일 경호 계약을 맺을 수 있다'}</p>`+h}catch(e){}return h}})();
+if(typeof HELP84!=='undefined'){HELP84.push(['히어로즈 사무소(v9.9)','지중해마을 광장 가까이에 \'탕정 히어로즈 사무소\'가 있다. 문 앞에서 히어로와 기간(1일·2일)을 골라 경호 계약을 맺으면(현금 봉투, 없으면 물) 그 히어로가 걸어와 합류하고, 계약 기간 동안 외출할 때마다 처음부터 함께 나온다. 상황판의 하루 1회 호출과는 별개.'])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
