@@ -13328,7 +13328,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.5.1';
+const APP_VER='9.6';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13435,6 +13435,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
     ${s4Seg('vib','진동','',[[1,'켬'],[0,'끔']],a.vib?1:0)}
     ${s4Seg('bright','장면 밝기','대피소·집·밤 거리가 어두우면 올린다 (3D 장면 노출)',BRT_OPT,brtGet())}
     <div class="s4-sec">게임 방식</div>
+    ${typeof heroPetRows==='function'?heroPetRows():''}
     ${typeof heroChampOn==='function'?s4Seg('melook','내 모습 (밖 3인칭·대피소)','챔피언 룩: 긴 코트·금 견장·엠블럼·대장 완장 — 다음 장면부터',[['std','보통'],['champ','챔피언']],store.get('sg.meLook','std')):''}
     ${s4Seg('pace','화면 움직임','끊겨 보이면 30fps로 고르게 고정 — 자동은 장면마다 재서 정한다',[['auto','자동'],['30','30 고정'],['60','최대']],paceMode())}
     ${s4Seg('owc','실제 지도 교전','공수부대 강하 때 밖 탐색 장면 그대로 싸울지, 전투 화면으로 넘어갈지',[[1,'같은 배경'],[0,'전투 화면']],store.get('sg.owc',true)!==false?1:0)}
@@ -13456,7 +13457,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='help'){s4Open('help');return}
   if(a==='close'){s4Close();return}
   if(a==='v'){S4.view=b.dataset.v;S4.conf=null;s4Re();return}
-  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
+  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
     else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
@@ -17317,6 +17318,188 @@ function evhRumorEnd(E){const H=E.H;if(H.ended)return;H.ended=1;const ok=H.helpe
 /* 넘어진 사람 구조 2명이면 끝 */
 (function(){const b=window.outDo;window.outDo=function(c){const r=b.apply(this,arguments);try{const E=EVD.cur;if(E&&E.k==='rumor'&&E.H&&E.H.helped>=2&&!E.H.done){E.H.done=1;setTimeout(()=>{if(EVD.cur===E)evhRumorEnd(E)},1500)}}catch(e){}return r}})();
 if(typeof HELP84!=='undefined'){HELP84.push(['돌발 상황 15종(v9.7)','기존 5종(공수부대·드론·저격수·트럭 탈취·화재)에 사람의 이중성을 다루는 10종이 더해졌다: 폭발물 의심 차량(사람들을 물러서게·신고) · 상가 약탈 폭동(말리기·신고·가담) · 선동 집회(사적 제재 — "근거가 뭡니까?") · 배신(물자 절도 — 추격·용서) · 급수 줄 폭행(사람 모으기·격투·신고) · 골목 살인(지혈이 먼저, 흉기 추격 금지) · 생수 폭리(신고·설득·구매·약탈 선동) · 가짜 검문(계급장·인식표·무전 확인) · 길 잃은 아이와 낯선 남자(막아서서 아이에게 묻기·인계) · 유언비어 인파 사고(라디오 확인·넘어진 사람 일으키기). 교육용 모드에서는 테러·폭동·선동·폭행·살인은 나오지 않는다.'])}
+
+/* ===================== 71 · v9.6 탕정 히어로즈 — 오리지널 히어로 4인 (A안 '히어로 지원') ===================== */
+/* 원작(마블·DC·포켓몬 등)의 이름·외형은 쓰지 않는다. 역할 영감만 가져온 우리 디자인: 🛡 가디언(방패 수호자) · 🤖 엑소(구조 외골격) · 🪝 후크(갈고리 로프 구조대원) · 🦉 올빼미(야간 정찰자).
+   상황판(🚨)에서 하루 1회 호출 → 하늘에서 내려와 착지 → 내 앞 가운데에 붙어 함께 다닌다(이번 외출 동안). 교전·운전·건물 안에서는 숨고 끝나면 돌아온다.
+   능력: 가디언 = 내가 맞는 피해를 방패로 막는다(밖 65%·교전 50%) · 엑소 = 중상자를 번쩍 들어 2배 빠르게 후송, 치료 6초 · 후크 = 담 넘기가 2배 빠르고 일행도 바로 따라 넘는다 · 올빼미 = 60m 안 적·물건을 8초마다 표시, 밤엔 총소리에 적이 절반만 반응한다 */
+const HERO_DEF=[
+ {id:'guard',nm:'가디언',ico:'🛡',role:'방패 수호자',av:'m_8',suit:'#1d3f8e',suit2:'#c9d0da',acc:'#f4c542',glow:'#ffd866',power:'육각 방패 — 내가 맞을 피해를 앞에서 막는다(밖 65%·교전 50%)',desc:'포탄 파편도 튕겨내는 육각 방패. 늘 내 앞에서 걷는다.',line:'제 뒤에 서세요!',cape:1},
+ {id:'exo',nm:'엑소',ico:'🤖',role:'구조 외골격',av:'f_8',suit:'#2b2f35',suit2:'#ff7a1a',acc:'#4df3ff',glow:'#4df3ff',power:'강화 외골격 — 쓰러진 사람을 번쩍 들어 2배 빠르게 후송(치료 6초)',desc:'잔해를 들어 올리고 사람을 업고 달린다.',line:'제가 업을게요!'},
+ {id:'hook',nm:'후크',ico:'🪝',role:'갈고리 로프 구조대원',av:'m_20',suit:'#1f5e3a',suit2:'#1b1b1b',acc:'#ffd84a',glow:'#ffe57a',power:'갈고리 로프 — 담·울타리를 2배 빠르게 넘고 일행도 바로 따라 넘는다',desc:'로프 한 줄이면 어디든 오른다.',line:'로프 갑니다!'},
+ {id:'kid',nm:'리틀 레인저',ico:'🧢',role:'꼬마 구조대원 + 동물 친구',av:'mc_1',suit:'#1f3b73',suit2:'#ff8a1f',acc:'#ffd23f',glow:'#8fe3ff',power:'어깨 친구(새·병아리·미니 로봇 중 설정) — 위험한 사람이 다가오면 먼저 알려주고, 60m 안 물건을 찾아준다',desc:'모자 쓴 꼬마 구조대원. 어깨 위 친구가 늘 먼저 본다.',line:'내가 먼저 갈게!',pet:'bird',kid:1},
+ {id:'owl',nm:'올빼미',ico:'🦉',role:'야간 정찰자',av:'f_14',suit:'#2b1e5e',suit2:'#8f6cff',acc:'#ffb347',glow:'#ffb347',power:'야간 투시 — 60m 안 적·물건이 8초마다 표시되고, 밤엔 적이 나를 늦게 알아챈다',desc:'밤에도 다 보인다. 소리 없이 앞장선다.',line:'제가 먼저 볼게요.',cape:1}];
+const HERO={cur:null,t:0,uiT:0,fx:[],marks:[],scanT:0,blockT:-9,noteT:-9,texs:{}};
+function heroDef(id){return HERO_DEF.find(d=>d.id===id)}
+function heroDay(){return Math.floor(Math.max(0,(G&&G.turn)||0)/4)}
+function heroUsedToday(){return !!(G&&G.flags&&G.flags.heroDay===heroDay())}
+function heroActive(id){const a=HERO.cur;return !!(a&&a.d.st!=='kia'&&(!id||a.hk===id))}
+function heroBusy(){return !!(OUT.drv||OUT.ride||(typeof OWC!=='undefined'&&OWC.on)||(typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on)||(typeof BR!=='undefined'&&BR.on))}
+function heroAvail(){return !!(OUT.on&&!heroBusy()&&!HERO.cur&&!heroUsedToday()&&RBX.ok&&OUT.scene)}
+/* ---------- 엠블럼(캔버스) ---------- */
+function heroHex(x,cx,cy,r){x.beginPath();for(let i=0;i<6;i++){const a=Math.PI/6+i*Math.PI/3;const px=cx+Math.cos(a)*r,py=cy+Math.sin(a)*r;if(i)x.lineTo(px,py);else x.moveTo(px,py)}x.closePath()}
+function heroEmblem(D){if(HERO.texs[D.id])return HERO.texs[D.id];const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
+  x.fillStyle=D.suit2;x.fillRect(0,0,256,256);x.fillStyle=D.suit;heroHex(x,128,128,118);x.fill();x.strokeStyle=D.acc;x.lineWidth=11;heroHex(x,128,128,100);x.stroke();
+  x.fillStyle=D.acc;x.strokeStyle=D.acc;x.lineWidth=16;x.lineCap='round';x.lineJoin='round';
+  if(D.id==='guard'){heroHex(x,128,128,52);x.fill();x.fillStyle=D.suit;heroHex(x,128,128,24);x.fill()}
+  else if(D.id==='exo'){x.beginPath();x.arc(128,128,36,0,Math.PI*2);x.fill();for(let i=0;i<8;i++){const a=i*Math.PI/4;x.beginPath();x.moveTo(128+Math.cos(a)*30,128+Math.sin(a)*30);x.lineTo(128+Math.cos(a)*60,128+Math.sin(a)*60);x.stroke()}x.fillStyle=D.suit;x.beginPath();x.arc(128,128,15,0,Math.PI*2);x.fill()}
+  else if(D.id==='hook'){x.beginPath();x.moveTo(140,62);x.lineTo(140,130);x.arc(112,130,28,0,Math.PI,false);x.lineTo(84,112);x.stroke();x.beginPath();x.arc(140,58,14,0,Math.PI*2);x.fill()}
+  else if(D.id==='kid'){x.beginPath();for(let i=0;i<8;i++){const a=-Math.PI/2+i*Math.PI/4;const r=i%2?22:64;x.lineTo(128+Math.cos(a)*r,130+Math.sin(a)*r)}x.closePath();x.fill();x.fillStyle=D.suit;x.beginPath();x.arc(128,130,11,0,Math.PI*2);x.fill()}
+  else if(D.id==='champ'){x.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5;const r=i%2?26:62;const px=128+Math.cos(a)*r,py=132+Math.sin(a)*r;if(i)x.lineTo(px,py);else x.moveTo(px,py)}x.closePath();x.fill()}
+  else{x.beginPath();x.arc(128,118,50,0,Math.PI*2);x.fill();x.fillStyle=D.suit;x.beginPath();x.arc(150,104,42,0,Math.PI*2);x.fill();x.fillStyle=D.acc;for(const s of [-1,1]){x.beginPath();x.arc(128+s*22,160,13,0,Math.PI*2);x.fill()}x.fillStyle=D.suit;for(const s of [-1,1]){x.beginPath();x.arc(128+s*22,160,5,0,Math.PI*2);x.fill()}}
+  return HERO.texs[D.id]=mkTex(c)}
+/* ---------- 수트: 몸 재질 교체 + 뼈에 붙는 부품(투구·가슴판·어깨·팔보호대·정강이·벨트·히어로별 장비·망토) ---------- */
+function heroBoneLen(h,a,b){const v=new T.Vector3(),w=new T.Vector3();h.b[a].getWorldPosition(v);h.b[b].getWorldPosition(w);return v.distanceTo(w)}
+function heroSuit(h,D){const mesh=h.mesh;if(!mesh||!h.b)return;if(D.kid){heroKidSuit(h,D);if(D.pet)try{heroPet(h,D)}catch(e){console.error(e)}h.heroD=D;return}h.root.updateMatrixWorld(true);
+  /* 몸 재질(옷·피부)을 수트 색으로 — 머리(얼굴)와 머리카락(opacity)은 그대로 */
+  const mats=Array.isArray(mesh.material)?mesh.material:[mesh.material];mesh.material=mats.map(m=>{if(/head|opacity|hair/i.test(m.name||''))return m;const s=new T.MeshStandardMaterial({color:D.suit,roughness:.5,metalness:.18});s.name='hero_suit';return s});
+  /* 가슴 기준 몸 좌표계(y 위·z 앞) → Spine2 로컬 */const qc=new T.Quaternion(),qr=new T.Quaternion();h.b.chest.getWorldQuaternion(qc);h.root.getWorldQuaternion(qr);const offQ=qc.invert().multiply(qr);h.offQ=h.offQ||offQ;
+  const body=(x,y,z)=>{const g=new T.Group();g.quaternion.copy(offQ);g.position.set(x,y,z).applyQuaternion(offQ);h.b.chest.add(g);return g};
+  const mS=mat(D.suit2,{r:.45,m:.35}),mA=mat(D.acc,{r:.4,m:.5}),mG=mat(D.glow,{e:D.glow,ei:1.6,r:.4}),mK=mat('#15171b',{r:.6,m:.2});
+  const L1=heroBoneLen(h,'shR','elR'),L2=heroBoneLen(h,'elR','handR'),L3=heroBoneLen(h,'hipR','kneeR'),L4=heroBoneLen(h,'kneeR','footR');
+  /* 가슴판(육각) + 엠블럼 */const cp=body(0,-.05,.125);MM(GG.cyl(.165,.165,.04,6),mS,0,0,0,{p:cp,rx:Math.PI/2,cast:false});const em=MM(GG.pl(.19,.19),mat('#ffffff',{map:heroEmblem(D),r:.5,m:.1}),0,0,.026,{p:cp,cast:false});em.rotation.z=Math.PI/6;
+  /* 어깨 */for(const s of ['shL','shR']){MM(GG.sph(.085,12),mS,.04,0,0,{p:h.b[s],cast:false,sx:1,sy:1.05,sz:1.05})}
+  /* 팔 보호대·정강이 */for(const s of ['elL','elR']){MM(GG.cyl(.055,.06,L2*.72,10),mK,L2*.5,0,0,{p:h.b[s],cast:false,rz:Math.PI/2});MM(GG.cyl(.062,.062,.03,10),mA,L2*.22,0,0,{p:h.b[s],cast:false,rz:Math.PI/2})}
+  for(const s of ['kneeL','kneeR']){MM(GG.cyl(.088,.078,L4*.55,12),mS,L4*.5,0,0,{p:h.b[s],cast:false,rz:Math.PI/2})}
+  /* 벨트(뼈 x축이 위아래 → 고리는 ry) */MM(GG.tor(.165,.024),mA,-.02,0,0,{p:h.b.pelvis,cast:false,ry:Math.PI/2});
+  /* 투구/마스크: 머리 뼈 + KPA_HQ(y 위·z 앞) */const hg=new T.Group();hg.quaternion.copy(KPA_HQ);hg.position.set(.07,-.004,0);h.b.head.add(hg);h.heroHead=hg;
+  const dome=(r,open,th,m)=>{const a=open||0;const g=new T.SphereGeometry(r,22,14,Math.PI/2+a,Math.PI*2-a*2,0,th||2.05);return MM(g,m,0,.012,-.004,{p:hg,cast:false,sy:1.06})};
+  if(D.id==='guard'){dome(.124,.95,2.0,mS);MM(GG.box(.024,.07,.2),mat(D.suit,{r:.5,m:.3}),0,.13,-.01,{p:hg,cast:false});MM(GG.box(.17,.02,.03),mA,0,.092,.092,{p:hg,cast:false})}
+  else if(D.id==='exo'){dome(.126,0,2.25,mK);const vis=new T.SphereGeometry(.13,22,10,Math.PI/2-.78,1.56,.78,.5);MM(vis,mat(D.acc,{e:D.acc,ei:1.2,t:1,op:.85,r:.2,m:.3}),0,.012,-.004,{p:hg,cast:false});for(const s of [-1,1])MM(GG.box(.03,.03,.05),mG,s*.11,.05,.03,{p:hg,cast:false})}
+  else if(D.id==='hook'){dome(.125,1.0,2.3,mat(D.suit,{r:.75}));for(const s of [-1,1]){MM(GG.tor(.026,.006),mK,s*.036,.02,.108,{p:hg,cast:false});MM(GG.cyl(.021,.021,.008,12),mat(D.acc,{e:D.acc,ei:.9,r:.3}),s*.036,.02,.108,{p:hg,cast:false,rx:Math.PI/2})}}
+  else{dome(.125,.95,2.1,mat(D.suit2,{r:.6}));for(const s of [-1,1]){MM(GG.cyl(.034,.034,.012,14),mat(D.acc,{e:D.acc,ei:1.3,r:.25}),s*.038,.025,.106,{p:hg,cast:false,rx:Math.PI/2});MM(GG.tor(.036,.007),mK,s*.038,.025,.106,{p:hg,cast:false});MM(GG.cone(.03,.09,8),mat(D.suit2,{r:.7}),s*.07,.15,-.01,{p:hg,cast:false,rz:-s*.5})}}
+  /* 히어로별 장비 */
+  if(D.id==='guard'){const sh=new T.Group();h.b.elL.add(sh);sh.position.set(L2*.5,0,.085);sh.rotation.set(Math.PI/2,0,0);MM(GG.cyl(.33,.33,.024,6),mS,0,0,0,{p:sh,cast:true});MM(GG.cyl(.2,.2,.03,6),mat(D.suit,{r:.5,m:.3}),0,.004,0,{p:sh,cast:false});MM(GG.cyl(.08,.08,.036,6),mA,0,.006,0,{p:sh,cast:false});h.heroShield=sh}
+  if(D.id==='exo'){const mF=mat(D.suit2,{r:.45,m:.4});for(const [s,L] of [['shL',L1],['shR',L1],['elL',L2],['elR',L2],['hipL',L3],['hipR',L3],['kneeL',L4],['kneeR',L4]]){for(const o of [[.07,0],[-.07,0],[0,.07]])MM(GG.box(L*.86,.026,.026),mF,L*.5,o[0],o[1],{p:h.b[s],cast:false});MM(GG.sph(.04,10),mG,0,0,0,{p:h.b[s],cast:false})}
+    const bp=body(0,-.02,-.17);MM(GG.box(.3,.36,.14,.03),mK,0,0,0,{p:bp,cast:true});MM(GG.box(.22,.05,.02),mG,0,.1,-.075,{p:bp,cast:false});for(const s of [-1,1])MM(GG.cyl(.035,.035,.3,10),mF,s*.12,-.02,-.09,{p:bp,cast:false})}
+  if(D.id==='hook'){MM(GG.box(.07,.05,L2*.6),mK,L2*.55,.045,0,{p:h.b.elR,cast:false,ry:Math.PI/2});MM(GG.cone(.022,.07,8),mA,L2*1.02,.045,0,{p:h.b.elR,cast:false,rz:-Math.PI/2});MM(GG.tor(.075,.022),mat('#d9c89a',{r:.95}),-.03,0,.2,{p:h.b.pelvis,cast:false,ry:Math.PI/2});MM(GG.box(.05,.14,.06),mK,0,-.1,.12,{p:h.b.pelvis,cast:false})}
+  if(D.id==='owl'){for(const s of [-1,1])MM(GG.box(.16,.03,.01),mG,s*.1,-.12,.12,{p:h.b.chest,cast:false})}
+  /* 망토(가디언·올빼미): 가슴 뒤에서 아래로, 달리면 뒤로 젖혀진다 */if(D.cape){const cg=body(0,.02,-.15);const cm=mat(D.id==='owl'?'#1a1240':'#15285e',{r:.9,side:T.DoubleSide});const cape=MM(GG.pl(.5,.78),cm,0,-.39,0,{p:cg,cast:true,recv:false});cape.rotation.x=.08;const trim=MM(GG.pl(.5,.05),mA,0,-.76,.004,{p:cg,cast:false,recv:false});h.heroCape=cg}
+  if(D.pet)try{heroPet(h,D)}catch(e){console.error(e)}
+  h.heroD=D}
+/* 꼬마 구조대원: 수트 대신 구조 조끼·모자·헤드램프·작은 배낭 (몸 재질은 조끼 색으로 통일) */
+function heroKidSuit(h,D){const mesh=h.mesh;const mats=Array.isArray(mesh.material)?mesh.material:[mesh.material];mesh.material=mats.map(m=>{if(/head|opacity|hair/i.test(m.name||''))return m;const s=new T.MeshStandardMaterial({color:D.suit,roughness:.8,metalness:.02});s.name='hero_suit';return s});
+  h.root.updateMatrixWorld(true);const qc=new T.Quaternion(),qr=new T.Quaternion();h.b.chest.getWorldQuaternion(qc);h.root.getWorldQuaternion(qr);const offQ=qc.invert().multiply(qr);h.offQ=h.offQ||offQ;
+  const body=(x,y,z)=>{const g=new T.Group();g.quaternion.copy(offQ);g.position.set(x,y,z).applyQuaternion(offQ);h.b.chest.add(g);return g};
+  const mV=mat(D.suit2,{r:.85}),mR=mat('#f4f6f8',{e:'#c9d2dc',ei:.35,r:.6}),mA=mat(D.acc,{r:.5,m:.2}),mK=mat('#15171b',{r:.6,m:.2});
+  /* 조끼: 앞판 둘 + 뒤판 + 반사띠 */const v=body(0,-.04,0);MM(GG.box(.26,.3,.06,.02),mV,0,0,.1,{p:v,cast:false});MM(GG.box(.28,.3,.06,.02),mV,0,0,-.09,{p:v,cast:false});for(const z of [.13,-.125]){MM(GG.box(.27,.025,.004),mR,0,.05,z,{p:v,cast:false});MM(GG.box(.27,.025,.004),mR,0,-.06,z,{p:v,cast:false})}
+  const em=MM(GG.pl(.1,.1),mat('#ffffff',{map:heroEmblem(D),r:.5,m:.1}),-.07,.09,.133,{p:v,cast:false});em.rotation.z=Math.PI/6;
+  /* 작은 배낭 */const bp=body(0,-.06,-.14);MM(GG.box(.2,.24,.1,.03),mA,0,0,0,{p:bp,cast:true});for(const sx of [-1,1])MM(GG.box(.03,.26,.02),mK,sx*.08,.02,.06,{p:bp,cast:false});
+  /* 무전기(벨트) */MM(GG.box(.03,.09,.05),mK,-.02,0,.12,{p:h.b.pelvis,cast:false});
+  /* 모자 + 헤드램프 */const hg=new T.Group();hg.quaternion.copy(KPA_HQ);hg.position.set(.07,-.004,0);h.b.head.add(hg);h.heroHead=hg;
+  const cap=new T.SphereGeometry(.112,20,12,0,Math.PI*2,0,1.3);MM(cap,mat(D.suit,{r:.8}),0,.025,0,{p:hg,cast:false,sy:.9});MM(GG.cyl(.1,.1,.012,20),mat(D.suit,{r:.8}),0,.03,.07,{p:hg,cast:false,sx:1,sz:.7});
+  MM(GG.box(.05,.035,.03),mK,0,.07,.1,{p:hg,cast:false});MM(GG.cyl(.014,.014,.012,10),mat('#fff6d0',{e:'#fff0b0',ei:1.5}),0,.07,.118,{p:hg,cast:false,rx:Math.PI/2});
+  const emh=MM(GG.pl(.055,.055),mat('#ffffff',{map:heroEmblem(D),r:.5}),0,.06,.112,{p:hg,cast:false});emh.rotation.z=Math.PI/6}
+/* 동료 생물: 어깨 위 전령새(우리 디자인 — 하늘색 깃털·흰 배·주황 부리) 또는 맴도는 미니 로봇 */
+function heroPetKind(D){if(!D.kid)return D.pet;const k=store.get('sg.heroPet','bird');return k==='chick'||k==='bot'?k:'bird'}
+function heroPetName(){try{const n=store.get('sg.heroPetName','');return typeof n==='string'&&n.trim()?n.trim().slice(0,12):''}catch(e){return ''}}
+function heroPet(h,D){const kind=heroPetKind(D);h.root.updateMatrixWorld(true);const qc=new T.Quaternion(),qr=new T.Quaternion();h.b.chest.getWorldQuaternion(qc);h.root.getWorldQuaternion(qr);const offQ=qc.invert().multiply(qr);
+  const g=new T.Group();g.quaternion.copy(offQ);const kid=!!D.kid;g.position.set(kid?-.14:-.2,kid?.1:.17,.0).applyQuaternion(offQ);g.scale.setScalar(kind==='bird'?1.35:1);h.b.chest.add(g);const pet={g,kind,t:Math.random()*5,parts:{}};h.heroPet=pet;
+  if(kind==='bird'){const mB=mat('#7fd1ff',{r:.75}),mW=mat('#f7fbff',{r:.8}),mO=mat('#ff9a3c',{r:.6}),mE=mat('#101418',{r:.4});const bd=new T.Group();g.add(bd);pet.parts.body=bd;
+    MM(GG.sph(.055,12),mB,0,.05,0,{p:bd,cast:false,sx:1,sy:.9,sz:1.35});MM(GG.sph(.04,10),mW,0,.035,.02,{p:bd,cast:false,sx:.9,sy:.7,sz:1.1});
+    const hd=new T.Group();hd.position.set(0,.105,.045);bd.add(hd);pet.parts.head=hd;MM(GG.sph(.038,12),mB,0,0,0,{p:hd,cast:false});MM(GG.cone(.012,.03,8),mO,0,-.005,.045,{p:hd,cast:false,rx:Math.PI/2});for(const sx of [-1,1])MM(GG.sph(.007,6),mE,sx*.02,.008,.028,{p:hd,cast:false});MM(GG.cone(.01,.03,6),mB,0,.04,-.005,{p:hd,cast:false,rx:-.4});
+    MM(GG.box(.03,.008,.07),mB,0,.04,-.08,{p:bd,cast:false,rx:.35});for(const sx of [-1,1]){const w=MM(GG.box(.012,.004,.075),mB,sx*.05,.065,0,{p:bd,cast:false});w.rotation.z=sx*.25;pet.parts['w'+sx]=w}
+    for(const sx of [-1,1])MM(GG.cyl(.004,.004,.03,5),mO,sx*.012,.0,.0,{p:bd,cast:false})}
+  else if(kind==='chick'){const mY=mat('#ffd93d',{r:.85}),mO=mat('#ff8c2a',{r:.6}),mE=mat('#101418',{r:.4});const bd=new T.Group();g.add(bd);pet.parts.body=bd;
+    MM(GG.sph(.06,12),mY,0,.055,0,{p:bd,cast:false,sx:1,sy:.95,sz:1.1});const hd=new T.Group();hd.position.set(0,.115,.025);bd.add(hd);pet.parts.head=hd;MM(GG.sph(.045,12),mY,0,0,0,{p:hd,cast:false});MM(GG.cone(.013,.028,8),mO,0,-.008,.048,{p:hd,cast:false,rx:Math.PI/2});for(const sx of [-1,1])MM(GG.sph(.0075,6),mE,sx*.02,.01,.036,{p:hd,cast:false});for(const sx of [-1,0,1])MM(GG.cone(.008,.03,5),mY,sx*.012,.045,-.005,{p:hd,cast:false,rz:-sx*.4});
+    for(const sx of [-1,1]){const w=MM(GG.sph(.028,8),mY,sx*.055,.06,0,{p:bd,cast:false,sx:.5,sy:.8,sz:1.1});pet.parts['w'+sx]=w}
+    for(const sx of [-1,1]){MM(GG.cyl(.004,.004,.025,5),mO,sx*.015,.0,.0,{p:bd,cast:false});MM(GG.box(.025,.004,.03),mO,sx*.015,-.012,.01,{p:bd,cast:false})}}
+  else{const mK=mat('#2a2f36',{r:.5,m:.4}),mA=mat(D.acc,{r:.4,m:.4}),mG=mat(D.glow,{e:D.glow,ei:1.8});const bd=new T.Group();bd.position.set(-.12,.22,.05);g.add(bd);pet.parts.body=bd;
+    MM(GG.box(.13,.07,.13,.025),mK,0,0,0,{p:bd,cast:false});MM(GG.sph(.028,10),mG,0,.0,.07,{p:bd,cast:false});for(const sx of [-1,1])for(const sz of [-1,1]){MM(GG.cyl(.012,.012,.03,8),mA,sx*.075,.03,sz*.075,{p:bd,cast:false});const r=MM(GG.cyl(.04,.04,.004,10),mK,sx*.075,.05,sz*.075,{p:bd,cast:false});pet.parts['r'+sx+sz]=r}}}
+function heroPetStep(a,dt){const P=a.h.heroPet;if(!P)return;P.t+=dt;const v=a.v||0;if(P.kind==='chick'){const hd=P.parts.head;if(hd){hd.rotation.x=Math.sin(P.t*2.6)*.22;hd.rotation.y=Math.sin(P.t*.9)*.45}const fl=v>3?Math.abs(Math.sin(P.t*22))*.5:v>.3?Math.abs(Math.sin(P.t*8))*.2:0;for(const sx of [-1,1]){const w=P.parts['w'+sx];if(w)w.rotation.z=sx*fl}P.parts.body.position.y=Math.abs(Math.sin(P.t*(v>1?10:1.5)))*(v>1?.015:.004)}
+  else if(P.kind==='bird'){const hd=P.parts.head;if(hd)hd.rotation.x=Math.sin(P.t*2.1)*.18;hd&&(hd.rotation.y=Math.sin(P.t*.7)*.5);const fl=v>3?Math.sin(P.t*26)*1.1:v>.3?Math.sin(P.t*9)*.35:Math.sin(P.t*1.3)*.08;for(const sx of [-1,1]){const w=P.parts['w'+sx];if(w)w.rotation.z=sx*(.25+fl)}P.parts.body.position.y=Math.abs(Math.sin(P.t*(v>1?9:1.2)))*(v>1?.012:.004)}
+  else{const bd=P.parts.body;bd.position.y=.22+Math.sin(P.t*2.4)*.03;bd.rotation.y+=dt*.6;for(const k in P.parts)if(k[0]==='r')P.parts[k].rotation.y+=dt*30}}
+/* ---------- 호출·착지·동행 ---------- */
+function heroMake(D){const h=makeHumanRBX(D.av,{pose:'idle',seed:70+HERO_DEF.indexOf(D)});if(!h)return null;h.kind='hero';try{heroSuit(h,D)}catch(e){console.error(e)}return h}
+function heroCall(id){const D=heroDef(id);if(!D)return false;if(!OUT.on){toast('밖에 나갔을 때 부를 수 있다');return false}if(HERO.cur){toast(`${HERO.cur.D.ico} ${HERO.cur.nm}이(가) 이미 함께 있다`);return false}if(heroUsedToday()){toast('오늘은 이미 불렀다 — 내일 다시');return false}if(!heroAvail())return false;
+  const h=heroMake(D);if(!h)return false;const p=FP3.pos;const H=FP3.yaw+Math.PI;let x=p.x+Math.sin(H)*6.5,z=p.z+Math.cos(H)*6.5;if(!pedFree(x,z)){let f=false;for(const r of [5,4,7])for(let a=0;a<Math.PI*2&&!f;a+=Math.PI/6){const ax=p.x+Math.sin(H+a)*r,az=p.z+Math.cos(H+a)*r;if(pedFree(ax,az)){x=ax;z=az;f=true}}}
+  h.root.position.set(x,26,z);h.root.rotation.y=Math.atan2(p.x-x,p.z-z);OUT.scene.add(h.root);try{h.setPose('crouch',true)}catch(e){}
+  const nm=heroName(D);const a={h,kind:'hero',hk:D.id,D,nm,d:{st:'ok',nm,hp:100,role:'히어로'},S:{n:'앞 가운데',u:0,f:3.3,face:0},slot:8,order:0,v:0,stuck:0,pT:0,still:0,mode:'hero',tagL:D.ico+' '+nm,hero:1,ms:D.kid?5.2:6.6,ent:{ph:'drop',t:0,y0:26}};
+  HERO.cur=a;OUT.npcs.push(a);G.flags.heroDay=heroDay();G.flags.heroCalls=(G.flags.heroCalls||0)+1;HERO.scanT=0;
+  outNote(`<b>${D.ico} ${nm} 출동!</b><div>${D.power}. 이번 외출 동안 함께 다닌다(하루 1회).</div>`,4600);try{SFX.step('concrete')}catch(e){}try{vib([60,40,120])}catch(e){}heroUI();return true}
+function heroClear(){const a=HERO.cur;if(!a)return;if(a.carry){const C=a.carry;C.inj.carried=null;if(C.inj.d.st==='crit')C.inj.bleed=60;GRP.carry=GRP.carry.filter(x=>x!==C)}if(a.h&&a.h.root.parent)a.h.root.parent.remove(a.h.root);OUT.npcs=(OUT.npcs||[]).filter(x=>x!==a);HERO.cur=null;heroMarksClear();heroUI()}
+function heroDust(p){const sc=OUT.scene;if(!sc)return;for(let i=0;i<12;i++){const a=i/12*Math.PI*2;const m=new T.Mesh(GG.sph(.16,7),new T.MeshStandardMaterial({color:'#b9b2a6',transparent:true,opacity:.75,roughness:1}));m.position.set(p.x+Math.cos(a)*.5,.2,p.z+Math.sin(a)*.5);m.castShadow=false;sc.add(m);HERO.fx.push({m,t:0,vx:Math.cos(a)*3.2,vz:Math.sin(a)*3.2})}}
+function heroFxStep(dt){if(!HERO.fx.length)return;HERO.fx=HERO.fx.filter(f=>{f.t+=dt;const m=f.m;m.position.x+=f.vx*dt;m.position.z+=f.vz*dt;m.position.y+=dt*.6;const k=Math.max(0,1-f.t/.9);m.scale.setScalar(.6+f.t*2.2);m.material.opacity=.75*k;if(f.t>.9){if(m.parent)m.parent.remove(m);m.material.dispose();return false}return true})}
+function heroStep(dt){const a=HERO.cur;heroFxStep(dt);if(!a||!OUT.on)return;HERO.t+=dt;const h=a.h,p=FP3.pos;
+  if(a.d.st==='kia')return;
+  /* 착지 */const E=a.ent;if(E){if(E.ph==='drop'){E.t+=dt;const u=Math.min(1,E.t/.8);h.root.position.y=E.y0*(1-u)*(1-u);if(u>=1){E.ph='land';E.t=0;h.root.position.y=0;sv3Shake(.35);heroDust(h.root.position);try{SFX.step('concrete')}catch(e){}try{bubSay(h,a.D.line,2.6,'')}catch(e){}}return}
+    if(E.ph==='land'){E.t+=dt;h.update(dt);if(E.t>.75){a.ent=null;try{h.setPose('idle',true)}catch(e){}}return}}
+  /* 교전·운전·건물 안에서는 숨는다 */const hide=heroBusy();if(hide!==!!a.hid){a.hid=hide;if(!(GRP.brd&&GRP.brd.ph==='in'))h.root.visible=!hide;if(!hide&&!a.carry){const S=a.S,H=TEAM.head;h.root.position.set(p.x+Math.sin(H)*S.f-Math.cos(H)*S.u,0,p.z+Math.cos(H)*S.f+Math.sin(H)*S.u);a.v=0}}
+  if(hide)return;
+  /* 팀원·가족이 없으면 머리 방향·발자취·TEAM.t를 여기서 갱신 */if(!TEAM.list.length&&!(typeof FAM!=='undefined'&&FAM.list.length)){TEAM.t+=dt;if(!TEAM.lp)TEAM.lp={x:p.x,z:p.z};const ix=dt>1e-4?1/dt:0;const vx=(p.x-TEAM.lp.x)*ix,vz=(p.z-TEAM.lp.z)*ix;TEAM.lp.x=p.x;TEAM.lp.z=p.z;if(Math.hypot(vx,vz)<=18){const k=Math.min(1,dt*4);TEAM.hv.x+=(vx-TEAM.hv.x)*k;TEAM.hv.z+=(vz-TEAM.hv.z)*k;const ls0=Math.hypot(TEAM.hv.x,TEAM.hv.z);if(ls0>.6){const want=Math.atan2(TEAM.hv.x,TEAM.hv.z);let dy=want-TEAM.head;dy=Math.atan2(Math.sin(dy),Math.cos(dy));TEAM.head+=dy*Math.min(1,dt*(ls0>3?3:2))}}const T0=TEAM.trail;const last=T0[T0.length-1];if(!last||Math.hypot(p.x-last.x,p.z-last.z)>.6){T0.push({x:p.x,z:p.z});if(T0.length>140)T0.shift()}}
+  /* 부축 중(엑소): 2배 속도·치료 6초 */if(a.carry){const C=a.carry;if(C.ph==='walk'&&C.safe){const Pc=h.root.position;const dx=C.safe.x-Pc.x,dz=C.safe.z-Pc.z,d=Math.hypot(dx,dz);if(d>3.6){const sp=1.25;const nx=Pc.x+dx/d*sp*dt,nz=Pc.z+dz/d*sp*dt;if(!FP3.blocked(nx,nz,.26)){Pc.x=nx;Pc.z=nz}}}else if(C.ph==='to'){const Pc=h.root.position,Pi=C.inj.h.root.position;const dx=Pi.x-Pc.x,dz=Pi.z-Pc.z,d=Math.hypot(dx,dz);if(d>1.2){const sp=4.4;const nx=Pc.x+dx/d*sp*dt,nz=Pc.z+dz/d*sp*dt;if(!FP3.blocked(nx,nz,.26)){Pc.x=nx;Pc.z=nz}}}else if(C.ph==='treat')C.t+=dt*2.33;heroCape(a,dt);return}
+  if(a.vault){h.update(dt);try{grpVaultMove(a,dt)}catch(e){a.vault=null}heroCape(a,dt);return}
+  if(a.carried){heroCape(a,dt);return}
+  h.update(dt);const H=TEAM.head,ls=Math.hypot(TEAM.hv.x,TEAM.hv.z);const C={p,ls,H,fx:Math.sin(H),fz:Math.cos(H),rx:-Math.cos(H),rz:Math.sin(H)};
+  try{tmMove(a,dt,C)}catch(e){console.error(e)}
+  const far=Math.hypot(h.root.position.x-p.x,h.root.position.z-p.z);if(far>60)tmPlace(a,2);
+  heroCape(a,dt);heroPetStep(a,dt);heroAbility(a,dt);
+  HERO.uiT-=dt;if(HERO.uiT<=0){HERO.uiT=.7;heroUI()}}
+function heroName(D){if(D.kid){try{const k=G&&G.fam&&G.fam.find(m=>m.id==='kid');const n=k&&k.n&&String(k.n).trim();if(n&&n!=='아이')return n+' 레인저'}catch(e){}}return D.nm}
+function heroCape(a,dt){const cg=a.h.heroCape;if(!cg)return;const want=-Math.min(.95,(a.v||0)*.16);cg.rotation.x+=(want-cg.rotation.x)*Math.min(1,dt*5)}
+/* ---------- 능력 ---------- */
+function heroAbility(a,dt){if(a.hk==='owl'){HERO.scanT-=dt;if(HERO.scanT<=0){HERO.scanT=8;heroOwlScan()}heroMarksStep(dt)}
+  else if(a.hk==='kid'){HERO.scanT-=dt;if(HERO.scanT<=0){HERO.scanT=2.5;heroBirdWatch(a)}heroMarksStep(dt)}}
+function heroBirdWatch(a){const p=FP3.pos;let near=null,nd=1e9,it=0;(OUT.npcs||[]).forEach(n=>{if(!heroHostile(n))return;const q=n.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<16&&d<nd){nd=d;near=n}});
+  if(typeof LOOT!=='undefined'&&LOOT.spots)LOOT.spots.forEach(s=>{if(s.taken||s.far)return;if(Math.hypot(s.x-p.x,s.z-p.z)<60){s.far=1;it++}});
+  if(near&&(!HERO.warnN||HERO.warnN!==near||HERO.t-HERO.warnT>10)){HERO.warnN=near;HERO.warnT=HERO.t;heroMarksClear();const q=near.h.root.position;const m=new T.Mesh(GG.sph(.17,8),new T.MeshStandardMaterial({color:'#ff6a4a',emissive:'#ff6a4a',emissiveIntensity:1.8,transparent:true,opacity:.95}));m.castShadow=false;m.position.set(q.x,2.35,q.z);OUT.scene.add(m);HERO.marks.push({m,n:near,t:0});const pk=heroPetKind(a.D),pn=heroPetName()||(pk==='chick'?'병아리':pk==='bot'?'미니 로봇':'전령새'),pi=pk==='chick'?'🐥':pk==='bot'?'🤖':'🐦';try{bubSay(a.h,pk==='bot'?'삐-빅! 저쪽 조심!':'삐삐! 저쪽 조심!',2.2,'vic')}catch(e){}try{vib([40,40,40])}catch(e){}outNote(`<b>${pi} ${pn}이(가) 경고한다</b><div>${Math.round(nd)}m 앞에 위험한 사람 — 붉은 표시.</div>`,2200)}
+  if(it&&HERO.t-HERO.noteT>14){HERO.noteT=HERO.t;const pk=heroPetKind(a.D),pn=heroPetName()||(pk==='chick'?'병아리':pk==='bot'?'미니 로봇':'전령새');outNote(`<b>${pk==='chick'?'🐥':pk==='bot'?'🤖':'🐦'} ${pn}이(가) 물건을 찾았다</b><div>60m 안 물건 ${it}개 — 지도에 표시.</div>`,2200)}}
+function heroHostile(n){return !!(n&&n.h&&!n.dead&&n.h.root.visible&&(n.kind==='thug'||n.kind==='loot'||n.kind==='en'||(n.kind==='spy'&&n.fleeing)))}
+function heroOwlScan(){const p=FP3.pos;let en=0,it=0;heroMarksClear();(OUT.npcs||[]).forEach(n=>{if(!heroHostile(n))return;const q=n.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)>60)return;en++;const m=new T.Mesh(GG.sph(.17,8),new T.MeshStandardMaterial({color:'#ff6a4a',emissive:'#ff6a4a',emissiveIntensity:1.8,transparent:true,opacity:.95}));m.castShadow=false;m.position.set(q.x,2.35,q.z);OUT.scene.add(m);HERO.marks.push({m,n,t:0})});
+  if(typeof LOOT!=='undefined'&&LOOT.spots){LOOT.spots.forEach(s=>{if(s.taken)return;if(Math.hypot(s.x-p.x,s.z-p.z)<60){s.far=1;it++}})}
+  if(en||it){if(HERO.t-HERO.noteT>14){HERO.noteT=HERO.t;outNote(`<b>🦉 올빼미 정찰</b><div>60m 안 — 위험한 사람 ${en}명 · 물건 ${it}개 (붉은 표시)</div>`,2600)}}}
+function heroMarksStep(dt){HERO.marks=HERO.marks.filter(k=>{k.t+=dt;const q=k.n.h.root.position;k.m.position.set(q.x,2.35+Math.sin(k.t*6)*.12,q.z);k.m.material.opacity=k.t<7?.95:Math.max(0,1-(k.t-7));if(k.t>8||!k.n.h.root.visible||k.n.dead){if(k.m.parent)k.m.parent.remove(k.m);k.m.material.dispose();return false}return true})}
+function heroMarksClear(){HERO.marks.forEach(k=>{if(k.m.parent)k.m.parent.remove(k.m);k.m.material.dispose()});HERO.marks=[]}
+function heroBlockFx(n){const a=HERO.cur;if(!a)return;if(HERO.t-HERO.blockT>1.2){HERO.blockT=HERO.t;toast(`🛡 가디언이 막았다 −${n}`,1400);try{bubSay(a.h,['막았다!','제 뒤로!','방패 올려!'][Math.floor(Math.random()*3)],1.8,'')}catch(e){}try{vib(30)}catch(e){}}
+  const sc=OUT.scene;if(!sc||!a.h.root.visible)return;const q=a.h.root.position;const m=new T.Mesh(GG.cyl(.5,.5,.03,6),new T.MeshStandardMaterial({color:'#ffd866',emissive:'#ffd866',emissiveIntensity:2,transparent:true,opacity:.8}));m.castShadow=false;m.rotation.x=Math.PI/2;m.position.set(q.x+Math.sin(a.h.root.rotation.y)*.55,1.25,q.z+Math.cos(a.h.root.rotation.y)*.55);sc.add(m);HERO.fx.push({m,t:.45,vx:0,vz:0})}
+/* 가디언: 밖에서 내가 맞는 피해를 막는다(카드 선택이 아닌 실시간 피해만) */
+(function(){const b=window.hurt;window.hurt=function(t,n){if(t==='me'&&n>0&&heroActive('guard')&&OUT.on&&!OUT.enc&&!heroBusy()){const a=HERO.cur;const d=Math.hypot(a.h.root.position.x-FP3.pos.x,a.h.root.position.z-FP3.pos.z);if(d<9&&a.h.root.visible&&!a.ent){const n2=Math.round(n*.35);heroBlockFx(n-n2);if(n2<=0)return;return b.call(this,t,n2)}}return b.apply(this,arguments)}})();
+(function(){const b=window.owcHurt;if(typeof b!=='function')return;window.owcHurt=function(n,from,src){if(heroActive('guard')&&n>0){const n2=Math.round(n*.5);if(HERO.t-HERO.blockT>1.2){HERO.blockT=HERO.t;toast(`🛡 가디언 엄호 −${n-n2}`,1200)}if(n2<=0)return;return b.call(this,n2,from,src)}return b.apply(this,arguments)}})();
+/* 엑소: 중상자는 엑소가 업는다 */
+(function(){const b=window.grpCarrier;if(typeof b!=='function')return;window.grpCarrier=function(inj){if(heroActive('exo')){const a=HERO.cur;if(!a.carry&&!a.carried&&!a.ent&&!a.vault&&a.h.root.visible&&a!==inj)return a}return b.apply(this,arguments)}})();
+(function(){const b=window.grpCarryAuto;if(typeof b!=='function')return;window.grpCarryAuto=function(inj,force){const r=b.apply(this,arguments);try{if(r&&inj.carried&&inj.carried.car===HERO.cur)outNote(`<b>🤖 엑소가 ${inj.d.nm}을(를) 번쩍 들었다</b><div>2배 빠르게 안전지대로 — 치료 6초.</div>`,3000)}catch(e){}return r}})();
+/* 후크: 담 넘기 2배 빠르고 일행(히어로 포함)도 바로 따라 넘는다 */
+(function(){const b=window.vltStart;if(typeof b!=='function')return;window.vltStart=function(P){const r=b.apply(this,arguments);try{const a=HERO.cur;if(a&&!a.ent&&!a.carry&&!a.vault&&a.h.root.visible){const q=a.h.root.position;if(Math.hypot(q.x-P.ax,q.z-P.az)<10)a.vault={ph:'go',ax:P.ax,az:P.az,bx:P.bx,bz:P.bz,h:P.top+.4,dur:.45+P.dist*.1,t:0,wait:0}}
+    if(heroActive('hook')){if(FP3.vault)FP3.vault.dur*=.5;(OUT.npcs||[]).forEach(n=>{if(n.vault){n.vault.dur*=.5;n.vault.wait=Math.min(n.vault.wait||0,.05)}});if(HERO.t-HERO.noteT>6){HERO.noteT=HERO.t;try{bubSay(HERO.cur.h,'로프!',1.4,'')}catch(e){}}}}catch(e){}return r}})();
+/* 올빼미: 밤엔 적이 나를 늦게 알아챈다(총소리 전파 거리 반) */
+(function(){const b=window.gunNoise;if(typeof b!=='function')return;window.gunNoise=function(pt,W){if(heroActive('owl')&&OUT.tod==='night'&&Math.random()<.5)return 0;return b.apply(this,arguments)}})();
+/* ---------- 상황판·HUD ---------- */
+function heroRows(row){let h='';const used=heroUsedToday(),cur=HERO.cur;
+  h+=`<div class="hero-head"><b>🦸 탕정 히어로즈</b><small>${cur?`${cur.D.ico} ${cur.nm} 함께 있음`:used?'오늘은 이미 불렀다 — 내일 다시':'하루 1회 · 밖에서 호출하면 하늘에서 내려온다'}</small></div><div class="hero-grid">`;
+  for(const D of HERO_DEF){const off=!!(cur||used||!OUT.on);h+=`<button class="hero-card" data-g3="hero" data-v="${D.id}"${off?' disabled':''} style="--c:${D.suit};--a:${D.acc}"><span class="hero-ico">${D.ico}</span><b>${D.nm}</b><small>${D.role}</small><em>${D.power}</em></button>`}
+  return h+'</div>'}
+(function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{h+=heroRows(row)}catch(e){console.error(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=hero]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const id=b.dataset.v;if(heroCall(id)){try{evBoard(false)}catch(e){}}},true);
+function heroUI(){const b=$('#oBar');if(!b||!OUT.on)return;let t=b.querySelector('[data-g3=herochip]');const a=HERO.cur;if(!a){if(t)t.remove();return}if(!t){t=document.createElement('span');t.dataset.g3='herochip';t.className='hero-chip';const ref=b.querySelector('[data-g3=famchip]')||b.querySelector('[data-g3=tmbtn]')||b.querySelector('[data-g3=oback]');b.insertBefore(t,ref)}const h=`${a.D.ico} ${a.nm}${a.carry?'(부축)':a.ent?'(착지 중)':''}`;if(t.textContent!==h)t.textContent=h}
+/* ---------- 걸이 ---------- */
+(function(){const b=window.tmStep;window.tmStep=function(dt){const r=b.apply(this,arguments);try{heroStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{heroClear()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.tmOwcJoin;if(typeof b!=='function')return;window.tmOwcJoin=function(){try{if(HERO.cur)HERO.cur.h.root.visible=false}catch(e){}return b.apply(this,arguments)}})();
+/* 히어로 시안(스튜디오 캡처용): 4인이 나란히 선 장면 */
+function heroStudio(sc,champ){const L=[];const list=HERO_DEF.slice();if(champ)list.push({id:'champ',champ:1});const n=list.length;list.forEach((D,i)=>{let h=null;if(D.champ){h=makeHumanRBX(RBX_LOOK.me,{pose:'idle',seed:9});if(h)heroChampSuit(h)}else h=heroMake(D);if(!h)return;h.root.position.set((i-(n-1)/2)*1.12,0,D.kid?.35:0);h.root.rotation.y=(i-(n-1)/2)*-.1;try{h.setPose('idle',true)}catch(e){}sc.add(h.root);L.push(h)});return L}
+if(typeof HELP84!=='undefined'){HELP84.push(['탕정 히어로즈(v9.6)','상황판(🚨)에서 하루 1회 히어로를 부른다 — 하늘에서 내려와 내 앞에서 함께 걷는다(이번 외출 동안). 가디언은 내가 맞는 피해를 방패로 막고, 엑소는 쓰러진 사람을 번쩍 들어 2배 빠르게 후송하며, 후크는 담 넘기를 2배 빠르게 하고 일행도 바로 따라 넘게 한다. 올빼미는 60m 안 위험한 사람·물건을 8초마다 붉게 표시하고 밤엔 적이 총소리를 늦게 알아챈다.'])}
+
+/* ---------- 내 아바타 '챔피언 룩'(설정 sg.meLook='champ'): 긴 코트·금 장식·엠블럼·완장 — 우리 디자인 ---------- */
+const CHAMP={suit:'#14161c',suit2:'#1b2b5e',acc:'#e3b341',glow:'#ffd866',id:'champ'};
+function heroChampSuit(h){if(!h||!h.mesh||!h.b||h.champ)return;h.champ=1;const D=CHAMP;const mesh=h.mesh;const mats=Array.isArray(mesh.material)?mesh.material:[mesh.material];mesh.material=mats.map(m=>{if(/head|opacity|hair/i.test(m.name||''))return m;const s=new T.MeshStandardMaterial({color:D.suit,roughness:.62,metalness:.1});s.name='hero_suit';return s});
+  h.root.updateMatrixWorld(true);const qc=new T.Quaternion(),qr=new T.Quaternion();h.b.chest.getWorldQuaternion(qc);h.root.getWorldQuaternion(qr);const offQ=qc.invert().multiply(qr);h.offQ=h.offQ||offQ;
+  const body=(x,y,z)=>{const g=new T.Group();g.quaternion.copy(offQ);g.position.set(x,y,z).applyQuaternion(offQ);h.b.chest.add(g);return g};
+  const mA=mat(D.acc,{r:.35,m:.6}),mN=mat(D.suit2,{r:.7}),mK=mat('#0d0e12',{r:.7});
+  /* 어깨 금 장식줄·견장 */for(const s of ['shL','shR']){MM(GG.box(.11,.02,.07),mA,.03,.055,0,{p:h.b[s],cast:false});MM(GG.sph(.02,8),mA,.09,.06,0,{p:h.b[s],cast:false})}
+  /* 가슴 엠블럼(육각) */const cp=body(-.08,.0,.13);const emD={id:'champ',suit:D.suit2,suit2:D.suit,acc:D.acc};MM(GG.cyl(.06,.06,.012,6),mA,0,0,0,{p:cp,rx:Math.PI/2,cast:false});const em=MM(GG.pl(.085,.085),mat('#ffffff',{map:heroEmblem(emD),r:.5}),0,0,.008,{p:cp,cast:false});em.rotation.z=Math.PI/6;
+  /* 완장 '대장' */MM(GG.cyl(.064,.064,.07,12),mat('#b8252e',{r:.8}),.15,0,0,{p:h.b.shL,cast:false,rz:Math.PI/2});
+  /* 긴 코트 자락(망토처럼 뒤로 젖혀짐) */const cg=body(0,-.08,-.12);const cape=MM(GG.pl(.52,.7),mat(D.suit2,{r:.85,side:T.DoubleSide}),0,-.35,0,{p:cg,cast:true,recv:false});MM(GG.pl(.52,.04),mA,0,-.68,.004,{p:cg,cast:false,recv:false});h.heroCape=cg;
+  /* 가슴 금 라인 2줄 · 높은 깃 · 망토 안감(진홍) */const ln=body(0,-.02,.135);for(const sx of [-1,1])MM(GG.box(.012,.3,.006),mA,sx*.055,0,0,{p:ln,cast:false});const col=body(0,.17,-.02);MM(new T.CylinderGeometry(.11,.1,.07,14,1,true,Math.PI*.15,Math.PI*1.7),mat(D.suit2,{r:.7,side:T.DoubleSide}),0,0,0,{p:col,cast:false,ry:Math.PI});
+  MM(GG.pl(.5,.68),mat('#8e1e2a',{r:.9}),0,-.35,.004,{p:cg,cast:false,recv:false});
+  /* 벨트 버클 */MM(GG.box(.06,.05,.02),mA,-.03,0,.17,{p:h.b.pelvis,cast:false})}
+function heroChampOn(){return store.get('sg.meLook','')==='champ'}
+(function(){const b=window.civHuman;window.civHuman=function(i,pose,kind){const h=b.apply(this,arguments);try{if(kind==='me'&&h&&h.rbx&&heroChampOn())heroChampSuit(h)}catch(e){console.error(e)}return h}})();
+/* 내 아바타(밖 3인칭)도 코트 자락이 달리면 젖혀진다 */
+(function(){const b=window.tmStep;window.tmStep=function(dt){const r=b.apply(this,arguments);try{const me=OUT.me;if(me&&me.heroCape){const v=FP3.moving?FP3.speed*Math.min(1,FP3.moving):0;const want=-Math.min(.9,v*.14);me.heroCape.rotation.x+=(want-me.heroCape.rotation.x)*Math.min(1,dt*5)}}catch(e){}return r}})();
+
+/* 설정: 리틀 레인저 어깨 친구(종류·이름) — 기기에만 저장 */
+function heroPetRows(){if(typeof s4Seg!=='function')return '';const nm=heroPetName();return s4Seg('heropet','리틀 레인저 어깨 친구','새·병아리·미니 로봇 중 하나 — 다음 호출부터',[['bird','하늘색 새'],['chick','노란 병아리'],['bot','미니 로봇']],store.get('sg.heroPet','bird'))+`<div class="seg"><div class="seg-label">친구 이름 <span class="small mut">${nm?nm+' — 경고 말풍선에 쓴다':'아직 없음 (아이가 지어주면 좋다)'}</span></div><button class="btn sm" data-g3="heropetname">${nm?'바꾸기':'이름 짓기'}</button></div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=heropetname]');if(!b)return;e.preventDefault();e.stopPropagation();let v=null;try{v=window.prompt('어깨 친구 이름 (12자까지)',heroPetName())}catch(x){}if(v==null)return;const c=(typeof clean==='function'?clean(v):String(v)).trim().slice(0,12);store.set('sg.heroPetName',c);toast(c?`친구 이름: ${c}`:'이름을 지웠다');try{const p=document.querySelector('[data-s4=v][data-v="ctl"]');if(typeof s4Render==='function')s4Render()}catch(x){}},true);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
