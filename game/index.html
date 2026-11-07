@@ -1264,6 +1264,13 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 /* v9.6 */
 .fam-chip{font:800 12px system-ui,sans-serif;border-radius:10px;padding:7px 10px;border:1px solid rgba(255,178,36,.45);background:rgba(6,8,11,.72);color:#ffd27a;white-space:nowrap}
 .pc-hud{top:204px}.tm-fam{border-top:1px solid var(--line);margin-top:6px;padding-top:4px}
+/* ---------- v9.6 탕정 히어로즈 ---------- */
+.hero-head{display:flex;align-items:baseline;gap:8px;margin:10px 2px 6px;color:#e8ecf2}.hero-head b{font-size:14px}.hero-head small{color:#9aa4b2;font-size:11px}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.hero-card{appearance:none;border:1px solid var(--a,#f4c542);background:linear-gradient(180deg,var(--c,#1d3f8e),#0e1424);color:#f2f5fa;border-radius:10px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center;cursor:pointer;min-height:96px}
+.hero-card:disabled{opacity:.42;cursor:default}.hero-card .hero-ico{font-size:22px;line-height:1}.hero-card b{font-size:13px}.hero-card small{font-size:10px;color:#cfd6e0}.hero-card em{font-style:normal;font-size:9.5px;line-height:1.25;color:#e8dcb0;margin-top:2px}
+.hero-chip{display:inline-flex;align-items:center;gap:4px;background:#2a2140;border:1px solid #8f6cff;color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;margin-right:4px}
+@media(max-width:700px){.hero-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -10622,7 +10629,7 @@ const FP3={pos:new T.Vector3(),yaw:0,pitch:0,eye:1.55,mv:{x:0,y:0},ptr:{},moving
     /* 대피소에서 장면을 만지면(이동·둘러보기) 아래 카드 띠를 자동으로 접어 시야와 엄지 영역을 비운다 */if(UI.screen==='shelter'){const d=$('#sv3Panel');if(d&&d.classList.contains('sv3-deck')&&!d.classList.contains('min')){d.classList.add('min');const t=d.querySelector('.deck-tg');if(t)t.textContent='▴ 펼치기'}}SND.ac();const p=sv3Local(e.clientX,e.clientY);const W=SV3.vw,H=SV3.vh;const role=(p.x<W*.42&&p.y>H*.28)?'move':'look';
     this.ptr[e.pointerId]={role,x:p.x,y:p.y,x0:p.x,y0:p.y,t0:performance.now(),moved:0};try{this.el.setPointerCapture(e.pointerId)}catch(x){}
     if(role==='move'){this.nav=null;sv3JoyDraw(p.x,p.y,p.x,p.y)}},
-  move(e){const q=this.ptr[e.pointerId];if(!q)return;const p=sv3Local(e.clientX,e.clientY);const dx=p.x-q.x,dy=p.y-q.y;q.x=p.x;q.y=p.y;q.moved+=Math.abs(dx)+Math.abs(dy);
+  move(e){const q=this.ptr[e.pointerId];if(!q)return;const p=sv3Local(e.clientX,e.clientY);const dx=p.x-q.x,dy=p.y-q.y;q.x=p.x;q.y=p.y;q.moved+=Math.abs(dx)+Math.abs(dy);q.tm=performance.now();
     if(q.role==='move'){let vx=p.x-q.x0,vy=p.y-q.y0;const d=Math.hypot(vx,vy),R=52;if(d>R){vx*=R/d;vy*=R/d}this.mv.x=vx/R;this.mv.y=-vy/R;sv3JoyDraw(q.x0,q.y0,q.x0+vx,q.y0+vy)}
     else{const s=.0042;this.yaw-=dx*s;this.pitch=clamp(this.pitch-dy*s,-1.2,1.2)}},
   up(e){const q=this.ptr[e.pointerId];if(!q)return;delete this.ptr[e.pointerId];
@@ -11274,7 +11281,8 @@ function vShelter3(){
   if(roam&&LIFE.on){FP3.attach(SV3.el);FP3.onTap=null;FP3.lock=false;FP3.nav=null;if(LIFE.me){FP3.pos.set(LIFE.me.root.position.x,0,LIFE.me.root.position.z)}}else FP3.detach();
   if(LIFE.on){lifeTurn();if(G.cur&&(st==='event'||st==='final')&&G.cur.ev&&!G.cur.vig){G.cur.vig=1;lifeEvent(G.cur.ev)}}
   SV3.step=dt=>{SH3.t+=dt;
-    if(LIFE.on)lifeStep(dt);if(SH3.torch){const cam=SV3.cam;SH3.torch.position.copy(cam.position);const fw=new T.Vector3(0,0,-1).applyQuaternion(cam.quaternion);SH3.tg.position.copy(cam.position).addScaledVector(fw,5)}else{const l=SH3.look;SV3.cam.position.copy(SH3.camP);SV3.cam.position.y+=Math.sin(SH3.t*.9)*.01;SV3.cam.lookAt(l.x+Math.sin(SH3.t*.35)*.15,l.y,l.z+Math.cos(SH3.t*.3)*.1);SV3.cam.rotation.z=SV3.shake*Math.sin(SV3.t*37)*.02;SV3.shake*=Math.exp(-dt*3.5)}
+    if(LIFE.on)lifeStep(dt);else{const l=SH3.look;SV3.cam.position.copy(SH3.camP);SV3.cam.position.y+=Math.sin(SH3.t*.9)*.01;SV3.cam.lookAt(l.x+Math.sin(SH3.t*.35)*.15,l.y,l.z+Math.cos(SH3.t*.3)*.1);SV3.cam.rotation.z=SV3.shake*Math.sin(SV3.t*37)*.02;SV3.shake*=Math.exp(-dt*3.5)}
+    /* v9.5.1: 손전등은 카메라를 따라간다(v9.5에서 이 코드가 else를 삼켜 자유 모드에서도 고정 카메라가 덮어쓰던 버그 수정) */if(SH3.torch){const cam=SV3.cam;SH3.torch.position.copy(cam.position);const fw=new T.Vector3(0,0,-1).applyQuaternion(cam.quaternion);SH3.tg.position.copy(cam.position).addScaledVector(fw,5)}
     SH3.people.forEach(h=>h.update(dt));if(SH3.flames)SH3.flames.forEach((f,i)=>{f.intensity=f.userData.i0*(.8+Math.sin(SH3.t*11+i*2)*.2)});
     if(SH3.boomT!=null){SH3.boomT-=dt;if(SH3.boomT<=0){SH3.boomT=14+Math.random()*16;if(SH3.wins)SH3.wins.forEach(w=>FX3.flashWin(w,'#ffd0a0'));sv3Shake(.3);SND.boom(false,.3);vib(30)}}
     FX3.step(dt)};
@@ -13320,7 +13328,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.5';
+const APP_VER='9.5.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13427,6 +13435,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
     ${s4Seg('vib','진동','',[[1,'켬'],[0,'끔']],a.vib?1:0)}
     ${s4Seg('bright','장면 밝기','대피소·집·밤 거리가 어두우면 올린다 (3D 장면 노출)',BRT_OPT,brtGet())}
     <div class="s4-sec">게임 방식</div>
+    ${typeof heroChampOn==='function'?s4Seg('melook','내 모습 (밖 3인칭·대피소)','챔피언 룩: 긴 코트·금 견장·엠블럼·대장 완장 — 다음 장면부터',[['std','보통'],['champ','챔피언']],store.get('sg.meLook','std')):''}
     ${s4Seg('pace','화면 움직임','끊겨 보이면 30fps로 고르게 고정 — 자동은 장면마다 재서 정한다',[['auto','자동'],['30','30 고정'],['60','최대']],paceMode())}
     ${s4Seg('owc','실제 지도 교전','공수부대 강하 때 밖 탐색 장면 그대로 싸울지, 전투 화면으로 넘어갈지',[[1,'같은 배경'],[0,'전투 화면']],store.get('sg.owc',true)!==false?1:0)}
     ${s4Seg('otime','밖 탐색 시간','걷고 둘러보는 동안에도 시간이 흐를지 (뒤지기·돕기 같은 행동은 늘 시간을 쓴다)',[[0,'걷기 무제한'],[1,'현실처럼 흐름']],store.get('sg.outTimed',false)?1:0)}
@@ -13447,7 +13456,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='help'){s4Open('help');return}
   if(a==='close'){s4Close();return}
   if(a==='v'){S4.view=b.dataset.v;S4.conf=null;s4Re();return}
-  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
+  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
     else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
@@ -14052,8 +14061,8 @@ function fpdCockpit(car){if(car.userData.cock)return car.userData.cock;const g=n
 /* ---------- 카메라 ---------- */
 function fpdFov(sp,fp,dt){const k=Math.min(1,Math.max(0,(sp-4)/14));const want=(fp&&OUT.ride?70:62)+k*(fp?14:9);FPD.fov+=(want-FPD.fov)*Math.min(1,dt*3);const cam=SV3.cam;if(Math.abs(cam.fov-FPD.fov)>.05){cam.fov=FPD.fov;cam.updateProjectionMatrix()}}
 function fpdFovReset(){const cam=SV3.cam;FPD.fov=62;if(cam&&Math.abs(cam.fov-62)>.01){cam.fov=62;cam.updateProjectionMatrix()}}
-function fpdLookBack(dt){/* 둘러보기를 놓으면 앞으로 돌아온다 */let looking=false;for(const k in FP3.ptr){if(FP3.ptr[k].role==='look'){looking=true;break}}if(!looking){FP3.yaw*=Math.max(0,1-dt*2.2);FP3.pitch+=(-.08-FP3.pitch)*Math.min(1,dt*1.5)}FP3.yaw=clamp(FP3.yaw,-1.9,1.9)}
-(function(){const base=window.tjDrivePost;if(typeof base!=='function')return;window.tjDrivePost=function(dt){const r=base.apply(this,arguments);const D=OUT.drv;if(!D)return r;const car=D.car;const fp=FPD.mode==='fp';const ck=fpdCockpit(car);ck.visible=fp;
+function fpdLookBack(dt){/* 둘러보기를 놓으면 앞으로 돌아온다 · v9.5.1: 놓는 이벤트를 놓쳐 남은 포인터(2.5초 넘게 안 움직임)는 놓은 것으로 본다 */let looking=false;const now=performance.now();for(const k in FP3.ptr){const q=FP3.ptr[k];if(q.role==='look'&&(q.pc||now-(q.tm||q.t0||0)<2500)){looking=true;break}}if(!looking){FP3.yaw*=Math.max(0,1-dt*2.2);FP3.pitch+=(-.08-FP3.pitch)*Math.min(1,dt*1.5)}FP3.yaw=clamp(FP3.yaw,-1.9,1.9)}
+(function(){const base=window.tjDrivePost;if(typeof base!=='function')return;window.tjDrivePost=function(dt){const r=base.apply(this,arguments);const D=OUT.drv;if(!D)return r;const car=D.car;const fp=FPD.mode==='fp';/* v9.5.1 안전장치: 차가 장면에서 빠졌거나 숨겨졌으면 되살린다(1인칭에서 차·계기판이 안 보이는 제보) */if(!car.visible)car.visible=true;if(!car.parent&&OUT.scene)OUT.scene.add(car);const ck=fpdCockpit(car);ck.visible=fp;
   /* v9.4: 3인칭에서도 둘러보기를 놓으면 앞으로 돌아온다(전엔 돌린 시점·기울기가 그대로 남아 카메라가 옆·바닥에 붙었다) */if(!fp)fpdLookBack(dt);
   if(fp){fpdLookBack(dt);car.updateMatrixWorld(true);const e=car.localToWorld(_fv[0].set(.38,1.16,-.2));const cam=SV3.cam;cam.position.copy(e);cam.rotation.order='YXZ';const sh=SV3.shake||0;cam.rotation.set(clamp(FP3.pitch*.7,-.5,.35)-.05+(car.rotation.x||0)+sh*Math.sin(SV3.t*47)*.02,D.yaw+Math.PI+FP3.yaw,-(car.rotation.z||0)+sh*Math.sin(SV3.t*37)*.02)}
   if(car.userData.wheel)car.userData.wheel.rotation.z=-(D.steer||0)*3;FPD.clT-=dt;if(fp&&FPD.clT<=0){FPD.clT=.12;fpdClusterDraw(car,Math.abs(D.v)*3.6,Math.min(1,Math.abs(D.v)/16+Math.max(0,FP3.mv.y)*.2))}
@@ -17027,7 +17036,7 @@ function famSpawn(sc){famClear();if(!OUT.on||OUT.mode!=='free'||!famOutOn()||!RB
   FAM.on=FAM.list.length>0;FAM.hid=false;if(FAM.on)outNote(`<b>👨‍👩‍👧 가족이 함께 나왔다</b><div>${FAM.list.map(a=>a.nm).join('·')} — 내 옆·뒤에 붙어 걷는다. 다치면 가족 체력이 깎인다. 팀 화면(👥)에서 동행을 끌 수 있다.</div>`,4200)}
 function famClear(){FAM.list.forEach(a=>{if(a.h&&a.h.root.parent)a.h.root.parent.remove(a.h.root)});OUT.npcs=(OUT.npcs||[]).filter(a=>!FAM.list.includes(a));FAM.list=[];FAM.on=false}
 function famLive(){return FAM.list.filter(a=>a.d.st!=='kia')}
-function famStep(dt){if(!OUT.on||!FAM.list.length)return;FAM.t+=dt;const p=FP3.pos;const hide=!!(OUT.drv||OUT.ride||(typeof APT!=='undefined'&&APT.on)||(typeof OWC!=='undefined'&&OWC.on)||(typeof SHOP!=='undefined'&&SHOP.on));
+function famStep(dt){if(!OUT.on||!FAM.list.length)return;FAM.t+=dt;/* v9.5.1: 팀원이 없으면 tmStep이 바로 돌아가 TEAM.t가 멈춰 가족 자세(걷기·뛰기)가 안 바뀌던 것('귀신처럼 미끄러짐') */if(!TEAM.list.length)TEAM.t+=dt;const p=FP3.pos;const hide=!!(OUT.drv||OUT.ride||(typeof APT!=='undefined'&&APT.on)||(typeof OWC!=='undefined'&&OWC.on)||(typeof SHOP!=='undefined'&&SHOP.on));
   if(hide!==FAM.hid){FAM.hid=hide;if(!(GRP.brd&&GRP.brd.ph==='in'))FAM.list.forEach(a=>{a.h.root.visible=!hide});if(!hide){FAM.list.forEach(a=>{if(!a.carried&&!a.carry){const S=a.S;const H=TEAM.head;const x=p.x+Math.sin(H)*S.f-Math.cos(H)*S.u,z=p.z+Math.cos(H)*S.f+Math.sin(H)*S.u;a.h.root.position.set(x,0,z);a.v=0}})}}
   if(hide)return;
   /* 팀원이 없으면 tmStep이 머리 방향·속도·발자취를 갱신하지 않으니 여기서 */if(!TEAM.list.length){if(!TEAM.lp)TEAM.lp={x:p.x,z:p.z};const ix=dt>1e-4?1/dt:0;const vx=(p.x-TEAM.lp.x)*ix,vz=(p.z-TEAM.lp.z)*ix;TEAM.lp.x=p.x;TEAM.lp.z=p.z;if(Math.hypot(vx,vz)<=18){const k=Math.min(1,dt*4);TEAM.hv.x+=(vx-TEAM.hv.x)*k;TEAM.hv.z+=(vz-TEAM.hv.z)*k;const ls0=Math.hypot(TEAM.hv.x,TEAM.hv.z);if(ls0>.6){const want=Math.atan2(TEAM.hv.x,TEAM.hv.z);let dy=want-TEAM.head;dy=Math.atan2(Math.sin(dy),Math.cos(dy));TEAM.head+=dy*Math.min(1,dt*(ls0>3?3:2))}}const T0=TEAM.trail;const last=T0[T0.length-1];if(!last||Math.hypot(p.x-last.x,p.z-last.z)>.6){T0.push({x:p.x,z:p.z});if(T0.length>140)T0.shift()}}
