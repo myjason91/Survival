@@ -1411,7 +1411,7 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .chf-top{display:flex;align-items:center;gap:8px;white-space:nowrap}.chf-top b{color:#ffd84a}.chf-top span{color:#cfe3ef}.chf-top i{font-style:normal;font-weight:800;color:#fff}
 .chf-say{font-size:12px;color:#fff6d8;max-width:420px;text-align:center;line-height:1.35}
 .chf-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.chf-btns button{font:800 12px var(--sans);padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}.chf-btns button.pri{background:#ffb224;color:#1a1200;border-color:#ffb224}
-.sv3.chf-on #adHud,.sv3.chf-on .sv3-hint{display:none}.chf-note b{color:#ffd84a}
+.sv3.chf-on #adHud,.sv3.chf-on .sv3-hint,.sv3.chf-on .pc-lock{display:none}.chf-note b{color:#ffd84a}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13475,7 +13475,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.4';
+const APP_VER='10.4.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
