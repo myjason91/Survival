@@ -13330,7 +13330,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='9.7';
+const APP_VER='9.8';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13438,6 +13438,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
     ${s4Seg('bright','장면 밝기','대피소·집·밤 거리가 어두우면 올린다 (3D 장면 노출)',BRT_OPT,brtGet())}
     <div class="s4-sec">게임 방식</div>
     ${typeof heroPetRows==='function'?heroPetRows():''}
+    ${typeof aptwRows==='function'?aptwRows():''}
     ${typeof heroChampOn==='function'?s4Seg('melook','내 모습 (밖 3인칭·대피소)','챔피언 룩: 긴 코트·금 견장·엠블럼·대장 완장 — 다음 장면부터',[['std','보통'],['champ','챔피언']],store.get('sg.meLook','std')):''}
     ${s4Seg('pace','화면 움직임','끊겨 보이면 30fps로 고르게 고정 — 자동은 장면마다 재서 정한다',[['auto','자동'],['30','30 고정'],['60','최대']],paceMode())}
     ${s4Seg('owc','실제 지도 교전','공수부대 강하 때 밖 탐색 장면 그대로 싸울지, 전투 화면으로 넘어갈지',[[1,'같은 배경'],[0,'전투 화면']],store.get('sg.owc',true)!==false?1:0)}
@@ -13459,7 +13460,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='help'){s4Open('help');return}
   if(a==='close'){s4Close();return}
   if(a==='v'){S4.view=b.dataset.v;S4.conf=null;s4Re();return}
-  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
+  if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='aptview'){store.set('sg.aptView',v==='1');toast(v==='1'?'창밖 실경 켬 — 다음에 들어갈 때부터':'창밖 실경 끔 — 그림판으로')}else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
     else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
@@ -17522,6 +17523,57 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=heropet
 
 /* 후크: 3m 담·벽까지 넘는다(건물 안으로는 아님) */
 (function(){const b=window.vltMaxH;if(typeof b!=='function')return;window.vltMaxH=function(){return heroActive('hook')?3.0:b.apply(this,arguments)}})();
+
+/* ===================== 72 · v9.8 아파트 안에서 창밖 실경 + 실내 점프·사격 ===================== */
+/* 들어간 세대의 창문 너머로 실제 지도(마을)가 보인다 — 밖 장면(OUT.scene)을 실내 장면의 자식으로 붙이고, 건물 위치·층 높이·정면 방향의 역변환을 걸어 둔다(창밖 그림판은 숨김, 하늘·안개는 밖 장면 것).
+   실내에서도 점프(버튼·Space)와 배낭 무기 장착·사격이 된다. 창문을 통해 쏘면 밖의 사람·땅에 맞는다(실내 벽·가구에는 막힘, 발사기류는 실내 불가). 예광탄·먼지·피 효과는 밖 장면 좌표로 바꿔 그린다.
+   사용자 요청(2026-11-07): "집안으로 들어갈 때 점프·총쏘기 가능하게, 창문 밖에서 마을을 볼 수 있도록 + 사격도 가능하게" */
+const APTW={on:false,anchor:null,q:null,sc:null,far:0,bg:null,fog:null};
+function aptwAnchor(){const A=OUT.apt;if(!A||!A.door)return null;const d=A.door;const fl=Math.max(1,A.fl||1);const nx=d.nx||0,nz=d.nz||1;/* 로컬 +z(거실 창 바깥) = 건물 정면 방향 n */
+  return{x:d.x-nx*4.6,y:A.lobby?0:(fl-1)*2.9,z:d.z-nz*4.6,yaw:Math.atan2(nx,nz)}}
+function aptwToWorld(v){const an=APTW.anchor;return v.clone().applyQuaternion(APTW.q).add(new T.Vector3(an.x,an.y,an.z))}
+function aptwDirToWorld(d){return d.clone().applyQuaternion(APTW.q)}
+function aptwOn(sc){if(!sc||!OUT.scene||APTW.on)return false;const an=aptwAnchor();if(!an)return false;const S=OUT.scene;if(S.parent)S.parent.remove(S);
+  const q=new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),an.yaw);const qi=q.clone().invert();
+  S.quaternion.copy(qi);S.position.copy(new T.Vector3(an.x,an.y,an.z).applyQuaternion(qi).negate());S.updateMatrixWorld(true);sc.add(S);
+  APTW.on=true;APTW.anchor=an;APTW.q=q;APTW.sc=sc;APTW.bg=sc.background;APTW.fog=sc.fog;if(S.background)sc.background=S.background;if(S.fog)sc.fog=S.fog;
+  sc.traverse(o=>{if(o.userData&&o.userData.win)o.visible=false});
+  if(SV3.cam){APTW.far=SV3.cam.far;SV3.cam.far=1600;SV3.cam.updateProjectionMatrix()}return true}
+function aptwOff(){if(!APTW.on)return;const S=OUT.scene,sc=APTW.sc;try{if(S&&sc&&S.parent===sc)sc.remove(S);if(S){S.position.set(0,0,0);S.quaternion.identity();S.updateMatrixWorld(true)}if(sc){sc.background=APTW.bg;sc.fog=APTW.fog;sc.traverse(o=>{if(o.userData&&o.userData.win)o.visible=true})}if(SV3.cam&&APTW.far){SV3.cam.far=APTW.far;SV3.cam.updateProjectionMatrix()}}catch(e){console.error(e)}APTW.on=false;APTW.sc=null}
+/* 실내 장면이 만들어지면 창밖을 붙이고, 점프 버튼을 단다 */
+(function(){const b=window.vApt3;if(typeof b!=='function')return;window.vApt3=function(){const r=b.apply(this,arguments);try{if(APT.on&&SV3.scene&&OUT.apt&&OUT.apt.door&&store.get('sg.aptView',true)!==false){if(aptwOn(SV3.scene)){const h=$('#sv3Hint');if(h&&!/창밖/.test(h.textContent))h.textContent+=' · 창밖은 지금 마을 — 총을 꺼내 창문으로 쏠 수 있다'}}
+    if(SV3.el&&!SV3.el.querySelector('#sv3Jump')){const d=document.createElement('div');d.innerHTML=SV3_JUMP();SV3.el.appendChild(d.firstChild)}}catch(e){console.error(e)}return r};SV3.views.apt=window.vApt3})();
+(function(){const b=window.tjAptLeave;if(typeof b!=='function')return;window.tjAptLeave=function(){try{aptwOff()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{aptwOff()}catch(e){}return b.apply(this,arguments)}})();
+/* 창가 저격 자리(65, 밖 장면으로 나감)와는 겹치지 않게: 나갈 땐 떼고, 돌아오면 다시 붙인다 */
+(function(){const s=window.gunOwStart,e=window.gunOwEnd;if(typeof s!=='function'||typeof e!=='function')return;window.gunOwStart=function(){const was=APTW.on,sc=APTW.sc;aptwOff();const r=s.apply(this,arguments);if(!GUN.ow&&was&&sc)aptwOn(sc);return r};window.gunOwEnd=function(){const r=e.apply(this,arguments);try{if(APT.on&&SV3.scene&&!APTW.on)aptwOn(SV3.scene)}catch(x){}return r}})();
+/* 실내 1인칭 무기 */
+(function(){const b=window.gunFpOk;window.gunFpOk=function(){if(APTW.on&&typeof OUT!=='undefined'&&OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)&&!(typeof BR!=='undefined'&&BR.on))return true;return b.apply(this,arguments)}})();
+(function(){const b=window.tjAptStep;if(typeof b!=='function')return;window.tjAptStep=function(dt){const r=b.apply(this,arguments);try{if(APT.on&&APTW.on&&!OUT.enc&&!OUT.busy){if(GUN.on)gunStep(dt);else if(GUN.eq&&!GUN.sheathed&&gunFpOk()&&G.eq===GUN.eq)gunEquip(GUN.eq,true)}}catch(e){console.error(e)}return r}})();
+/* 광선: 실내 벽·가구(AABB)에 먼저 막히고, 창 너머는 밖 좌표로 땅·벽을 본다 */
+function aptwRayBox(o,d,b){let t0=0,t1=Infinity;for(const k of ['x','y','z']){const dk=d[k];if(Math.abs(dk)<1e-9){if(o[k]<b.min[k]||o[k]>b.max[k])return null;continue}let ta=(b.min[k]-o[k])/dk,tb=(b.max[k]-o[k])/dk;if(ta>tb){const s=ta;ta=tb;tb=s}t0=Math.max(t0,ta);t1=Math.min(t1,tb);if(t0>t1)return null}return t0>0?t0:(t1>0?0:null)}
+/* 자기 건물의 높이 격자 안에 있는 동안은 건너뛴다(최대 40m) */
+function aptwRayLeaveBldg(wo,wd,t0){try{const G0=owcHG(),n=G0.n,H=G0.h;let t=t0;for(let k=0;k<80;k++){const x=wo.x+wd.x*t,y=wo.y+wd.y*t,z=wo.z+wd.z*t;const i=Math.floor(x-G0.x0),j=Math.floor(z-G0.z0);if(i<0||j<0||i>=n||j>=n)return t;const h=H[j*n+i];if(!(h&&h>y))return t;t+=.5}return t}catch(e){return t0}}
+function aptwRayExit(o,d,b){let t1=Infinity;for(const k of ['x','y','z']){const dk=d[k];if(Math.abs(dk)<1e-9)continue;let ta=(b.min[k]-o[k])/dk,tb=(b.max[k]-o[k])/dk;if(ta>tb){const s=ta;ta=tb;tb=s}t1=Math.min(t1,tb)}return Math.max(0,t1)}
+(function(){const b=window.gunCast;if(typeof b!=='function')return;window.gunCast=function(o,d,maxD){if(!APTW.on)return b.apply(this,arguments);
+  /* 실내판: 사람(실내 좌표 광선) → 실내 벽·가구 → 창 너머 밖 건물(높이 격자, 자기 건물은 건너뜀) → 밖의 땅(y=0은 밖 좌표 기준) */
+  gunHitList();GUN.ray=GUN.ray||new T.Raycaster();GUN.ray.set(o,d);GUN.ray.far=maxD;let best=null,bd=maxD;
+  try{const hs=GUN.ray.intersectObjects(GUN.hits,false);for(const h of hs){const t=GUN.hitMap.get(h.object);if(!t||t.h.dead)continue;best={pt:h.point,tgt:t,d:h.distance};bd=h.distance;break}}catch(e){}
+  for(const bx of FP3.boxes||[]){const t=aptwRayBox(o,d,bx);if(t!=null&&t>.05&&t<bd){bd=t;best={pt:o.clone().addScaledVector(d,t),wall:1,inside:1,d:t}}}
+  const B=FP3.bounds||[-7,-5,7,5];const tx=aptwRayExit(o,d,{min:{x:B[0]-.5,y:-60,z:B[1]-.5},max:{x:B[2]+.5,y:60,z:B[3]+.5}});
+  const wo=aptwToWorld(o),wdir=aptwDirToWorld(d);const tx2=aptwRayLeaveBldg(wo,wdir,tx);
+  if(tx2<bd){try{const th=owcRayHG(wo.clone().addScaledVector(wdir,tx2),wdir,bd-tx2);if(isFinite(th)&&th+tx2<bd){bd=th+tx2;best={pt:o.clone().addScaledVector(d,bd),wall:1,d:bd}}}catch(e){}}
+  if(wdir.y<-1e-3){const tg=-wo.y/wdir.y;if(tg<bd){bd=tg;best={pt:o.clone().addScaledVector(d,tg),ground:1,d:tg}}}
+  return best}})();
+/* 효과는 밖 장면(OUT.scene) 좌표로 */
+(function(){const t=window.owcTracer,i=window.owcImpact,bl=window.owcBlood;if(typeof t==='function')window.owcTracer=function(a,b,en){if(APTW.on&&!(typeof OWC!=='undefined'&&OWC.on))return t.call(this,aptwToWorld(a),aptwToWorld(b),en);return t.apply(this,arguments)};
+  if(typeof i==='function')window.owcImpact=function(p,col,n){if(APTW.on&&!(typeof OWC!=='undefined'&&OWC.on))return i.call(this,aptwToWorld(p),col,n?aptwDirToWorld(n):n);return i.apply(this,arguments)};
+  if(typeof bl==='function')window.owcBlood=function(p){if(APTW.on&&!(typeof OWC!=='undefined'&&OWC.on))return bl.call(this,aptwToWorld(p));return bl.apply(this,arguments)}})();
+/* 발사기(판저파우스트·RPG·유탄)는 실내에서 못 쏜다 */
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){if(APTW.on){const W=typeof gunW==='function'?gunW():null;if(W&&(W.rocket||W.nade)){if(typeof outNote==='function')outNote('<b>실내에서는 발사기를 쏠 수 없다</b><div>후폭풍 — 창가에서도 안 된다. 소총·권총으로.</div>',2200);return false}}return b.apply(this,arguments)}})();
+/* 설정: 창밖 실경(저사양 폰은 끌 수 있다) */
+function aptwRows(){if(typeof s4Seg!=='function')return '';return s4Seg('aptview','아파트 창밖 실경','들어간 세대 창문 너머로 실제 마을을 그린다(폰이 느리면 끔)',[['1','켬'],['0','끔']],store.get('sg.aptView',true)!==false?'1':'0')}
+if(typeof HELP84!=='undefined'){HELP84.push(['아파트 안(v9.8)','아무 아파트에 들어가면 창문 너머로 실제 마을이 보인다. 안에서도 점프(⤒·Space)할 수 있고, 배낭에서 총을 장착해 창문으로 밖의 위협을 쏠 수 있다(벽·가구에는 막힌다, 발사기는 실내 불가). 주민에게 쏘면 밖에서처럼 큰 벌을 받는다.'])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
