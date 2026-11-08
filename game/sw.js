@@ -1,5 +1,5 @@
 /* 생존of탕정(72시간 생존게임) 서비스워커 — 범위는 /game/ 하위만. 생존 수첩 캐시(saengjon-v*)는 건드리지 않는다 */
-const CACHE='saengjon-game-v10.4.1';
+const CACHE='saengjon-game-v10.5';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SCOPE=new URL('./',self.location).pathname;
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()))});

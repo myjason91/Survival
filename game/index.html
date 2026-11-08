@@ -1412,6 +1412,44 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .chf-say{font-size:12px;color:#fff6d8;max-width:420px;text-align:center;line-height:1.35}
 .chf-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.chf-btns button{font:800 12px var(--sans);padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}.chf-btns button.pri{background:#ffb224;color:#1a1200;border-color:#ffb224}
 .sv3.chf-on #adHud,.sv3.chf-on .sv3-hint,.sv3.chf-on .pc-lock{display:none}.chf-note b{color:#ffd84a}
+/* v10.5 🚕 태워 주기(택시) · 🏆 선의의 라이벌 */
+.fpd-taxi{pointer-events:auto;position:absolute;right:16px;bottom:164px;width:56px;height:56px;border-radius:50%;border:2px solid rgba(255,255,255,.38);background:rgba(10,14,18,.55);color:#fff;display:grid;place-items:center;align-content:center;gap:0;touch-action:manipulation;box-shadow:0 2px 10px rgba(0,0,0,.4);cursor:pointer}
+.fpd-taxi i{font-style:normal;font-size:20px;line-height:1;filter:grayscale(1);opacity:.6}.fpd-taxi small{font-size:9px;font-weight:800;white-space:nowrap;opacity:.75}
+.fpd-taxi.on{border-color:#ffd84a;background:rgba(60,46,0,.62)}.fpd-taxi.on i{filter:none;opacity:1}.fpd-taxi.on small{color:#ffd84a;opacity:1}.fpd-taxi:active{transform:scale(.92)}
+.tx-hud{position:absolute;left:50%;top:82px;transform:translateX(-50%);z-index:8;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;padding:6px 8px 6px 12px;border-radius:14px;background:rgba(6,10,14,.9);border:1px solid rgba(255,216,74,.6);color:#eef4f8;font-size:12px;line-height:1.3;width:max-content;max-width:min(640px,calc(100% - 268px));box-shadow:0 4px 16px rgba(0,0,0,.45);pointer-events:auto}
+.tx-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;min-width:0}.tx-main b{color:#ffd84a;font-size:13px;white-space:nowrap}.tx-main small{color:#9fb0bd;font-size:11px;white-space:nowrap}.tx-main span{white-space:nowrap;font-weight:800}.tx-main i{font-style:normal;color:#8fe36b}
+.tx-urg{font-style:normal;font-weight:800;color:#ffb0a0;white-space:nowrap}.tx-urg.late{color:#9aa4ad}
+.tx-main .tx-rw{font-weight:700;color:#e6f6d8}.tx-rw i{color:#ff9a8a!important}
+.tx-say{grid-column:1/-1;color:#fff6d8;font-style:italic;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tx-btns{display:flex;gap:5px}.tx-btns button{font:800 11.5px var(--sans);padding:6px 9px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;white-space:nowrap}.tx-btns button.pri{background:#ffb224;color:#1a1200;border-color:#ffb224}
+.sv3.mx-on .tx-hud{top:132px}.sv3.tx-on .sv3-hint{display:none}
+/* 알림(#oNote)은 위쪽 띠 아래로 — ID 규칙(top:104px)이 클래스 규칙을 이겨 미션 띠와 겹치던 것도 함께 */.sv3.mis-on #oNote{top:122px}.sv3.mx-on #oNote,.sv3.tx-on #oNote{top:150px}.sv3.mx-on.mis-on #oNote,.sv3.tx-on.mx-on #oNote{top:198px}
+@media(max-width:520px){.tx-hud{top:78px;grid-template-columns:1fr}.tx-btns{justify-content:flex-end}.sv3.tx-on #oNote{top:172px}}
+/* 낮은 가로 화면: 팀원 운전 + 손님 중에는 가운데 알림을 숨겨 운전 담당 띠와 겹치지 않게(도착 알림은 손님 띠가 사라진 뒤 보인다) */@media(max-height:520px){.sv3.chf-on.tx-on #oNote{display:none}}
+.sv3:has(.out-enc:not([hidden])) .pc-lock{display:none}
+.rv-tick{position:absolute;left:10px;top:198px;z-index:9;display:flex;gap:8px;align-items:center;padding:6px 11px;border-radius:12px;background:rgba(14,12,4,.86);border:1px solid rgba(255,216,74,.45);color:#f2efe2;font-size:12px;line-height:1.35;max-width:min(360px,46%);pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.4);transition:opacity .4s}
+.rv-tick.out{opacity:0}.rv-tick b{color:#ffd84a}.rv-tick i{font-style:normal;font-weight:800;color:#8fe36b}
+.mx-hud:has(.rv-race){flex-wrap:wrap}.rv-race{flex:1 1 100%;font-size:11.5px;font-weight:800;color:#ffd84a;text-align:center}
+.rv-board{display:grid;gap:6px;margin:8px 0}
+.rv-row{display:grid;grid-template-columns:20px 34px 1fr auto;align-items:center;gap:3px 8px;padding:7px 9px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.rv-row.me{background:rgba(255,216,74,.1);border-color:rgba(255,216,74,.45)}
+.rv-rk{font:900 16px/1 var(--sans);color:#9fb0bd;text-align:center}.rv-row:first-child .rv-rk{color:#ffd84a}
+.rv-ico{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:17px;border:2px solid var(--c);background:rgba(255,255,255,.06)}
+.rv-nm{min-width:0}.rv-nm b{display:block;font-size:13px}.rv-nm small{display:block;font-size:10.5px;color:#9fb0bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-p{font:900 18px/1 var(--sans);color:#fff}
+.rv-cats{grid-column:3/5;display:flex;gap:9px;flex-wrap:wrap;align-items:center;font-size:11px;color:#cfd8df}.rv-cats .rv-resp{margin:0 0 0 auto}.rv-row{padding:6px 9px}
+.rv-resp{display:flex;align-items:center;gap:6px;margin-top:3px}.rv-resp i{display:block;width:80px;height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}.rv-resp i::after{content:'';position:absolute;inset:0;width:var(--w,20%);background:#8fe36b}.rv-resp em{font-style:normal;font-size:10px;color:#b8c6cf}
+.rv-sub{display:flex;gap:8px;align-items:baseline;margin:10px 0 4px}.rv-sub small{color:#9fb0bd;font-size:10.5px}
+.rv-kill{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}.rv-kill .me{color:#ffd84a;font-weight:800}
+.rv-perks{display:grid;gap:4px;font-size:11.5px;color:#cfd8df}.rv-perks div{display:flex;gap:8px}.rv-perks b{flex:0 0 46px;color:#fff}
+.rv-log{display:grid;gap:2px;font-size:11.5px;color:#cfd8df}.rv-log i{font-style:normal;color:#8fe36b;font-weight:800}
+.rv-owc{margin:6px 0 0;font-size:13px;line-height:1.45;padding:8px 10px;border-radius:10px;background:rgba(181,162,106,.14);border:1px solid rgba(200,178,122,.45)}
+.sv3.cine-on .rv-tick,.sv3.cine-on .tx-hud,.sv3.br-on .rv-tick,.sv3.owc-on .rv-tick{visibility:hidden}
+.rv-end{display:grid;gap:3px;margin:4px 0 12px;font-size:13px}.rv-end span.me{color:#ffd84a;font-weight:800}.rv-end b{font-variant-numeric:tabular-nums}.rv-end small{color:var(--mut,#9fb0bd);font-size:12px;margin-top:3px}
+/* v10.5 캠페인 띠: 닫기 · 낮은 가로 화면에서는 위로 붙이고 한 줄로 */
+.camp-panel .camp-x{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#dfe6ec;border-radius:10px;padding:5px 10px;font:800 12px var(--sans);cursor:pointer;white-space:nowrap}
+.camp-panel .btn{white-space:nowrap}
+@media(max-height:500px){.camp-panel{top:92px;flex-wrap:nowrap;font-size:12px;padding:5px 8px 5px 12px}.camp-panel .btn{font-size:12.5px;padding:5px 11px}.camp-panel b{white-space:nowrap}.camp-panel span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13475,7 +13513,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.4.1';
+const APP_VER='10.5';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -18905,11 +18943,15 @@ function campSkipGoal(D,why){const g=campGoal();if(!g||g.mx!==D.id)return;G.camp
   try{outNote(`<b>📖 ${D.n}</b><div>${why} — 이 장면은 이야기로 넘어간다. ${CAMP_SKIP[D.id]||'국군과 경찰이 상황을 정리했다.'}</div>`,5200)}catch(e){}
   const C=campCh();if(G.camp.gi>=C.goals.length)setTimeout(()=>{if(campOn())campChapterDone()},4200);else{const g2=campGoal();if(g2&&g2.mx){CAMP.pend=g2.mx;CAMP.pendT=-60}}}
 /* 목표 끝 → 다음 목표 / 장 마무리 · 실패면 다시 */
-(function(){const b=window.mxClear;window.mxClear=function(ok,why,quiet){const M=MX.cur;const r=b.apply(this,arguments);try{const g=campGoal();if(M&&g&&g.mx===M.D.id){if(ok){G.camp.done[g.mx]=1;G.camp.gi++;save();const C=campCh();if(G.camp.gi>=C.goals.length){setTimeout(()=>{if(campOn())campChapterDone()},3200)}else setTimeout(()=>{if(!campOn()||!OUT.on)return;campNextPrompt();const g2=campGoal();if(g2&&g2.mx&&!MX.cur){CAMP.pend=g2.mx;CAMP.pendT=-40}},2800)}else setTimeout(()=>campRetryPrompt(why),1200)}}catch(e){console.error(e)}return r}})();
-function campNextPrompt(){if(!campOn()||!OUT.on)return;const g=campGoal();if(!g)return;campPanel(`<b>📖 ${G.camp.ch}장 · 다음 목표 — 곧 시작</b><span>${campGoalName(g)}</span><button class="btn sm pri" data-a="campgoal">지금</button>`)}
-function campRetryPrompt(why){if(!campOn()||!OUT.on)return;const g=campGoal();if(!g)return;campPanel(`<b>📖 ${G.camp.ch}장 · 다시 해 본다</b><span>${campGoalName(g)}${why?` — ${why}`:''}</span><button class="btn sm pri" data-a="campgoal">다시 시작</button>`)}
-function campPanel(html){const el=SV3.el;if(!el)return;let p=$('#campPanel');if(!p){p=document.createElement('div');p.id='campPanel';p.className='camp-panel';el.appendChild(p)}p.innerHTML=html;p.hidden=false}
-function campPanelOff(){const p=$('#campPanel');if(p)p.remove()}
+(function(){const b=window.mxClear;window.mxClear=function(ok,why,quiet){const M=MX.cur;const r=b.apply(this,arguments);try{const g=campGoal();if(M&&g&&g.mx===M.D.id){if(ok){G.camp.done[g.mx]=1;G.camp.gi++;save();const C=campCh();if(G.camp.gi>=C.goals.length){setTimeout(()=>{if(campOn())campChapterDone()},3200)}else setTimeout(()=>{if(!campOn()||!OUT.on)return;campNextPrompt();const g2=campGoal();if(g2&&g2.mx&&!MX.cur){CAMP.pend=g2.mx;CAMP.pendT=-40}},2800)}else setTimeout(()=>campRetryPrompt(why,quiet),1200)}}catch(e){console.error(e)}return r}})();
+function campNextPrompt(){if(!campOn()||!OUT.on)return;const g=campGoal();if(!g)return;campPanel(`<b>📖 ${G.camp.ch}장 · 다음 목표 — 곧 시작</b><span>${campGoalName(g)}</span><button class="btn sm pri" data-a="campgoal">지금</button><button class="camp-x" data-a="campclose" data-v="next" aria-label="나중에">나중에</button>`)}
+/* v10.5 사용자 제보(2026-11-08): "미션을 그만뒀는데 계속 이게 떠서 불편해" — 스스로 그만두면 띠를 띄우지 않고 짧은 안내만(위쪽 📖 단추로 언제든 다시),
+   실패했을 때의 '다시 해 본다' 띠는 한 줄로 줄이고 ✕로 닫거나 12초 뒤 저절로 접힌다 */
+function campRetryPrompt(why,quiet){if(!campOn()||!OUT.on)return;const g=campGoal();if(!g)return;
+  if(quiet||/그만뒀|포기/.test(why||'')){campPanelOff();outNote(`<b>📖 ${G.camp.ch}장 목표는 그대로 남아 있다</b><div>${campGoalName(g)} — 준비되면 위쪽 '📖 ${G.camp.ch}장' 단추로 다시 시작한다.</div>`,3400);return}
+  campPanel(`<b>📖 ${G.camp.ch}장 · 다시 해 본다</b><span>${campGoalName(g)}</span><button class="btn sm pri" data-a="campgoal">다시 시작</button><button class="camp-x" data-a="campclose" aria-label="닫기">✕</button>`,12)}
+function campPanel(html,sec){const el=SV3.el;if(!el)return;let p=$('#campPanel');if(!p){p=document.createElement('div');p.id='campPanel';p.className='camp-panel';el.appendChild(p)}p.innerHTML=html;p.hidden=false;clearTimeout(CAMP.panelT);CAMP.panelT=sec?setTimeout(()=>{const q=$('#campPanel');if(q&&q===p)campPanelOff()},sec*1000):0}
+function campPanelOff(){clearTimeout(CAMP.panelT);CAMP.panelT=0;const p=$('#campPanel');if(p)p.remove()}
 /* ---------- 72시간 결과 대신 이어 가기 · 쓰러지면 그 장 처음부터 ---------- */
 (function(){const b=window.toEnd;window.toEnd=function(){try{if(campOn()&&!G.over&&M('me')&&M('me').hp>0){G.endless=true;G.end=null;G.phase='shelter';G.turn=Math.max(12,G.turn+1);G.cur=null;beginTurn();save();setScreen('shelter');campToast('📖 캠페인은 계속된다','72시간을 넘겼다 — 다음 장으로');return}if(G&&G.camp&&!G.camp.fin){G.camp.dead=1}}catch(e){console.error(e)}return b.apply(this,arguments)}})();
 (function(){const b=window.vEnd;window.vEnd=function(){let h=b.apply(this,arguments);try{const ck=store.get('sg.campCk',null);if(G&&G.camp&&G.camp.dead&&ck&&ck.camp&&ck.camp.t0===G.camp.t0&&CAMP_CH[ck.camp.ch-1]){h=h.replace('<div class="row"><button class="btn pri" data-a="again">',`<div class="endless-cta"><div><b>📖 캠페인 ${ck.camp.ch}장 「${CAMP_CH[ck.camp.ch-1].n}」</b><small>쓰러졌다 — 이 장 처음부터 다시 할 수 있다.</small></div><button class="btn pri" data-a="campretry">📖 ${ck.camp.ch}장 다시</button></div><div class="row"><button class="btn" data-a="again">`)}}catch(e){}return h}})();
@@ -18922,7 +18964,8 @@ function campShelterBtn(on){let b=$('#campBtn');if(!on){if(b)b.remove();return}c
 (function(){const b=window.outBar;window.outBar=function(){const r=b.apply(this,arguments);try{const bar=$('#oBar');if(bar&&campOn()){let c=bar.querySelector('[data-a=campgoal]');if(!c){c=document.createElement('button');c.dataset.a='campgoal';c.className='mis-btn camp-chip';bar.insertBefore(c,bar.firstChild)}const C=campCh();const t=`📖 ${G.camp.ch}장 ${Math.min(G.camp.gi+1,C.goals.length)}/${C.goals.length}`;if(c._t!==t){c._t=t;c.textContent=t}}}catch(e){}return r}})();
 (function(){const b=window.outStep;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(campOn()&&OUT.on){campPendStep();CAMP.uiT-=dt;if(CAMP.uiT<=0){CAMP.uiT=.5;if(MX.cur)campPanelOff()}}}catch(e){console.error(e)}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(why){campPanelOff();CAMP.pend=null;const r=b.apply(this,arguments);try{if(campOn()&&G.camp.pendIntro)setTimeout(campShelterTick,900)}catch(e){}return r}})();
-document.addEventListener('click',e=>{const b=e.target.closest('[data-a=campgo],[data-a=campx],[data-a=campnext],[data-a=campintro],[data-a=campgoal],[data-a=camphome]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.a;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a=campgo],[data-a=campx],[data-a=campnext],[data-a=campintro],[data-a=campgoal],[data-a=camphome],[data-a=campclose]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.a;
+  if(k==='campclose'){const next=b.dataset.v==='next';campPanelOff();if(next){CAMP.pend=null;try{outNote(`<b>📖 나중에 한다</b><div>준비되면 위쪽 '📖 ${G.camp.ch}장' 단추로 다음 목표를 시작한다.</div>`,2600)}catch(x){}}return}
   if(k==='campgo'){if(G.camp.ch===1){campOvClose();return}campStart();return}if(k==='campx'){campOvClose();campShelterTick();return}if(k==='campnext'){campNext();return}if(k==='campintro'){campIntro();return}
   if(k==='campgoal'){campPanelOff();if(MX.cur){toast('진행 중인 미션을 먼저 끝낸다');return}const g=campGoal();if(g&&g.mx){CAMP.pend=g.mx;CAMP.pendT=19}return}if(k==='camphome'){campOvClose();try{if(typeof OUT!=='undefined'&&OUT.on)outReturn('fast')}catch(x){}clearSave();setTimeout(()=>{clearSave();setScreen('title')},700)}},true);
 /* ---------- 마지막 장: 광장의 축제(집회 → 휴전을 맞는 사람들) ---------- */
@@ -19084,6 +19127,328 @@ function chfEnd(){if(!CHF.on&&!CHF.m)return;const m=CHF.m;CHF.on=false;if(CHF.pr
 (function(){const b=window.tjDriveEnd;window.tjDriveEnd=function(){const was=CHF.on;const m=CHF.m;const car=OUT.drv&&OUT.drv.car;const r=b.apply(this,arguments);try{if(was){/* 나는 조수석 쪽(오른쪽)으로 내린다 */if(car){const y=car.rotation.y;const lx=Math.cos(y),lz=-Math.sin(y);for(const d of [2.1,2.6]){const x=car.position.x-lx*d,z=car.position.z-lz*d;if(!FP3.blocked(x,z,.35)){FP3.pos.set(x,0,z);if(OUT.me)OUT.me.root.position.set(x,0,z);break}}}chfEnd();if(m&&m.h){m.h.root.visible=true;try{bubSay(m.h,mrPick(['다음에도 불러 주세요.','차는 여기 세워 둘게요.']),2.2,'')}catch(e){}}}else chfEnd()}catch(e){console.error(e)}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(){try{chfEnd();CHF.dest=null}catch(e){}return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined')HELP84.push(['팀원 운전 · 조수석(v10.4)','팀 화면에서 팀원에게 \'🚗 운전 맡기기\' → 큰 지도 \'🧭 위치 이동\'을 켜고 도착 방법 \'🚗 OO 운전\'으로 갈 곳을 누르면 목적지가 찍히고 가까운 차로 달려간다 → 차 옆 \'조수석에 타기\' → 운전 담당은 운전석, 나는 조수석, 일행은 뒷자리 → 찍어 둔 곳까지 도로를 따라 운전한다. 조수석에서는 화면을 끌어 둘러보고, \'세워 줘\'·\'다시 출발\'·\'🗺 목적지\'·\'내가 운전\'. 도착하면 \'차에서 내리기\'.']);
+
+/* ===================== 83 · v10.5 🚕 태워 주기(택시) ===================== */
+/* 사용자 요청(2026-11-08): "택시모드 같이 원하는 곳으로 행인을 데려다 주고 그에 걸맞는 보수(물,식량,무기,의약품)지급등은어때요?"
+   흐름: 차를 몰면 길가 행인이 손을 흔든다(🙋 말풍선 · 노란 기둥 · 미니맵 노란 점) → 옆에 세우면(7m 안 · 거의 멈춤) 뒷문으로 탄다
+   → 손님 카드(누구 · 어디로 · 왜 · 보수) → 목적지(초록 기둥 · 미니맵 초록 점) 가까이 세우면 내려서 보수를 준다
+   보수 = 손님 유형별 기본(물·식량·의약품·무기/탄약 · 이웃 신뢰) × 거리(0.7~2.2배) × 급한 손님 제시간(1.5배) × 거칠게 몰면(부딪힐 때마다 −10%, 최저 50%) · 사람을 치면 절반
+   팀원 운전(v10.4)과 연결: 조수석에 타 있으면 운전 담당이 손님 옆에 세우고, 손님 목적지에 먼저 들렀다가 원래 목적지로 간다.
+   오른쪽 🚕 단추로 끄고 켠다(이 기기 sg.taxi). 미션·교전·돌발 상황 중에는 새 손님이 손을 들지 않는다. 모든 인물은 가상 */
+const TAXI={hail:[],walk:[],gone:[],spT:9,cur:null,uiT:0,resume:null,resT:0,lastSay:'',sayLeft:0,chatT:16,offT:0,btn:'',held:0};
+const TX_NM={f:['한소율','오지민','배수아','신예린','문가영','임채원','송다인','유하은','권나래','조은별','황보미','서지안'],
+  m:['이도현','장민혁','최건우','박태양','김시우','정우진','홍석민','노현수','고준혁','남기태','안재민','변상욱'],of:['김순례','이말순','박옥자','최복희'],om:['최만석','이춘배','정덕수','한영태']};
+/* 손님 유형: dest = 갈 곳 후보(mxSites 키) · rw = 기본 보수 · urg = 급한 손님(제시간 ×1.5) · old = 어르신도 될 수 있음 · oldOnly · f/m = 그 성별만 */
+const TX_TYPE={
+  old:{n:'다리를 다친 어르신',ico:'👴',oldOnly:1,old:1,urg:1,dest:['gym','check','shelterB'],ask:['무릎이 아파서 못 걷겠어 — {d}까지 좀 태워 주구려.','약이 떨어졌어… {d}에 가야 해.'],thx:['고마워, 젊은이. 복 받을 거야.','덕분에 살았네. 이거라도 받아.'],rw:{meds:1,water:1},trust:2},
+  mom:{n:'아이를 찾는 엄마',ico:'👩',f:1,urg:1,dest:['shelterB','gym','bus2'],ask:['아이가 {d}에 먼저 가 있대요 — 빨리 좀 부탁드려요!','{d}까지요, 제발요. 아이가 기다려요.'],thx:['정말 고맙습니다… 이거라도 받으세요.','아이 얼굴 보러 갑니다. 고마워요!'],rw:{food:1,water:1},trust:1},
+  nurse:{n:'교대하러 가는 간호사',ico:'💉',dest:['gym','check','shelterB'],ask:['진료소 교대 시간이에요 — {d}까지 가야 해요.','{d}에 환자가 몰렸대요. 태워 주실 수 있어요?'],thx:['진료소에서 남은 약이에요 — 챙기세요.','덕분에 늦지 않았어요!'],rw:{meds:2}},
+  resv:{n:'소집 가는 예비군',ico:'🎒',m:1,dest:['field','check','bus2'],ask:['예비군 소집이에요 — {d}로 가야 합니다.','{d} 집결이랍니다. 부탁드립니다!'],thx:['보급받은 것 일부 나눠 드릴게요. 조심하세요!','고맙습니다. 동네는 우리가 지킵니다.'],rw:{gun:'k5',ammo:['9mm',15]}},
+  fire:{n:'출동하는 의용소방대원',ico:'🚒',urg:1,dest:['site','subway','truck'],ask:['{d}에 불이 났대요 — 빨리요!','{d}로 출동해야 합니다!'],thx:['예비 소방도끼예요. 쓸 일 없길 바랍니다.','덕분에 빨리 왔습니다!'],rw:{gun:'axe',water:1}},
+  shop:{n:'가게로 가는 상인',ico:'🏪',old:1,dest:['shop:*','vgreen','truck'],ask:['가게 물건 챙기러 가요 — {d}까지요.','{d}에 두고 온 물건이 있어서요.'],thx:['가게에서 챙긴 거예요, 받아요!','장사 다시 하면 꼭 들러요.'],rw:{water:2,food:1}},
+  stud:{n:'집에 가는 학생',ico:'🎓',dest:['apt0','apt1','apt2','bus2','bus'],ask:['부모님이 {d}에서 기다리세요…','{d}까지만 태워 주실 수 있어요?'],thx:['감사합니다! 이거 제 간식인데 드세요.','고맙습니다, 조심히 가세요!'],rw:{food:1},mor:2},
+  rept:{n:'취재하는 기자',ico:'📷',dest:['vgreen','subway','check','truck'],ask:['{d} 상황을 취재해야 해요 — 태워 주세요!','{d} 쪽 소식이 끊겼대요. 가 봐야 해요.'],thx:['기사에 꼭 쓸게요 — 택시 영웅! 하하.','물 한 병 받으세요, 고마워요.'],rw:{water:1},trust:2},
+  vol:{n:'배식 봉사자',ico:'🍙',old:1,dest:['truck','shelterB','gym'],ask:['{d}에서 배식을 도와야 해요!','{d}로 가야 해요 — 밥 기다리는 사람이 많아요.'],thx:['남은 주먹밥이에요 — 같이 먹어요.','덕분에 배식 시간 맞췄어요!'],rw:{food:2}}};
+const TX_CHAT=['요즘 물 한 병 구하기도 힘들어요.','아까 하늘에서 수송기 소리가 났어요… 무서웠어요.','운전 잘하시네요. 택시 해 보셨어요?','차 타니까 좀 살 것 같네요.','라디오에서 구호 트럭이 더 온대요.','이 동네가 원래 이렇게 조용하진 않았는데…'];
+const TX_CHAT_RV=['새벽 구조대 사람들 정말 부지런해요. 밤새 뛰어다니더라고요.','솔개 수색대가 공사장 뒤 침투조를 막았대요. 든든하죠?','노란 우산 나눔단한테 물 받았어요. 이번엔 기사님 덕 보네요.','청솔 방범대 순찰차는 늘 꽉 차 있더라고요 — 기사님이 있어서 다행이에요.'];
+const TX_BUMP=['아이고! 살살 좀…','으악 — 괜찮은 거죠?','어이쿠, 꽉 잡을게요!','기사님, 천천히요!'];
+function txOn(){return store.get('sg.taxi',true)!==false}
+function txChf(){return typeof chfOn==='function'&&chfOn()}
+/* 새 손님이 손을 들어도 되는 때 */
+function txCanSpawn(){return OUT.on&&OUT.drv&&!OUT.enc&&!OUT.mapOpen&&txOn()&&PED.list.length&&PED.segs&&!(typeof OWC!=='undefined'&&OWC.on)&&!(typeof MX!=='undefined'&&MX.cur)&&!(typeof MIS!=='undefined'&&MIS.cur)&&!(typeof EVD!=='undefined'&&EVD.cur&&EVD.cur.ph!=='go')&&!(typeof GRP!=='undefined'&&GRP.brd)}
+/* ---------- ① 손 흔드는 행인 고르기 ---------- */
+function txPick(){const D=OUT.drv;const c=D.car.position;const fx=Math.sin(D.yaw),fz=Math.cos(D.yaw);let best=null,bs=1e9;
+  for(const a of PED.list){if(a.kind!=='ped'||!a.h||a.mode==='kid'||a.mate||a.h.pose==='dead'||!a.h.root.visible)continue;if(PED.list.some(b=>b.lead===a))continue;
+    const P=a.h.root.position;const dx=P.x-c.x,dz=P.z-c.z;const d=Math.hypot(dx,dz);if(d<22||d>78)continue;const dot=(dx*fx+dz*fz)/d;if(Math.abs(D.v)>1&&dot<.35)continue;
+    if(TAXI.hail.some(H=>Math.hypot(H.a.h.root.position.x-P.x,H.a.h.root.position.z-P.z)<16))continue;const sc=d*(1.7-dot);if(sc<bs){bs=sc;best=a}}return best}
+function txHailMake(a){const h=a.h;const key=h.key||'';const old=/^(f_14|m_3)$/.test(key),fem=/^f/.test(key);
+  const L=Object.keys(TX_TYPE).filter(k=>{const T0=TX_TYPE[k];if(old)return !!T0.old;if(T0.oldOnly)return false;if(T0.f&&!fem)return false;if(T0.m&&fem)return false;return true});
+  const ty=mrPick(L.length?L:['shop']);/* 이름표가 있던 행인이면 그 이름 그대로 */const nm=a.nm||mrPick(old?(fem?TX_NM.of:TX_NM.om):(fem?TX_NM.f:TX_NM.m));a.kind='hail';a.flee=0;try{h.setPose('wave')}catch(e){}
+  let pil=null;try{pil=misPillar(OUT.scene,h.root.position.x,h.root.position.z,'#ffd84a',6.5);pil.scale.set(.42,1,.42);pil.userData.keepGlow=1}catch(e){}
+  const H={a,ty,nm,t:0,pil,bubT:.3,wT:2.6,still:0};TAXI.hail.push(H);return H}
+/* 보도로 되돌리기: 가장 가까운 보도 선에 올려 다시 걷게 한다(순간 이동이 안 보이게 1.5m 안쪽만) */
+function txSeg(P){const S=PED.segs;let bi=-1,bd=1e9,bu=0,bl=0;if(!S)return null;for(let i=0;i<S.length;i++){const s=S[i];const px=P.x-s.ax,pz=P.z-s.az;let u=px*s.tx+pz*s.tz;u=u<0?0:u>s.L?s.L:u;const d=Math.hypot(P.x-(s.ax+s.tx*u),P.z-(s.az+s.tz*u));if(d<bd){bd=d;bi=i;bu=u;bl=px*(-s.tz)+pz*s.tx}}
+  if(bi<0)return null;const s=S[bi];const lat=clamp(bl,-1.5,1.5);return{i:bi,u:bu,lat,d:bd,x:s.ax+s.tx*bu+(-s.tz)*lat,z:s.az+s.tz*bu+s.tx*lat}}
+function txToPed(a){const h=a.h;if(!h)return;const q=txSeg(h.root.position);if(!q){a.kind='ped';return}a.seg=q.i;a.s=q.u;a.lat=q.lat;a.dir=Math.random()<.5?1:-1;a.flee=0;if(a.mode==='stand')a.mode='walk';a.kind='ped';h.root.visible=true;try{h.setPose('walk')}catch(e){}}
+function txPilOff(H){if(H&&H.pil&&H.pil.parent)H.pil.parent.remove(H.pil);if(H)H.pil=null}
+function txRelease(H,why){txPilOff(H);TAXI.hail=TAXI.hail.filter(x=>x!==H);const a=H.a;if(!a||!a.h)return;txToPed(a);
+  if(why==='late'&&typeof rvRivalTaxi==='function'&&Math.random()<.4)try{rvRivalTaxi(H)}catch(e){}}
+/* ---------- ② 갈 곳: 손님 유형별 후보 중 130~950m · 차가 설 수 있는 길 칸(2m) ---------- */
+function txDropPt(s){if(typeof adGrid!=='function'||!adGrid())return{x:s.x,z:s.z};const C=ADRV.CG;const [i0,j0]=adCell(s.x,s.z);let best=null,bd=1e9;
+  for(let r=0;r<=22;r++){for(let dj=-r;dj<=r;dj++)for(let di=-r;di<=r;di++){if(Math.max(Math.abs(di),Math.abs(dj))!==r)continue;const i=i0+di,j=j0+dj;if(i<0||j<0||i>=C.n||j>=C.n)continue;const k=j*C.n+i;if(C.g[k]||!C.rd[k])continue;const x=C.x0+i*2+1,z=C.z0+j*2+1;const d=Math.hypot(x-s.x,z-s.z);if(d<bd){bd=d;best={x,z}}}if(best&&r*2>bd+2)break}
+  if(!best){const q=adFree(i0,j0,12);if(q)best={x:C.x0+q[0]*2+1,z:C.z0+q[1]*2+1}}return best&&Math.hypot(best.x-s.x,best.z-s.z)<48?best:null}
+function txDest(ty,from){let S={};try{S=mxSites()}catch(e){}const F=TX_TYPE[ty];const keys=[];for(const k of F.dest){if(k==='shop:*')keys.push(...Object.keys(S).filter(x=>x.startsWith('shop:')));else if(S[k])keys.push(k)}
+  const mk=L=>L.map(s=>({s,d:Math.hypot(s.x-from.x,s.z-from.z)}));let L=mk(keys.map(k=>S[k]).filter(Boolean)).filter(o=>o.d>130&&o.d<950);
+  if(!L.length)L=mk(Object.values(S).filter(s=>s&&s.k!=='home'&&s.k!=='hoff')).filter(o=>o.d>110&&o.d<900);
+  for(let i=L.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[L[i],L[j]]=[L[j],L[i]]}
+  for(const o of L.slice(0,8)){const q=txDropPt(o.s);if(q)return{k:o.s.k,n:o.s.n,x:o.s.x,z:o.s.z,drop:q}}return null}
+/* ---------- ③ 타기 ---------- */
+function txDoor(car,P){const D=grpDoors(car);const a=D[2],b=D[3];return Math.hypot(a.x-P.x,a.z-P.z)<Math.hypot(b.x-P.x,b.z-P.z)?a:b}
+function txBoard(H){const a=H.a,D=OUT.drv;if(!a||!a.h||!D)return;const dest=txDest(H.ty,D.car.position);txPilOff(H);TAXI.hail=TAXI.hail.filter(x=>x!==H);
+  if(!dest){bubSay(a.h,'아, 길이 막혔다네요 — 걸어갈게요!',2.4,'');txToPed(a);return}const F=TX_TYPE[H.ty];a.kind='taxi';
+  const d0=Math.hypot(dest.drop.x-D.car.position.x,dest.drop.z-D.car.position.z);
+  TAXI.cur={a,ty:H.ty,nm:H.nm,F,dest,d0,t:0,ph:'walk',wt:0,lim:F.urg?Math.round(d0/5.2+45):0,bump:0,ran0:(G.flags&&G.flags.ranOver)||0,ran:0,pil:null,chf:txChf(),ask:mrPick(F.ask).replace('{d}',dest.n)};
+  if(typeof ADRV!=='undefined'&&ADRV.on&&!TAXI.cur.chf){TAXI.resume={x:ADRV.want?ADRV.want.x:dest.drop.x,z:ADRV.want?ADRV.want.z:dest.drop.z,self:1};adStop('taxi')}
+  try{a.h.setPose('walk')}catch(e){}bubSay(a.h,mrPick(['네, 고마워요!','타도 되죠?','살았다!']),2,'')}
+function txSeated(){const C=TAXI.cur;if(!C)return;const a=C.a;a.h.root.visible=false;C.ph='ride';C.t=0;TAXI.chatT=10+Math.random()*8;
+  try{C.pil=misPillar(OUT.scene,C.dest.drop.x,C.dest.drop.z,'#2ccf7c',8);C.pil.scale.set(.6,1,.6);C.pil.userData.keepGlow=1}catch(e){}
+  if(!TJ.goal||TJ.goal.taxi)TJ.goal={bx:C.dest.drop.x,bz:C.dest.drop.z,taxi:1};txSay(C.ask);
+  if(!C.chf)outNote(`<b>🚕 손님이 탔다 — ${C.dest.n}까지</b><div>초록 기둥(미니맵 초록 점) 가까이 세우면 내린다 · 위쪽 손님 띠</div>`,2800);
+  if(C.chf){try{const ok=adStart(C.dest.drop.x,C.dest.drop.z);if(ok&&typeof chfSay==='function')chfSay(`${C.dest.n}(으)로 손님 먼저 모셔다 드릴게요.`)}catch(e){console.error(e)}}
+  try{SND.ok&&SND.ok()}catch(e){}}
+/* ---------- ④ 보수 ---------- */
+function txK(C,part){let k=clamp(C.d0/350,.7,2.2);if(C.lim&&C.t<=C.lim)k*=1.5;k*=Math.max(.5,1-.1*C.bump);if(C.ran)k*=.5;if(part!=null)k*=part;return k}
+function txRwList(C,part){const k=txK(C,part),w=C.F.rw,o=[];const n=v=>Math.max(1,Math.round(v*k));for(const r of ['water','food','meds'])if(w[r])o.push({k:r,n:n(w[r])});
+  if(w.ammo)o.push({k:'ammo',am:w.ammo[0],n:Math.max(5,Math.round(w.ammo[1]*k))});if(w.gun)o.push({k:'gun',id:w.gun});return o}
+const TX_ICO={water:'💧',food:'🍙',meds:'💊'};
+function txRwTxt(C){return '🎁 '+txRwList(C).map(r=>r.k==='gun'?(ARMS[r.id]?ARMS[r.id].n:'무기'):r.k==='ammo'?`탄약 ${r.n}발`:`${TX_ICO[r.k]}${r.n}`).join(' · ')+(C.F.trust&&!C.ran?` · 신뢰 +${C.F.trust}`:'')}
+function txPay(C,part){FX=[];const got=[];for(const r of txRwList(C,part)){if(r.k==='gun'){const W=ARMS[r.id];if(!W)continue;if(gunHas&&gunHas(r.id)){if(W.am){gunAmmoAdd(W.am,W.mag||10);push('탄약 '+W.am,W.mag||10,'발')}else{res('water',1)}got.push((W.n||'무기')+'(이미 있어 대신)')}
+      else{const ok=gunAdd(r.id,{});if(ok===true){push(W.n,1)}else{res('food',1);got.push('배낭이 가득 차 '+(W.n||'무기')+' 대신 식량')}}}
+    else if(r.k==='ammo'){gunAmmoAdd(r.am,r.n);push('탄약 '+r.am,r.n,'발')}else res(r.k,r.n)}
+  if(C.F.trust&&!C.ran)trust(C.F.trust);if(C.F.mor)mor(C.F.mor);const fx=FX.slice();OUT.fx.push(...fx);try{outStat()}catch(e){}return{fx,got}}
+/* ---------- ⑤ 내리기 ---------- */
+function txAlight(C){const a=C.a,D=OUT.drv;const h=a.h;let p=null;if(D){const d=grpDoors(D.car);for(const q of [d[3],d[2],d[1]]){if(!FP3.blocked(q.x,q.z,.3)){p=q;break}}p=p||d[3]}else p={x:FP3.pos.x+1,z:FP3.pos.z};
+  h.root.position.set(p.x,0,p.z);h.root.visible=true;a.kind='txout';try{h.setPose('walk')}catch(e){}const q=txSeg(h.root.position);const tgt=q&&q.d<26?{x:q.x,z:q.z}:{x:C.dest.x,z:C.dest.z};TAXI.walk.push({a,tgt,t:0,far:!(q&&q.d<26)})}
+function txArrive(part){const C=TAXI.cur;if(!C)return;TAXI.cur=null;txPilOff(C);if(TJ.goal&&TJ.goal.taxi)TJ.goal=null;txAlight(C);const r=txPay(C,part);const sec=Math.round(C.t);
+  const R=G.taxi||(G.taxi={n:0,earn:0,best:0});R.n++;R.earn+=r.fx.length;if(!R.best||sec<R.best)R.best=sec;try{const dv=store.get('sg.taxiRec',{n:0});dv.n=(dv.n||0)+1;store.set('sg.taxiRec',dv)}catch(e){}
+  const late=C.lim&&C.t>C.lim;const thx=C.ran?'…다음엔 꼭 천천히 가요.':mrPick(C.F.thx);bubSay(C.a.h,thx,3,C.ran?'hard':'');
+  const why=[];if(C.lim)why.push(late?'⏱ 늦었다':'⏱ 제시간 ×1.5');if(C.bump)why.push(`부딪힘 ${C.bump}번 −${Math.min(50,C.bump*10)}%`);if(C.ran)why.push('사람을 쳐서 절반');if(part!=null)why.push('도중에 내림');
+  outNote(`<b>🚕 ${C.nm} 씨를 내려 드렸다 — ${C.dest.n}</b><div>“${thx}” · ${txT(sec)}${why.length?' · '+why.join(' · '):''}</div>${fxChips(r.fx)}${r.got.length?`<div class="small">${r.got.join(' · ')}</div>`:''}`,5200);
+  try{if(typeof rvMe==='function')rvMe('taxi',1,C)}catch(e){}try{SND.ok&&SND.ok()}catch(e){}
+  if(C.chf&&TAXI.resume)TAXI.resT=2.4;else if(TAXI.resume&&TAXI.resume.self)TAXI.resume=null}
+/* 도중에 내려 드리기 · 차에서 내리면: 목적지 70m 안이면 60%, 아니면 보수 없이 */
+function txDropEarly(){const C=TAXI.cur;if(!C)return;const D=OUT.drv;const cp=D?D.car.position:FP3.pos;const dd=Math.hypot(cp.x-C.dest.drop.x,cp.z-C.dest.drop.z);
+  if(dd<70){txArrive(.6);return}TAXI.cur=null;txPilOff(C);if(TJ.goal&&TJ.goal.taxi)TJ.goal=null;txAlight(C);bubSay(C.a.h,'여기서 걸어갈게요. 그래도 고마워요!',2.6,'');
+  outNote(`<b>🚕 ${C.nm} 씨가 내렸다</b><div>${C.dest.n}까지 아직 ${Math.round(dd)}m — 걸어가겠다며 내렸다. 보수는 없다.</div>`,3200)}
+function txT(s){s=Math.max(0,Math.round(s));const m=Math.floor(s/60),r=s%60;return `${m}:${r<10?'0':''}${r}`}
+function txSay(t){TAXI.lastSay=t;TAXI.sayLeft=5.5;txHud(true)}
+/* ---------- ⑥ 매 프레임 ---------- */
+function txStep(dt){if(!OUT.on)return;if(!(dt>0))dt=0;const D=OUT.drv;
+  /* 내린 손님: 보도까지 걸어간 뒤 다시 행인으로 */for(const W of TAXI.walk.slice()){const h=W.a.h;W.t+=dt;const P=h.root.position;const dx=W.tgt.x-P.x,dz=W.tgt.z-P.z;const d=Math.hypot(dx,dz);
+    if(d>.3&&W.t<9){const s=Math.min(d,1.35*dt);P.x+=dx/d*s;P.z+=dz/d*s;h.root.rotation.y=Math.atan2(dx,dz);if(h.pose!=='walk')try{h.setPose('walk')}catch(e){}}
+    else{TAXI.walk=TAXI.walk.filter(x=>x!==W);if(W.far){h.root.visible=false;W.a.kind='txgone';TAXI.gone.push(W.a)}else txToPed(W.a)}}
+  /* 보도에서 먼 곳에 내린 손님: 내가 멀어지면 행인으로 돌린다(눈앞 순간 이동 없이) */if(TAXI.gone.length){const p=FP3.pos;TAXI.gone=TAXI.gone.filter(a=>{if(Math.hypot(a.h.root.position.x-p.x,a.h.root.position.z-p.z)>pedVisD()+6){txToPed(a);return false}return true})}
+  if(TAXI.resT>0){TAXI.resT-=dt;if(TAXI.resT<=0){const R=TAXI.resume;TAXI.resume=null;if(R&&txChf()&&!ADRV.on){try{adStart(R.x,R.z)}catch(e){}}}}
+  if(OUT.enc)return;
+  /* 차에서 내렸으면 기다리던 손님은 5초 뒤 다시 걷는다 */if(!D){if(TAXI.hail.length){TAXI.offT+=dt;if(TAXI.offT>5){TAXI.hail.slice().forEach(H=>txRelease(H))}}txHud(false);return}TAXI.offT=0;
+  if(TAXI.tipT>0&&!(typeof GRP!=='undefined'&&GRP.brd)){TAXI.tipT-=dt;if(TAXI.tipT<=0&&txOn())try{txTip()}catch(e){}}
+  const cp=D.car.position;
+  /* 새 손님 */if(txCanSpawn()&&!TAXI.cur){TAXI.spT-=dt;if(TAXI.spT<=0){const fast=typeof rvResp==='function'&&rvResp('pine')>=60;TAXI.spT=(16+Math.random()*14)*(fast?.7:1);if(TAXI.hail.length<2){const a=txPick();if(a)txHailMake(a);else TAXI.spT=4}}}
+  /* 손 흔드는 사람 */for(const H of TAXI.hail.slice()){const a=H.a,h=a.h;if(!h||h.pose==='dead'||a.kind!=='hail'){txPilOff(H);TAXI.hail=TAXI.hail.filter(x=>x!==H);continue}H.t+=dt;const P=h.root.position;const d=Math.hypot(P.x-cp.x,P.z-cp.z);
+    if(H.t>75||d>150||!txOn()){txRelease(H,H.t>75?'late':'');continue}h.root.visible=d<pedVisD()+20;if(d<46)lifeFace(h,cp.x,cp.z);
+    H.wT-=dt;if(H.wT<=0){H.wT=h.pose==='wave'?1.1:2.6;try{h.setPose(h.pose==='wave'?'idle':'wave')}catch(e){}}
+    H.bubT-=dt;if(H.bubT<=0){H.bubT=2.5;if(d<34)bubSay(h,TX_TYPE[H.ty].urg?'🙋 급해요! 태워 주세요':'🙋 태워 주세요!',2.8,TX_TYPE[H.ty].urg?'hard':'')}
+    if(H.pil){H.pil.position.x=P.x;H.pil.position.z=P.z}
+    if(!TAXI.cur&&!H.skip){const R=txChf()?22:7.5;if(d<R&&Math.abs(D.v)<.7){H.still+=dt;if(H.still>.5){txBoard(H);break}}else H.still=0}}
+  /* 운전 담당(v10.4): 손님이 보이면 옆에 세운다 */if(txChf()&&typeof CHF!=='undefined'&&CHF.seated&&!TAXI.cur&&ADRV.on&&!TAXI.chfStop){const fx=Math.sin(D.yaw),fz=Math.cos(D.yaw);
+    const H=TAXI.hail.find(H=>{if(H.skip)return false;const P=H.a.h.root.position;const dx=P.x-cp.x,dz=P.z-cp.z;const d=Math.hypot(dx,dz);return d<24&&(dx*fx+dz*fz)/Math.max(d,.1)>-.2});
+    if(H){TAXI.resume=CHF.dest?{x:CHF.dest.x,z:CHF.dest.z}:null;TAXI.chfStop=1;TAXI.chfT=0;TAXI.chfH=H;adStop('taxi');try{chfSay('손님이 손 흔드네요 — 잠깐 세울게요.')}catch(e){}}}
+  /* 세웠는데 6초 안에 못 타면(멀리 섰거나 손님이 떠남) 원래 길을 간다 */if(TAXI.chfStop&&!TAXI.cur){TAXI.chfT=(TAXI.chfT||0)+dt;if(TAXI.chfT>6){if(TAXI.chfH)TAXI.chfH.skip=1;TAXI.chfStop=0;const R=TAXI.resume;TAXI.resume=null;if(R&&txChf()&&!ADRV.on)try{adStart(R.x,R.z)}catch(e){}}}
+  const C=TAXI.cur;
+  if(C&&C.ph==='walk'){C.wt+=dt;const h=C.a.h;const P=h.root.position;const q=txDoor(D.car,P);const dx=q.x-P.x,dz=q.z-P.z;const d=Math.hypot(dx,dz);
+    if(d<.35||C.wt>(C.chf?12:7)){txSeated()}else{const s=Math.min(d,1.6*dt);P.x+=dx/d*s;P.z+=dz/d*s;h.root.rotation.y=Math.atan2(dx,dz);if(h.pose!=='walk')try{h.setPose('walk')}catch(e){}}}
+  else if(C&&C.ph==='ride'){C.t+=dt;TAXI.chfStop=0;if(((G.flags&&G.flags.ranOver)||0)>C.ran0&&!C.ran){C.ran=1;txSay('사… 사람을 치셨어요?! 천천히 가요, 제발!')}
+    if(!TJ.goal)TJ.goal={bx:C.dest.drop.x,bz:C.dest.drop.z,taxi:1};
+    const dd=Math.hypot(cp.x-C.dest.drop.x,cp.z-C.dest.drop.z),ds=Math.hypot(cp.x-C.dest.x,cp.z-C.dest.z);if((dd<10||ds<15)&&Math.abs(D.v)<1.6){txArrive();return}
+    TAXI.chatT-=dt;if(TAXI.chatT<=0){TAXI.chatT=18+Math.random()*10;const L=TX_CHAT.concat(typeof RV_F!=='undefined'&&typeof rvOn==='function'&&rvOn()?TX_CHAT_RV:[]);txSay(mrPick(L))}}
+  if(TAXI.sayLeft>0)TAXI.sayLeft-=dt;TAXI.uiT-=dt;if(TAXI.uiT<=0){TAXI.uiT=.25;txHud(true)}}
+/* ---------- ⑦ 화면 ---------- */
+function txHud(on){const el=SV3.el;let u=$('#txHud');const C=TAXI.cur;const show=on!==false&&el&&OUT.on&&OUT.drv&&C&&(C.ph==='ride'||C.ph==='walk')&&!OUT.enc&&!OUT.mapOpen;
+  if(!show){if(u)u.remove();if(el)el.classList.remove('tx-on');return}if(!u||u.parentNode!==el){if(u)u.remove();u=document.createElement('div');u.id='txHud';u.className='tx-hud';el.appendChild(u)}el.classList.add('tx-on');
+  const cp=OUT.drv.car.position;const dd=Math.round(Math.hypot(cp.x-C.dest.drop.x,cp.z-C.dest.drop.z));const left=C.lim?C.lim-C.t:0;const ride=C.ph==='ride';
+  const h=`<div class="tx-main"><b>🚕 ${C.F.ico} ${C.nm}</b><small>${C.F.n}</small><span>${ride?`→ ${C.dest.n} <i>${dd}m</i>`:'타는 중…'}</span>`+
+    (C.lim&&ride?`<em class="tx-urg${left<=0?' late':''}">${left>0?`⏱ ${txT(left)} ×1.5`:'⏱ 늦었다'}</em>`:'')+`<span class="tx-rw">${txRwTxt(C)}${C.bump?` <i>부딪힘 ${C.bump}</i>`:''}</span></div>`+
+    (ride?`<div class="tx-btns">${!C.chf&&typeof adStart==='function'&&!(typeof ADRV!=='undefined'&&(ADRV.on||ADRV.job))?'<button class="pri" data-g3="txauto">🧭 자동</button>':''}<button data-g3="txdrop">내려 드리기</button></div>`:'')+
+    (TAXI.sayLeft>0&&TAXI.lastSay?`<div class="tx-say">“${TAXI.lastSay}”</div>`:'');
+  if(u.innerHTML!==h)u.innerHTML=h}
+function txClear(){TAXI.hail.slice().forEach(H=>{txPilOff(H);try{if(H.a&&H.a.h)txToPed(H.a)}catch(e){}});TAXI.hail=[];const C=TAXI.cur;if(C){txPilOff(C);try{C.a.h.root.visible=true;txToPed(C.a)}catch(e){}if(TJ.goal&&TJ.goal.taxi)TJ.goal=null}TAXI.cur=null;
+  TAXI.walk.forEach(W=>{try{txToPed(W.a)}catch(e){}});TAXI.walk=[];TAXI.gone.forEach(a=>{try{txToPed(a)}catch(e){}});TAXI.gone=[];TAXI.resume=null;TAXI.resT=0;TAXI.chfStop=0;TAXI.spT=9;txHud(false);if(SV3.el)SV3.el.classList.remove('tx-on')}
+/* ---------- ⑧ 끼워 넣기 ---------- */
+(function(){const b=window.outStep;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(OUT.on)txStep(dt)}catch(e){console.error(e)}return r}})();
+/* 타고 내리는 동안은 차를 세워 둔다 · 부딪힘 세기 */
+(function(){const b=window.tjDrivePre;window.tjDrivePre=function(dt){const D=OUT.drv;const C=TAXI.cur;const hold=C&&C.ph==='walk';if(D&&hold){D.v=0;FP3.mv.x=0;FP3.mv.y=0}const pv=D?D.v:0;const r=b.apply(this,arguments);
+  try{if(D&&hold){D.v=0}if(D&&C&&C.ph==='ride'&&Math.abs(pv)>3&&D.v*pv<0){C.bump++;txSay(mrPick(TX_BUMP))}}catch(e){}return r}})();
+(function(){const b=window.tjDriveEnd;window.tjDriveEnd=function(){try{const C=TAXI.cur;if(C){if(C.ph==='walk'){TAXI.cur=null;C.a.h.root.visible=true;txToPed(C.a);TAXI.resume=null}else if(C.ph==='ride')txDropEarly()}}catch(e){console.error(e)}const r=b.apply(this,arguments);txHud(false);return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{txClear()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.startOutside;window.startOutside=function(){try{txClear();TAXI.spT=9}catch(e){}return b.apply(this,arguments)}})();
+/* 시동 안내에 한 줄 */
+(function(){const b=window.tjDriveStart;window.tjDriveStart=function(){const r=b.apply(this,arguments);try{if(OUT.drv&&txOn()){TAXI.spT=Math.min(TAXI.spT,8+Math.random()*4);TAXI.tipT=.2}}catch(e){}return r}})();
+/* 일행이 다 탄 뒤 지금 안내에 한 줄 붙인다(없으면 짧은 안내) */
+function txTip(){const n=$('#oNote');const line='🚕 손님 받기 켜짐 — 손 흔드는 사람(노란 기둥) 옆에 세우면 탄다. 오른쪽 🚕로 끈다.';if(n&&!n.hidden&&!n.classList.contains('out')&&/시동이 걸렸다|모두 탔다|탄다|출발/.test(n.textContent)){if(!/손님 받기 켜짐/.test(n.textContent))n.insertAdjacentHTML('beforeend',`<small>${line}</small>`)}else outNote(`<b>🚕 손님 받기 켜짐</b><div>손 흔드는 사람(노란 기둥) 옆에 세우면 탄다. 오른쪽 🚕로 끈다.</div>`,3000)}
+/* 미니맵: 손님 = 노란 점 */
+(function(){const b=window.tjMarkers;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{if(OUT.on&&TAXI.hail.length){for(const H of TAXI.hail){const P=H.a.h.root.position;const [sx,sy]=toS(P.x,P.z);x.fillStyle='#ffd84a';x.strokeStyle='#241a00';x.lineWidth=1.6*scale;x.beginPath();x.arc(sx,sy,4.4*scale,0,7);x.fill();x.stroke()}}}catch(e){}return r}})();
+/* 🚕 단추(차를 몰 때만) */
+(function(){const b=window.fpdUI;window.fpdUI=function(){const r=b.apply(this,arguments);try{const u=$('#fpdUI');if(u){let t=u.querySelector('.fpd-taxi');const want=!!(OUT.drv&&!u.hidden);
+  if(want&&!t){t=document.createElement('button');t.className='fpd-taxi';t.dataset.g3='txtog';t.setAttribute('aria-label','택시 손님 받기');u.appendChild(t);TAXI.btn=''}
+  if(t){if(t.hidden!==!want)t.hidden=!want;const s=txOn()?'on':'off';if(TAXI.btn!==s){TAXI.btn=s;t.classList.toggle('on',s==='on');t.innerHTML=`<i>🚕</i><small>${s==='on'?'손님 받기':'택시 끔'}</small>`}}}}catch(e){}return r}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=txtog],[data-g3=txauto],[data-g3=txdrop]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
+  if(k==='txtog'){const on=!txOn();store.set('sg.taxi',on);if(!on)TAXI.hail.slice().forEach(H=>txRelease(H));TAXI.spT=on?6:9;outNote(on?'<b>🚕 손님 받기 켬</b><div>손 흔드는 사람(노란 기둥·미니맵 노란 점) 옆에 세우면 탄다. 원하는 곳에 내려 주면 물·식량·약·무기로 보답한다.</div>':'<b>🚕 손님 받기 끔</b><div>새 손님이 손을 들지 않는다. 탄 손님은 끝까지 모신다.</div>',3000);fpdUI();return}
+  if(k==='txauto'){const C=TAXI.cur;if(C&&C.ph==='ride'){try{adStart(C.dest.drop.x,C.dest.drop.z)}catch(x){}}txHud(true);return}
+  if(k==='txdrop'){const D=OUT.drv;if(D&&Math.abs(D.v)>1.6){outNote('<b>차를 먼저 세우자</b><div>멈춘 뒤에 내려 드린다.</div>',1800);return}txDropEarly();return}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🚕 태워 주기(v10.5)','차를 몰면 길가 행인이 손을 흔든다(🙋 · 노란 기둥 · 미니맵 노란 점). 7m 안에 거의 세우면 뒷문으로 탄다 → 손님이 갈 곳을 말한다(초록 기둥) → 가까이 세우면 내려서 보수: 물·식량·의약품·무기/탄약 · 이웃 신뢰. 멀수록 많이(최대 2.2배), 급한 손님은 제시간이면 1.5배, 부딪힐 때마다 −10%, 사람을 치면 절반. 손님 카드의 🧭 자동 운전 · 여기서 내려 드리기(목적지 70m 안이면 60%). 팀원이 운전하면(조수석) 운전 담당이 손님 옆에 세우고 먼저 모셔다 드린 뒤 원래 목적지로 간다. 오른쪽 🚕 단추로 끄고 켠다. 미션·교전 중에는 새 손님이 없다.']);
+
+/* ===================== 84 · v10.5 🏆 선의의 라이벌 세력 ===================== */
+/* 사용자 요청(2026-11-08): "나랑 선의의 라이벌 세력들도 있으면좋겠어요" + "선의의 라이벌들 중 북한군을 잘 물리치는 세력도 있음 좋겠습니다"
+   네 세력(모두 가상): 🚑 새벽 구조대(구조) · 🛡️ 청솔 자율방범대(호송·태워 주기) · ☂️ 노란 우산 나눔단(배달·나눔) · 🦅 솔개 예비군 수색대(적 침투조 격퇴)
+   구호 점수 = 구조·호송·지키기 10 · 배달·보급·기타 8 · 태워 주기 4 · 격퇴 3(명) — 나와 팀도 같은 기준(미션 완료 · 택시 · 같은 자리 교전에서 무력화한 적)
+   라이벌도 6시간(한 턴)마다 제 몫을 하고, 밖에 있는 동안 가끔 📻 소식(+점수)이 들린다. 적대는 없다 — 서로 돕는 경쟁.
+   밖에서 만나기: 두 세력의 조(깃발 · 색 모자 · 완장 · 이름표)가 거점 근처에 있다 → 다가가 이야기(존중 +2 · 쓸모 있는 정보) 또는 세력별 도움
+   미션 경쟁: 미션을 시작하면 가끔 같은 일을 하는 세력도 출동 — 먼저 끝내면 +5점 · 존중 +2
+   🦅 솔개 수색대: 같은 자리 교전(정찰조·강하·저격·기지·드론 등)에 아군 사수로 합류해 실제로 싸운다(명중률 높음 · 교전규칙: 투항자·민간인은 쏘지 않음)
+     — 그들이 무력화한 적은 솔개 격퇴로 센다. 격퇴 순위는 솔개가 1위로 시작한다. 존중 60+면 늘 3명이 합류
+   존중 40+: 만나면 선물(약·탄약·물·손님 소개) · 60+: 세력별 혜택. 이 판 기록은 G.rv(판 저장) */
+const RV_F={
+  dawn:{n:'새벽 구조대',ico:'🚑',col:'#e5484d',cap:'#d6333a',sp:'res',sp2:'etc',d:'응급 구조 — 다친 사람을 가장 먼저 찾아낸다',s:'구조대',ld:'구조대장',nm:{m:['방도현','남궁준','여태오'],f:['차서윤','길하람','민소이']},kind:'civ',site:['gym','site','subway','shelterB'],
+    news:['공사장 비계 아래 부상자를 구조했다','지하보도 출구에서 연기 마신 주민을 옮겼다','체육관 진료소로 어르신을 업어 날랐다','무너진 담장 아래 사람을 꺼냈다'],
+    hello:['어, 라이벌 팀이다! 수고 많아요!','다친 사람 보면 바로 알려 줘요!'],talk:['오늘은 우리가 한 명 더 구했네요. 내일은 모르죠!','부상자 소식 있으면 서로 알려 줘요 — 점수보다 사람이 먼저니까.','그쪽 손이 빠르던데요? 우리도 분발해야겠어요.']},
+  pine:{n:'청솔 자율방범대',ico:'🛡️',col:'#3d8bfd',cap:'#2f6fd6',sp:'esc',sp2:'taxi',d:'순찰·호송 — 순찰차로 피난민을 실어 나른다',s:'방범대',ld:'방범대장',nm:{m:['우태민','백승호','진수혁'],f:['마은지','소하늘','어진아']},kind:'civ',site:['check','bus2','bus','field'],
+    news:['피난 가족을 검문소까지 호송했다','순찰차로 귀가 못 한 주민을 태워 줬다','밤새 단지 둘레를 순찰했다','길 잃은 아이를 부모에게 데려다줬다'],
+    hello:['오늘도 순찰 중이에요 — 안전 운전!','손님 많이 태우셨어요? 우리도 바빠요!'],talk:['손 흔드는 분이 많더라고요. 먼저 태우는 쪽이 이기는 거죠?','호송은 우리가 한 수 위예요. 아마도요!','막힌 길 알려 드릴게요 — 대신 다음엔 우리가 먼저 갑니다.']},
+  umb:{n:'노란 우산 나눔단',ico:'☂️',col:'#f5c518',cap:'#f2b705',sp:'del',sp2:'etc',d:'물자 나눔 — 물·식량을 가장 많이 나른다',s:'나눔단',ld:'나눔단장',nm:{m:['표선우','계도윤','탁민규'],f:['여다솜','설나윤','하민서']},kind:'civ',site:['truck','shelterB','vgreen','play'],
+    news:['구호 트럭에서 생수를 나눴다','상가 대피소에 식량을 날랐다','학원 아이들에게 빵을 나눠 줬다','어르신 댁마다 물을 배달했다'],
+    hello:['물 필요하면 말해요 — 나눔은 경쟁 아니니까!','오늘 배달 몇 건 하셨어요?'],talk:['오늘 생수 나눔은 우리가 1등! …아직은요.','경쟁해도 결국 다 나눠 먹는 거니까요.','배달 많이 하셨다면서요? 우리도 질 수 없죠.']},
+  hawk:{n:'솔개 예비군 수색대',ico:'🦅',col:'#b5a26a',cap:'#c8b27a',sp:'kill',sp2:'esc',d:'적 침투조 격퇴 — 공수·정찰조가 나오면 가장 먼저 달려간다',s:'수색대',ld:'수색대장',nm:{m:['도경민','엄지훈','석태진','국현우','편승재'],f:[]},kind:'rok',site:['field','site','check','subway'],
+    news:['공사장 뒤 침투조를 제압했다','옥상 관측병을 몰아냈다','강하 지점을 먼저 찾아 막아 냈다','검문소를 노리던 정찰조를 격퇴했다'],
+    hello:['수색대입니다. 이 근처 정찰조 흔적은 없어요.','교전 나면 우리를 부르세요!'],talk:['정찰조 셋, 오늘 아침에 우리가 막았습니다. 격퇴 순위는 아직 우리 거예요.','교전 나면 부르세요 — 사격은 자신 있습니다.','교전규칙은 지킵니다. 민간인·투항자는 절대 쏘지 않아요.']}};
+const RV_CAT={res:{n:'구조',ico:'🩹',w:10},esc:{n:'호송·지키기',ico:'🚶',w:10},del:{n:'배달·보급',ico:'📦',w:8},etc:{n:'수색·수리 등',ico:'🔎',w:8},taxi:{n:'태워 주기',ico:'🚕',w:4},kill:{n:'격퇴',ico:'🎯',w:3}};
+const RV_PERK={dawn:'40+ 만나면 의약품 · 60+ 교전 뒤 응급 처치(체력 +15)',pine:'40+ 손님 소개(곧 손님) · 60+ 손님이 더 자주',umb:'40+ 만나면 물 2 · 60+ 6시간마다 대피소에 물·식량',hawk:'40+ 만나면 탄약 · 60+ 교전에 늘 3명 합류(아니면 확률)'};
+const RV_OWC={para:1,praid:1,sniper:1,hijack:1,base:1,mxrecon:1,drone:1};
+const RVS={sq:[],need:0,needT:0,newsT:140,race:null,tick:'',tickT:0,join:null,call:0,lastRk:0};
+function rvOn(){return store.get('sg.rival',true)!==false}
+function rvZ(){return{res:0,esc:0,del:0,etc:0,taxi:0,kill:0,bonus:0}}
+function rvG(){if(typeof G==='undefined'||!G)return null;let R=G.rv;if(!R||R.v!==1){const z=o=>Object.assign(rvZ(),o);R=G.rv={v:1,turn:G.turn||0,
+    st:{me:rvZ(),dawn:z({res:3,etc:1}),pine:z({esc:2,taxi:3,del:1}),umb:z({del:4,etc:1}),hawk:z({kill:9,esc:1})},resp:{dawn:20,pine:20,umb:20,hawk:20},log:[],gift:{}}}return R}
+function rvPts(s){let p=0;for(const k in RV_CAT)p+=(s[k]||0)*RV_CAT[k].w;return p+(s.bonus||0)}
+function rvResp(f){const R=rvG();return R?R.resp[f]||0:0}
+function rvRespAdd(f,n){const R=rvG();if(R&&RV_F[f])R.resp[f]=clamp((R.resp[f]||0)+n,0,100)}
+function rvRank(){const R=rvG();const L=[{id:'me',n:'나와 우리 팀',ico:'⭐',col:'#ffd84a',p:rvPts(R.st.me)}].concat(Object.keys(RV_F).map(f=>({id:f,n:RV_F[f].n,ico:RV_F[f].ico,col:RV_F[f].col,p:rvPts(R.st[f])})));L.sort((a,b)=>b.p-a.p||(a.id==='me'?-1:b.id==='me'?1:0));return L}
+function rvMyRank(){return rvRank().findIndex(x=>x.id==='me')+1}
+function rvKillRank(){const R=rvG();return [{id:'me',n:'나와 우리 팀',ico:'⭐',k:R.st.me.kill}].concat(Object.keys(RV_F).map(f=>({id:f,n:RV_F[f].n,ico:RV_F[f].ico,k:R.st[f].kill}))).sort((a,b)=>b.k-a.k||(a.id==='me'?-1:b.id==='me'?1:0))}
+/* 나와 팀 점수 */
+function rvMe(cat,n){const R=rvG();if(!R||!RV_CAT[cat])return;R.st.me[cat]=(R.st.me[cat]||0)+n;rvRankCheck()}
+function rvBonus(n){const R=rvG();if(R){R.st.me.bonus=(R.st.me.bonus||0)+n;rvRankCheck()}}
+/* 라이벌 점수 + 소식 */
+function rvAddF(f,cat,n,txt,quiet){const R=rvG();if(!R||!RV_F[f])return;R.st[f][cat]=(R.st[f][cat]||0)+n;const p=n*RV_CAT[cat].w;R.log.push({t:G.turn,f,txt,p});if(R.log.length>40)R.log.shift();if(!quiet&&rvOn())rvTick(`${RV_F[f].ico} <b>${RV_F[f].n}</b> — ${txt} <i>+${p}</i>`);rvRankCheck(true)}
+function rvRankCheck(quiet){const k=rvMyRank();const was=RVS.lastRk||k;RVS.lastRk=k;if(!quiet&&k<was&&rvOn())rvTick(`🏆 <b>순위가 올랐다 — 지금 ${k}위!</b> 상황판(🚨) → 라이벌`)}
+function rvCatOf(D){if(D.fight)return 'kill';return {res:'res',fir:'res',esc:'esc',def:'esc',del:'del',sup:'del'}[D.ty]||'etc'}
+function rvT(s){s=Math.max(0,Math.round(s));const m=Math.floor(s/60),r=s%60;return `${m}:${r<10?'0':''}${r}`}
+function rvShuf(L){L=L.slice();for(let i=L.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[L[i],L[j]]=[L[j],L[i]]}return L}
+/* ---------- ① 6시간마다: 라이벌도 제 몫을 한다 ---------- */
+function rvTurn(){const R=rvG();if(!R)return;const n=(G.turn||0)-(R.turn||0);if(n<=0){R.turn=G.turn||0;return}R.turn=G.turn;
+  for(let k=0;k<Math.min(n,6);k++){for(const f in RV_F){const F=RV_F[f];const a=F.sp==='kill'?2+Math.floor(Math.random()*3):1+(Math.random()<.5?1:0);R.st[f][F.sp]+=a;if(Math.random()<.5)R.st[f][F.sp2]+=1}
+    const f=mrPick(Object.keys(RV_F));R.log.push({t:G.turn,f,txt:mrPick(RV_F[f].news),p:0});if(R.log.length>40)R.log.shift()}
+  if(rvOn()&&R.resp.umb>=60){const fx0=FX;FX=[];res('water',1);res('food',1);FX=fx0;try{toast('☂️ 노란 우산 나눔단이 대피소에 물 1L·식량 1을 두고 갔다')}catch(e){}}RVS.lastRk=rvMyRank()}
+(function(){const b=window.beginTurn;if(typeof b!=='function')return;window.beginTurn=function(){try{rvTurn()}catch(e){console.error(e)}return b.apply(this,arguments)}})();
+/* ---------- ② 소식 띠(위쪽 가운데, 5.5초) ---------- */
+function rvTick(html){RVS.tick=html;RVS.tickT=5.5;rvTickUI()}
+function rvTickUI(){const el=SV3.el;if(!el)return;let t=$('#rvTick');const show=RVS.tick&&RVS.tickT>0&&OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)&&!OUT.mapOpen;if(!show){if(t)t.remove();return}
+  if(!t||t.parentNode!==el){if(t)t.remove();t=document.createElement('div');t.id='rvTick';t.className='rv-tick';el.appendChild(t)}const h=`<span>📻</span><div>${RVS.tick}</div>`;if(t.innerHTML!==h)t.innerHTML=h;t.classList.toggle('out',RVS.tickT<.5)}
+/* ---------- ③ 밖에서 만나는 조 ---------- */
+const RV_GEO={};
+function rvGear(h,F){try{if(!h||!h.b)return;h.root.updateMatrixWorld(true);
+    /* 완장(왼팔 윗부분) */const s=h.b.shL,e=h.b.elL;if(s&&e){const b=new T.Vector3();e.getWorldPosition(b);const loc=s.worldToLocal(b);const L=loc.length();if(L>1e-4){const ws=new T.Vector3();s.getWorldScale(ws);const k=1/(ws.x||1);
+      const m=MM(GG.cyl(+(.066*k).toFixed(4),+(.066*k).toFixed(4),+(.09*k).toFixed(4),12),mat(F.cap,{r:.7}),0,0,0,{p:s,cast:false,recv:false});m.position.copy(loc).multiplyScalar(.36);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),loc.clone().normalize());m.name='rvBand'}}
+    /* 색 모자(민간 세력 — 군 세력은 철모 그대로) */if(F.kind!=='rok'&&h.b.head&&typeof KPA_HQ!=='undefined'){const hg=new T.Group();hg.quaternion.copy(KPA_HQ);hg.position.set(.07,-.004,0);h.b.head.add(hg);
+      RV_GEO.cap=RV_GEO.cap||new T.SphereGeometry(.112,16,10,0,Math.PI*2,0,1.3);MM(RV_GEO.cap,mat(F.cap,{r:.8}),0,.025,0,{p:hg,cast:false,sy:.9});MM(GG.cyl(.1,.1,.012,16),mat(F.cap,{r:.8}),0,.03,.07,{p:hg,cast:false,sx:1,sz:.7});hg.name='rvCap'}}catch(e){console.error(e)}}
+function rvFlag(sc,x,z,F){const g=new T.Group();g.position.set(x,0,z);MM(GG.cyl(.035,.035,2.7,6),mat('#d8dde2',{r:.5,m:.4}),0,1.35,0,{p:g,cast:true,recv:false});
+  if(F===RV_F.umb){MM(GG.cone(.95,.42,12),mat(F.col,{r:.7,side:T.DoubleSide}),0,2.78,0,{p:g,cast:true,recv:false})}
+  else{MM(GG.pl(.95,.58),mat(F.col,{r:.8,side:T.DoubleSide}),.5,2.32,0,{p:g,cast:false,recv:false});MM(GG.pl(.95,.08),mat('#f4f4ee',{r:.8,side:T.DoubleSide}),.5,2.32,.003,{p:g,cast:false,recv:false})}
+  sc.add(g);g.userData.rv=1;return g}
+function rvSquads(){RVS.sq=[];if(!rvOn()||!OUT.scene||!(typeof RBX!=='undefined'&&RBX.ok))return;let S={};try{S=mxSites()}catch(e){return}const p=FP3.pos;
+  let fs=rvShuf(Object.keys(RV_F));if(Math.random()<.5&&fs.indexOf('hawk')>1){fs=fs.filter(f=>f!=='hawk');fs.unshift('hawk')}fs=fs.slice(0,2);const used=[];
+  for(const f of fs){const F=RV_F[f];let pick=null;for(const k of rvShuf(F.site).concat(rvShuf(['check','gym','bus2','vgreen','truck','field','site','subway']))){const s=S[k];if(!s)continue;const d=Math.hypot(s.x-p.x,s.z-p.z);if(d<45||d>340)continue;if(used.some(u=>Math.hypot(u.x-s.x,u.z-s.z)<90))continue;pick=s;break}
+    if(!pick)continue;const a0=Math.random()*6.283;const q=misNear(pick.x+Math.cos(a0)*7,pick.z+Math.sin(a0)*7,.9)||[pick.x,pick.z];const g=rvSquad(f,q[0],q[1],pick);if(g){RVS.sq.push(g);used.push({x:q[0],z:q[1]})}}}
+function rvSquad(f,x,z,site){const F=RV_F[f];const g={f,x,z,site,m:[],flag:null,met:false,hi:false};const n=3;
+  for(let i=0;i<n;i++){const ang=i/n*6.283+.3;const q=misNear(x+Math.cos(ang)*1.7,z+Math.sin(ang)*1.7,.35)||[x+Math.cos(ang)*1.7,z+Math.sin(ang)*1.7];let h=null;
+    try{h=civHuman(71+Math.floor(Math.random()*30)*2+i,mrPick(['idle','talk','listen','look']),F.kind)}catch(e){h=null}if(!h)continue;h.root.position.set(q[0],0,q[1]);lifeFace(h,x,z);OUT.scene.add(h.root);rvGear(h,F);
+    const fem=/^f/.test(h.key||'');const pool=(fem&&F.nm.f.length?F.nm.f:F.nm.m).filter(nm=>!g.m.some(a=>a.nm===nm));const nm=mrPick(pool.length?pool:F.nm.m);
+    const a={h,kind:'rv',rv:f,nm,tagL:`${F.ico} ${i===0?F.ld:F.s} ${nm}`,home:{x:q[0],z:q[1]}};OUT.npcs.push(a);g.m.push(a)}
+  if(!g.m.length)return null;try{g.flag=rvFlag(OUT.scene,x+1.9,z+.6,F)}catch(e){}return g}
+function rvSqStep(dt){const p=FP3.pos;for(const g of RVS.sq){const F=RV_F[g.f];const d=Math.hypot(g.x-p.x,g.z-p.z);
+    for(const a of g.m){if(a.kind==='dead'&&!a.hit){a.hit=1;rvRespAdd(g.f,-25);FX=[];trust(-2);OUT.fx.push(...FX);outNote(`<b>😨 ${F.n} 대원을 차로 쳤다</b><div>${a.nm} 씨가 크게 다쳤다. 존중 −25 · 이웃 신뢰 −2 — 사람이 있는 곳에서는 천천히.</div>`,4200)}
+      if(a.kind==='rv'&&d<11&&!OUT.drv)lifeFace(a.h,p.x,p.z)}
+    if(!g.hi&&d<7&&!OUT.drv&&!OUT.ride){g.hi=true;const L=g.m.find(a=>a.kind==='rv');if(L)bubSay(L.h,mrPick(F.hello),3,'')}}}
+/* 미니맵: 라이벌 조 = 세력 색 점 */
+(function(){const b=window.tjMarkers;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{if(OUT.on&&RVS.sq.length&&rvOn()){for(const g of RVS.sq){if(!g.m.some(a=>a.kind==='rv'))continue;const [sx,sy]=toS(g.x,g.z);x.fillStyle=RV_F[g.f].col;x.strokeStyle='#ffffff';x.lineWidth=1.4*scale;x.beginPath();x.arc(sx,sy,3.8*scale,0,7);x.fill();x.stroke()}}}catch(e){}return r}})();
+/* 다가가면 '이야기' */
+(function(){const oc=window.outCands;window.outCands=function(){const L=oc.apply(this,arguments);try{if(Array.isArray(L)&&OUT.on&&!OUT.drv&&!OUT.ride&&rvOn())for(const g of RVS.sq){if(g.met||!g.m.some(a=>a.kind==='rv'))continue;const F=RV_F[g.f];
+  L.push({id:'rv:'+g.f,k:'rvmeet',x:g.x,z:g.z,r:3.8,g:F.ico,n:`${F.n}와 이야기`,s:`선의의 라이벌 · 존중 ${rvResp(g.f)}`,h:0,nomap:1,sq:g})}}catch(e){}return L}})();
+(function(){const od=window.outDo;window.outDo=function(c){if(c&&c.k==='rvmeet'&&!OUT.busy&&!OUT.enc){rvMeet(c.sq);return}return od.apply(this,arguments)}})();
+(function(){const b=window.logDecision;if(typeof b!=='function')return;window.logDecision=function(ev){if(ev&&ev.noLog)return;return b.apply(this,arguments)}})();
+function rvGiftOk(f){const R=rvG();const day=Math.floor((G.turn||0)/4);return R.resp[f]>=40&&R.gift[f]!==day}
+function rvGiftMark(f){const R=rvG();R.gift[f]=Math.floor((G.turn||0)/4)}
+function rvMeet(g){if(!g)return;const f=g.f,F=RV_F[f];const R=rvG();const L=rvRank();const me=L.findIndex(x=>x.id==='me')+1,they=L.findIndex(x=>x.id===f)+1;const ld=g.m[0];
+  const line=mrPick(F.talk);const site=g.site;const S=(()=>{try{return mxSites()}catch(e){return{}}})();
+  const tipGo=()=>{/* 세력별 쓸모 있는 정보 */if(f==='hawk'){const t=typeof EVD!=='undefined'&&EVD.nextT>0?Math.round(EVD.nextT):0;return t?`“정찰조 움직임이 잦습니다. 다음 돌발 상황까지 대략 ${rvT(t)} — 미리 엄폐물을 봐 두세요.”`:'“지금은 조용합니다. 그래도 큰길 쪽은 조심하세요.”'}
+    if(f==='pine'){const s=S.bus2||S.bus;if(s){TJ.goal={bx:s.x,bz:s.z,rv:1}}if(typeof TAXI!=='undefined')TAXI.spT=Math.min(TAXI.spT,3);return `“${s?s.n+' 쪽에 차 기다리는 분이 많아요 — 미니맵 초록 점.':'큰길에 차 기다리는 분이 많아요.'} 차 몰면 곧 손 흔드는 분이 보일 거예요.”`}
+    if(f==='umb'){const s=S.truck||S.shelterB;if(s)TJ.goal={bx:s.x,bz:s.z,rv:1};return `“${s?s.n+'에 물자가 더 왔대요 — 미니맵 초록 점.':'구호 트럭에 물자가 더 왔대요.'}”`}
+    const s=S.gym||S.check;if(s)TJ.goal={bx:s.x,bz:s.z,rv:1};return `“${s?s.n+' 진료소에 일손이 모자라요 — 미니맵 초록 점.':'진료소에 일손이 모자라요.'}”`};
+  const gift=rvGiftOk(f);const ch=[{t:'응원하고 소식 나누기',s:'존중 +2 · 쓸모 있는 정보',go(){rvRespAdd(f,2);g.met=true;return `${F.n}와 서로 점수를 묻고 웃었다. ${tipGo()} <span class="small">존중 ${rvResp(f)}</span>`}}];
+  if(f==='dawn')ch.push(gift?{t:'🎁 응급 키트 받기',s:'존중 40+ 선물 — 의약품 +1(하루 한 번)',go(){rvGiftMark(f);res('meds',1);rvRespAdd(f,1);g.met=true;return '“라이벌한테 약 주는 건 비밀이에요!” 구조대장이 웃으며 응급 키트를 건넸다.'}}:
+    {t:'물 1L ↔ 의약품 1 바꾸기',s:'존중 +2',need:()=>G.res.water>=1,go(){res('water',-1);res('meds',1);rvRespAdd(f,2);g.met=true;return '물 한 병을 건네고 응급 키트를 받았다. “고마워요 — 현장에서 물이 제일 귀해요.”'}});
+  if(f==='pine')ch.push({t:'🚕 손님 소개받기',s:gift?'존중 40+ — 곧 손님 · 다음 보수 ×1.2':'곧 손 흔드는 손님이 나타난다 · 존중 +1',go(){if(typeof TAXI!=='undefined'){TAXI.spT=1.5;if(gift){TAXI.bonus=1.2;rvGiftMark(f)}}rvRespAdd(f,1);g.met=true;return `“저쪽 큰길에 차 기다리는 분이 있어요. 우리 순찰차는 꽉 찼거든요 — 이번엔 양보할게요!”${gift?' 다음 손님 보수 ×1.2.':''}`}});
+  if(f==='umb')ch.push(gift?{t:'🎁 물 나눔 받기',s:'존중 40+ 선물 — 물 2L(하루 한 번)',go(){rvGiftMark(f);res('water',2);rvRespAdd(f,1);g.met=true;return '“노란 우산은 비만 막는 게 아니에요!” 나눔단장이 생수 두 병을 건넸다.'}}:
+    {t:'식량 1 나눔에 보태기',s:'이웃 신뢰 +2 · 존중 +4',need:()=>G.res.food>=1,go(){res('food',-1);trust(2);rvRespAdd(f,4);g.met=true;return '식량 한 봉지를 나눔 상자에 보탰다. “오늘 배달 점수는 반반 나눠요!”'}});
+  if(f==='hawk')ch.push(gift?{t:'🎁 탄약 지원 받기',s:'존중 40+ — 5.56mm 30발 또는 9mm 15발(하루 한 번)',go(){rvGiftMark(f);const rifle=(typeof gunArms==='function'?gunArms():[]).some(a=>ARMS[a.id]&&ARMS[a.id].am==='556');if(rifle){gunAmmoAdd('556',30);push('탄약 556',30,'발')}else{gunAmmoAdd('9mm',15);push('탄약 9mm',15,'발')}rvRespAdd(f,1);g.met=true;return '“교전 나면 같이 갑니다.” 수색대장이 탄창을 건넸다.'}}:
+    {t:'🦅 교전 때 함께 싸우자',s:'다음 같은 자리 교전에 꼭 합류 · 존중 +2',go(){RVS.call=1;rvRespAdd(f,2);g.met=true;return '“무전 주파수 맞춰 두겠습니다. 교전 나면 바로 갑니다 — 측면은 맡겨요.”'}});
+  ch.push({t:'다음에 봬요',s:'',go(){g.met=true;return '“또 봬요 — 오늘도 무사히!”'}});
+  outEncShow({id:'rv-'+f,noLog:1,cat:'🏆 선의의 라이벌',title:`${F.ico} ${F.n}`,art:'group',tone:'',text:`<b>${ld?ld.nm:''} ${F.ld}</b>: “${line}”<br><span class="small">구호 점수 — ${F.n} ${rvPts(R.st[f])}점(${they}위) · 나와 팀 ${rvPts(R.st.me)}점(${me}위) · 존중 ${R.resp[f]}</span>`,choices:ch})}
+/* ---------- ④ 미션 경쟁 ---------- */
+function rvRaceStart(M){RVS.race=null;if(!rvOn()||!M||!M.D||(G&&G.camp)||Math.random()>.38)return;const D=M.D;const cat=rvCatOf(D);const f=Object.keys(RV_F).find(k=>RV_F[k].sp===cat)||mrPick(Object.keys(RV_F));
+  let t=null;try{t=mxTarget()}catch(e){}const d=t?Math.hypot(t.x-FP3.pos.x,t.z-FP3.pos.z):150;const eta=Math.round((d/3.2+D.steps.length*28)*(1+Math.random()*.4)+30);
+  RVS.race={f,eta,id:D.id};rvTick(`${RV_F[f].ico} <b>${RV_F[f].n}</b>도 「${D.n}」에 나섰다 — 먼저 끝내면 +5점`)}
+(function(){const b=window.mxStart;window.mxStart=function(id){const r=b.apply(this,arguments);try{if(MX.cur&&MX.cur.D&&MX.cur.D.id===id&&(!RVS.race||RVS.race.id!==id))rvRaceStart(MX.cur)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.mxClear;window.mxClear=function(ok){const M=MX.cur;const race=RVS.race;RVS.race=null;const r=b.apply(this,arguments);
+  try{if(M&&M.D){const cat=rvCatOf(M.D);const F=race&&RV_F[race.f];if(ok){rvMe(cat==='kill'?'etc':cat,1);if(F){if((M.t||0)<=race.eta){rvBonus(5);rvRespAdd(race.f,2);rvTick(`🏆 <b>${F.n}보다 먼저 끝냈다! +5</b> “${mrPick(['역시 빠르시네요!','다음엔 안 질 거예요!','좋은 승부였습니다!'])}”`)}else{rvAddF(race.f,cat==='kill'?'etc':cat,1,`우리 팀과 「${M.D.n}」을 함께 마무리했다`,true);rvRespAdd(race.f,1);rvTick(`${F.ico} <b>${F.n}</b>가 먼저 와 있었다 — 함께 마무리. “좋은 승부!”`)}}}
+    else if(F){rvAddF(race.f,cat==='kill'?'etc':cat,1,`「${M.D.n}」을 대신 마무리했다`)}}}catch(e){console.error(e)}return r}})();
+(function(){const b=window.mxHud;window.mxHud=function(){const r=b.apply(this,arguments);try{const h=$('#mxHud');const R=RVS.race;if(h&&R&&MX.cur&&MX.cur.D.id===R.id){let c=h.querySelector('.rv-race');if(!c){c=document.createElement('div');c.className='rv-race';h.appendChild(c)}const F=RV_F[R.f];const left=R.eta-(MX.cur.t||0);
+  const txt=left>0?`${F.ico} ${F.n} 도착까지 ${rvT(left)} — 먼저 끝내면 +5`:`${F.ico} ${F.n}도 현장에 왔다 — 함께 마무리`;if(c.textContent!==txt)c.textContent=txt}}catch(e){}return r}})();
+/* ---------- ⑤ 🦅 솔개 수색대: 같은 자리 교전에 합류 ---------- */
+function rvOwcJoin(kind){RVS.join=null;if(!rvOn()||!RV_OWC[kind]||!OWC.S)return;const R=rvG();if(!R)return;const resp=R.resp.hawk;const sure=RVS.call||resp>=60;if(!sure&&Math.random()>.5+resp/250)return;RVS.call=0;
+  const F=OWC.face,A=OWC.pSpot||OWC.A;if(!F||!A)return;const rx=-F.z,rz=F.x;const n=resp>=60?3:2;const names=rvShuf(RV_F.hawk.nm.m).slice(0,n);const offs=[[-4.4,-1.0],[5.8,-1.4],[-7.2,-1.9]];const J={n:0,kills:0,list:[]};
+  names.forEach((name,i)=>{let h=null;try{h=makeHuman(owcAllyLook({id:'rvh'+i,n:name,look:'rok'},i+7))}catch(e){h=null}if(!h)return;let x=A.x+rx*offs[i][0]+F.x*offs[i][1],z=A.z+rz*offs[i][0]+F.z*offs[i][1];
+    for(let t=0;t<4&&OWC.al.some(q=>Math.hypot(q.h.root.position.x-x,q.h.root.position.z-z)<1.2);t++){x+=rx*1.3*Math.sign(offs[i][0]);z+=rz*1.3*Math.sign(offs[i][0])}
+    if(!owcFree(x,z,.4)){const q=owcNearFree(x,z,6);if(q){x=q.x;z=q.z}}h.root.position.set(x,0,z);h.root.rotation.y=Math.atan2(F.x,F.z);h.setPose('crouch',true);h.lookKeep=true;owcAdd(h.root);rvGear(h,RV_F.hawk);
+    const a={side:'al',id:'rvh'+i,n:name,r:'🦅 솔개 수색대',lead:false,h,x,z,sp:{x,z,ch:.9},st:'cover',t:.4+i*.3,hp:5,aimP:0,tgt:null,burst:0,shotT:0,cd:0,said:0,accK:2.3,rv:'hawk'};OWC.al.push(a);OWC.byH.set(h,a);J.list.push(a);J.n++});
+  if(!J.n)return;RVS.join=J;owcLater(3.2,()=>{if(OWC.on&&!OWC.done&&J.list[0])owcSay('🦅 솔개 수색대 '+J.list[0].n,mrPick(['솔개 수색대 합류! 측면은 우리가 맡는다!','늦지 않았죠? 측면 적은 우리가 잡습니다!','교전규칙대로 — 무장한 적만 쏜다. 들어간다!']),1)})}
+(function(){const b=window.owcBuild;window.owcBuild=function(kind){const r=b.apply(this,arguments);try{rvOwcJoin(kind||OWC.k)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.owcKill;window.owcKill=function(a,by){const was=a&&a.st;const r=b.apply(this,arguments);try{if(was!=='down'&&by&&by!=='me'&&by.rv==='hawk'&&RVS.join)RVS.join.kills++}catch(e){}return r}})();
+function rvAfterFight(J,won){const R=rvG();if(!R)return;const s=OWC.stt||{};const myK=s.kills||0;if(myK)rvMe('kill',myK);
+  if(J&&J.n){if(J.kills)R.st.hawk.kill+=J.kills;if(won)rvRespAdd('hawk',4);const roe=s.civ||0;if(roe)rvRespAdd('hawk',-10);R.log.push({t:G.turn,f:'hawk',txt:`우리 팀과 함께 싸웠다 — 적 ${J.kills}명 격퇴`,p:J.kills*3});if(R.log.length>40)R.log.shift();
+    const K=rvKillRank();const kr=K.findIndex(x=>x.id==='me')+1;const el=$('#owcResult .result');
+    if(el)el.insertAdjacentHTML('afterend',`<p class="rv-owc">🦅 <b>솔개 예비군 수색대</b> ${J.n}명이 함께 싸웠다 — 수색대 <b>${J.kills}</b>명 · 나 <b>${myK}</b>명 무력화${won?' · 존중 +4':''}${roe?' · 교전규칙 위반으로 존중 −10':''}<br><span class="small">🎯 격퇴 순위: ${K.slice(0,3).map((x,i)=>`${i+1}. ${x.ico} ${x.n} ${x.k}`).join(' · ')}${kr>3?` · 나 ${kr}위`:''}</span></p>`)}
+  if(won&&rvOn()&&R.resp.dawn>=60&&typeof M==='function'){try{const me=M('me');if(me&&me.hp<100){me.hp=Math.min(100,me.hp+15);const el=$('#owcResult .result');if(el)el.insertAdjacentHTML('afterend','<p class="rv-owc">🚑 <b>새벽 구조대</b>가 달려와 응급 처치를 했다 — 체력 +15</p>')}}catch(e){}}
+  RVS.join=null;rvRankCheck(true)}
+(function(){const b=window.owcResult;window.owcResult=function(){const J=RVS.join;const on=OWC.on;const won=OWC.win;const r=b.apply(this,arguments);try{if(on)rvAfterFight(J,won)}catch(e){console.error(e)}return r}})();
+/* 안 가고 둔 교전 돌발 상황: 솔개가 대신 막아 낸 소식 */
+(function(){const b=window.evMiss;if(typeof b!=='function')return;window.evMiss=function(why){const E=typeof EVD!=='undefined'&&EVD.cur;const r=b.apply(this,arguments);try{if(E&&rvOn()&&typeof EVK!=='undefined'&&EVK[E.k]&&EVK[E.k].combat)rvAddF('hawk','kill',2+Math.floor(Math.random()*2),`${E.site&&E.site.n?E.site.n+'의 ':''}${EVK[E.k].n} 현장에 뒤늦게 출동해 남은 침투조를 제압했다`)}catch(e){}return r}})();
+/* 청솔 순찰차가 기다리던 손님을 먼저 태움(택시에서 부른다) */
+function rvRivalTaxi(){if(!rvOn())return;rvAddF('pine','taxi',1,'순찰차로 기다리던 손님을 먼저 태웠다')}
+/* ---------- ⑥ 상황판 줄 · 순위 판 ---------- */
+(function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{const R=rvG();if(R){const L=rvRank();const me=L.findIndex(x=>x.id==='me')+1;
+  h+=row('🏆','선의의 라이벌 — 구호 점수',`나와 팀 ${me}위 · ${rvPts(R.st.me)}점 · 1위 ${L[0].ico} ${L[0].n} ${L[0].p}점`,rvOn()?'':'꺼짐','<button class="btn sm" data-g3="rvopen">순위 보기</button>')}}catch(e){console.error(e)}return h}})();
+function rvPanel(open){const el=SV3.el;let p=$('#rvPanel');if(!open){if(p)p.remove();return}if(!el)return;const R=rvG();if(!R)return;if(!p){p=document.createElement('div');p.id='rvPanel';p.className='mis-panel rv-panel';el.appendChild(p)}const L=rvRank();
+  let h=`<div class="mis-head"><b>🏆 선의의 라이벌 — 구호 점수</b><button class="btn sm" data-g3="rvx">닫기</button></div><p class="mis-note">모두 가상의 단체 · 적대 없이 서로 돕는 경쟁. 구조·호송 10점 · 배달·기타 8점 · 태워 주기 4점 · 격퇴 3점(명) · 미션 경쟁에서 먼저 끝내면 +5.</p>`;
+  h+=`<div class="rv-board">${L.map((x,i)=>{const s=x.id==='me'?R.st.me:R.st[x.id];return `<div class="rv-row${x.id==='me'?' me':''}"><span class="rv-rk">${i+1}</span><span class="rv-ico" style="--c:${x.col}">${x.ico}</span><div class="rv-nm"><b>${x.n}</b><small>${x.id==='me'?'미션 · 태워 주기 · 교전':RV_F[x.id].d}</small></div><b class="rv-p num">${x.p}</b><div class="rv-cats">${Object.keys(RV_CAT).map(k=>`<span>${RV_CAT[k].ico}${s[k]||0}</span>`).join('')}${s.bonus?`<span>🏁+${s.bonus}</span>`:''}${x.id==='me'?'':`<span class="rv-resp"><i style="--w:${R.resp[x.id]}%"></i><em>존중 ${R.resp[x.id]}</em></span>`}</div></div>`}).join('')}</div>`;
+  const K=rvKillRank();h+=`<div class="rv-sub"><b>🎯 격퇴 순위</b><small>같은 자리 교전에서 무력화한 적(명)</small></div><div class="rv-kill">${K.map((x,i)=>`<span class="${x.id==='me'?'me':''}">${i+1}. ${x.ico} ${x.n} <b>${x.k}</b></span>`).join('')}</div>`;
+  h+=`<div class="rv-sub"><b>🤝 존중</b><small>밖에서 만나 이야기하고 도우면 오른다</small></div><div class="rv-perks">${Object.keys(RV_F).map(f=>`<div><b>${RV_F[f].ico} ${R.resp[f]}</b><span>${RV_PERK[f]}</span></div>`).join('')}</div>`;
+  const lg=R.log.slice(-6).reverse();if(lg.length)h+=`<div class="rv-sub"><b>📻 최근 소식</b></div><div class="rv-log">${lg.map(x=>`<span>${RV_F[x.f]?RV_F[x.f].ico+' '+RV_F[x.f].n:''} — ${x.txt}${x.p?` <i>+${x.p}</i>`:''}</span>`).join('')}</div>`;
+  h+=`<div class="ev-fq"><span>라이벌</span><button class="btn sm${rvOn()?' pri':''}" data-g3="rvon" data-v="1">켬</button><button class="btn sm${rvOn()?'':' pri'}" data-g3="rvon" data-v="0">끔</button></div>`;p.innerHTML=h}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=rvopen],[data-g3=rvx],[data-g3=rvon]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
+  if(k==='rvopen'){try{evBoard(false)}catch(x){}rvPanel(true);return}if(k==='rvx'){rvPanel(false);return}if(k==='rvon'){store.set('sg.rival',b.dataset.v==='1');rvPanel(true);return}},true);
+/* ---------- ⑦ 매 프레임 · 시작/끝 ---------- */
+function rvStep(dt){if(!OUT.on)return;if(!(dt>0))dt=0;if(RVS.need){RVS.needT-=dt;if(RVS.needT<=0&&OUT.scene&&typeof TJ!=='undefined'&&TJ.world){RVS.need=0;try{rvSquads()}catch(e){console.error(e)}}}
+  if(RVS.sq.length)rvSqStep(dt);
+  if(rvOn()&&!OUT.enc&&!(typeof OWC!=='undefined'&&OWC.on)){RVS.newsT-=dt;if(RVS.newsT<=0){RVS.newsT=130+Math.random()*90;const f=mrPick(Object.keys(RV_F));const F=RV_F[f];rvAddF(f,F.sp,1,mrPick(F.news))}}
+  if(RVS.tickT>0){RVS.tickT-=dt;rvTickUI()}else if($('#rvTick'))rvTickUI()}
+(function(){const b=window.outStep;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(OUT.on)rvStep(dt)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.startOutside;window.startOutside=function(){RVS.sq=[];RVS.need=1;RVS.needT=1.2;RVS.race=null;RVS.join=null;RVS.newsT=100+Math.random()*60;RVS.tick='';RVS.tickT=0;try{rvG();RVS.lastRk=rvMyRank()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;window.outReturn=function(){RVS.sq=[];RVS.need=0;RVS.race=null;rvPanel(false);const t=$('#rvTick');if(t)t.remove();return b.apply(this,arguments)}})();
+/* 끝 화면(72시간·캠페인 결과): 라이벌 최종 순위 */
+function rvEndHtml(){const R=typeof G!=='undefined'&&G&&G.rv;if(!R||!rvOn())return '';const L=rvRank();const K=rvKillRank();const me=L.findIndex(x=>x.id==='me')+1;
+  return `<div class="sec-h"><h3>🏆 선의의 라이벌 — 최종 순위</h3></div><div class="rv-end">${L.map((x,i)=>`<span class="${x.id==='me'?'me':''}">${i+1}. ${x.ico} ${x.n} <b>${x.p}</b></span>`).join('')}<small>${me===1?'우리 팀이 1위로 마쳤다 — 라이벌들이 박수를 보낸다.':`우리 팀 ${me}위 · 1위 ${L[0].ico} ${L[0].n}.`} 🎯 격퇴 1위 ${K[0].ico} ${K[0].n} ${K[0].k}명${G.taxi&&G.taxi.n?` · 🚕 태워 드린 손님 ${G.taxi.n}명`:''}</small></div>`}
+(function(){const base=window.vEnd;if(typeof base!=='function')return;window.vEnd=function(){const h=base.apply(this,arguments);try{const s=rvEndHtml();if(!s)return h;const at=h.indexOf('<div class="sec-h"><h3>판단 기록</h3>');return at<0?h+s:h.slice(0,at)+s+h.slice(at)}catch(e){return h}}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🏆 선의의 라이벌(v10.5)','가상의 네 세력과 구호 점수를 겨룬다 — 🚑 새벽 구조대(구조) · 🛡️ 청솔 자율방범대(호송·태워 주기) · ☂️ 노란 우산 나눔단(배달) · 🦅 솔개 예비군 수색대(적 침투조 격퇴). 점수: 구조·호송 10 · 배달·기타 8 · 태워 주기 4 · 격퇴 3(명). 상황판(🚨) → 🏆 순위 보기(전체 순위 · 격퇴 순위 · 존중 · 소식). 밖에서 두 세력의 조(깃발·색 모자·완장)를 만나 이야기하면 존중 +2와 정보, 세력별 도움(약·물·탄약·손님 소개·교전 동행). 미션을 시작하면 가끔 라이벌도 출동 — 먼저 끝내면 +5. 솔개 수색대는 같은 자리 교전에 아군 사수로 합류해 함께 싸운다(존중 60+면 늘 3명). 적대는 없다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
