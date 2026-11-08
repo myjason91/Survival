@@ -1585,6 +1585,15 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 @media (max-height:520px){.bag-ov .sheet.bag-sheet{padding:6px 10px 8px}.bag-ov .ov-head h2{font-size:16px}.bag-ov .ov-head .btn{padding:6px 12px;min-height:0}
   .bag-ov .bag-body{grid-template-columns:minmax(0,1fr) minmax(250px,1fr);min-height:0}.bag-ov .bag-grid{max-height:min(26vh,112px)}
   .bag-ov .bag-det{font-size:12px;padding-top:6px}.bag-ov .bag-det h3{font-size:14px;margin-bottom:2px}.bag-ov .bag-det p{margin:0 0 4px}.bag-ov .bag-det .btn{padding:8px 12px;min-height:0}}
+/* ---------- v10.9.2 배낭: 고른 물건(제목·장착 단추)을 오른쪽 칸 맨 위로 · 내 물건 격자 · 팀원 가방(접힘) 순서 · 성능 카드 맨 위 장착 줄 ---------- */
+.bag-ov .bag-side .bag-det{order:-1;border-top:0;border-bottom:1px solid var(--line);padding:0 0 8px}
+.bag-ov .bag-side .bag-res{order:0}.bag-ov .bag-side .bag-grid{order:1}.bag-ov .bag-side #bagTeam{order:2}
+.bag-ov .bag-side>*{flex-shrink:0}
+.tb-wrap{border:1px solid var(--line2);border-radius:10px;padding:6px 8px;background:var(--panel)}.tb-wrap>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:6px;font-size:13px}.tb-wrap>summary::-webkit-details-marker{display:none}.tb-wrap>summary::after{content:'▸';margin-left:auto;color:#9aa3ad}.tb-wrap[open]>summary::after{content:'▾'}.tb-wrap>summary small{color:#9aa3ad;font-size:11px}
+.tb-wrap .tb-row{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:5px 0;border-top:1px solid var(--line);font-size:12px}.tb-wrap .tb-items{color:#cfd6dc;font-size:11.5px}
+.bag-ws .ws-acts{position:sticky;top:-6px;z-index:4;display:flex;align-items:center;gap:6px;margin:-6px -6px 6px;padding:7px 8px;background:rgba(10,14,19,.98);border-bottom:1px solid var(--line2);border-radius:12px 12px 0 0}
+.bag-ws .ws-acts b{flex:1 1 auto;min-width:0;font-size:13px;color:#e8edf1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bag-ws .ws-acts .btn{flex:0 0 auto;width:auto;padding:7px 14px;min-height:0;font-size:13px;white-space:nowrap}
+
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13669,7 +13678,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.9.1';
+const APP_VER='10.9.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -19978,9 +19987,11 @@ function tbStep(dt){if(!OUT.on||typeof TEAM==='undefined'||!TEAM.list.length)ret
 (function(){const b=window.tmStep;window.tmStep=function(dt){const r=b.apply(this,arguments);try{tbStep(dt)}catch(e){console.error(e)}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(){try{if(typeof TEAM!=='undefined')TEAM.list.forEach(m=>{if(m.farm)tbEnd(m)})}catch(e){}return b.apply(this,arguments)}})();
 /* 배낭 화면: 팀원 가방 */
-function tbHtml(){const L=(typeof tmData==='function'?tmData():[]).filter(d=>d.st!=='kia');if(!L.length)return'';let h='<div class="tb-wrap"><b>👥 팀원 가방</b>';
+/* v10.9.2: 팀원 가방은 접어 둔다(펼친 상태는 기억) — 팀원 5명이면 오른쪽 칸을 다 차지해 내 물건·장착 단추가 밀려났다 */
+function tbHtml(){const L=(typeof tmData==='function'?tmData():[]).filter(d=>d.st!=='kia');if(!L.length)return'';const tot=L.reduce((s,d)=>{const bg=tbBag(d);return s+Object.keys(bg.k).filter(k=>bg.k[k]>0).length},0);let h=`<details class="tb-wrap"${TB.uiOpen?' open':''}><summary><b>👥 팀원 가방</b> <small>${L.length}명 · 물건 ${tot}칸${tot?' — 눌러서 받기':''}</small></summary>`;
   for(const d of L){const bg=tbBag(d);const ks=Object.keys(bg.k).filter(k=>bg.k[k]>0);h+=`<div class="tb-row"><div><b>${d.nm}</b> <small>${d.role||''} · ${ks.length}/${TB.cap}칸${d.st==='away'?' · 후송 중':''}</small><div class="tb-items">${ks.length?ks.map(k=>`${bagName(k)}${bg.k[k]>1?' ×'+bg.k[k]:''}`).join(' · '):'<i>비어 있음</i>'}</div></div>${ks.length&&d.st!=='away'?`<button class="btn sm" data-g3="tbtake" data-v="${d.id}">내 배낭으로 받기</button>`:''}</div>`}
-  return h+'</div>'}
+  return h+'</details>'}
+document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('tb-wrap'))TB.uiOpen=t.open},true);
 (function(){const b=window.bagSide;if(typeof b!=='function')return;window.bagSide=function(){const r=b.apply(this,arguments);try{let el=$('#bagTeam');const rs=$('#bagRes');if(!el&&rs){el=document.createElement('div');el.id='bagTeam';rs.after(el)}if(el)el.innerHTML=tbHtml()}catch(e){console.error(e)}return r}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=tbtake]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const d=tmData().find(x=>x.id===b.dataset.v);if(!d)return;const bg=tbBag(d);let n=0,left=0;
   for(const k of Object.keys(bg.k)){while(bg.k[k]>0){const g=bagGive(k.startsWith('ammo:')?k:k,k.startsWith('ammo:')?bg.k[k]:1);if(!g){left++;break}if(k.startsWith('ammo:'))bg.k[k]=0;else bg.k[k]--;n++}}
@@ -20533,7 +20544,11 @@ function wsDelta(id){const L=OPTX.last;if(!L||L.id!==id||Date.now()-L.t>90000)re
   const t=[P('배율',a.zoom>1?a.zoom:1,b.zoom>1?b.zoom:1,v=>v+'×'),P('정확도',Math.round(a.acc*100),Math.round(b.acc*100),v=>v),P('유효',a.rng,b.rng,v=>v,'m'),P('조준',+a.adsT.toFixed(2),+b.adsT.toFixed(2),v=>v.toFixed(2),'초'),P('무게',a.kg,b.kg,v=>v.toFixed(1),'kg')].filter(Boolean);
   return t.length?`<div class="ws-delta">${t.join('')}</div>`:''}
 /* 배낭: 총을 고르면 3D 진열 위 왼쪽에 '조준경 칸 + 바뀐 수치 + 성능 카드'를 띄운다(66 bagDet가 부른다) */
-function wsBagHtml(id){return wsCard(id)+wsDelta(id)+optChips(id)}
+/* v10.9.2 사용자 제보(폰 캡처): "총을 장착하는 버튼이 없어요" — 오른쪽 칸이 팀원 가방으로 가득 차 장착 단추가 화면 밖에 있었다
+   → 총을 누르면 뜨는 성능 카드 맨 위에 늘 보이는 장착 줄(카드를 굴려도 붙어 있음) */
+function wsActs(id){const W=ARMS[id];if(!W||!G)return '';const eq=(typeof GUN!=='undefined'&&GUN.eq===id)||G.eq===id;const rec=(G.arms||[]).find(x=>x.id===id)||{};const can=W.mag&&W.am&&(rec.mag||0)<W.mag&&typeof gunAmmoOf==='function'&&gunAmmoOf(W.am)>0;
+  return `<div class="ws-acts"><b>${W.n}</b><button class="btn ${eq?'':'pri'}" data-bag="eq" data-k="${id}">${eq?'넣기(해제)':'🔫 장착'}</button>${can?`<button class="btn" data-bag="load" data-k="${id}">탄 채우기</button>`:''}</div>`}
+function wsBagHtml(id){return wsActs(id)+wsCard(id)+wsDelta(id)+optChips(id)}
 function wsBagPanel(id){const v=$('#bagView');if(!v)return;let el=$('#bagWs');if(!id||!ARMS[id]){if(el)el.remove();return}
   if(!el){el=document.createElement('div');el.id='bagWs';el.className='bag-ws';v.appendChild(el);['pointerdown','pointermove','pointerup','wheel'].forEach(t=>el.addEventListener(t,e=>e.stopPropagation(),{passive:true}))}
   const st=el.dataset.id===id?el.scrollTop:0;el.dataset.id=id;el.innerHTML=wsBagHtml(id);el.scrollTop=st}
