@@ -1394,9 +1394,13 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .camp-prog{display:flex;align-items:center;gap:4px;color:#7f8a94;font-size:11px}.camp-prog i{width:14px;height:5px;border-radius:3px;background:rgba(255,255,255,.14)}.camp-prog i.ok{background:#8dffb0}.camp-prog i.now{background:#ffd84a}
 .camp-card.done{border-color:rgba(141,255,176,.5)}.camp-card.done .camp-no{background:#8dffb0}.camp-out{font-size:15px!important;color:#fff!important}
 .camp-stat{display:flex;flex-wrap:wrap;gap:6px}.camp-stat span{font-size:12px;color:#c9d2da;background:rgba(255,255,255,.06);padding:4px 8px;border-radius:8px}.camp-stat b{color:#fff}
-.camp-btn{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;display:grid;gap:1px;text-align:center;padding:9px 16px;border-radius:14px;border:1px solid rgba(255,216,74,.7);background:rgba(14,19,26,.92);color:#ffd84a;font:800 14px/1.25 var(--sans);box-shadow:0 8px 24px rgba(0,0,0,.5);cursor:pointer;max-width:calc(100% - 32px)}
-.camp-btn small{font:600 11px/1.3 var(--sans);color:#c9d2da}
-.sv3 .camp-btn{position:absolute;bottom:auto;top:120px}
+.camp-btn{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 6px;text-align:center;padding:9px 16px;border-radius:14px;border:1px solid rgba(255,216,74,.7);background:rgba(14,19,26,.92);color:#ffd84a;font:800 14px/1.25 var(--sans);box-shadow:0 8px 24px rgba(0,0,0,.5);cursor:pointer;max-width:calc(100% - 32px)}
+.camp-btn small{font:600 11px/1.3 var(--sans);color:#c9d2da}.camp-btn .cb-a{font-style:normal;opacity:.75}
+/* v10.5.1 대피소 3D: 화면 맨 위 가운데(12시) 한 줄 — 왼쪽 위·오른쪽 위 단추 줄 사이 빈자리에 맞춰 길이를 줄인다(80-camp campBtnPlace) */
+.sv3 .camp-btn{position:absolute;top:6px;bottom:auto;left:50%;transform:translateX(-50%);z-index:7;flex-wrap:nowrap;white-space:nowrap;gap:5px;padding:7px 11px;border-radius:10px;font:800 12px/1.3 system-ui,sans-serif;background:rgba(14,19,26,.86);box-shadow:0 2px 10px rgba(0,0,0,.4);max-width:none}
+.sv3 .camp-btn small{font:600 11px/1.2 system-ui,sans-serif;max-width:210px;overflow:hidden;text-overflow:ellipsis}
+.sv3 .camp-btn.cb-m .cb-g,.sv3 .camp-btn.cb-s .cb-g,.sv3 .camp-btn.cb-s .cb-n{display:none}
+.sv3.cine-on .camp-btn,.sv3.br-on .camp-btn,.sv3.owc-on .camp-btn,.sv3.ff-on .camp-btn{visibility:hidden}
 .camp-panel{position:absolute;left:50%;top:136px;transform:translateX(-50%);z-index:9;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 12px;border-radius:14px;background:rgba(6,8,11,.9);border:1px solid rgba(255,216,74,.6);color:#eef4f8;font-size:12.5px;max-width:min(560px,calc(100% - 20px));pointer-events:auto}.camp-panel b{color:#ffd84a}.camp-panel .btn{width:auto;min-height:0;padding:6px 12px}
 .camp-chip{background:rgba(255,216,74,.14)!important;border-color:rgba(255,216,74,.6)!important;color:#ffd84a!important}
 .camp-end{position:relative;width:min(560px,100%);max-height:calc(100vh - 24px);overflow:hidden;border-radius:20px;border:1px solid rgba(255,216,74,.5);box-shadow:0 20px 70px rgba(0,0,0,.6)}
@@ -13513,7 +13517,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.5';
+const APP_VER='10.5.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -18959,7 +18963,26 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a=campretr
 /* 교전규칙 위반은 엔딩에 남긴다 */(function(){const b=window.owcROE;if(typeof b!=='function')return;window.owcROE=function(a){const was=a&&a.hit;const r=b.apply(this,arguments);try{if(campOn()&&a&&!was&&a.hit)G.camp.roe=(G.camp.roe||0)+1}catch(e){}return r}})();
 /* ---------- 대피소 · 밖 화면의 📖 단추 ---------- */
 function campShelterTick(){if(!campOn()||UI.screen!=='shelter'||(typeof OUT!=='undefined'&&OUT.on)){campShelterBtn(false);return}if(G.camp.pendIntro&&!CAMP.ov){G.camp.pendIntro=0;save();campIntro();return}campShelterBtn(true)}
-function campShelterBtn(on){let b=$('#campBtn');if(!on){if(b)b.remove();return}const host=(typeof SV3!=='undefined'&&SV3.el&&SV3.el.isConnected)?SV3.el:document.body;if(!b||b.parentNode!==host){if(b)b.remove();b=document.createElement('button');b.id='campBtn';b.className='camp-btn';b.dataset.a='campintro';host.appendChild(b)}const C=campCh();const g=campGoal();const t=`📖 ${G.camp.ch}장 「${C.n}」<small>${g?campGoalName(g):''} · 이어서</small>`;if(b._t!==t){b._t=t;b.innerHTML=t}}
+/* v10.5.1 사용자 제보(2026-11-08): "2장 물과약 창이 안없어지네요. 최상단으로 해당 창을 이동시켜주세요 12시방향으로요"
+   → 대피소 3D 화면에서는 화면 맨 위 가운데(12시)의 한 줄 단추. 왼쪽 위 시계 줄(.hud)과 오른쪽 위 자유 행동 줄(#frBar) 사이 빈자리에 맞춰
+     '장 · 이름 · 목표' → '장 · 이름' → '장'으로 줄인다. 빈자리가 전혀 없으면(세로 화면 등) 위쪽 줄들 바로 아래 가운데. 누르면 장 안내가 열린다 */
+function campShelterBtn(on){let b=$('#campBtn');if(!on){if(b)b.remove();return}const host=(typeof SV3!=='undefined'&&SV3.el&&SV3.el.isConnected)?SV3.el:document.body;if(!b||b.parentNode!==host){if(b)b.remove();b=document.createElement('button');b.id='campBtn';b.className='camp-btn';b.dataset.a='campintro';host.appendChild(b)}const C=campCh();const g=campGoal();const gn=g?campGoalName(g):'';const t=`<b class="cb-c">📖 ${G.camp.ch}장</b><span class="cb-n">「${C.n}」</span>${gn?`<small class="cb-g">${gn}</small>`:''}<i class="cb-a">▸</i>`;if(b._t!==t){b._t=t;b.innerHTML=t;const al=`📖 ${G.camp.ch}장 「${C.n}」${gn?' — '+gn:''} · 눌러서 이어서`;b.title=al;b.setAttribute('aria-label',al)}campBtnPlace()}
+/* 자리 계산은 3D 화면 안쪽 좌표(offset)로 한다 — 세로로 든 폰에서는 3D 화면 전체가 90° 돌아가 있어 화면 좌표(getBoundingClientRect)가 맞지 않는다 */
+function campBox(el,host){if(!el||el.hidden||!el.offsetWidth||!el.offsetHeight||getComputedStyle(el).visibility==='hidden')return null;let x=0,y=0,e=el;while(e&&e!==host){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent}if(e!==host)return null;return{l:x,t:y,r:x+el.offsetWidth,b:y+el.offsetHeight}}
+function campBtnPlace(){const b=$('#campBtn');if(!b||!b.isConnected)return;const host=b.parentNode;
+  if(!host.classList||!host.classList.contains('sv3')){b.classList.remove('cb-m','cb-s','cb-low');b.style.left=b.style.top='';return}
+  const W=host.clientWidth;if(!(W>80&&host.clientHeight>80))return;
+  let hud=null;for(const h of host.querySelectorAll('.hud')){const q=campBox(h,host);if(q&&q.t<24){hud=q;break}}
+  const fb=campBox($('#frBar'),host),st=campBox($('#frStat'),host),hint=campBox(host.querySelector('.sv3-hint'),host);const L=hud?hud.r+8:8,R=fb?fb.l-8:W-8;
+  const fit=lv=>{b.classList.toggle('cb-m',lv==='m');b.classList.toggle('cb-s',lv==='s');return b.offsetWidth};
+  let lv='',w=0,y0=6,cx=W/2;for(const k of ['f','m','s']){w=fit(k);if(w<=R-L){lv=k;break}}
+  if(lv)cx=Math.max(L+w/2,Math.min(R-w/2,W/2));
+  else{/* 위쪽 줄에 빈자리가 없다 → 위쪽 줄들 바로 아래 가운데. 왼쪽 안내 글과 겹치면 그 오른쪽, 그래도 안 되면 그 아래 */
+    y0=Math.round(Math.max(hud?hud.b:0,fb?fb.b:0,st?st.b:0)+6);for(const k of ['m','s']){w=fit(k);if(w<=W-16){lv=k;break}}if(!lv)w=fit('s');
+    const h=b.offsetHeight||30;if(hint&&hint.t<y0+h&&hint.b>y0&&hint.r>cx-w/2-8){if(hint.r+8+w/2<=W-8)cx=hint.r+8+w/2;else y0=Math.round(hint.b+6)}}
+  b.classList.toggle('cb-low',y0>6);b.style.left=Math.round(cx)+'px';b.style.top=y0+'px'}
+(function(){const b=window.freeBar;if(typeof b!=='function')return;window.freeBar=function(){const r=b.apply(this,arguments);try{if($('#campBtn'))campBtnPlace()}catch(e){}return r}})();
+addEventListener('resize',()=>{clearTimeout(CAMP.plT);CAMP.plT=setTimeout(()=>{try{campBtnPlace()}catch(e){}},120)});
 (function(){const b=window.render;window.render=function(){const r=b.apply(this,arguments);try{setTimeout(campShelterTick,60)}catch(e){}return r}})();
 (function(){const b=window.outBar;window.outBar=function(){const r=b.apply(this,arguments);try{const bar=$('#oBar');if(bar&&campOn()){let c=bar.querySelector('[data-a=campgoal]');if(!c){c=document.createElement('button');c.dataset.a='campgoal';c.className='mis-btn camp-chip';bar.insertBefore(c,bar.firstChild)}const C=campCh();const t=`📖 ${G.camp.ch}장 ${Math.min(G.camp.gi+1,C.goals.length)}/${C.goals.length}`;if(c._t!==t){c._t=t;c.textContent=t}}}catch(e){}return r}})();
 (function(){const b=window.outStep;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(campOn()&&OUT.on){campPendStep();CAMP.uiT-=dt;if(CAMP.uiT<=0){CAMP.uiT=.5;if(MX.cur)campPanelOff()}}}catch(e){console.error(e)}return r}})();
