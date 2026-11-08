@@ -1454,6 +1454,16 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .camp-panel .camp-x{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#dfe6ec;border-radius:10px;padding:5px 10px;font:800 12px var(--sans);cursor:pointer;white-space:nowrap}
 .camp-panel .btn{white-space:nowrap}
 @media(max-height:500px){.camp-panel{top:92px;flex-wrap:nowrap;font-size:12px;padding:5px 8px 5px 12px}.camp-panel .btn{font-size:12.5px;padding:5px 11px}.camp-panel b{white-space:nowrap}.camp-panel span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}}
+/* v10.5.2 알림은 아래 가운데(6시) — 86-dock.js가 아래 단추를 재서 쌓는다. 처음 뜨는 순간에도 아래쪽에 보이게 기본값 */
+.sv3 #oNote,.sv3 #frNote,.sv3 #oWarn,.sv3 #rcWarn,.sv3 .mis-hud,.sv3 .mx-hud,.sv3 .tx-hud,.sv3 .camp-panel,.sv3 .ev-alert,.sv3 .tip84,.sv3 .chf-hud{top:auto!important;bottom:84px}
+.sv3.dock-pause .docked,.sv3 .docked.dock-skip{visibility:hidden!important}
+/* 공습경보 띠(85-raidcover): 엎드리기 단추만 누를 수 있게 */
+.rc-warn .rc-prone{pointer-events:auto;margin-top:5px;justify-self:center;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.14);color:#fff;font:800 12.5px var(--sans);padding:5px 16px;border-radius:10px;cursor:pointer}
+.rc-warn .rc-prone[hidden]{display:none}.rc-warn.prone{background:rgba(92,60,8,.9);border-color:#ffb224;animation:none}.rc-warn.prone span{color:#ffe2a8}
+/* 6시 자리에 쌓인 안내 문구는 제목·내용을 한 줄로 이어 짧게(조준점까지 올라오지 않게) · 공습 띠는 단추를 오른쪽에 */
+.sv3 .fr-note.docked{padding:6px 12px;line-height:1.35}.sv3 .fr-note.docked>b{display:inline;margin:0 6px 0 0;font-size:13px}.sv3 .fr-note.docked>div{display:inline}.sv3 .fr-note.docked>small{display:inline;margin:0 0 0 6px}
+.sv3 .rc-warn.docked{grid-template-columns:1fr auto;column-gap:12px;align-items:center;text-align:left;padding:7px 10px 7px 14px}.sv3 .rc-warn.docked>b{grid-column:1}.sv3 .rc-warn.docked>span{grid-column:1}.sv3 .rc-warn.docked .rc-prone{grid-column:2;grid-row:1/3;margin:0;align-self:center}
+
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -12635,16 +12645,16 @@ function tjPopulate(sc){const SG=new T.Group();SG.name='outStatic';sc.add(SG);OU
   P.shops.forEach(s=>{OUT.covers.push({x:s.door[0],z:s.door[1],r:3.2,n:SHN[s.k]});if(!done['shop:'+s.k])OUT.spots.push({id:'shop:'+s.k,k:s.k,x:s.door[0],z:s.door[1],r:2.6,g:'?',n:`${SHN[s.k]} 안 뒤지기`,s:'30분 · 물자 발견 가능',h:.5})});
   OUT.covers.push({x:P.shelterB.door[0],z:P.shelterB.door[1],r:3.4,n:'상가 지하 대피소'},{x:P.subway.p[0],z:P.subway.p[1],r:4,n:'지하보도'},{x:P.gym[0],z:P.gym[1],r:4,n:'체육관'},{x:P.guard[0],z:P.guard[1],r:3.2,n:'경비실'});
   TJ.lobbies.forEach(q=>OUT.covers.push({x:q[0],z:q[1],r:3.2,n:`${q[2]}동 1층 현관`}));
-  /* 버려진 차·불탄 차 — 멀쩡한 차는 운전할 수 있게 따로 둔다(병합 제외) */OUT.dcars=[];P.cars.forEach((c,i)=>{const b=c.b;const car=PK.car(b?null:['#9aa3ad','#d0d0d0','#5a2a2a','#2a3a6a'][i%4],b?SG:sc,!!b);if(!b)car.userData.dyn=1;car.position.set(c.p[0],0,c.p[1]);car.rotation.y=yawOf(c.t[0],c.t[1])+(r()-.5)*.6;const cbx=new T.Box3().setFromObject(car);TOWN.solids.push(cbx);if(!b)OUT.dcars.push({i,car,box:cbx});
+  /* 버려진 차·불탄 차 — 멀쩡한 차는 운전할 수 있게 따로 둔다(병합 제외) */OUT.dcars=[];P.cars.forEach((c,i)=>{const b=c.b;const car=PK.car(b?null:['#9aa3ad','#d0d0d0','#5a2a2a','#2a3a6a'][i%4],b?SG:sc,!!b);if(!b)car.userData.dyn=1;car.position.set(c.p[0],0,c.p[1]);car.rotation.y=yawOf(c.t[0],c.t[1])+(r()-.5)*.6;/* v10.5.2: 비스듬히 선 차를 축 정렬 상자 하나로 감싸면 옆 차로까지 막는 '보이지 않는 벽' — 차 길이를 따라 작은 상자 3개 + 차 모양(obb) */const cbs=tjCarBoxes(car);cbs.forEach(q=>TOWN.solids.push(q));if(!b)OUT.dcars.push({i,car,box:null,boxes:cbs});
     if(b){if(i===2){FX3.fire(new T.Vector3(c.p[0],1.1,c.p[1]),{sec:99999,r:1.3});OUT.fires.push({x:c.p[0],z:c.p[1],r:2.6})}else MM(GG.pl(3,5),new T.MeshBasicMaterial({map:scorchTex(),transparent:true,opacity:.8,depthWrite:false}),c.p[0],.03,c.p[1],{p:sc,rx:-Math.PI/2,cast:false,recv:false})}
     else if(!done['car:'+i])OUT.spots.push({id:'car:'+i,k:'car',x:c.p[0]-c.t[0]*3.0,z:c.p[1]-c.t[1]*3.0,r:2.1,g:'?',n:'버려진 차 트렁크 열기',s:'30분 · 담요·물 있을 수도',h:.5})});
-  /* 잔해 */const rub=mat('#5e5a55',{r:1});const c2=P.cars[2];for(let i=0;i<12;i++){const a=r()*6.28,d=3+r()*14;const x=c2.p[0]+Math.cos(a)*d,z=c2.p[1]+Math.sin(a)*d;const b=MM(GG.box(.6+r()*1.4,.25+r()*.5,.5+r()*1.2),rub,x,.2,z,{p:SG});b.rotation.y=r()*3;TOWN.solids.push(new T.Box3().setFromObject(b))}
+  /* 잔해 */const rub=mat('#5e5a55',{r:1});const c2=P.cars[2];for(let i=0;i<12;i++){const a=r()*6.28,d=3+r()*14;const x=c2.p[0]+Math.cos(a)*d,z=c2.p[1]+Math.sin(a)*d;const b=MM(GG.box(.6+r()*1.4,.25+r()*.5,.5+r()*1.2),rub,x,.2,z,{p:SG});b.rotation.y=r()*3;{const q=new T.Box3().setFromObject(b);q.rub=1;TOWN.solids.push(q)}}
   /* 두 번째 화재: 상가 2층 */{const s=P.shops[3];FX3.fire(new T.Vector3(s.mid[0]-s.n[0]*1.5,7.5,s.mid[1]-s.n[1]*1.5),{sec:99999,r:2.0})}
   /* 검문소(국군): 모래주머니·표지·군인 2 */const ck=P.check;const cn=[-ck.t[1],ck.t[0]];for(let i=0;i<6;i++){const o=-1.5-i*1.3;const b=MM(GG.box(1.2,.45,.6,.08),mat('#7a7258',{r:1}),ck.p[0]+cn[0]*o,.25,ck.p[1]+cn[1]*o,{p:SG});b.rotation.y=yawOf(cn[0],cn[1])+Math.PI/2;TOWN.solids.push(new T.Box3().setFromObject(b))}
   const sg=MM(GG.pl(3,.8),mat('#ffffff',{map:textTex('검문소 · 통행 확인','#2a3a24','#fff',256,64,34),r:.7}),ck.p[0]-cn[0]*5,2.2,ck.p[1]-cn[1]*5,{p:SG,cast:false,recv:false});sg.rotation.y=yawOf(-ck.t[0],-ck.t[1]);
   for(let i=0;i<2;i++){const h=civHuman(10+i,i?'look':'idle','rok');const o=-3+i*3.4;h.root.position.set(ck.p[0]+cn[0]*o-ck.t[0]*1.6,0,ck.p[1]+cn[1]*o-ck.t[1]*1.6);h.root.rotation.y=yawOf(-ck.t[0],-ck.t[1]);sc.add(h.root);OUT.npcs.push({h,kind:'rok',home:{x:h.root.position.x,z:h.root.position.z}})}
   const askP=[ck.p[0]-ck.t[0]*3.2,ck.p[1]-ck.t[1]*3.2];if(!done['ask:'+G.turn])OUT.spots.push({id:'ask:'+G.turn,k:'ask',x:askP[0],z:askP[1],r:2.8,g:'i',n:'검문소 군인에게 상황 묻기',s:'30분 · 바깥 소식·힌트',h:.5});
-  if(G.turn>=4){const tp=P.truck;const tr=PK.truck(SG);tr.position.set(tp.p[0],0,tp.p[1]);tr.rotation.y=yawOf(tp.t[0],tp.t[1]);TOWN.solids.push(new T.Box3().setFromObject(tr));const d='relief:'+Math.floor(G.turn/4);if(!done[d])OUT.spots.push({id:d,k:'truck',x:tp.p[0]+cn[0]*2.6,z:tp.p[1]+cn[1]*2.6,r:2.8,g:'▤',n:'구호품 트럭에서 배급 받기',s:'30분 · 물 4L·식량 2',h:.5})}
+  if(G.turn>=4){const tp=P.truck;const tr=PK.truck(SG);tr.position.set(tp.p[0],0,tp.p[1]);tr.rotation.y=yawOf(tp.t[0],tp.t[1]);tjObjBoxes(tr).forEach(q=>TOWN.solids.push(q));const d='relief:'+Math.floor(G.turn/4);if(!done[d])OUT.spots.push({id:d,k:'truck',x:tp.p[0]+cn[0]*2.6,z:tp.p[1]+cn[1]*2.6,r:2.8,g:'▤',n:'구호품 트럭에서 배급 받기',s:'30분 · 물 4L·식량 2',h:.5})}
   /* 자판기·게시판(마을 쉼터) */const vg=P.vgreen||[P.shops[0].door[0],P.shops[0].door[1]];const vm=grp(vg[0]+2,0,vg[1],SG);MM(GG.box(1.0,1.8,.8,.04),mat('#c02a2a',{r:.5}),0,.9,0,{p:vm});MM(GG.box(.8,1.0,.05),mat('#9fc4e0',{r:.1,e:'#5a7a9a',ei:.3}),0,1.1,.42,{p:vm,cast:false});TOWN.solids.push(new T.Box3().setFromCenterAndSize(new T.Vector3(vg[0]+2,.9,vg[1]),new T.Vector3(1,1.8,.8)));
   if(!done.vend)OUT.spots.push({id:'vend',k:'vend',x:vg[0]+2,z:vg[1]+1.4,r:2.0,g:'?',n:'멈춘 자판기',s:'30분 · 유리를 깨면 생수',h:.5});
   const nb=grp(vg[0]-3,0,vg[1],SG);MM(GG.box(2.6,1.6,.12),mat('#3a4a5a',{r:.7}),0,1.5,0,{p:nb});MM(GG.pl(2.4,1.4),mat('#ffffff',{map:textTex('대피·구호 안내','#f2f0e8','#1a2a3a',256,160,30),r:.9}),0,1.5,.07,{p:nb,cast:false,recv:false});for(const sx of [-1.1,1.1])MM(GG.cyl(.05,.05,.8,6),mat('#5a5e62'),sx,.4,0,{p:nb,cast:false});TOWN.solids.push(new T.Box3().setFromCenterAndSize(new T.Vector3(vg[0]-3,1.2,vg[1]),new T.Vector3(2.6,2.4,.3)));
@@ -12852,12 +12862,28 @@ function tjDriveStart(c){const dc=c.dc;if(!dc)return;const done=G.outDone||(G.ou
   OUT.me.root.visible=false;OUT.follow.forEach(f=>{f.h.root.visible=false});FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;FP3.yaw=0;FP3.pitch=-.1;try{SND.engineStart()}catch(e){}if(SV3.el)SV3.el.classList.add('tj-driving');
   if(!car.userData.hl){for(const sx of [-.6,.6]){const hl=new T.SpotLight('#fff3d8',OUT.tod==='day'?0:120,45,.5,.6,1.4);hl.position.set(sx,.7,2.0);hl.target.position.set(sx*2,0,30);car.add(hl);car.add(hl.target)}car.userData.hl=1}
   OUT.sig='';outNote(`<b>시동이 걸렸다</b><div>왼쪽 조이스틱 위=가속 · 아래=브레이크·후진 · 좌우=핸들. 아무 데서나 '차에서 내리기'.${OUT.follow.length?' 동행한 사람도 함께 탔다.':''}</div>`,4200)}
-function tjCarHit(x,z,yaw){const O=TJ.occ;const c=Math.cos(yaw),s=Math.sin(yaw);for(const [a,b] of [[-.95,-2.1],[.95,-2.1],[-.95,2.1],[.95,2.1],[0,2.2],[0,-2.2],[0,0]]){const px=x+a*c+b*s,pz=z-a*s+b*c;if(O){const i=Math.floor(px-O.x0),j=Math.floor(pz-O.z0);if(i<0||j<0||i>=O.n||j>=O.n||O.b[j*O.n+i])return true}}
-  const bx=new T.Box3().setFromCenterAndSize(new T.Vector3(x,.8,z),new T.Vector3(2.0,1.4,4.4));for(const b of TOWN.solids){if(bx.intersectsBox(b))return true}return false}
+/* v10.5.2 사용자 제보(2026-11-08): "운전 중에 보이지 않는 무언가의 장애물에 막혀 차가 이동하지 않는 버그"
+   원인 ① 내 차 충돌 상자(2.0×4.4)가 차 방향을 따라 돌지 않았다 — 동서로 달리면 옆으로 2.2m까지 막혔다
+   원인 ② 비스듬히 선 차·트럭을 축 정렬 상자 하나로 감싸 실제보다 1~2m 큰 '보이지 않는 벽'이 생겼다
+   → 차는 방향 따라 돈 직사각형(분리축 검사)으로 맞대고, 선 차·트럭은 자기 모양(obb)으로 잰다. 낮은 잔해는 덜컹거리며 넘는다 */
+function tjOBB(x,z,yaw,hl,hw){const fx=Math.sin(yaw),fz=Math.cos(yaw);return{x,z,fx,fz,lx:fz,lz:-fx,hl,hw}}
+function tjObbHit(A,B){const dx=B.x-A.x,dz=B.z-A.z;for(const [ux,uz] of [[A.fx,A.fz],[A.lx,A.lz],[B.fx,B.fz],[B.lx,B.lz]]){const ra=A.hl*Math.abs(A.fx*ux+A.fz*uz)+A.hw*Math.abs(A.lx*ux+A.lz*uz),rb=B.hl*Math.abs(B.fx*ux+B.fz*uz)+B.hw*Math.abs(B.lx*ux+B.lz*uz);if(Math.abs(dx*ux+dz*uz)>=ra+rb)return false}return true}
+function tjBoxObb(b){return b.obb||{x:(b.min.x+b.max.x)/2,z:(b.min.z+b.max.z)/2,fx:0,fz:1,lx:1,lz:0,hl:(b.max.z-b.min.z)/2,hw:(b.max.x-b.min.x)/2}}
+/* 겹친 곳 수(all=false면 하나 찾으면 바로 1) — 건물 칸(1m) 7점 + 장애물 상자 */
+function tjCarHitN(x,z,yaw,all){const O=TJ.occ;const c=Math.cos(yaw),s=Math.sin(yaw);let n=0;for(const [a,b] of [[-.95,-2.1],[.95,-2.1],[-.95,2.1],[.95,2.1],[0,2.2],[0,-2.2],[0,0]]){const px=x+a*c+b*s,pz=z-a*s+b*c;if(O){const i=Math.floor(px-O.x0),j=Math.floor(pz-O.z0);if(i<0||j<0||i>=O.n||j>=O.n||O.b[j*O.n+i]){n++;if(!all)return n}}}
+  const A=tjOBB(x,z,yaw,2.15,.97);const seen=new Set();for(const b of TOWN.solids){if(b.rub||b.max.y<.42||b.min.y>1.6)continue;if(b.obb){if(seen.has(b.obb))continue;seen.add(b.obb)}if(tjObbHit(A,tjBoxObb(b))){n++;if(!all)return n}}return n}
+function tjCarHit(x,z,yaw){return tjCarHitN(x,z,yaw,false)>0}
+/* 선 물체(트럭 등)의 충돌: 길이를 따라 정사각 상자 몇 개(걷는 사람용) + 모두 같은 obb(차끼리 맞댈 때) */
+function tjObjBoxes(obj,h){const ry=obj.rotation.y;obj.rotation.y=0;obj.updateMatrixWorld(true);const bb=new T.Box3().setFromObject(obj);obj.rotation.y=ry;obj.updateMatrixWorld(true);const hl=Math.max(.5,(bb.max.z-bb.min.z)/2),hw=Math.max(.4,(bb.max.x-bb.min.x)/2);
+  const fx=Math.sin(ry),fz=Math.cos(ry);const o=tjOBB(obj.position.x,obj.position.z,ry,hl,hw);const n=Math.max(1,Math.ceil(hl/hw));const out=[];for(let i=0;i<n;i++){const k=n>1?-hl+hw+i*(2*hl-2*hw)/(n-1):0;const cx=obj.position.x+fx*k,cz=obj.position.z+fz*k;const b=new T.Box3(new T.Vector3(cx-hw,0,cz-hw),new T.Vector3(cx+hw,h||bb.max.y||2.6,cz+hw));b.obb=o;out.push(b)}return out}
 function tjDrivePre(dt){const D=OUT.drv;if(!D)return;const car=D.car;D.t+=dt;const mv=FP3.mv;const th=OUT.enc?0:mv.y;const st=OUT.enc?0:mv.x;
   const steerT=-st*.45*clamp(1.15-Math.abs(D.v)/26,.45,1);D.steer+=(steerT-D.steer)*Math.min(1,dt*6);const acc=th>0?th*5.5:th<0?th*9:0;D.v+=acc*dt;D.v-=D.v*.3*dt;if(th===0)D.v-=Math.sign(D.v)*Math.min(Math.abs(D.v),1.6*dt);D.v=clamp(D.v,-4,16);
-  const yawRate=(D.v/3.0)*Math.tan(D.steer*Math.min(1,.45+Math.abs(D.v)/10));D.yaw+=yawRate*dt;const nx=car.position.x+Math.sin(D.yaw)*D.v*dt,nz=car.position.z+Math.cos(D.yaw)*D.v*dt;const R=TJ_DATA.R-14;
-  if(Math.abs(nx)<R&&Math.abs(nz)<R&&!tjCarHit(nx,nz,D.yaw)){car.position.x=nx;car.position.z=nz}else{if(Math.abs(D.v)>3){sv3Shake(.5);SND.boom(false,.22);vib(50);FX=[];if(Math.abs(D.v)>9){hurt('me',4);OUT.fx.push(...FX);outStat()}}D.v*=-.25}
+  const yawRate=(D.v/3.0)*Math.tan(D.steer*Math.min(1,.45+Math.abs(D.v)/10));const y0=D.yaw;D.yaw+=yawRate*dt;const nx=car.position.x+Math.sin(D.yaw)*D.v*dt,nz=car.position.z+Math.cos(D.yaw)*D.v*dt;const R=TJ_DATA.R-14;
+  /* v10.5.2: 이미 무언가와 겹쳐 있으면(내린 자리·돌던 중) 겹침을 늘리지 않는 쪽으로는 움직이게 둔다 — 앞뒤 모두 막혀 서 버리던 것. 막히면 방향도 되돌린다 */
+  const n0=tjCarHitN(car.position.x,car.position.z,y0,true);const inR=Math.abs(nx)<R&&Math.abs(nz)<R;const n1=inR?tjCarHitN(nx,nz,D.yaw,n0>0):99;
+  if(inR&&(n0?n1<=n0:n1===0)){car.position.x=nx;car.position.z=nz;D.blk=0}else{D.yaw=y0;if(Math.abs(D.v)>3){sv3Shake(.5);SND.boom(false,.22);vib(50);FX=[];if(Math.abs(D.v)>9){hurt('me',4);OUT.fx.push(...FX);outStat()}}D.v*=-.25;if(Math.abs(th)>.3)D.blk=(D.blk||0)+dt}
+  /* 안전장치: 가속·후진을 1.2초 넘게 눌러도 앞뒤 모두 막혀 있으면 가까운 빈자리로 차를 빼낸다 */if((D.blk||0)>1.2){D.blk=0;const fx0=Math.sin(D.yaw),fz0=Math.cos(D.yaw);if(tjCarHit(car.position.x+fx0*.45,car.position.z+fz0*.45,D.yaw)&&tjCarHit(car.position.x-fx0*.45,car.position.z-fz0*.45,D.yaw)){const p=tjCarFree(car.position.x,car.position.z,D.yaw);if(p){car.position.x=p[0];car.position.z=p[1];D.yaw=p[2];D.v=0;D.unstuck=(D.unstuck||0)+1;outNote('<b>차를 빼냈다</b><div>끼인 자리에서 가까운 빈자리로 옮겼다.</div>',1800)}}}
+  /* 낮은 잔해: 넘어가되 덜컹거리며 느려진다 */if(Math.abs(D.v)>2){const A=tjOBB(car.position.x,car.position.z,D.yaw,2.15,.97);for(const b of TOWN.solids){if(b.rub&&tjObbHit(A,tjBoxObb(b))){D.v*=Math.pow(.35,dt);D.bumpT=(D.bumpT||0)-dt;if(D.bumpT<=0){D.bumpT=.35;sv3Shake(.18);vib(15)}break}}}
   car.rotation.y=D.yaw;const accL=(D.v-D.prevV)/Math.max(dt,1e-3);D.prevV=D.v;D.pitch+=((-accL*.012)-D.pitch)*Math.min(1,dt*5);D.roll+=((yawRate*D.v*.02)-D.roll)*Math.min(1,dt*5);car.rotation.x=clamp(D.pitch,-.06,.06)*.5;car.rotation.z=clamp(D.roll,-.07,.07)*.5;
   try{SND.engine(D.v,th);SND.skid(Math.max(0,Math.abs(yawRate*D.v)-3.5)/4)}catch(e){}
   FP3.pos.set(car.position.x,0,car.position.z);TJ.head=D.yaw+Math.PI;OUT.follow.forEach(f=>{f.h.root.position.set(car.position.x,0,car.position.z)});
@@ -12868,7 +12894,9 @@ function tjDrivePost(dt){const D=OUT.drv;if(!D)return;const car=D.car,cam=SV3.ca
   if(!D.cam){D.cam=new T.Vector3(tx,hgt,tz)}const k=Math.min(1,dt*4);D.cam.x+=(tx-D.cam.x)*k;D.cam.z+=(tz-D.cam.z)*k;D.cam.y+=(Math.max(1.3,hgt-FP3.pitch*2)-D.cam.y)*k;/* v9.4: 바닥 아래로는 안 내려간다 */cam.position.copy(D.cam);cam.lookAt(car.position.x+Math.sin(cy)*6,1.0,car.position.z+Math.cos(cy)*6);
   cam.rotation.z+=SV3.shake*Math.sin(SV3.t*37)*.02}
 /* 세운 차의 충돌: 비스듬히 선 차를 축 정렬 상자 하나로 감싸면 옆자리까지 막혀(내린 사람이 상자 안에 갇힌다) — 차 길이를 따라 작은 상자 3개로 */
-function tjCarBoxes(car){const y=car.rotation.y,fx=Math.sin(y),fz=Math.cos(y);return [-1.35,0,1.35].map(k=>{const cx=car.position.x+fx*k,cz=car.position.z+fz*k;return new T.Box3(new T.Vector3(cx-.82,0,cz-.82),new T.Vector3(cx+.82,1.5,cz+.82))})}
+function tjCarBoxes(car){const y=car.rotation.y,fx=Math.sin(y),fz=Math.cos(y);const o=tjOBB(car.position.x,car.position.z,y,2.15,.97);return [-1.35,0,1.35].map(k=>{const cx=car.position.x+fx*k,cz=car.position.z+fz*k;const b=new T.Box3(new T.Vector3(cx-.82,0,cz-.82),new T.Vector3(cx+.82,1.5,cz+.82));b.obb=o;return b})}
+/* 가까운 빈자리(차 모양이 아무것과도 겹치지 않는 곳): 0.6~4.2m · 16방향, 방향은 그대로 → ±20° */
+function tjCarFree(x,z,yaw){const R=TJ_DATA.R-14;for(const d of [.6,1.2,1.8,2.4,3.2,4.2])for(const dy of [0,.35,-.35])for(let k=0;k<16;k++){const a=k/16*Math.PI*2;const px=x+Math.cos(a)*d,pz=z+Math.sin(a)*d;if(Math.abs(px)<R&&Math.abs(pz)<R&&!tjCarHit(px,pz,yaw+dy))return [px,pz,yaw+dy]}return null}
 function tjDriveEnd(){const D=OUT.drv;if(!D)return;const car=D.car,y=car.rotation.y;car.rotation.x=0;car.rotation.z=0;const lx=Math.cos(y),lz=-Math.sin(y),fx=Math.sin(y),fz=Math.cos(y);let p=null;
   const bx=tjCarBoxes(car);bx.forEach(b=>TOWN.solids.push(b));D.dc.boxes=bx;D.dc.box=null;FP3.boxes=TOWN.solids.filter(b=>b.max.y>.4);
   /* 내릴 자리: 차 상자를 넣은 뒤에 고른다(운전석 쪽 → 반대쪽 → 앞뒤 → 대각선, 2.1·2.7·3.4m) */
@@ -13517,7 +13545,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.5.1';
+const APP_VER='10.5.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -16966,7 +16994,8 @@ if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>h[0]==='밖 탐색')
 /* ===================== 66 · v9.5 배낭 15칸 — 3D 진열(보유 물건·무기를 돗자리에 펼쳐 놓고 돌려 본다) · 사용·장착·버리기 ===================== */
 /* 칸: 물건 종류마다 1칸(같은 종류는 쌓인다) · 무기는 종류별 칸 수(소총 2·권총 1·기관총 3) · 탄은 주머니(0칸) · 물·식량·의약품·전력은 '비축'(대피소와 공용, 0칸)
    여는 곳: 밖 탐색·아파트·상가 위쪽 띠 '🎒 배낭' · 대피소 왼쪽 위 🎒 · PC B 키. 열면 조작이 멈추고(걷기 잠금) 별도 WebGL 캔버스에 3D로 그린다 — 끌면 돌아가고, 물건을 누르면 앞으로 나와 설명·행동 */
-const BAG_CAP=15;
+/* v10.5.2 사용자 요청(2026-11-08): "가방슬롯도 50개로 확장해 주세요" — 15칸 → 50칸. 16개 넘게 들면 배낭 화면은 10×5 칸으로 작게 놓고, 이름표는 고른 것만 */
+const BAG_CAP=50;
 const BAG={open:false,r:null,sc:null,cam:null,items:[],sel:null,yaw:0,pitch:.55,drag:null,raf:0,t:0,lab:null,canvas:null,wrap:null};
 const BAG_N={ramen:'라면',burner:'휴대용 가스버너',radio:'휴대용 라디오',wallet:'지갑·신분증',laptop:'노트북',charger:'휴대폰 충전기',cash:'현금 봉투',gold:'금붙이·시계',quilt:'두꺼운 이불',teddy:'아이 애착인형',firstaid:'구급상자',wipes:'물티슈·휴지',bleach:'무향 락스',torch:'손전등',candle:'양초·라이터',tools:'멀티툴·장갑',vinyl:'비닐·우의·테이프',mask:'KF94 마스크',whistle:'호루라기',blanket:'담요',drink:'음료수',gascan:'휘발유통',rope:'로프',helmet:'방탄헬멧',vest:'방탄조끼',nade:'K413 수류탄',smoke:'연막탄',drone:'정찰 드론',canfood:'통조림',snack:'간식·초코바',battery:'건전지',lighter:'라이터',energy:'에너지바'};
 const BAG_D={ramen:'끓여야 먹는다(가스버너)',burner:'조리용',radio:'건전지식 · 정보(힌트)',wallet:'신원 확인·구호 등록',laptop:'업무 자료',charger:'콘센트용',cash:'정전 시 카드 불가',gold:'귀중품',quilt:'보온 · 부피 큼',teddy:'아이 안정',firstaid:'거즈·붕대·소독약 · 출혈 지혈',wipes:'위생 · 감염 예방',bleach:'식수 소독용',torch:'건전지 포함 · 밤 시야',candle:'조명',tools:'공구함',vinyl:'밀폐·오염 차단',mask:'호흡기 보호(낙진·화학)',whistle:'구조 신호',blanket:'보온',drink:'마시면 물 +0.5L · 사기 +1',gascan:'차에 넣으면 연료',rope:'구조·결박',helmet:'머리 피격 피해 감소(교전)',vest:'총탄 피해 40% 감소(교전)',nade:'교전 때 던진다',smoke:'8초 연막',drone:'큰 지도에 150m 안 물자·사람 위치 표시(1회)',canfood:'먹으면 식량 +1일분 · 체력 +3',snack:'먹으면 사기 +2',battery:'라디오·손전등 전력',lighter:'불 붙이기',energy:'먹으면 체력 +4'};
@@ -16993,20 +17022,21 @@ function bagOpen(){if(BAG.open||!G)return;if(!HAS3D||!R3.init()){bagOpen2D();ret
   bagBuild();bagSide();bagResize();BAG.yaw=.35;BAG.pitch=.6;BAG.t=0;bagBind();cancelAnimationFrame(BAG.raf);BAG.last=performance.now();BAG.raf=requestAnimationFrame(bagLoop)}
 function bagClose(){if(!BAG.open)return;BAG.open=false;cancelAnimationFrame(BAG.raf);BAG.raf=0;FP3.lock=BAG.lockWas||false;const o=$('#bagOv');if(o)o.remove();if(BAG.sc){BAG.sc.traverse(x=>{if(x.geometry&&x.userData.own)x.geometry.dispose()});BAG.sc=null}BAG.items=[];BAG.sel=null;BAG.confirmDrop=null;document.removeEventListener('click',bagClick,true);window.removeEventListener('resize',bagResize);document.removeEventListener('keydown',bagKey);const f=$('#bagFab');if(f)f.innerHTML=`🎒<small>${bagUsed()}/${BAG_CAP}</small>`}
 function bagBuild(){const sc=new T.Scene();BAG.sc=sc;sc.add(new T.HemisphereLight('#e8eef8','#4a4036',1.0));const sun=new T.DirectionalLight('#fff3e0',2.0);sun.position.set(1.5,3.2,2);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);const c=sun.shadow.camera;c.left=-1.6;c.right=1.6;c.top=1.6;c.bottom=-1.6;c.near=.5;c.far=10;sun.shadow.bias=-.0005;sc.add(sun);const f=new T.DirectionalLight('#cfe0ff',.8);f.position.set(-2,1.5,-1);sc.add(f);
-  /* 돗자리 */const matG=mat('#2f3a44',{r:.95});const mt=MM(GG.box(2.3,.02,1.5,.01),matG,0,-.01,0,{p:sc,cast:false});mt.receiveShadow=true;MM(GG.box(2.36,.015,1.56),mat('#1d242b',{r:.95}),0,-.02,0,{p:sc,cast:false});
-  const L=bagList();BAG.items=[];const cols=5,rows=3;const sx=.42,sz=.42;let i=0;
+  const L=bagList();const BIG=L.length>15;BAG.big=BIG;BAG.R=BIG?3.5:2.6;const cols=BIG?10:5,rows=BIG?5:3;const sx=BIG?.32:.42,sz=BIG?.32:.42;const MW=BIG?3.45:2.3,MD=BIG?1.75:1.5;
+  /* 돗자리 */const matG=mat('#2f3a44',{r:.95});const mt=MM(GG.box(MW,.02,MD,.01),matG,0,-.01,0,{p:sc,cast:false});mt.receiveShadow=true;MM(GG.box(MW+.06,.015,MD+.06),mat('#1d242b',{r:.95}),0,-.02,0,{p:sc,cast:false});
+  BAG.items=[];let i=0;
   L.forEach(e=>{if(i>=cols*rows)return;const col=i%cols,row=Math.floor(i/cols);const x=(col-(cols-1)/2)*sx,z=(row-(rows-1)/2)*sz;let m=null;try{m=itemModel(e.key,e.n)}catch(err){m=null}if(!m)return;
-    /* 크기 맞추기: 가장 긴 변이 0.34m(무기는 0.42m) */const bb=new T.Box3().setFromObject(m);const sz3=new T.Vector3();bb.getSize(sz3);const big=Math.max(sz3.x,sz3.y,sz3.z)||.1;const want=e.kind==='arm'?.42:.3;const k=Math.min(2.5,want/big);m.scale.setScalar(k);bb.setFromObject(m);m.position.set(x-(bb.min.x+bb.max.x)/2,-bb.min.y+.005,z-(bb.min.z+bb.max.z)/2);m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false}});
+    /* 크기 맞추기: 가장 긴 변이 0.34m(무기는 0.42m) */const bb=new T.Box3().setFromObject(m);const sz3=new T.Vector3();bb.getSize(sz3);const big=Math.max(sz3.x,sz3.y,sz3.z)||.1;const want=BIG?(e.kind==='arm'?.31:.22):(e.kind==='arm'?.42:.3);const k=Math.min(2.5,want/big);m.scale.setScalar(k);bb.setFromObject(m);m.position.set(x-(bb.min.x+bb.max.x)/2,-bb.min.y+.005,z-(bb.min.z+bb.max.z)/2);m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false}});
     const g=new T.Group();g.add(m);g.userData.bag=e;sc.add(g);BAG.items.push({e,g,m,x,z,base:m.position.clone()});i++});
   const cam=new T.PerspectiveCamera(36,1.6,.05,20);BAG.cam=cam}
 function bagResize(){if(!BAG.r||!BAG.wrap)return;const w=Math.max(200,BAG.wrap.clientWidth),h=Math.max(160,BAG.wrap.clientHeight);BAG.r.setSize(w,h,false);BAG.cam.aspect=w/h;BAG.cam.updateProjectionMatrix();BAG.w=w;BAG.h=h}
 function bagLoop(now){if(!BAG.open||!BAG.r||!BAG.sc)return;const dt=Math.min(.05,(now-(BAG.last||now))/1000);BAG.last=now;BAG.t+=dt;
-  const cam=BAG.cam;const R=2.6,y=BAG.pitch;cam.position.set(Math.sin(BAG.yaw)*Math.cos(y)*R,.35+Math.sin(y)*R,Math.cos(BAG.yaw)*Math.cos(y)*R);cam.lookAt(0,.06,0);
+  const cam=BAG.cam;const R=BAG.R||2.6,y=BAG.pitch;cam.position.set(Math.sin(BAG.yaw)*Math.cos(y)*R,.35+Math.sin(y)*R,Math.cos(BAG.yaw)*Math.cos(y)*R);cam.lookAt(0,.06,0);
   BAG.items.forEach(it=>{const s=BAG.sel===it;const lift=s?.12+Math.sin(BAG.t*2)*.02:0;it.m.position.y+=((it.base.y+lift)-it.m.position.y)*Math.min(1,dt*8);it.g.rotation.y=s?it.g.rotation.y+dt*.9:it.g.rotation.y*Math.max(0,1-dt*4)});
   try{BAG.r.render(BAG.sc,cam)}catch(e){}bagLabels();BAG.raf=requestAnimationFrame(bagLoop)}
 const _bgv=new T.Vector3();
 function bagLabels(){const el=BAG.lab;if(!el)return;if(!el.children.length||el.children.length!==BAG.items.length){el.innerHTML=BAG.items.map((it,i)=>`<span data-i="${i}"></span>`).join('')}
-  BAG.items.forEach((it,i)=>{const s=el.children[i];if(!s)return;_bgv.set(it.x,0,it.z).project(BAG.cam);const x=(_bgv.x*.5+.5)*BAG.w,y=(-_bgv.y*.5+.5)*BAG.h;const t=`${bagName(it.e.key)}${it.e.n>1?' ×'+it.e.n:''}${it.e.eq?' · 장착':''}`;if(s.textContent!==t)s.textContent=t;s.style.transform=`translate(${x.toFixed(0)}px,${(y+10).toFixed(0)}px) translate(-50%,0)`;s.classList.toggle('sel',BAG.sel===it);s.classList.toggle('arm',it.e.kind==='arm')})}
+  BAG.items.forEach((it,i)=>{const s=el.children[i];if(!s)return;_bgv.set(it.x,0,it.z).project(BAG.cam);const x=(_bgv.x*.5+.5)*BAG.w,y=(-_bgv.y*.5+.5)*BAG.h;const t=`${bagName(it.e.key)}${it.e.n>1?' ×'+it.e.n:''}${it.e.eq?' · 장착':''}`;if(s.textContent!==t)s.textContent=t;s.style.transform=`translate(${x.toFixed(0)}px,${(y+10).toFixed(0)}px) translate(-50%,0)`;s.classList.toggle('sel',BAG.sel===it);s.classList.toggle('arm',it.e.kind==='arm');s.style.display=BAG.big&&BAG.sel!==it?'none':''})}
 function bagBind(){const c=BAG.canvas;if(!c)return;let pid=null,lx=0,ly=0,moved=0;c.addEventListener('pointerdown',e=>{pid=e.pointerId;lx=e.clientX;ly=e.clientY;moved=0;try{c.setPointerCapture(pid)}catch(x){}e.preventDefault()});
   c.addEventListener('pointermove',e=>{if(e.pointerId!==pid)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);BAG.yaw-=dx*.006;BAG.pitch=clamp(BAG.pitch+dy*.004,.25,1.2)});
   const up=e=>{if(e.pointerId!==pid)return;pid=null;if(moved<8){const r=c.getBoundingClientRect();const nx=((e.clientX-r.left)/r.width)*2-1,ny=-((e.clientY-r.top)/r.height)*2+1;bagPick(nx,ny)}};c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
@@ -17046,9 +17076,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=bagopen
 document.addEventListener('keydown',e=>{if(e.code!=='KeyB'||e.repeat)return;if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;if(typeof pcUiOpen==='function'&&pcUiOpen()&&!BAG.open)return;if(!G||!(UI.screen==='shelter'||UI.screen==='outside'||UI.screen==='apt'||UI.screen==='shop'))return;if(typeof BR!=='undefined'&&BR.on)return;if(typeof OWC!=='undefined'&&OWC.on)return;if(BAG.open)bagClose();else bagOpen()});
 /* PC: 배낭이 열려 있으면 다른 UI처럼 취급(마우스 잠금 안 함) */
 (function(){const b=window.pcUiOpen;if(typeof b!=='function')return;window.pcUiOpen=function(){return BAG.open||b.apply(this,arguments)}})();
-/* 처음 60초 배낭도 15칸 */
-(function(){const b=window.startGrab;if(typeof b!=='function')return;window.startGrab=function(){const r=b.apply(this,arguments);try{if(typeof GR!=='undefined'&&GR.cap===10)GR.cap=BAG_CAP}catch(e){}return r}})();
-if(typeof HELP84!=='undefined'){HELP84.push(['배낭 15칸(v9.5)','밖·아파트·상가 위쪽 띠의 🎒(대피소는 왼쪽 위, PC B 키)를 누르면 가진 물건과 무기가 돗자리 위에 3D로 펼쳐진다. 끌어서 돌려 보고, 물건을 누르면 설명과 할 수 있는 일(먹기·마시기·장착·탄 채우기·버리기). 종류마다 1칸, 무기는 1~3칸, 탄과 물·식량·의약품·전력은 칸을 쓰지 않는다.'])}
+/* 처음 60초 챙기기는 15칸 그대로 — 무엇을 챙길지 고르는 판단 훈련(v10.5.2에서 배낭은 50칸) */
+(function(){const b=window.startGrab;if(typeof b!=='function')return;window.startGrab=function(){const r=b.apply(this,arguments);try{if(typeof GR!=='undefined'&&GR.cap===10)GR.cap=15}catch(e){}return r}})();
+if(typeof HELP84!=='undefined'){HELP84.push(['배낭 50칸(v10.5.2)','처음 60초 챙기기는 15칸, 그 뒤 배낭은 50칸. 밖·아파트·상가 위쪽 띠의 🎒(대피소는 왼쪽 위, PC B 키)를 누르면 가진 물건과 무기가 돗자리 위에 3D로 펼쳐진다. 끌어서 돌려 보고, 물건을 누르면 설명과 할 수 있는 일(먹기·마시기·장착·탄 채우기·버리기). 종류마다 1칸, 무기는 1~3칸, 탄과 물·식량·의약품·전력은 칸을 쓰지 않는다.'])}
 
 /* ===================== 67 · v9.5 파밍 — 길거리 줍기 · 지중해마을 상가 7곳 안으로 · 팀원 동반 파밍 · 군용 상자 · 검문소 소총 수령 · 적 노획 · 정찰 드론 ===================== */
 /* 길거리: 외출마다 길가(보도)에 물건 36개쯤 + 군용 보급 상자 3개가 판 시드대로 놓인다(🎒 표식, 2.4m 안에서 '줍기' · PC E). 주운 자리는 그 판에 기록(리스폰 없음).
@@ -19472,6 +19502,103 @@ function rvEndHtml(){const R=typeof G!=='undefined'&&G&&G.rv;if(!R||!rvOn())retu
   return `<div class="sec-h"><h3>🏆 선의의 라이벌 — 최종 순위</h3></div><div class="rv-end">${L.map((x,i)=>`<span class="${x.id==='me'?'me':''}">${i+1}. ${x.ico} ${x.n} <b>${x.p}</b></span>`).join('')}<small>${me===1?'우리 팀이 1위로 마쳤다 — 라이벌들이 박수를 보낸다.':`우리 팀 ${me}위 · 1위 ${L[0].ico} ${L[0].n}.`} 🎯 격퇴 1위 ${K[0].ico} ${K[0].n} ${K[0].k}명${G.taxi&&G.taxi.n?` · 🚕 태워 드린 손님 ${G.taxi.n}명`:''}</small></div>`}
 (function(){const base=window.vEnd;if(typeof base!=='function')return;window.vEnd=function(){const h=base.apply(this,arguments);try{const s=rvEndHtml();if(!s)return h;const at=h.indexOf('<div class="sec-h"><h3>판단 기록</h3>');return at<0?h+s:h.slice(0,at)+s+h.slice(at)}catch(e){return h}}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🏆 선의의 라이벌(v10.5)','가상의 네 세력과 구호 점수를 겨룬다 — 🚑 새벽 구조대(구조) · 🛡️ 청솔 자율방범대(호송·태워 주기) · ☂️ 노란 우산 나눔단(배달) · 🦅 솔개 예비군 수색대(적 침투조 격퇴). 점수: 구조·호송 10 · 배달·기타 8 · 태워 주기 4 · 격퇴 3(명). 상황판(🚨) → 🏆 순위 보기(전체 순위 · 격퇴 순위 · 존중 · 소식). 밖에서 두 세력의 조(깃발·색 모자·완장)를 만나 이야기하면 존중 +2와 정보, 세력별 도움(약·물·탄약·손님 소개·교전 동행). 미션을 시작하면 가끔 라이벌도 출동 — 먼저 끝내면 +5. 솔개 수색대는 같은 자리 교전에 아군 사수로 합류해 함께 싸운다(존중 60+면 늘 3명). 적대는 없다.']);
+
+/* ===================== 85 · v10.5.2 공습경보 30초 · 숨을 곳 대폭 추가 ===================== */
+/* 사용자 요청(2026-11-08): "공습 30초 정도 시간이 너무 짧고 주어진 시간대비 근처 피할 수 있는 위치는 매우 한정적이라 재미가 없네요.
+   이 부문도 보완해 주세요. 시간을 30초로 하되 주위에 숨을 수 있는 곳들을 많이 만들어주세요."
+   · 경보는 30초(전엔 25초)
+   · 지도의 건물마다 1층 출입구 쪽에 숨을 곳을 하나씩 만든다(아파트 동 현관·마을 상가 1층·건물 1층 안쪽 …) — 상가·역·체육관·경비실·대피소 입구에 더해 수백 곳
+   · 경보가 울리면 가까운 숨을 곳 5곳에 하늘색 기둥 + 미니맵 하늘색 점, 아래 띠에 '가장 가까운 곳 · 몇 시 방향 · 몇 m'
+   · 차로 달려가 숨을 곳 옆에 세우면(거의 멈춤) 뛰어 들어간 것으로 본다
+   · 숨을 곳이 너무 멀면 '엎드리기' — 다치긴 해도 크게 줄인다(건물·지하만큼 안전하지는 않다) */
+const RC={pool:[],sc:null,near:[],nT:0,txt:'',cls:''};
+const RC_N=['아파트 동 현관(지하 연결)','마을 상가 1층','건물 1층 안쪽','건물 1층 안쪽','건물 1층 안쪽','낮은 건물 안','건물 안','건물 안','건물 안'];
+function rcOcc(x,z){const O=TJ.occ;if(!O)return false;const i=Math.floor(x-O.x0),j=Math.floor(z-O.z0);return i<0||j<0||i>=O.n||j>=O.n||!!O.b[j*O.n+i]}
+/* 건물 윤곽의 변마다 바깥쪽 1.8~3.6m에 서 볼 자리 → 비어 있는 가장 긴 변 하나(입구 쪽으로 본다). 이미 있는 숨을 곳 9m 안이면 건너뛴다 */
+function rcBuild(){const D=TJ_DATA;const R=D.R-24;const add=[];const near=(x,z)=>OUT.covers.some(c=>Math.hypot(c.x-x,c.z-z)<9)||add.some(c=>Math.hypot(c.x-x,c.z-z)<9);
+  D.B.forEach(b=>{const t=b[0],pts=b[4],n=pts.length/2;if(n<3)return;let cx=0,cz=0;for(let i=0;i<n;i++){cx+=pts[2*i];cz+=pts[2*i+1]}cx/=n;cz/=n;if(Math.abs(cx)>R||Math.abs(cz)>R)return;
+    let best=null,bl=0;for(let i=0;i<n;i++){const j=(i+1)%n;const ax=pts[2*i],az=pts[2*i+1],bx=pts[2*j],bz=pts[2*j+1];const L=Math.hypot(bx-ax,bz-az);if(L<3||L<=bl)continue;const mx=(ax+bx)/2,mz=(az+bz)/2;let nx=(bz-az)/L,nz=-(bx-ax)/L;if((mx-cx)*nx+(mz-cz)*nz<0){nx=-nx;nz=-nz}
+      for(const o of [1.8,2.6,3.6]){const px=mx+nx*o,pz=mz+nz*o;if(!rcOcc(px,pz)&&!rcOcc(px+nx*.8,pz+nz*.8)){bl=L;best=[px,pz];break}}}
+    if(!best||near(best[0],best[1]))return;add.push({x:best[0],z:best[1],r:3.0,n:RC_N[t]||'건물 안',bld:1})});
+  OUT.covers.push(...add);return add.length}
+function rcPool(){if(RC.sc===OUT.scene&&RC.pool.length)return RC.pool;RC.sc=OUT.scene;RC.pool=[];if(!OUT.scene)return RC.pool;
+  for(let i=0;i<5;i++){const m=MM(GG.cyl(.55,.55,6,12,true),new T.MeshBasicMaterial({color:'#4fd2ff',transparent:true,opacity:i?.26:.4,depthWrite:false,side:T.DoubleSide}),0,3,0,{p:OUT.scene,cast:false,recv:false});m.userData.keepGlow=1;m.visible=false;RC.pool.push(m)}return RC.pool}
+function rcHide(){RC.pool.forEach(m=>{m.visible=false});RC.near=[];const w=$('#rcWarn');if(w)w.hidden=true}
+function rcHead(){const D=OUT.drv;const h=D?D.yaw+Math.PI:FP3.yaw;return{fx:-Math.sin(h),fz:-Math.cos(h),rx:Math.cos(h),rz:-Math.sin(h)}}
+function rcClock(x,z){const p=FP3.pos,H=rcHead();const vx=x-p.x,vz=z-p.z;const a=Math.atan2(vx*H.rx+vz*H.rz,vx*H.fx+vz*H.fz);const h=((Math.round(a/(Math.PI/6))%12)+12)%12;return h||12}
+function rcBand(s){const el=SV3.el;if(!el)return;let w=$('#rcWarn');if(!w||w.parentNode!==el){if(w)w.remove();w=document.createElement('div');w.id='rcWarn';w.className='out-warn rc-warn';w.innerHTML='<b id="rcT1"></b><span id="rcT2"></span><button class="rc-prone" data-g3="rcprone"></button>';el.appendChild(w);RC.txt='';RC.cls=''}
+  w.hidden=false;const sec=Math.max(0,Math.ceil(s.t));const N=RC.near[0];const where=N?`${N.c.n} · ${rcClock(N.c.x,N.c.z)}시 방향 ${Math.round(N.d)}m`:'가까운 건물·지하';
+  let t1,t2,bt,cls;if(s.cov){t1=`몸을 숨겼다 — ${s.where}`;t2=`경보가 끝날 때까지 기다린다 · ${sec}초`;bt='';cls='safe'}
+  else if(s.prone){t1='엎드려 몸을 낮췄다';t2=`${sec}초 · 건물·지하가 더 안전하다 — ${where}`;bt='일어나기';cls='prone'}
+  else{t1='공습경보 — 숨을 곳으로!';t2=`${sec}초 · 가장 가까운 곳 ${where}`;bt=OUT.drv?'':'엎드리기';cls=''}
+  const key=t1+'|'+t2+'|'+bt;if(key!==RC.txt){RC.txt=key;$('#rcT1').textContent=t1;$('#rcT2').textContent=t2;const b=w.querySelector('.rc-prone');b.textContent=bt;b.hidden=!bt}
+  if(cls!==RC.cls){RC.cls=cls;w.classList.toggle('safe',cls==='safe');w.classList.toggle('prone',cls==='prone')}}
+function rcProneSet(on){const s=OUT.siren;if(!s)return;s.prone=!!on;FP3.noWalk=!!on||!!OUT.drv;FP3.eye=on?.75:1.55;try{if(OUT.me&&OUT.me.setPose)OUT.me.setPose(on?'crouchIn':'idle')}catch(e){}if(on)vib&&vib(25)}
+function rcProne(){const s=OUT.siren;if(!s||s.cov)return;if(OUT.drv){toast('차에서 먼저 내린다',1600);return}rcProneSet(!s.prone)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=rcprone]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();rcProne()},true);
+/* 경보 진행(기존 경보 처리 다음에): 30초 · 숨을 곳 판정(차는 세우면) · 기둥·띠 · 끝나면 엎드린 사람 피해 일부 */
+function rcStep(dt,was){const s=OUT.siren;
+  if(!s){if(was&&was.rc){if(was.prone){FP3.noWalk=!!OUT.drv;FP3.eye=1.55;try{if(OUT.me&&OUT.me.setPose)OUT.me.setPose('idle')}catch(e){}
+      if(was.prone&&!was.cov&&OUT.on){FX=[];hurt('me',5);mor(-1);OUT.fx.push(...FX);outStat();setTimeout(()=>{try{outNote('<b>파편이 스쳤다 — 엎드려서 크게 다치지는 않았다</b><div>숨을 곳이 멀면 엎드려 머리를 감싼다. 그래도 건물·지하가 더 안전하다.</div>'+fxChips(FX),4200)}catch(e){}},3700)}}}
+    rcHide();return}
+  if(!s.rc){s.rc=1;s.t=Math.max(s.t,30);s.t0=30;s.where=s.where||'';if(OUT.coversBld!==OUT.scene){OUT.coversBld=OUT.scene;try{rcBuild()}catch(e){console.error(e)}}RC.nT=0}
+  const tj=typeof tjUse==='function'&&tjUse()&&TJ.world;const p=FP3.pos;
+  RC.nT-=dt;if(RC.nT<=0){RC.nT=.4;RC.near=OUT.covers.map(c=>({c,d:Math.hypot(c.x-p.x,c.z-p.z)})).filter(q=>q.d<320).sort((a,b)=>a.d-b.d).slice(0,5)}
+  /* 숨을 곳 판정: 걸어서 반경 안 · 차는 거의 세운 채 반경+3.5m 안 */
+  if(!s.cov){const D=OUT.drv;for(const q of RC.near){const c=q.c;if(D){if(Math.abs(D.v)<1.5&&q.d<c.r+3.5){s.cov=true;s.where=`${c.n}(차를 세우고 뛰어 들어갔다)`;break}}else if(q.d<c.r){s.cov=true;s.where=c.n;break}}
+    if(!s.cov&&OUT.back&&!D&&Math.hypot(p.x-OUT.back.bx,p.z-OUT.back.bz)<4){s.cov=true;s.where=OUT.back.n}
+    if(s.cov&&s.prone){FP3.noWalk=!!OUT.drv;FP3.eye=1.55;try{if(OUT.me&&OUT.me.setPose)OUT.me.setPose('idle')}catch(e){}}}
+  s.safe=!!(s.cov||s.prone);if(s.prone&&!s.cov)s.where='길에 엎드린 자리';
+  /* 기본 경보 띠는 숨기고(매 프레임 새로 써서 단추를 누를 수 없다) 이 띠를 쓴다 */const w0=$('#oWarn');if(w0)w0.hidden=true;rcBand(s);
+  const pool=tj?rcPool():[];pool.forEach((m,i)=>{const q=RC.near[i];const on=!!q&&!s.cov;m.visible=on;if(on){m.position.set(q.c.x,3,q.c.z);m.material.opacity=i?.24+.08*Math.sin(SV3.t*4+i):.42+.12*Math.sin(SV3.t*5)}})}
+(function(){const base=window.outSiren;window.outSiren=function(dt){const was=OUT.siren;const r=base.apply(this,arguments);try{if(OUT.on)rcStep(dt,was)}catch(e){console.error(e)}return r}})();
+(function(){const b=window.outReturn;window.outReturn=function(){try{const s=OUT.siren;if(s&&s.prone){FP3.noWalk=false;FP3.eye=1.55}rcHide();RC.pool=[];RC.sc=null}catch(e){}return b.apply(this,arguments)}})();
+/* 미니맵: 경보 중 가까운 숨을 곳(하늘색, 가장 가까운 곳은 크게) */
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{const s=OUT.siren;if(OUT.on&&s&&s.rc&&!s.cov)RC.near.forEach((q,i)=>{const [sx,sy]=toS(q.c.x,q.c.z);x.fillStyle='#4fd2ff';x.strokeStyle='#ffffff';x.lineWidth=(i?1.2:2)*scale;x.beginPath();x.arc(sx,sy,(i?3.4:5)*scale,0,7);x.fill();x.stroke()})}catch(e){}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['공습경보(v10.5.2)','밖에서 공습경보가 울리면 30초 안에 숨는다. 상가·역·체육관·경비실·대피소 입구뿐 아니라 지도의 건물마다 1층 출입구 쪽이 숨을 곳이다(아파트 동 현관·마을 상가 1층·건물 1층 안쪽). 가까운 5곳에 하늘색 기둥과 미니맵 하늘색 점이 뜨고, 아래 띠에 가장 가까운 곳의 방향(몇 시)과 거리가 나온다. 차로 가면 숨을 곳 옆에 세우면 된다. 너무 멀면 \'엎드리기\' — 다치긴 해도 크게 줄인다.']);
+
+/* ===================== 86 · v10.5.2 알림은 아래 가운데(6시)에 ===================== */
+/* 사용자 요청(2026-11-08): "최대한 게임플레이 하는데 가운데 부문에 알림창으로 방해 없도록 조치바랍니다. 필요 내용은 6시방향에 배치해서 플레이 시인성 확보필요."
+   화면 위쪽 가운데·가운데에 뜨던 알림 띠·안내를 아래 가운데에 아래에서 위로 쌓는다:
+   (PC 마우스 안내) → 공습경보 → 운전 담당 → 손님 → 자동 이동 → 미션 → 돌발 상황 → 캠페인 → 돌발 알림 → 안내 문구 → 총 사용 도움말 → 팁.
+   · 시작 높이: 그 장면의 아래쪽 가운데 단추·속도계를 재서 바로 위(가운데 선 ±60px에 걸린 것만 높이를 올린다)
+   · 옆 단추(행동 카드·사격·넣기·탄약 등)에는 닿지 않게 폭을 줄이거나 조금 비킨다 — 300px보다 좁아지면 그 단추들 위로 올린다
+   · 아래쪽 대화 카드(선택지)가 열려 있으면 잠시 숨긴다 · 가운데 조준점을 가리지 않게 화면 아래쪽 47% 안에서만 쌓고, 넘치면 뒤쪽(위쪽) 안내는 잠시 숨긴다 · 쌓인 안내 문구는 한두 줄로 줄인다
+   · 자리 계산은 3D 화면 안쪽 좌표 — 세로로 든 폰에서 3D 화면 전체가 90° 돌아가 있어도 같다 */
+const DOCK={T:0};
+const DOCK_SEL=['#rcWarn','.pc-lock','#oWarn','.chf-hud','#txHud','#adHud','#mxHud','#misHud','#campPanel','#evAlert','#oNote','#frNote','#gunHelp','#tip84'];
+const DOCK_OBS='button,.fpd-spd,.fr-acts,.tj-attr,.sv3-hint,[class*=ammo]';
+/* 3D 화면 안쪽 좌표의 상자(offset 합 + 이동 변환) — 안 보이면 null */
+function dockBox(el,host){if(!el||el.hidden)return null;const w=el.offsetWidth,h=el.offsetHeight;if(!w||!h)return null;const cs=getComputedStyle(el);if(cs.visibility==='hidden'||cs.display==='none')return null;
+  let x=0,y=0,e=el;while(e&&e!==host){x+=e.offsetLeft;y+=e.offsetTop;const t=getComputedStyle(e).transform;if(t&&t!=='none'){const m=t.match(/^matrix\(([^)]+)\)$/);if(m){const v=m[1].split(',').map(Number);x+=v[4]||0;y+=v[5]||0}}e=e.offsetParent}
+  if(e!==host)return null;return{l:x,t:y,r:x+w,b:y+h,soft:cs.pointerEvents==='none'}}
+function dockItems(host){const out=[];for(const s of DOCK_SEL){host.querySelectorAll(s).forEach(el=>{if(out.includes(el)||el.closest('.out-enc'))return;if(dockBox(el,host)||el.classList.contains('dock-skip'))out.push(el)})}return out}
+function dockStep(){const host=typeof SV3!=='undefined'&&SV3.el;if(!host||!host.isConnected||!host.classList.contains('sv3'))return;const W=host.clientWidth,H=host.clientHeight;if(W<240||H<160)return;
+  const enc=$('#oEnc');host.classList.toggle('dock-pause',!!(enc&&!enc.hidden&&enc.offsetHeight>0));
+  const items=dockItems(host);if(!items.length)return;
+  /* 아래 단추들 */const obs=[];host.querySelectorAll(DOCK_OBS).forEach(el=>{if(items.some(it=>it===el||it.contains(el)))return;if(el.closest('.out-enc,.hude,.camp-ov,.tj-mini,.hud,.fr-bar,.fr-stat'))return;const b=dockBox(el,host);if(b&&b.t>H*.45)obs.push(b)});
+  const C0=W/2-60,C1=W/2+60;let base=12;for(const o of obs){if(!o.soft&&o.r>C0&&o.l<C1)base=Math.max(base,H-o.t+8)}
+  const sides=(bs)=>{let L=8,R=W-8;const y1=H-bs,y0=y1-200;for(const o of obs){if(o.soft||(o.r>C0&&o.l<C1))continue;if(o.b<y0||o.t>y1)continue;if((o.l+o.r)/2<W/2)L=Math.max(L,o.r+8);else R=Math.min(R,o.l-8)}return[L,R]};
+  let [L,R]=sides(base);if(R-L<300){for(const o of obs){if(o.soft||(o.r>C0&&o.l<C1))continue;if(o.t>H-base-200)base=Math.max(base,H-o.t+8)}[L,R]=sides(base)}
+  const maxW=Math.max(240,Math.min(560,R-L));items.forEach(el=>el.style.setProperty('max-width',maxW+'px','important'));
+  let sw=0;items.forEach(el=>{sw=Math.max(sw,el.offsetWidth)});sw=Math.min(sw,maxW);const cx=Math.max(L+sw/2,Math.min(R-sw/2,W/2));
+  /* 글자만 있는 낮은 표시(지명·출처·속도계)는 쌓인 띠와 가로로 겹치면 그 위로 */for(const o of obs){if(!o.soft)continue;if(o.r>cx-sw/2&&o.l<cx+sw/2)base=Math.max(base,H-o.t+6)}
+  let y=base;const lim=H*.47;for(const el of items){const h=el.offsetHeight||0;const skip=y+h>lim&&y>base;el.classList.add('docked');el.classList.toggle('dock-skip',skip);if(skip)continue;
+    el.style.setProperty('top','auto','important');el.style.setProperty('bottom',Math.round(y)+'px','important');el.style.setProperty('left',Math.round(cx)+'px','important');y+=h+6}}
+setInterval(()=>{try{dockStep()}catch(e){}},120);
+/* 안내 문구가 뜨는 바로 그 순간에도 자리를 잡는다(깜빡임 줄이기) */
+['outNote','freeNote','misHud','txHud','adHud','evAlert','campPanel'].forEach(n=>{const b=window[n];if(typeof b!=='function')return;window[n]=function(){const r=b.apply(this,arguments);try{dockStep()}catch(e){}return r}});
+/* ---------- v10.5.2 사용자 제보(2026-11-08): "건물안에 들어갔다가 나오니깐 앉기·점프 등의 플레이 아이콘이 다 사라졌네요" ----------
+   원인: 아파트·건물에서 나오면 바깥 화면을 새로 그리며(sv3Mount) 총 단추판(#gunUI)이 지워졌는데, 총은 든 채라 다시 만들지 않았다
+   (바깥 화면을 새로 그릴 때 총 상태를 정리하던 vOutside3 감싸기는 화면 목록 SV3.views가 예전 함수를 들고 있어 불리지 않았다)
+   → 바깥에서 총을 든 동안 단추판이 없으면 곧바로 다시 만든다(0.25초마다 확인). 총을 넣었는데 'gun-on' 표시만 남아 기본 점프 단추가 숨는 것도 바로잡는다.
+     상가 안에 들어갈 때 넣어 둔 총은 나오면 다시 든다 */
+function gunHeal(){const el=SV3.el;if(!el||!OUT.on||OUT.drv||(typeof OWC!=='undefined'&&OWC.on)||(typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on))return;
+  if(GUN.on){if(!el.classList.contains('gun-on')){el.classList.add('gun-on');el.classList.toggle('gun-fp',!!GUN.fp)}if(!$('#gunUI'))gunUI()}
+  else if(el.classList.contains('gun-on')&&!$('#gunUI'))el.classList.remove('gun-on','gun-fp')}
+(function(){let t=0;const b=window.outStep;window.outStep=function(dt){const r=b.apply(this,arguments);try{t-=dt;if(t<=0){t=.25;gunHeal()}}catch(e){console.error(e)}return r}})();
+(function(){const b=window.shopEnter;if(typeof b!=='function')return;window.shopEnter=function(c){const on=GUN.on;const r=b.apply(this,arguments);try{if(on&&OUT.shop)OUT.shop.reGun=1}catch(e){}return r}})();
+(function(){const b=window.shopLeave;if(typeof b!=='function')return;window.shopLeave=function(){const A=OUT.shop;const r=b.apply(this,arguments);try{if(A&&A.reGun)GUN.sheathed=false}catch(e){}return r}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
