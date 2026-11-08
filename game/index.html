@@ -1516,6 +1516,64 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .owc-sm.kia i{background:#1a1a1a!important;box-shadow:0 0 0 1px #9aa}
 .owc-sm.kia b{text-decoration:line-through;opacity:.7}
 .sq-cas{display:block;color:#ffb4a8;margin-top:4px}
+
+/* v10.8 조준경 · 성능 카드 */
+.gun-scope{--scd:min(94vh,94vw)}
+.gun-scope.r-x2{--scd:min(72vh,72vw)}.gun-scope.r-x4{--scd:min(82vh,82vw)}.gun-scope.r-x6{--scd:min(90vh,90vw)}
+.gun-scope .sc-ring{width:var(--scd);height:var(--scd);border:0;box-shadow:0 0 0 200vmax #000,inset 0 0 0 calc(var(--scd)*.028) #070707,inset 0 0 calc(var(--scd)*.07) calc(var(--scd)*.05) rgba(0,0,0,.88)}
+.gun-scope .sc-glass{position:absolute;left:50%;top:50%;width:var(--scd);height:var(--scd);transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 36% 28%,rgba(200,230,255,.10),rgba(140,190,240,.03) 38%,transparent 60%);pointer-events:none}
+.gun-scope .sc-p{position:absolute;background:#000}
+.gun-scope .sc-pl,.gun-scope .sc-pr{top:50%;height:5px;margin-top:-2.5px;width:calc(var(--scd)*.34)}
+.gun-scope .sc-pl{left:calc(50% - var(--scd)/2)}.gun-scope .sc-pr{right:calc(50% - var(--scd)/2)}
+.gun-scope .sc-pt,.gun-scope .sc-pb{left:50%;width:5px;margin-left:-2.5px;height:calc(var(--scd)*.34)}
+.gun-scope .sc-pt{top:calc(50% - var(--scd)/2)}.gun-scope .sc-pb{bottom:calc(50% - var(--scd)/2)}
+.gun-scope.r-x2 .sc-h,.gun-scope.r-x6 .sc-h,.gun-scope.r-mil .sc-h{height:1.5px;margin-top:-.75px}
+.gun-scope.r-x2 .sc-v,.gun-scope.r-x6 .sc-v,.gun-scope.r-mil .sc-v{width:1.5px;margin-left:-.75px}
+.gun-scope .sc-c{position:absolute;left:50%;top:50%;width:calc(var(--scd)*.09);height:calc(var(--scd)*.09);transform:translate(-50%,-50%);border:1.5px solid #000;border-radius:50%}
+.gun-scope .sc-cd{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#ff3a2a;box-shadow:0 0 4px 1px rgba(255,58,42,.8)}
+.gun-scope.r-x4 .sc-h,.gun-scope.r-x4 .sc-v{display:none}
+.gun-scope .sc-chev{position:absolute;box-sizing:border-box;left:calc(50% - 10px);top:calc(50% + 4.1px);width:20px;height:20px;border-left:3px solid #ff6a1a;border-top:3px solid #ff6a1a;transform:rotate(45deg);filter:drop-shadow(0 0 3px rgba(255,106,26,.85))}
+.gun-scope .sc-bdc{position:absolute;left:50%;top:calc(50% + 20px);width:0;height:0}
+.gun-scope .sc-bdc::before{content:'';position:absolute;left:-1px;top:0;width:2px;height:72px;background:#ff6a1a;box-shadow:0 0 3px rgba(255,106,26,.7)}
+.gun-scope .sc-bdc i{position:absolute;left:0;height:2px;background:#ff6a1a;box-shadow:0 0 3px rgba(255,106,26,.7)}
+.gun-scope .sc-bdc b{position:absolute;font:800 9px var(--mono);color:#ff8a4a;text-shadow:0 0 3px rgba(0,0,0,.85)}
+.gun-scope .sc-mag{position:absolute;left:50%;top:calc(50% - var(--scd)/2 + var(--scd)*.04);transform:translateX(-50%);font:900 15px var(--mono);letter-spacing:.05em;color:#ff5a24;text-shadow:0 0 6px rgba(255,90,36,.6),0 1px 2px #000;padding:1px 8px;border-radius:6px;background:rgba(0,0,0,.55)}
+.gun-scope .sc-info{top:calc(50% + var(--scd)/2 - var(--scd)*.11)}
+.gun-dot{position:absolute;inset:0;pointer-events:none;z-index:9;opacity:0}
+.gun-dot .gd-win{position:absolute;left:50%;top:50%;width:min(56vh,44vw);height:min(44vh,34vw);transform:translate(-50%,-50%);border-radius:16px 16px 22px 22px;border:5px solid rgba(12,14,17,.92);box-shadow:0 0 0 1px rgba(255,255,255,.07),inset 0 0 28px rgba(110,180,255,.16);background:linear-gradient(180deg,rgba(150,205,255,.08),rgba(80,130,180,.03) 60%,rgba(0,0,0,.06))}
+.gun-dot .gd-d{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#ff3a30;box-shadow:0 0 5px 2px rgba(255,50,40,.8),0 0 14px 5px rgba(255,40,30,.28)}
+.gun-dot .gd-l{position:absolute;left:50%;top:calc(50% - min(22vh,17vw) + 8px);transform:translateX(-50%);font:900 11px var(--mono);color:#ff8a6a;text-shadow:0 1px 2px #000}
+.ws-card{margin:7px 0 4px;padding:8px 9px 7px;border-radius:12px;background:rgba(10,14,19,.78);border:1px solid var(--line2);font-size:12px}
+.ws-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:5px}.ws-head b{font-size:12.5px;color:#ffd27a}.ws-head small{color:#8f99a3;font-size:10px;white-space:nowrap}
+.ws-row{display:grid;grid-template-columns:58px minmax(40px,1fr) auto;gap:7px;align-items:center;min-height:17px}
+.ws-row>span{color:#cfd6dc;font-weight:800;font-size:11px;white-space:nowrap}
+.ws-bar{position:relative;height:7px;border-radius:4px;background:rgba(255,255,255,.09);overflow:hidden}
+.ws-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,#3fb27f,#9fe6a0)}
+.ws-row.bad .ws-bar i{background:linear-gradient(90deg,#e8a03a,#ff6a4a)}
+.ws-row em{font-style:normal;font:800 10.5px var(--mono);color:#e8edf1;white-space:nowrap;text-align:right}
+.ws-foot{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px;color:#bfeaff;font-size:10.5px;font-weight:700}
+.ws-stk{margin-top:5px;padding-top:5px;border-top:1px dashed rgba(255,255,255,.13);color:#cfd6dc;font-size:10.5px;line-height:1.55}.ws-stk>b{color:#ffb6a0;margin-right:4px}.ws-stk b.num{color:#fff}.ws-stk small{color:#8f99a3;margin-left:4px}
+.ws-opt{margin:8px 0 2px}.ws-opt>b{font-size:11.5px;color:#9fe6ff}
+.ws-chips{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 3px}
+.ws-chip{font:800 11.5px var(--sans);padding:6px 9px;border-radius:9px;border:1px solid var(--line2);background:var(--panel);color:#e8edf1;cursor:pointer}
+.ws-chip.on{border-color:#ffb224;color:#ffd27a;background:rgba(255,178,36,.14)}.ws-chip.no{opacity:.42;cursor:default}
+.ws-chip small{font-weight:700;color:#9aa3ad;margin-left:4px;font-size:10px}
+.ws-tip{display:block;color:#8f99a3;font-size:10.5px;line-height:1.45}
+.ws-delta{display:flex;flex-wrap:wrap;gap:3px 10px;margin:4px 0 0;padding:5px 8px;border-radius:9px;background:rgba(255,178,36,.08);border:1px solid rgba(255,178,36,.25);font:800 10.5px var(--mono);color:#e8edf1}.ws-delta b.up{color:#7ee2a0}.ws-delta b.dn{color:#ff9a7a}
+.bag-det{max-height:min(54vh,460px);overflow:auto;overscroll-behavior:contain}
+.bag-ws{position:absolute;left:8px;top:8px;bottom:26px;width:min(330px,58%);overflow:auto;overscroll-behavior:contain;z-index:3;padding:6px 6px 8px;border-radius:12px;background:rgba(6,9,13,.94);border:1px solid var(--line2);box-shadow:0 6px 18px rgba(0,0,0,.45);touch-action:pan-y;scrollbar-width:thin}
+.bag-ws .ws-card{margin:0 0 4px;border:0;background:transparent;padding:4px 4px 2px}.bag-ws .ws-opt{margin:6px 4px 2px}.bag-ws .ws-delta{margin:4px 4px 0}
+@media (max-width:640px){.bag-ws{width:min(330px,calc(100% - 16px))}}
+.gs-inf{cursor:pointer}.gs-inf.on{outline:1px solid rgba(255,178,36,.55);outline-offset:-1px;border-radius:10px}.gs-i{color:#9fe6ff;font-weight:800}
+.gs-panel .ws-card{margin:2px 4px 8px}
+/* v10.8 조준경 속 화면(PIP): 렌즈 안에만 조준선 · 바깥은 평소 시야(살짝 어둡게) · 하우징 링 */
+.gun-scope .sc-lens{position:absolute;left:50%;top:50%;width:var(--scd);height:var(--scd);transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;pointer-events:none}
+.gun-scope .sc-dim{display:none}
+.gun-scope.pip{--scd:min(66vh,66vw)}.gun-scope.pip.r-x2{--scd:min(56vh,56vw)}.gun-scope.pip.r-x4{--scd:min(62vh,62vw)}.gun-scope.pip.r-x6,.gun-scope.pip.r-mil{--scd:min(68vh,68vw)}
+.gun-scope.pip .sc-ring{box-shadow:0 0 0 calc(var(--scd)*.045) #0b0b0c,0 0 0 calc(var(--scd)*.056) rgba(74,78,84,.92),0 0 calc(var(--scd)*.06) calc(var(--scd)*.075) rgba(0,0,0,.5),inset 0 0 calc(var(--scd)*.045) calc(var(--scd)*.016) rgba(0,0,0,.78)}
+.gun-scope.pip .sc-dim{display:block;position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 0,transparent calc(var(--scd)*.56),rgba(0,0,0,.26) calc(var(--scd)*.85),rgba(0,0,0,.34) 100%)}
+.gun-scope.pip .sc-glass{display:none}
+.gun-scope.pip .sc-mag{top:calc(50% - var(--scd)/2 - var(--scd)*.035)}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13597,7 +13655,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.7';
+const APP_VER='10.8';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -13710,6 +13768,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
     ${typeof heroChampOn==='function'?s4Seg('melook','내 모습 (밖 3인칭·대피소)','챔피언 룩: 긴 코트·금 견장·엠블럼·대장 완장 — 다음 장면부터',[['std','보통'],['champ','챔피언']],store.get('sg.meLook','champ')):''}
     ${s4Seg('pace','화면 움직임','끊겨 보이면 30fps로 고르게 고정 — 자동은 장면마다 재서 정한다',[['auto','자동'],['30','30 고정'],['60','최대']],paceMode())}
     ${s4Seg('owc','실제 지도 교전','공수부대 강하 때 밖 탐색 장면 그대로 싸울지, 전투 화면으로 넘어갈지',[[1,'같은 배경'],[0,'전투 화면']],store.get('sg.owc',true)!==false?1:0)}
+    ${s4Seg('pip','조준경 바깥','확대 조준 때 조준경 원 밖을 평소 시야로 보여 줄지 — 끄면 예전처럼 검게(저사양 폰은 끄면 가볍다)',[[1,'보이게'],[0,'검게']],store.get('sg.pip',true)!==false?1:0)}
     ${s4Seg('otime','밖 탐색 시간','걷고 둘러보는 동안에도 시간이 흐를지 (뒤지기·돕기 같은 행동은 늘 시간을 쓴다)',[[0,'걷기 무제한'],[1,'현실처럼 흐름']],store.get('sg.outTimed',false)?1:0)}
     <div class="s4-sec">교육용 모드</div>
     ${s4Seg('edu','교육용 모드','전투·격투·정치 선동·시신 장면 없이 생존 수칙만 (학교·기관용, 다음 사건부터)',[[0,'끔'],[1,'켬']],eduOn()?1:0)}
@@ -13731,6 +13790,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
   if(a==='opt'){const k=b.dataset.k,v=b.dataset.v;if(k==='fs')A11Y.set({fs:v});else if(k==='calm')A11Y.set({calm:v==='1'});else if(k==='vib')A11Y.set({vib:v==='1'});else if(k==='crowd'){store.set('sg.crowd',+v);toast(v==='2'?'거리 인파 많이(2배) — 다음 외출부터':'거리 인파 보통')}else if(k==='aptview'){store.set('sg.aptView',v==='1');toast(v==='1'?'창밖 실경 켬 — 다음에 들어갈 때부터':'창밖 실경 끔 — 그림판으로')}else if(k==='kidlook'){store.set('sg.kidLook',v==='plain'?'plain':'ranger');toast(v==='plain'?'아이 겉모습: 평상복 — 다음 장면부터':'아이 겉모습: 레인저 차림 — 다음 장면부터')}else if(k==='heropet'){store.set('sg.heroPet',v);toast('어깨 친구: '+({bird:'하늘색 새',chick:'노란 병아리',bot:'미니 로봇'}[v]||v)+' — 다음 호출부터')}else if(k==='melook'){store.set('sg.meLook',v);toast(v==='champ'?'챔피언 룩 — 다음에 밖에 나갈 때부터':'보통 모습으로')}else if(k==='bright'){store.set('sg.bright',+v);toast('장면 밝기: '+(BRT_OPT.find(o=>String(o[0])===String(v))||['','보통'])[1],2200)}
     else if(k==='pace'){store.set('sg.pace',v);PACE.cap=false;PACE.kind='';toast(v==='30'?'30fps로 고정 — 고르게 움직인다':v==='60'?'가능한 한 빠르게 그린다':'자동 — 끊기면 30fps로 고정한다',2600)}
     else if(k==='owc'){store.set('sg.owc',v==='1');toast(v==='1'?'교전: 밖 탐색 장면 그대로 싸운다 (화면 전환 없음)':'교전: 전투 화면으로 넘어가 싸운다',2800)}
+    else if(k==='pip'){store.set('sg.pip',v==='1');try{if(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)gunUI()}catch(e){}toast(v==='1'?'조준경 바깥: 평소 시야로 보인다 (조준경 안만 확대)':'조준경 바깥: 예전처럼 검게 가린다',2600)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
     else if(k==='edu'){store.set('sg.edu',v==='1');a11yApply();toast(v==='1'?'교육용 모드: 전투·격투·정치 선동·시신 장면을 뺀다 (다음 사건부터)':'교육용 모드를 껐다',3000)}s4Re();return}
   if(a==='errcopy'){const L=ERRLOG.list();s4Copy(`[생존of탕정 오류 기록 v${APP_VER}] ${navigator.userAgent}\n`+L.map(x=>`${x.t}${x.n?' ×'+x.n:''} [${x.s}] ${x.m}${x.at?' @'+x.at:''}`).join('\n'));return}
@@ -14680,7 +14740,7 @@ const _oc=new T.Vector3(),_od=new T.Vector3(),_oe=new T.Vector3(),_of=new T.Vect
 function owcPlayer(dt){const mv=FP3.mv;const len=Math.hypot(mv.x,mv.y);const busy=OWC.medT>0;
   OWC.sprint=len>.88&&!OWC.ads&&!OWC.cr&&mv.y>.3&&!busy&&!OWC.done;FP3.speed=busy?.8:OWC.cr?1.35:OWC.sprint?5.0:OWC.ads?1.6:2.6;
   if(!OWC.dead){FP3.step(dt)}else{FP3.mv.x=FP3.mv.y=0}
-  OWC.adsK+=((OWC.ads&&!OWC.sprint&&OWC.reload<=0?1:0)-OWC.adsK)*Math.min(1,dt*12);OWC.crK+=((OWC.cr?1:0)-OWC.crK)*Math.min(1,dt*9);
+  OWC.adsK+=((OWC.ads&&!OWC.sprint&&OWC.reload<=0?1:0)-OWC.adsK)*Math.min(1,dt*(typeof owcAdsRate==='function'?owcAdsRate():12));OWC.crK+=((OWC.cr?1:0)-OWC.crK)*Math.min(1,dt*9);
   OWC.bloom=Math.max(0,OWC.bloom-dt*(OWC.fire?2.2:6));OWC.kickP=Math.max(0,OWC.kickP-dt*(OWC.fire?.05:.16));OWC.kick=Math.max(0,OWC.kick-dt*9);
   if(OWC.reload>0){OWC.reload-=dt;if(OWC.reload<=0){const need=OWC_W.mag-OWC.mag;const n=Math.min(need,OWC.res);OWC.mag+=n;OWC.res-=n;owcAmmoUI()}}
   if(OWC.medT>0){OWC.medT-=dt;if(OWC.medT<=0){OWC.hpP=Math.min(100,OWC.hpP+35);owcHpUI();owcFeed('구급 — 지혈대·붕대 (+35)','ok')}}
@@ -16702,7 +16762,9 @@ function makeGun2(type,att){att=att||{};const g=new T.Group();g.userData.type=ty
   const mag=(h,z,ang,m,w)=>{const e=B(w||.028,h,.07,0,-.02-h/2,z,m||dk,{rx:ang||.1,r:.004});e.name='mag';B((w||.028)+.004,.012,.074,0,-.02-h,z,blk,{rx:ang||.1,r:.003});return e};
   const sights=(top,z0,zf)=>{B(.024,.022,.02,0,top+.011,z0,blk,{r:.003});B(.006,.012,.004,0,top+.03,z0,blk);B(.004,.028,.004,0,top+.014,zf,blk);for(const x of [-.012,.012])B(.004,.02,.012,x,top+.01,zf,blk)};
   const rail=(top,z0,n)=>{for(let i=0;i<n;i++)B(.03,.006,.012,0,top+.003,z0+i*.03,blk)};
-  const scope=(z,r,l,y)=>{y=y==null?.1:y;const s=C(r,l,0,y,z,blk);s.name='scope';C(r*1.25,.03,0,y,z+l/2-.01,blk);C(r*1.15,.03,0,y,z-l/2+.01,blk);MM(GG.cyl(r*.9,r*.9,.004,12),GM2.lens(),0,y,z+l/2+.005,{p:g,rx:Math.PI/2,recv:false});B(.02,.03,.03,0,y-.025,z-.04,blk);B(.02,.03,.03,0,y-.025,z+.04,blk);C(.006,.04,.02,y,z,blk,{rz:1.3,rx:0});return s};
+  /* 기본 조준경은 'opt0' 묶음 — v10.8 조준경 파트(97)를 달면 통째로 숨긴다 */
+  const opt0=n0=>{const sg=new T.Group();sg.name='opt0';g.children.slice(n0).forEach(k=>sg.add(k));g.add(sg);return sg};
+  const scope=(z,r,l,y)=>{const n0=g.children.length;y=y==null?.1:y;const s=C(r,l,0,y,z,blk);s.name='scope';C(r*1.25,.03,0,y,z+l/2-.01,blk);C(r*1.15,.03,0,y,z-l/2+.01,blk);MM(GG.cyl(r*.9,r*.9,.004,12),GM2.lens(),0,y,z+l/2+.005,{p:g,rx:Math.PI/2,recv:false});B(.02,.03,.03,0,y-.025,z-.04,blk);B(.02,.03,.03,0,y-.025,z+.04,blk);C(.006,.04,.02,y,z,blk,{rz:1.3,rx:0});opt0(n0);return s};
   const bipod=(z,y)=>{for(const x of [-.03,.03])C(.005,.26,x,y-.12,z,dk,{rx:.15,rz:x*9});B(.07,.02,.03,0,y,z,blk)};
   const stockFix=(z,m,h)=>{B(.045,h||.09,.26,0,.02,z-.13,m,{r:.006});B(.05,(h||.09)+.02,.025,0,.015,z-.27,rub,{r:.004})};
   const stockFold=(z,m)=>{for(const x of [-.018,.018])B(.008,.008,.24,x,.045,z-.12,m||dk);B(.04,.07,.016,0,.03,z-.25,m||dk,{r:.003})};
@@ -16732,7 +16794,7 @@ function makeGun2(type,att){att=att||{};const g=new T.Group();g.userData.type=ty
     const fur=type==='sgp'?GM2.wood2():poly;B(.045,.07,.22,0,.04,-.02,blk,{r:.006});C(.011,.56,0,.06,.37);C(.011,.5,0,.03,.33,dk);/* 튜브 탄창 */
     const pump=C(.02,.14,0,.03,.3,fur,{seg:12});pump.name='pump';for(let i=0;i<5;i++)B(.044,.004,.004,0,.03,.24+i*.03,dk);
     B(.012,.012,.02,0,.08,.64,GM2.brass());grip(-.06,fur);B(.05,.09,.3,0,.01,-.26,fur,{rx:.1,r:.008});B(.055,.11,.02,0,.0,-.41,rub,{r:.004});
-    if(type==='sga'){rail(.08,-.1,6);B(.03,.035,.05,0,.1,-.04,blk,{r:.004});MM(GG.cyl(.011,.011,.006,10),new T.MeshBasicMaterial({color:'#ff3b30'}),0,.1,-.013,{rx:Math.PI/2,recv:false,p:g});const m1=mag(.1,.0,.05,dk,.034);}
+    if(type==='sga'){rail(.08,-.1,6);const n0=g.children.length;B(.03,.035,.05,0,.1,-.04,blk,{r:.004});MM(GG.cyl(.011,.011,.006,10),new T.MeshBasicMaterial({color:'#ff3b30'}),0,.1,-.013,{rx:Math.PI/2,recv:false,p:g});opt0(n0);const m1=mag(.1,.0,.05,dk,.034);}
     mz=[0,.06,.65];
   }else if(type==='m24'){
     const st=mat('#2f3a2c',{r:.8});B(.05,.075,.74,0,.0,-.06,st,{r:.01});B(.05,.1,.2,0,-.03,-.36,st,{r:.01});C(.02,.3,0,.045,.08,blk);C(.012,.56,0,.05,.5,blk);
@@ -16830,6 +16892,9 @@ function gunAmmoAdd(am,n){if(!G)return;G.ammo=G.ammo||{};G.ammo[am]=Math.max(0,(
 function gunHas(id){return gunArms().some(a=>a.id===id)}
 function gunZoom(){const W=gunW();if(!W||!W.zoom||W.zoom<=1)return 1;return GUN.zoomLo?Math.max(1.5,W.zoom/2):W.zoom}
 function gunScoped(){const W=gunW();return !!(W&&W.zoom>1)}
+/* 조준 속도(초당 접근률) — v10.8 조준경·무게(97)가 덮어쓴다 */
+function gunAdsRate(){return gunScoped()?7:12}
+function owcAdsRate(){return 12}
 function gunFpOk(){return typeof OUT!=='undefined'&&OUT.on&&!OUT.drv&&!OUT.ride&&!(typeof OWC!=='undefined'&&OWC.on)&&!(typeof APT!=='undefined'&&APT.on&&!GUN.ow)&&!(typeof BR!=='undefined'&&BR.on)}
 /* 시점 감도: 조준경 배율만큼 느리게(터치·PC·교전 사격 버튼 공통) */
 function lookScale(){let W,k;if(typeof OWC!=='undefined'&&OWC.on){W=OWC.gunType&&ARMS[OWC.gunType];k=OWC.adsK}else{if(!GUN.on)return 1;W=gunW();k=GUN.adsK}if(!W||!(W.zoom>1)||!(k>0))return 1;const z=GUN.zoomLo?Math.max(1.5,W.zoom/2):W.zoom;return 1/(1+(z-1)*k)}
@@ -16885,7 +16950,7 @@ function gunStep(dt){if(!GUN.on||!OUT.on)return;const W=gunW();if(!W)return;GUN.
   if(!GUN.fp){gunMeleeStep(dt);return}
   if(OUT.me)OUT.me.root.visible=false;
   const busy=OUT.enc||OUT.busy||OUT.mapOpen;if(busy){GUN.fire=false}
-  GUN.adsK+=((GUN.ads&&GUN.reload<=0&&!busy?1:0)-GUN.adsK)*Math.min(1,dt*(gunScoped()?7:12));
+  GUN.adsK+=((GUN.ads&&GUN.reload<=0&&!busy?1:0)-GUN.adsK)*Math.min(1,dt*gunAdsRate());
   GUN.bloom=Math.max(0,GUN.bloom-dt*(GUN.fire?2.2:6));GUN.kickP=Math.max(0,GUN.kickP-dt*(GUN.fire?.05:.16));GUN.kick=Math.max(0,GUN.kick-dt*9);
   if(GUN.reload>0){GUN.reload-=dt;if(GUN.reload<=0){const need=W.mag-GUN.mag;const have=gunAmmoOf(W.am);const n=Math.min(need,have);GUN.mag+=n;gunAmmoAdd(W.am,-n);gunSaveMag();gunAmmoUI()}}
   /* 숨 참기(조준경): 5초까지, 놓으면 회복 */if(GUN.hold&&GUN.adsK>.5){GUN.breath=Math.max(0,GUN.breath-dt);if(GUN.breath<=0)GUN.hold=false}else GUN.breath=Math.min(5,GUN.breath+dt*.7);
@@ -17099,10 +17164,10 @@ function bagSelect(it){BAG.sel=it||null;BAG.confirmDrop=null;bagDet();const g=$(
 function bagSide(){const cnt=$('#bagCnt');if(cnt)cnt.textContent=`${bagUsed()}/${BAG_CAP}칸`;const rs=$('#bagRes');if(rs&&G){rs.innerHTML=`<b>비축(대피소·배낭 공용)</b><span>💧 물 ${(+G.res.water).toFixed(1)}L</span><span>🍚 식량 ${G.res.food}인·일</span><span>💊 의약품 ${G.res.meds}회</span><span>🔋 전력 ${Math.round(G.res.power)}%</span>`}
   const gd=$('#bagGrid');if(gd){const L=bagList();gd.innerHTML=L.map(e=>`<button class="bg-it${e.kind==='arm'?' arm':''}${e.eq?' eq':''}" data-k="${e.key}"><b>${bagName(e.key)}</b><small>${e.kind==='arm'?(e.mag!=null&&ARMS[e.key].mag?`${e.mag}/${ARMS[e.key].mag}`:ARMS_CAT[ARMS[e.key].cat]):e.n>1?'×'+e.n:''}${e.slot?' · '+e.slot+'칸':''}</small></button>`).join('')+(L.length?'':'<p class="small mut">아직 비어 있다 — 길거리·상가·군용 상자에서 모은다.</p>')}
   bagDet()}
-function bagDet(){const d=$('#bagDet');if(!d)return;const it=BAG.sel;if(!it){d.innerHTML='<p class="small mut">물건을 누르면 설명과 할 수 있는 일이 뜬다.</p>';return}const e=it.e,k=e.key;const acts=[];
+function bagDet(){const d=$('#bagDet');if(!d)return;const it=BAG.sel;if(!it){d.innerHTML='<p class="small mut">물건을 누르면 설명과 할 수 있는 일이 뜬다.</p>';try{if(typeof wsBagPanel==='function')wsBagPanel(null)}catch(x){}return}const e=it.e,k=e.key;const acts=[];
   if(e.kind==='arm'){const W=ARMS[k];const eq=GUN.eq===k||G.eq===k;acts.push(`<button class="btn ${eq?'':'pri'}" data-bag="eq" data-k="${k}">${eq?'넣기(장착 해제)':'장착'}</button>`);if(W.mag&&W.am&&(e.mag||0)<W.mag&&gunAmmoOf(W.am)>0)acts.push(`<button class="btn" data-bag="load" data-k="${k}">탄 채우기</button>`);acts.push(BAG.confirmDrop===k?`<button class="btn dngr" data-bag="drop2" data-k="${k}">정말 버린다</button>`:`<button class="btn ghost" data-bag="drop" data-k="${k}">버리기</button>`)}
-  else if(e.kind==='inv'){if(k==='drink'||k==='canfood'||k==='snack'||k==='energy')acts.push(`<button class="btn pri" data-bag="use" data-k="${k}">${k==='drink'?'마신다':'먹는다'}</button>`);if(k==='drone'&&typeof lootDroneScan==='function')acts.push(`<button class="btn pri" data-bag="use" data-k="${k}">띄운다(정찰)</button>`);acts.push(BAG.confirmDrop===k?`<button class="btn dngr" data-bag="drop2" data-k="${k}">정말 버린다</button>`:`<button class="btn ghost" data-bag="drop" data-k="${k}">버리기</button>`)}
-  d.innerHTML=`<h3>${bagName(k)}${e.n>1?` <small class="num">×${e.n}</small>`:''}</h3><p>${bagDesc(k)}</p>${e.kind==='arm'&&ARMS[k].mag?`<p class="small">탄창 <b class="num">${e.mag||0}/${ARMS[k].mag}</b> · 남은 탄 <b class="num">${gunAmmoOf(ARMS[k].am)}</b></p>`:''}<div class="row">${acts.join('')}</div>`}
+  else if(e.kind==='inv'){if(k.startsWith('opt_')&&typeof optBagActs==='function')acts.push(...optBagActs(k));if(k==='drink'||k==='canfood'||k==='snack'||k==='energy')acts.push(`<button class="btn pri" data-bag="use" data-k="${k}">${k==='drink'?'마신다':'먹는다'}</button>`);if(k==='drone'&&typeof lootDroneScan==='function')acts.push(`<button class="btn pri" data-bag="use" data-k="${k}">띄운다(정찰)</button>`);acts.push(BAG.confirmDrop===k?`<button class="btn dngr" data-bag="drop2" data-k="${k}">정말 버린다</button>`:`<button class="btn ghost" data-bag="drop" data-k="${k}">버리기</button>`)}
+  d.innerHTML=`<h3>${bagName(k)}${e.n>1?` <small class="num">×${e.n}</small>`:''}</h3><p>${bagDesc(k)}</p>${e.kind==='arm'&&ARMS[k].mag?`<p class="small">탄창 <b class="num">${e.mag||0}/${ARMS[k].mag}</b> · 남은 탄 <b class="num">${gunAmmoOf(ARMS[k].am)}</b></p>`:''}<div class="row">${acts.join('')}</div>${e.kind==='arm'&&typeof wsBagPanel==='function'?'<p class="small mut">📊 성능 카드·🔭 조준경 칸은 왼쪽 진열 위에 뜬다</p>':''}`;try{if(typeof wsBagPanel==='function')wsBagPanel(e.kind==='arm'?k:null)}catch(x){}}
 function bagUse(k){if(!G)return;FX=[];let t='';if(k==='drink'){give(k,-1);res('water',.5);mor(1);t='음료수를 마셨다'}else if(k==='canfood'){give(k,-1);res('food',1);heal('me',3);t='통조림을 먹었다'}else if(k==='snack'){give(k,-1);mor(2);t='간식을 먹었다'}else if(k==='energy'){give(k,-1);heal('me',4);t='에너지바를 먹었다'}
   else if(k==='drone'&&typeof lootDroneScan==='function'){if(lootDroneScan()){give(k,-1);t='드론을 띄웠다'}else{t='밖에서만 띄울 수 있다'}}
   if(G.inv[k]<=0)delete G.inv[k];if(typeof OUT!=='undefined'&&OUT.on){OUT.fx.push(...FX);outStat()}if(t)toast(t+(FX.length?' · '+FX.map(x=>`${x.l} ${x.n>0?'+':''}${x.n}${x.u||''}`).join(' · '):''),2600);bagRefresh()}
@@ -20246,7 +20311,7 @@ if(typeof HELP84!=='undefined')HELP84.push(['💣 공방 드론 교전(v10.7)','
    · 값: 현금 봉투(드론 공방 납품으로 번다) · 탄약도 판다
    · 처음 사는 총마다 '검증 시민 무장 등록' — 경찰·군이 반긴다: merit +2 · 마을 기강 +2 (처음 한 번 이웃 신뢰 +1)
    · 등록한 총을 들고 다니면 거리의 군인·경찰이 알아보고 인사한다 */
-const GSH={grp:null,sc:null,door:null,npc:[],cells:null,tab:'gun',greetT:0};
+const GSH={grp:null,sc:null,door:null,npc:[],cells:null,tab:'gun',greetT:0,info:null};
 const GS_LIST=[['rev',3,2],['xbow',3,2],['sgp',5,3],['k5',6,3],['p9',6,3],['k1a',9,5],['k2c1',12,6],['m16',12,5],['m4',14,6],['sga',16,7],['k2dmr',18,8],['k14',22,10],['gl40',26,10],['k3',30,12]];
 const GS_AMMO=[['556',30,1],['9mm',30,1],['12ga',16,1],['762',20,1],['38',24,1],['bolt',6,1],['40mm',3,2]];
 function gsBuild(sc){try{dfUnmark(GSH.cells)}catch(e){}GSH.cells=null;GSH.grp=null;GSH.door=null;GSH.npc=[];const Ss=typeof dfSites==='function'?dfSites():null;if(!Ss||!Ss.gs)return;const L=Ss.gs;GSH.sc=sc;
@@ -20274,13 +20339,14 @@ function gsBuy(id){const it=GS_LIST.find(x=>x[0]===id);const W=ARMS[id];if(!it||
 function gsAmmo(k){const it=GS_AMMO.find(x=>x[0]===k);if(!it)return false;const [,n,pr]=it;if(dfCash()<pr){toast(`현금 봉투 ${pr}개가 필요하다`);return false}dfPay(pr);gunAmmoAdd(k,n);try{gunAmmoUI()}catch(e){}toast(`${AMMO[k]?AMMO[k].n:k} ${n}발`,1800);return true}
 function gsPanel(open){const el=SV3.el;let p=$('#gsPanel');if(!open){if(p)p.remove();return}if(!el)return;if(!p){p=document.createElement('div');p.id='gsPanel';p.className='mis-panel df-panel gs-panel';el.appendChild(p)}const tr=G.trust||0;
   let h=`<div class="mis-head"><b>🔫 탕정 총포사</b><button class="btn sm" data-g3="gsx">닫기</button></div><div class="df-stock"><span>🤝 이웃 신뢰 <b class="num">${tr}</b></span><span>💵 현금 봉투 <b class="num">${dfCash()}</b></span><span>🪪 등록 ${Object.keys(gsReg()).length}정</span></div>`;
-  h+=`<div class="df-tabs">${[['gun','총기'],['ammo','탄약']].map(([k,n])=>`<button class="df-tab${GSH.tab===k?' on':''}" data-g3="gstab" data-v="${k}">${n}</button>`).join('')}</div>`;
+  h+=`<div class="df-tabs">${[['gun','총기'],...(typeof optShopRows==='function'?[['opt','조준경']]:[]),['ammo','탄약']].map(([k,n])=>`<button class="df-tab${GSH.tab===k?' on':''}" data-g3="gstab" data-v="${k}">${n}</button>`).join('')}</div>`;
   if(GSH.tab==='gun'){h+=`<p class="mis-note">이웃 신뢰가 오를수록 더 강한 총이 열린다. 사면 경찰·군이 신원을 확인하고 '검증 시민 무장'으로 등록한다.</p>`;for(const [id,need,pr] of GS_LIST){const W=ARMS[id];if(!W)continue;const lock=tr<need,own=gsOwned(id),can=!lock&&!own&&dfCash()>=pr;
-      h+=`<div class="mis-row${lock?' gs-lock':''}"><span class="mis-ico">${lock?'🔒':ARMS_CAT[W.cat]==='소총'?'🎯':'🔫'}</span><div><b>${W.n} <small class="df-have">${ARMS_CAT[W.cat]||''}</small></b><small>${(W.d||'').split('.')[0]}</small><em>${lock?`이웃 신뢰 ${need} 필요 (지금 ${tr})`:`현금 봉투 ${pr}${W.am&&AMMO[W.am]?' · '+AMMO[W.am].n+' 포함':''}`}</em></div><button class="btn sm${can?' pri':' dis'}" data-g3="gsbuy" data-v="${id}"${can?'':' disabled'}>${own?'보유':'구매'}</button></div>`}}
+      const inf=typeof wsCard==='function';h+=`<div class="mis-row${lock?' gs-lock':''}${inf?' gs-inf':''}${GSH.info===id?' on':''}"${inf?` data-g3="gsinfo" data-v="${id}"`:''}><span class="mis-ico">${lock?'🔒':ARMS_CAT[W.cat]==='소총'?'🎯':'🔫'}</span><div><b>${W.n} <small class="df-have">${ARMS_CAT[W.cat]||''}${inf?' · <span class="gs-i">ⓘ 성능 보기</span>':''}</small></b><small>${(W.d||'').split('.')[0]}</small><em>${lock?`이웃 신뢰 ${need} 필요 (지금 ${tr})`:`현금 봉투 ${pr}${W.am&&AMMO[W.am]?' · '+AMMO[W.am].n+' 포함':''}`}</em></div><button class="btn sm${can?' pri':' dis'}" data-g3="gsbuy" data-v="${id}"${can?'':' disabled'}>${own?'보유':'구매'}</button></div>${inf&&GSH.info===id?wsCard(id,{shop:1}):''}`}}
+  else if(GSH.tab==='opt'&&typeof optShopRows==='function')h+=optShopRows();
   else{for(const [k,n,pr] of GS_AMMO){const A=AMMO[k];if(!A)continue;const can=dfCash()>=pr;h+=`<div class="mis-row"><span class="mis-ico">📦</span><div><b>${A.n} ${n}발</b><small>현금 봉투 ${pr}</small></div><button class="btn sm${can?' pri':' dis'}" data-g3="gsammo" data-v="${k}"${can?'':' disabled'}>사기</button></div>`}}
   p.innerHTML=h}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=gsx],[data-g3=gstab],[data-g3=gsbuy],[data-g3=gsammo]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3,v=b.dataset.v;
-  if(k==='gsx'){gsPanel(false);FP3.lock=false;return}if(k==='gstab')GSH.tab=v;else if(k==='gsbuy')gsBuy(v);else if(k==='gsammo')gsAmmo(v);gsPanel(true)},true);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=gsx],[data-g3=gstab],[data-g3=gsbuy],[data-g3=gsammo],[data-g3=gsoptbuy],[data-g3=gsinfo]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3,v=b.dataset.v;
+  if(k==='gsx'){gsPanel(false);FP3.lock=false;return}if(k==='gstab'){GSH.tab=v;GSH.info=null}else if(k==='gsbuy')gsBuy(v);else if(k==='gsammo')gsAmmo(v);else if(k==='gsoptbuy'&&typeof optBuy==='function')optBuy(v);else if(k==='gsinfo')GSH.info=GSH.info===v?null:v;gsPanel(true)},true);
 (function(){const b=window.outCands;window.outCands=function(){const L=b.apply(this,arguments);try{if(OUT.on&&GSH.door&&GSH.sc===OUT.scene&&!OUT.drv&&!OUT.ride){const nx=GS_LIST.find(x=>x[1]>(G.trust||0));L.push({id:'gs',k:'gs',x:GSH.door.x,z:GSH.door.z,r:3.2,g:'🔫',n:'탕정 총포사 — 검증 시민 무장',s:`이웃 신뢰 ${G.trust||0} · 현금 봉투 ${dfCash()}${nx?` · 다음: ${ARMS[nx[0]].n}(신뢰 ${nx[1]})`:''}`,h:0,nomap:0})}}catch(e){}return L}})();
 (function(){const b=window.outDo;window.outDo=function(c){if(c&&c.k==='gs'&&!OUT.busy&&!OUT.enc){FP3.lock=true;FP3.mv.x=FP3.mv.y=0;gsPanel(true);return}return b.apply(this,arguments)}})();
 (function(){const b=window.outReturn;window.outReturn=function(){try{gsPanel(false)}catch(e){}return b.apply(this,arguments)}})();
@@ -20340,6 +20406,219 @@ window.owcSqUI=function(){const el=$('#owcSq');if(!el)return;const h=OWC.al.map(
     SQ.cas=cas.map(q=>({m:q.m,sev:q.sev}));if(SQ.cas.length)SQ.ambT=.6}catch(e){console.error(e)}return r}})();
 (function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{if(SQ.ambT>0&&OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)){SQ.ambT-=dt;if(SQ.ambT<=0){SQ.ambT=0;const L=SQ.cas.filter(q=>q.m&&q.m.h&&(q.sev==='kia'||['crit','hurt'].includes(q.m.d.st)));SQ.cas=[];if(L.length&&typeof ambCall==='function'&&!AMBU.on)ambCall({list:L},'fight',{near:true})}}}catch(e){console.error(e)}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🛡 교전 팀원(v10.7)','교전 중 내가 5m 넘게 앞으로 나가 멈추면(또는 14m 넘게 계속 나가면) 팀원들이 내 옆·뒤 엄폐물로 한 명씩 뛰어오고, 그동안 나머지가 엄호 사격한다. 팀원은 다칠 수 있다 — 부상(지혈하며 빠짐) · 치명상(쓰러져 출혈) · 드물게 전사. 교전 결과 창을 닫으면 근처 길에서 구급차가 5초 안팎에 와 치명상자·전사자를 들것으로 싣고, 부상자는 뒷문에서 처치해 팀에 돌려보낸다.']);
+
+/* ===================== 97 · v10.8 조준경 파트 · 무기 성능 카드 ===================== */
+/* 사용자 요청(2026-11-08): "돌격소총에도 조준경 파트를 장착하게 해 주세요. 종류 별 총들에도 장착하게 해 주시고
+   총 클릭 시 총by성능을 표기바랍니다. 반동,정확도.속도.무게.치명상 등"
+   · 조준경 5종: 도트(1배) · 2배 · 4배 전투 · 6배 · 8배 저격 — 총 종류마다 달 수 있는 범위가 다르다(OPT_FIT)
+   · 달면 실제로 바뀐다: 배율(ARMS.zoom 게터) · 조준 퍼짐(ARMS.spA 게터) · 무게 → 조준 속도 · 무거운 총을 들면 이동 속도↓
+   · 총 3D 모델(1인칭 · 교전 · 배낭)에 조준경이 붙는다. 기본 조준경(지정사수·저격총·석궁)·일체형 도트(자동 산탄총)는 바꿔 달면 숨긴다
+   · 조준 화면: 검은 링 + 위쪽 배율(X2·X4) + 종류별 조준선(2배 이중선 · 4배 셰브런과 낙차 눈금 · 6·8배 밀도트) · 도트는 유리창 + 붉은 점
+   · 성능 카드: 위력 · 치명상(적별 몸통/머리 발수) · 정확도(유효 사거리) · 반동 · 연사 · 조준 속도 · 무게 · 이동 속도 · 장탄
+     — 배낭에서 총을 누르면, 총포사 목록에서 총을 누르면 뜬다. 수치는 게임 기준(실제 제원 아님)
+   · 구하는 곳: 총포사 '조준경' 탭(이웃 신뢰 단계) · 군용 보급 상자(40%) · 교전 노획(저격수·조장이 잘 떨군다) */
+const OPT={
+  dot:{n:'도트사이트',sn:'도트',z:1,acc:.85,ads:.95,kg:.25,d:'1배 · 붉은 점 하나로 빠르게 겨눈다'},
+  x2:{n:'2배율 조준경',sn:'2배',z:2,acc:.74,ads:1.1,kg:.35,d:'근·중거리 · 시야가 넓다'},
+  x4:{n:'4배율 전투 조준경',sn:'4배',z:4,acc:.6,ads:1,kg:.5,d:'중거리 정밀 · 셰브런과 낙차 눈금'},
+  x6:{n:'6배율 조준경',sn:'6배',z:6,acc:.5,ads:.9,kg:.65,d:'원거리 · 흔들림이 커서 숨 참기가 필요'},
+  x8:{n:'8배율 저격 조준경',sn:'8배',z:8,acc:.42,ads:.82,kg:.8,d:'저격 · 아주 먼 거리'}};
+const OPT_K=['dot','x2','x4','x6','x8'];
+/* 총 종류별 장착 범위(id가 따로 있으면 그것) */
+const OPT_FIT_CAT={ar:['dot','x2','x4','x6'],smg:['dot','x2'],sg:['dot'],sr:['x2','x4','x6','x8'],lmg:['dot','x2','x4'],pst:['dot']};
+const OPT_FIT_ID={k1a:['dot','x2','x4'],sga:['dot','x2'],xbow:['dot','x2','x4'],flareg:[],taser:[]};
+const OPT_BUILT={sga:'dot'};/* 기본으로 도트가 붙어 있는 총 */
+const OPT_BACC={2:.74,3:.67,4:.6,6:.5,8:.42};/* 기본 조준경 배율 → 정확도 몫(바꿔 달 때 이중 계산 방지) */
+const OPT_SHOP=[['dot',5,2],['x2',8,3],['x4',12,4],['x6',18,6],['x8',22,8]];/* [종류, 이웃 신뢰, 현금 봉투] */
+const OPT_DROP=[['dot',30],['x2',30],['x4',24],['x6',11],['x8',5]];
+/* 장착 자리(총 좌표: +Z 총구 · +Y 위): [높이, 앞뒤, 크기, 숨길 기본 조준경 이름, 좌우] */
+const OPT_MOUNT={k2:[.098,.02],k2c1:[.098,.02],k1a:[.098,.02],m4:[.1,.05],m16:[.118,-.02],k2dmr:[.1,0],ak47:[.084,-.04],ak74:[.084,-.04],t88:[.084,-.04],
+  k7:[.098,-.01],mp9:[.078,0],uzi:[.097,-.04],sgp:[.076,-.03],sga:[.086,-.03],k14:[.09,.02,1,'scope'],svd:[.09,-.04,1,'scope',-.01],m24:[.093,0],amr:[.092,-.04],
+  k3:[.118,.06],pkm:[.12,0],k5:[.045,.025,.7],p9:[.052,.03,.7],rev:[.066,.03,.7],xbow:[.062,-.02]};
+/* 무게(kg, 장전 상태 · 게임 기준 추정치) */
+const ARMS_KG={k2c1:3.4,k1a:2.9,k2dmr:4.2,m4:3.1,m16:3.9,ak47:4.3,ak74:3.6,t88:3.5,k7:3.3,mp9:1.6,uzi:2.6,sgp:3.6,sga:4.0,k14:6.0,svd:4.6,m24:6.4,amr:13.5,
+  k3:7.5,pkm:8.4,k5:.8,p9:.8,rev:.7,flareg:.6,pzf:13.3,rpg:7.0,gl40:2.7,knife:.3,axe:2.7,bat:1.0,crowbar:1.4,machete:.7,xbow:3.2,taser:.3};
+const WS_EN=[['소총수',2],['기관총 사수',3],['특수부대 조장',5]];
+const OPTX={next:null,bag:0,last:null,base:{},glass:null};
+/* ---------- 장착 상태 ---------- */
+function optFitL(id){const W=ARMS[id];if(!W)return[];if(OPT_FIT_ID[id])return OPT_FIT_ID[id];return OPT_FIT_CAT[W.cat]||[]}
+function optFits(id,k){return !!k&&optFitL(id).includes(k)}
+function optRec(id){return typeof G!=='undefined'&&G&&G.arms?G.arms.find(a=>a.id===id):null}
+function optOn(id){if(typeof G==='undefined'||!G||!G.arms)return null;const r=G.arms.find(a=>a.id===id);return r&&r.opt&&OPT[r.opt]?r.opt:null}
+function optBuiltZ(id){const b=OPTX.base[id];return b?(b.zoom||0):0}
+function optBuiltAcc(id){if(OPT_BUILT[id])return OPT[OPT_BUILT[id]].acc;const z=optBuiltZ(id);return z>1?(OPT_BACC[z]||.6):1}
+function optEff(id){return optOn(id)||OPT_BUILT[id]||null}
+function optHave(k){const loose=(G&&G.inv&&G.inv['opt_'+k])||0;return loose+((G&&G.arms)||[]).filter(a=>a.opt===k).length}
+function optFitTxt(k){const c=Object.keys(OPT_FIT_CAT).filter(c=>OPT_FIT_CAT[c].includes(k)).map(c=>ARMS_CAT[c]);if(OPT_FIT_ID.xbow.includes(k))c.push('석궁');return c.join('·')}
+/* ARMS 배율·조준 퍼짐을 장착 조준경에 따라 — 읽는 곳(65·48·66)은 그대로 */
+(function(){for(const id in ARMS){const W=ARMS[id];if(!W||W.cat==='mel')continue;const b={zoom:W.zoom||0,spA:W.spA};OPTX.base[id]=b;
+  Object.defineProperty(W,'zoom',{configurable:true,enumerable:true,get(){const o=optOn(id);return o?OPT[o].z:b.zoom},set(v){b.zoom=v}});
+  if(b.spA!=null)Object.defineProperty(W,'spA',{configurable:true,enumerable:true,get(){const o=optOn(id);return o?+(b.spA/optBuiltAcc(id)*OPT[o].acc).toFixed(4):b.spA},set(v){b.spA=v}})}})();
+/* ---------- 성능 수치 ---------- */
+function wsKg(id,o){const W=ARMS[id];const base=ARMS_KG[id]!=null?ARMS_KG[id]:((W&&W.slot)||1)*1.4;return +(base+(o&&OPT[o]?OPT[o].kg:0)).toFixed(2)}
+function wsMob(kg){return kg>4.5?clamp(1-(kg-4.5)*.028,.72,1):1}
+function wsHeavyAds(kg){return kg>4.5?clamp(4.5/kg,.6,1):1}
+function wsAdsRate(id,o){const z=o?OPT[o].z:optBuiltZ(id);return (z>1?7:12)*(o?OPT[o].ads:1)*wsHeavyAds(wsKg(id,o))}
+function wsStats(id,opt){const W=ARMS[id];if(!W)return null;const b=OPTX.base[id]||{zoom:W.zoom||0,spA:W.spA};
+  const o=opt===undefined?optOn(id):(opt&&OPT[opt]&&optFits(id,opt)?opt:null);const O=o?OPT[o]:null;
+  const S={id,W,o,O,cat:W.cat,mel:W.cat==='mel'};S.kg=wsKg(id,o);S.mob=wsMob(S.kg);
+  if(S.mel){S.dmg=W.dmg;S.swing=W.swing||.4;S.reach=W.reach||1.4;S.stkB=Math.max(1,Math.ceil(2.4/W.dmg-1e-9));return S}
+  S.zoom=O?O.z:(b.zoom||0);S.spA=O?b.spA/optBuiltAcc(id)*O.acc:b.spA;S.pel=W.pel||1;S.dmg=W.dmg||0;S.rpm=Math.round(60/(W.rate||1));
+  S.ads=wsAdsRate(id,o);S.adsT=Math.log(10)/S.ads;
+  const kick=(W.cat==='sg'?.014:W.cat==='sr'?.012:W.cat==='pst'?.008:.0062)*(W.heavy?1.3:1);S.kickA=kick*.55*57.2958;
+  S.rec=clamp(.6*kick/.016+.25*(W.bl||0)/.7+.15*(W.bmax||0)/5.5,0,1);S.acc=clamp((1.3-S.spA)/1.25,.03,1);
+  const maxR=W.range||(W.rocket?220:W.nade?45:W.cat==='sr'?900:W.cat==='sg'?45:420);
+  S.rng=W.cat==='sg'?12:Math.min(maxR,Math.round(.35/Math.tan(Math.max(.01,S.spA)*Math.PI/180)));
+  const tot=S.dmg*S.pel;S.boom=!!(W.rocket||W.nade);S.nl=!!W.nonlethal;S.pow=S.boom?1:clamp(tot/3.4,0,1);
+  S.stk=S.nl||S.boom||!tot?null:WS_EN.map(([n,hp])=>({n,hp,b:Math.max(1,Math.ceil(hp/tot-1e-9)),h:W.cat==='sg'?null:Math.max(1,Math.ceil(hp/(S.dmg*2.2)-1e-9))}));
+  S.leth=S.nl?0:S.boom?1:clamp(.5*clamp(tot*2.2/5,0,1)+.5/(S.stk?S.stk[0].b:9),0,1);return S}
+function wsRow(lab,v,txt,bad){return `<div class="ws-row${bad?' bad':''}"><span>${lab}</span><div class="ws-bar"><i style="width:${Math.round(clamp(v,0,1)*100)}%"></i></div><em>${txt}</em></div>`}
+function wsCard(id,o){o=o||{};const S=wsStats(id,o.opt);if(!S)return '';const W=S.W;let h=`<div class="ws-card" data-ws="${id}"><div class="ws-head"><b>📊 ${W.n} 성능</b><small>${ARMS_CAT[W.cat]||''} · 게임 기준 수치</small></div>`;
+  if(S.mel){h+=wsRow('위력',W.dmg/2.4,`×${W.dmg}`)+wsRow('치명상',1/S.stkB,`불량배 ${S.stkB}번`)+wsRow('공격 속도',clamp((.62-S.swing)/.35,.1,1),`${S.swing}초/회`)+wsRow('사거리',S.reach/1.8,`${S.reach}m`)+wsRow('무게',S.kg/14,`${S.kg.toFixed(1)}kg`,1)+wsRow('이동 속도',S.mob,`${Math.round(S.mob*100)}%`);return h+'</div>'}
+  const rf=W.auto?'연발':W.bolt?'노리쇠':'단발';
+  h+=wsRow('위력',S.pow,S.boom?`폭발 ×${W.dmg}`:S.nl?'비살상':`×${S.dmg}${S.pel>1?` ×${S.pel}알`:''}`);
+  h+=wsRow('치명상',S.leth,S.nl?`${W.stun||6}초 제압`:S.boom?`반경 ${W.nade?4.5:6}m`:`소총수 ${S.stk[0].b}${S.stk[0].h?'/'+S.stk[0].h:''}발`);
+  h+=wsRow('정확도',S.acc,S.cat==='sg'?`~${S.rng}m 산탄`:`${S.rng}m · ${S.spA.toFixed(2)}°`);
+  h+=wsRow('반동',S.rec,`${S.rec<.42?'약함':S.rec<.55?'보통':'강함'} ${S.kickA.toFixed(2)}°`,1);
+  h+=wsRow('연사 속도',Math.min(1,S.rpm/900),`${S.rpm}발/분 ${rf}`);
+  h+=wsRow('조준 속도',clamp(1-(S.adsT-.15)/.5,.05,1),`${S.adsT.toFixed(2)}초`);
+  h+=wsRow('무게',S.kg/14,`${S.kg.toFixed(1)}kg${S.O?` (+${S.O.kg})`:''}`,1);
+  h+=wsRow('이동 속도',S.mob,`${Math.round(S.mob*100)}%`);
+  const sight=S.O?`${S.O.n} 장착`:S.zoom>1?`기본 조준경 ${S.zoom}배`:OPT_BUILT[id]?'도트사이트 일체형':'가늠자';
+  h+=`<div class="ws-foot"><span>🔭 ${sight}${S.zoom>1?` · ${S.zoom}배`:''}</span>${W.mag?`<span>탄창 ${W.mag}발 · 재장전 ${W.reload}초${AMMO[W.am]?' · '+AMMO[W.am].n:''}</span>`:''}</div>`;
+  if(S.stk)h+=`<div class="ws-stk"><b>치명상</b> 무력화까지 ${W.cat==='sg'?'몸통(근거리 산탄 모두 명중)':'몸통/머리'} — ${S.stk.map(s=>`${s.n} <b class="num">${s.b}${s.h?'/'+s.h:''}</b>`).join(' · ')}발 <small>머리 ×2.2 · 다리 ×0.7</small></div>`;
+  return h+'</div>'}
+function wsDelta(id){const L=OPTX.last;if(!L||L.id!==id||Date.now()-L.t>90000)return '';const a=wsStats(id,L.from||null),b=wsStats(id,L.to||null);if(!a||!b||a.mel)return '';
+  const P=(n,x,y,f,u)=>x===y?'':`<span>${n} ${f(x)}→<b class="${(n==='조준'||n==='무게')?(y>x?'dn':'up'):(y>x?'up':'dn')}">${f(y)}</b>${u||''}</span>`;
+  const t=[P('배율',a.zoom>1?a.zoom:1,b.zoom>1?b.zoom:1,v=>v+'×'),P('정확도',Math.round(a.acc*100),Math.round(b.acc*100),v=>v),P('유효',a.rng,b.rng,v=>v,'m'),P('조준',+a.adsT.toFixed(2),+b.adsT.toFixed(2),v=>v.toFixed(2),'초'),P('무게',a.kg,b.kg,v=>v.toFixed(1),'kg')].filter(Boolean);
+  return t.length?`<div class="ws-delta">${t.join('')}</div>`:''}
+/* 배낭: 총을 고르면 3D 진열 위 왼쪽에 '조준경 칸 + 바뀐 수치 + 성능 카드'를 띄운다(66 bagDet가 부른다) */
+function wsBagHtml(id){return wsCard(id)+wsDelta(id)+optChips(id)}
+function wsBagPanel(id){const v=$('#bagView');if(!v)return;let el=$('#bagWs');if(!id||!ARMS[id]){if(el)el.remove();return}
+  if(!el){el=document.createElement('div');el.id='bagWs';el.className='bag-ws';v.appendChild(el);['pointerdown','pointermove','pointerup','wheel'].forEach(t=>el.addEventListener(t,e=>e.stopPropagation(),{passive:true}))}
+  const st=el.dataset.id===id?el.scrollTop:0;el.dataset.id=id;el.innerHTML=wsBagHtml(id);el.scrollTop=st}
+function optChips(id){const W=ARMS[id];if(!W)return '';const L=optFitL(id);if(!L.length)return `<div class="ws-opt"><b>🔭 조준경</b> <small class="mut">${W.cat==='lch'?'발사기 전용 조준기 — 바꿔 달 수 없다':W.cat==='mel'?'근접 무기':'달 수 없다'}</small></div>`;
+  const cur=optOn(id);const bz=optBuiltZ(id);let h=`<div class="ws-opt"><b>🔭 조준경</b><div class="ws-chips"><button class="ws-chip${!cur?' on':''}" data-optb="${id}" data-o="">${OPT_BUILT[id]?'기본 도트':bz>1?`기본 ${bz}배`:'가늠자'}</button>`;
+  let any=0;for(const k of L){const O=OPT[k];const loose=(G.inv&&G.inv['opt_'+k])||0;const other=(G.arms||[]).find(a=>a.opt===k&&a.id!==id);const on=cur===k;const can=on||loose>0||!!other;if(can)any=1;
+    h+=`<button class="ws-chip${on?' on':''}${can?'':' no'}" data-optb="${id}" data-o="${k}"${can?'':' disabled'}>${O.sn}${on?'':loose?`<small>×${loose}</small>`:other?`<small>${ARMS[other.id].n.split(' ')[0]}에서</small>`:'<small>없음</small>'}</button>`}
+  return h+`</div><small class="ws-tip">${any?'누르면 바로 단다(다른 총에 달린 것도 옮겨 단다)':'구하는 곳: 총포사 \'조준경\' 탭 · 군용 보급 상자 · 교전 노획'}</small></div>`}
+/* 배낭에서 조준경 물건을 눌렀을 때: 맞는 총에 달기 */
+function optBagActs(key){const k=key.slice(4);if(!OPT[k])return[];const L=((G&&G.arms)||[]).filter(a=>optFits(a.id,k));if(!L.length)return[`<span class="small mut">맞는 총이 배낭에 없다 — ${optFitTxt(k)}</span>`];
+  const eq=typeof GUN!=='undefined'?(GUN.eq||G.eq):G.eq;return L.slice(0,4).map(a=>`<button class="btn${a.id===eq?' pri':''}" data-optb="${a.id}" data-o="${k}"${a.opt===k?' disabled':''}>${ARMS[a.id].n}${a.opt===k?' — 장착됨':'에 달기'}</button>`)}
+/* ---------- 달기·떼기 ---------- */
+function optAttach(id,k,quiet){if(!G)return false;const rec=optRec(id);if(!rec)return false;k=k||null;const cur=rec.opt&&OPT[rec.opt]?rec.opt:null;if(cur===k)return true;
+  if(k&&!optFits(id,k)){if(!quiet)toast(`${ARMS[id].n}에는 ${OPT[k].n}을(를) 달 수 없다`);return false}G.inv=G.inv||{};
+  if(k){const key='opt_'+k;if((G.inv[key]||0)>0){G.inv[key]--;if(G.inv[key]<=0)delete G.inv[key]}else{const o2=(G.arms||[]).find(a=>a.opt===k&&a.id!==id);if(!o2){if(!quiet)toast(`${OPT[k].n}이(가) 없다`);return false}o2.opt=null;optRefreshGun(o2.id)}}
+  if(cur){const key='opt_'+cur;G.inv[key]=(G.inv[key]||0)+1}rec.opt=k;OPTX.last={id,from:cur,to:k,t:Date.now()};optRefreshGun(id);
+  if(!quiet){try{SFX.mech(k?'magin':'switch')}catch(e){}toast(k?`🔭 ${ARMS[id].n} — ${OPT[k].n} 장착 (${OPT[k].z}배)`:`${ARMS[id].n} — 조준경을 뗐다`,1800)}return true}
+function optRefreshGun(id){try{if(typeof GUN!=='undefined'&&GUN.on&&GUN.fp&&GUN.eq===id){GUN.zoomLo=false;GUN.ads=false;GUN.adsK=0;gunVmBuild(ARMS[id]);gunUI()}}catch(e){console.error(e)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-optb]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.disabled)return;const ok=optAttach(b.dataset.optb,b.dataset.o||null);
+  if(ok&&typeof BAG!=='undefined'&&BAG.open){try{const k=b.dataset.optb;bagRefresh();const it=BAG.items.find(x=>x.e.key===k);if(it)bagSelect(it)}catch(x){}}},true);
+/* 총을 버리면 달려 있던 조준경은 배낭으로 */
+(function(){const b=window.gunDrop;if(typeof b!=='function')return;window.gunDrop=function(id){try{const rec=optRec(id);if(rec&&rec.opt&&OPT[rec.opt]){G.inv=G.inv||{};G.inv['opt_'+rec.opt]=(G.inv['opt_'+rec.opt]||0)+1;rec.opt=null}}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 3D: 조준경 모델 · 총에 달기 ---------- */
+function optGlass(){return OPTX.glass||(OPTX.glass=new T.MeshStandardMaterial({color:'#9fd0ff',transparent:true,opacity:.22,roughness:.05,metalness:.3,emissive:'#3a6a9a',emissiveIntensity:.25,side:T.DoubleSide,depthWrite:false}))}
+function optModel(k){const g=new T.Group();g.name='optic';g.userData.opt=k;const blk=GM.blk(),dk=GM.dk();
+  const B=(w,h,d,x,y,z,m,o)=>MM(GG.box(w,h,d,o&&o.r),m||blk,x,y,z,Object.assign({recv:false,p:g},o||{}));
+  const C=(rt,rb,l,x,y,z,m,o)=>MM(GG.cyl(rt,rb,l,o&&o.seg||16),m||blk,x,y,z,Object.assign({rx:Math.PI/2,recv:false,p:g},o||{}));
+  const V=(r,l,x,y,z,m,o)=>MM(GG.cyl(r,r,l,10),m||blk,x,y,z,Object.assign({recv:false,p:g},o||{}));
+  const lens=GM2.lens(),eye=mat('#0b1622',{r:.12,m:.5,e:'#06101c',ei:.3});
+  if(k==='dot'){B(.026,.006,.046,0,.003,0,dk,{r:.002});for(const x of [-.0125,.0125])B(.004,.03,.034,x,.021,.002,blk,{r:.0012});B(.029,.005,.036,0,.038,.002,blk,{r:.002});B(.006,.009,.014,.0165,.02,-.006,dk,{r:.001});
+    MM(GG.pl(.021,.027),optGlass(),0,.021,.015,{p:g,recv:false,cast:false});MM(GG.sph(.0017,6),new T.MeshBasicMaterial({color:'#ff2a2a'}),0,.022,.012,{p:g,recv:false,cast:false})}
+  else if(k==='x2'){B(.022,.008,.07,0,.004,0,dk,{r:.002});for(const z of [-.026,.026])B(.026,.022,.012,0,.015,z,blk,{r:.003});C(.0145,.0145,.11,0,.032,0,blk);C(.019,.0145,.024,0,.032,.066,blk);C(.0145,.017,.022,0,.032,-.065,blk);
+    C(.0165,.0165,.003,0,.032,.0785,lens);C(.0145,.0145,.003,0,.032,-.077,eye)}
+  else if(k==='x4'){B(.026,.012,.075,0,.006,0,dk,{r:.002});B(.034,.034,.1,0,.03,0,blk,{r:.008});C(.021,.0175,.03,0,.032,.064,blk);C(.015,.017,.024,0,.03,-.06,blk);
+    C(.0185,.0185,.003,0,.032,.0795,lens);C(.0135,.0135,.003,0,.03,-.073,eye);C(.0032,.0032,.074,0,.0505,-.004,mat('#e0701c',{r:.35,e:'#b04a10',ei:.8}));B(.012,.012,.012,.021,.032,0,dk,{r:.002})}
+  else{const L=k==='x8'?.27:.22,R=k==='x8'?.031:.026;for(const z of [-.05,.05])B(.028,.03,.014,0,.016,z,blk,{r:.003});B(.022,.008,.13,0,.004,0,dk,{r:.002});
+    C(.0165,.0165,L,0,.038,0,blk);C(R,.0165,.055,0,.038,L/2+.02,blk);C(.0165,.021,.05,0,.038,-L/2-.015,blk);C(R-.003,R-.003,.003,0,.038,L/2+.048,lens);C(.017,.017,.003,0,.038,-L/2-.041,eye);
+    V(.0095,.018,0,.063,0,blk);V(.0095,.018,.026,.038,0,blk,{rz:Math.PI/2});if(k==='x8')V(.009,.014,-.025,.038,.03,blk,{rz:Math.PI/2})}
+  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false}});return g}
+function optMount(g,type,k){if(!g||!OPT[k])return null;const M=OPT_MOUNT[type]||[.1,0];const m=optModel(k);m.position.set(M[4]||0,M[0],M[1]);m.scale.setScalar(M[2]||1);g.add(m);
+  const h=g.getObjectByName(M[3]||'opt0');if(h)h.visible=false;g.userData.opt=k;return m}
+/* makeGun(종류)를 부르기 직전에 OPTX.next = {id, k}를 두면 그 총에만 달린다(군인·적 총은 그대로) · AK-47은 AK 모양으로 */
+(function(){const b=window.makeGun;window.makeGun=function(type,att){const o=OPTX.next;let g;
+  if(o&&o.id===type){OPTX.next=null;g=type==='ak47'?b.call(this,'ak',att):b.apply(this,arguments);try{optMount(g,type,o.k)}catch(e){console.error(e)}}
+  else g=type==='ak47'?b.call(this,'ak',att):b.apply(this,arguments);if(type==='ak47'&&g)g.userData.type='ak47';return g}})();
+(function(){const b=window.gunVmBuild;window.gunVmBuild=function(W){const id=GUN.eq;const o=id&&optOn(id);OPTX.next=o?{id,k:o}:null;try{return b.apply(this,arguments)}finally{OPTX.next=null}}})();
+(function(){const b=window.owcVmBuild;if(typeof b!=='function')return;window.owcVmBuild=function(){const id=OWC.gunType;const o=id&&optOn(id);OPTX.next=o?{id,k:o}:null;try{return b.apply(this,arguments)}finally{OPTX.next=null}}})();
+(function(){const b=window.itemModel;window.itemModel=function(key,n){if(typeof key==='string'&&key.startsWith('opt_')&&OPT[key.slice(4)]){const g=new T.Group();g.userData.item=key;MM(GG.box(.17,.012,.1,.003),mat('#2a2f36',{r:.8}),0,.006,0,{p:g,recv:false});const m=optModel(key.slice(4));m.rotation.y=Math.PI/2;m.scale.setScalar(1.6);m.position.y=.012;g.add(m);return g}
+  if(OPTX.bag&&ARMS[key]){const o=optOn(key);if(o)OPTX.next={id:key,k:o}}try{return b.apply(this,arguments)}finally{OPTX.next=null}}})();
+(function(){const b=window.bagBuild;if(typeof b!=='function')return;window.bagBuild=function(){OPTX.bag=1;try{return b.apply(this,arguments)}finally{OPTX.bag=0}}})();
+Object.assign(BAG_N,{opt_dot:'도트사이트',opt_x2:'2배율 조준경',opt_x4:'4배율 전투 조준경',opt_x6:'6배율 조준경',opt_x8:'8배율 저격 조준경'});
+OPT_K.forEach(k=>{BAG_D['opt_'+k]=`조준경 부품 · ${OPT[k].d} · 무게 +${OPT[k].kg}kg · 맞는 총: ${optFitTxt(k)} — 총을 누르고 '조준경'에서 단다`});
+/* ---------- 조준 속도 · 이동 속도(무게) ---------- */
+window.gunAdsRate=function(){const id=GUN.eq;if(!id||!ARMS[id])return gunScoped()?7:12;return wsAdsRate(id,optOn(id))};
+window.owcAdsRate=function(){const id=OWC.ownGun||OWC.gunType;if(!id||!ARMS[id])return 12;return wsAdsRate(id,optOn(id))};
+function optMobK(){if(typeof OUT==='undefined'||!OUT.on)return 1;let id=null;if(typeof OWC!=='undefined'&&OWC.on)id=OWC.ownGun||OWC.gunType;else if(GUN.on&&GUN.fp)id=GUN.eq;if(!id||!ARMS[id])return 1;return wsMob(wsKg(id,optOn(id)))}
+(function(){const st=FP3.step;FP3.step=function(dt){try{const k=optMobK();if(k<.999)this.speed*=k}catch(e){}return st.call(this,dt)}})();
+/* ---------- 조준 화면: 링 · 배율 · 조준선 / 도트 ---------- */
+function optRetKind(id){const o=optEff(id);if(o)return o;const z=optBuiltZ(id);return z>=6?'x6':z>=2&&z<3?'x2':'mil'}
+function optZTxt(z){return Math.abs(z-Math.round(z))<.01?String(Math.round(z)):z.toFixed(1)}
+function optScopeInner(id,own){const k=optRetKind(id);const W=ARMS[id];const z=own?gunZoom():W.zoom;
+  let r='<div class="sc-dim"></div><div class="sc-ring"></div><div class="sc-lens"><div class="sc-glass"></div><div class="sc-h"></div><div class="sc-v"></div>';
+  if(k==='x2')r+='<div class="sc-p sc-pl"></div><div class="sc-p sc-pr"></div><div class="sc-p sc-pt"></div><div class="sc-p sc-pb"></div><div class="sc-c"></div>';
+  else if(k==='x4')r+='<div class="sc-chev"></div><div class="sc-bdc">'+[1,2,3,4].map(i=>{const w=44-i*8;return `<i style="top:${i*16}px;width:${w}px;margin-left:${-w/2}px"></i><b style="top:${i*16-5}px;left:${w/2+5}px">${i+1}</b>`}).join('')+'</div><div class="sc-p sc-pl"></div><div class="sc-p sc-pr"></div>';
+  else r+='<div class="sc-dots"></div><div class="sc-p sc-pl"></div><div class="sc-p sc-pr"></div><div class="sc-p sc-pt"></div><div class="sc-p sc-pb"></div><div class="sc-cd"></div>';
+  r+=`</div><div class="sc-mag">X${optZTxt(z)}</div>`;
+  r+=own?`<div class="sc-info"><b id="gunZoomT">${gunZoom()}×</b><span id="gunRange">—</span><small id="gunBreath"></small></div>`:`<div class="sc-info"><b>${optZTxt(W.zoom)}×</b><span>${(OPT[optOn(id)]||{}).n||'기본 조준경'}</span></div>`;
+  return {cls:'gun-scope r-'+k+(pipOn()?' pip':''),html:r,k}}
+const OPT_DOT_HTML='<div class="gd-win"></div><div class="gd-d"></div><div class="gd-l">1× 도트</div>';
+function optUiApply(){const id=GUN.eq;if(!id||!ARMS[id]||!GUN.fp)return;const sc=$('#gunScope');if(sc&&gunScoped()){const R=optScopeInner(id,true);const hid=sc.hidden,op=sc.style.opacity;sc.className=R.cls;sc.innerHTML=R.html;sc.dataset.opt=R.k;sc.hidden=hid;sc.style.opacity=op;PIP.d=0}
+  const ui=$('#gunUI');let d=$('#gunDot');if(optEff(id)==='dot'){if(!d&&ui){d=document.createElement('div');d.id='gunDot';d.className='gun-dot';d.innerHTML=OPT_DOT_HTML;ui.insertBefore(d,ui.firstChild)}}else if(d)d.remove()}
+(function(){const b=window.gunUI;window.gunUI=function(){const r=b.apply(this,arguments);try{optUiApply()}catch(e){console.error(e)}return r}})();
+function optDotTick(k){const on=k>.55;const d=$('#gunDot');if(d)d.style.opacity=on?String(Math.min(1,(k-.55)/.3)):'0';const xh=$('#gunXh');if(xh)xh.style.opacity=k>.5?'0':'1'}
+(function(){const b=window.gunVmStep;window.gunVmStep=function(dt){const r=b.apply(this,arguments);try{if(GUN.eq&&optEff(GUN.eq)==='dot'){const V=GUN.vm;if(V)V.hold.position.y-=GUN.adsK*.05;optDotTick(GUN.adsK)}
+  else if(gunScoped()){const sc=$('#gunScope');if(sc){const on=GUN.adsK>.82;if(sc.hidden===on)sc.hidden=!on;sc.style.opacity=on?String(Math.min(1,(GUN.adsK-.82)/.18)):'0'}}}catch(e){}return r}})();
+(function(){const b=window.gunHudTick;window.gunHudTick=function(){const r=b.apply(this,arguments);try{if(GUN.eq&&optEff(GUN.eq)==='dot')optDotTick(GUN.adsK);const m=document.querySelector('#gunScope .sc-mag');if(m){const t='X'+optZTxt(gunZoom());if(m.textContent!==t)m.textContent=t}}catch(e){}return r}})();
+(function(){const b=window.gunFov;window.gunFov=function(k){if(GUN.eq&&optEff(GUN.eq)==='dot')return 70-(70-40)*k;if(pipOn()&&gunScoped())return 70-(70-PIP_F)*k;return b.apply(this,arguments)}})();
+(function(){const b=window.gunOwcFov;if(typeof b!=='function')return;window.gunOwcFov=function(k){if(OWC.gunType&&optEff(OWC.gunType)==='dot')return 70-(70-40)*k;if(pipOn()&&OWC.gunType&&ARMS[OWC.gunType]&&ARMS[OWC.gunType].zoom>1)return 70-(70-PIP_F)*k;return b.apply(this,arguments)}})();
+/* ---------- 조준경 속 화면(PIP) — 사용자 요청(2026-11-08): "저격할 때 다른 곳도 조준점 외에 보일 수 있기해주세요"
+   확대 조준 때 본 화면은 넓게(55°) 두고 조준경 원 안만 확대해서 따로 그린다(렌더 타깃 → 원 모양 셰이더). 바깥은 검게 가리지 않는다.
+   원 안 배율은 예전 전체 확대와 같은 각 크기(70°/배율 기준). 그림자 지도는 다시 만들지 않는다(같은 장면·같은 순간). 설정 '조준경 바깥'으로 끄면 예전처럼 검게 */
+const PIP_F=55;const PIP={rt:null,cam:null,sc:null,oc:null,mesh:null,mat:null,d:0,dT:0,used:0,n:0};
+function pipOn(){try{return store.get('sg.pip',true)!==false}catch(e){return true}}
+function pipInfo(){if(typeof OWC!=='undefined'&&OWC.on){const id=OWC.gunType;const W=id&&ARMS[id];if(!W||!(W.zoom>1)||OWC.done)return null;return{z:GUN.zoomLo?Math.max(1.5,W.zoom/2):W.zoom,k:OWC.adsK,el:'#gunScopeOwc .sc-lens'}}
+  if(typeof GUN!=='undefined'&&GUN.on&&GUN.fp&&gunScoped())return{z:gunZoom(),k:GUN.adsK,el:'#gunScope .sc-lens'};return null}
+function pipRender(){PIP.used=0;const I=pipInfo();if(!I||I.k<=.82||!pipOn())return false;const R=R3.r;if(!R||!SV3.scene||!SV3.cam)return false;const cv=R.domElement;const W=cv.width,H=cv.height;if(!W||!H)return false;
+  const now=performance.now();if(!PIP.d||now-PIP.dT>500){const el=document.querySelector(I.el);PIP.dT=now;PIP.d=el?el.getBoundingClientRect().width:0}const pr=W/Math.max(1,cv.clientWidth||W);const d=Math.round(PIP.d*pr);if(d<24)return false;
+  const res=Math.min(1024,Math.max(128,Math.round(d*(SV3.qt==='low'?.6:SV3.qt==='mid'?.8:1))));if(!PIP.rt||PIP.rt.width!==res){if(PIP.rt)PIP.rt.dispose();let hf=false;try{hf=!!(R.extensions&&(R.extensions.has('EXT_color_buffer_float')||R.extensions.has('EXT_color_buffer_half_float')))}catch(e){}
+    /* 반정밀 부동소수 지원이면 밝은 곳도 본 화면과 같게, 아니면 8비트 sRGB로(어두운 곳 계단 줄임) */PIP.rt=new T.WebGLRenderTarget(res,res,hf?{depthBuffer:true,type:T.HalfFloatType}:{depthBuffer:true});if(!hf)PIP.rt.texture.colorSpace=T.SRGBColorSpace;PIP.hf=hf}
+  const mc=SV3.cam;const c=PIP.cam||(PIP.cam=new T.PerspectiveCamera(10,1,.05,3000));mc.updateMatrixWorld(true);c.position.setFromMatrixPosition(mc.matrixWorld);c.quaternion.setFromRotationMatrix(mc.matrixWorld);c.near=mc.near;c.far=mc.far;
+  const adsF=Math.max(6,70/I.z);c.fov=2*Math.atan((d/H)*Math.tan(adsF*Math.PI/360))*180/Math.PI;c.aspect=1;c.updateProjectionMatrix();c.updateMatrixWorld(true);
+  const sm=R.shadowMap.autoUpdate,ac=R.autoClear,prev=R.getRenderTarget();try{R.shadowMap.autoUpdate=false;R.setRenderTarget(PIP.rt);R.autoClear=true;R.clear();R.render(SV3.scene,c)}finally{R.setRenderTarget(prev);R.shadowMap.autoUpdate=sm;R.autoClear=ac}
+  if(!PIP.sc){PIP.sc=new T.Scene();PIP.oc=new T.OrthographicCamera(-1,1,1,-1,0,2);PIP.oc.position.z=1;
+    PIP.mat=new T.ShaderMaterial({uniforms:{map:{value:null}},depthTest:false,depthWrite:false,vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+      fragmentShader:'uniform sampler2D map;varying vec2 vUv;void main(){vec2 p=vUv*2.-1.;float r=length(p);if(r>1.)discard;vec4 c=texture2D(map,vUv);c.rgb*=mix(.3,1.,smoothstep(1.,.8,r));gl_FragColor=vec4(c.rgb,1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}'});
+    PIP.mesh=new T.Mesh(new T.PlaneGeometry(2,2),PIP.mat);PIP.mesh.frustumCulled=false;PIP.sc.add(PIP.mesh)}
+  PIP.mat.uniforms.map.value=PIP.rt.texture;const oc=PIP.oc;oc.left=-W/2;oc.right=W/2;oc.top=H/2;oc.bottom=-H/2;oc.updateProjectionMatrix();PIP.mesh.scale.set(d/2,d/2,1);
+  try{R.autoClear=false;R.clearDepth();R.render(PIP.sc,oc)}finally{R.autoClear=ac}PIP.used=1;PIP.n++;PIP.fov=c.fov;PIP.px=d;return true}
+(function(){const b=window.sv3Loop;window.sv3Loop=function(now){const r=b.apply(this,arguments);try{if(!window.__noRender&&SV3.el)pipRender()}catch(e){}return r}})();
+/* 교전(48): 조준경 화면을 종류에 맞게 · 확대 조준 때 총을 내려 조준경만 보이게 · 도트 */
+function optOwcTick(){const id=OWC.gunType;if(!OWC.on||!id||!ARMS[id])return;const W=ARMS[id];const V=OWC.vm;
+  if(W.zoom>1){const sc=$('#gunScopeOwc');const kind=optRetKind(id)+'|'+W.zoom+'|'+(pipOn()?1:0);if(sc&&sc.dataset.opt!==kind){const R=optScopeInner(id,false);const hid=sc.hidden,op=sc.style.opacity;sc.className=R.cls;sc.innerHTML=R.html;sc.dataset.opt=kind;sc.hidden=hid;sc.style.opacity=op;PIP.d=0}if(V)V.hold.position.y-=OWC.adsK*.5}
+  else if(optEff(id)==='dot'){let d=$('#gunDotOwc');if(!d&&SV3.el){d=document.createElement('div');d.id='gunDotOwc';d.className='gun-dot';d.innerHTML=OPT_DOT_HTML;SV3.el.appendChild(d)}const k=OWC.done?0:OWC.adsK;if(d)d.style.opacity=k>.55?String(Math.min(1,(k-.55)/.3)):'0';const xh=$('#owcXh');if(xh)xh.style.opacity=k>.5?'0':'1';if(V)V.hold.position.y-=k*.05}}
+(function(){const b=window.owcHud;if(typeof b!=='function')return;window.owcHud=function(dt){const r=b.apply(this,arguments);try{optOwcTick()}catch(e){}return r}})();
+(function(){const b=window.owcClose;if(typeof b!=='function')return;window.owcClose=function(){let drops=[];try{if(OWC.on&&OWC.win&&OWC.en&&OUT.scene){for(const a of OWC.en){if(a.st!=='down'||!a.h)continue;const p=a.type==='sniper'?.6:a.type==='elite'?.45:a.type==='mg'?.15:a.type==='rifle'?.08:0;const u=window.__optCap!=null?window.__optCap:Math.random();if(!p||u>=p)continue;
+      const r2=Math.random();const k=a.type==='sniper'?(r2<.5?'x6':'x8'):a.type==='elite'?(r2<.6?'x4':'dot'):a.type==='mg'?'x2':(r2<.5?'dot':'x2');const q=a.h.root.position;drops.push({k,x:q.x-.4,z:q.z-.5});if(drops.length>=2)break}}}catch(e){}
+  const r=b.apply(this,arguments);try{const d=$('#gunDotOwc');if(d)d.remove()}catch(e){}
+  try{if(drops.length&&OUT.scene){const key='opc'+G.turn+'_'+Date.now()%1e5;drops.forEach((d,i)=>lootMk(OUT.scene,{id:key+':'+i,key:'opt_'+d.k,n:1,x:d.x,z:d.z}));OPTX.capN=(OPTX.capN||0)+drops.length;setTimeout(()=>{try{if(OUT.on)outNote(`<b>🔭 적 조준경 노획</b><div>${drops.map(d=>OPT[d.k].n).join(' · ')} — 쓰러진 적 옆에서 줍는다.</div>`,3600)}catch(e){}},4200)}}catch(e){}return r}})();
+/* 군용 보급 상자: 40% 확률로 조준경도 */
+function optRoll(u){u=(u==null?Math.random():u)*OPT_DROP.reduce((s,q)=>s+q[1],0);for(const q of OPT_DROP){u-=q[1];if(u<=0)return q[0]}return 'dot'}
+(function(){const b=window.lootTake;if(typeof b!=='function')return;window.lootTake=function(sp){const crate=!!(sp&&sp.key==='crate'&&!sp.taken);const r=b.apply(this,arguments);
+  try{if(crate&&sp.taken&&(window.__optCrate!=null?window.__optCrate:Math.random())<.4){const k=optRoll();const got=bagGive('opt_'+k,1);if(got){OPTX.crateK=k;setTimeout(()=>{try{if(OUT.on)outNote(`<b>🔭 상자 안에 ${OPT[k].n}도 있었다</b><div>배낭(🎒)에서 총을 누르고 '조준경'에서 단다 · 맞는 총: ${optFitTxt(k)}</div>`,3400)}catch(e){}},2700)}}}catch(e){}return r}})();
+/* ---------- 총포사(95) '조준경' 탭 ---------- */
+(function(){const b=window.gsPanel;if(typeof b!=='function')return;window.gsPanel=function(open){const r=b.apply(this,arguments);try{if(open&&GSH.info){const c=document.querySelector('#gsPanel .ws-card');if(c&&c.scrollIntoView)c.scrollIntoView({block:'nearest'})}}catch(e){}return r}})();
+function optShopRows(){const tr=G.trust||0;let h=`<p class="mis-note">조준경은 총 종류마다 달 수 있는 배율이 다르다. 사면 배낭에 들어가고, 지금 든 총에 맞고 비어 있으면 바로 달아 준다.</p>`;
+  for(const [k,need,pr] of OPT_SHOP){const O=OPT[k];const lock=tr<need;const have=optHave(k);const can=!lock&&dfCash()>=pr;
+    h+=`<div class="mis-row${lock?' gs-lock':''}"><span class="mis-ico">${lock?'🔒':'🔭'}</span><div><b>${O.n} <small class="df-have">${O.z}배 · +${O.kg}kg</small></b><small>${O.d} · 맞는 총: ${optFitTxt(k)}</small><em>${lock?`이웃 신뢰 ${need} 필요 (지금 ${tr})`:`현금 봉투 ${pr}${have?` · 보유 ${have}`:''}`}</em></div><button class="btn sm${can?' pri':' dis'}" data-g3="gsoptbuy" data-v="${k}"${can?'':' disabled'}>사기</button></div>`}
+  return h}
+function optBuy(k){const it=OPT_SHOP.find(x=>x[0]===k);const O=OPT[k];if(!it||!O||!G)return false;const [,need,pr]=it;
+  if((G.trust||0)<need){toast(`이웃 신뢰 ${need}이(가) 필요하다 (지금 ${G.trust||0})`);return false}if(dfCash()<pr){toast(`현금 봉투 ${pr}개가 필요하다 — 드론 공방 납품으로 번다`);return false}
+  const got=bagGive('opt_'+k,1);if(!got){toast('배낭에 자리가 없다');return false}dfPay(pr);
+  const eq=(typeof GUN!=='undefined'&&GUN.eq)||G.eq;let att='';if(eq&&gunHas(eq)&&optFits(eq,k)&&!optOn(eq)&&optAttach(eq,k,true))att=ARMS[eq].n;
+  try{const own=GSH.npc.find(a=>a.kind==='gs');if(own){talkPose(own.h,'talk');bubSay(own.h,att?`${att}에 달고 영점까지 잡아 뒀습니다`:`${O.n}, 배낭에 넣어 드렸습니다`,2.4,'ok')}}catch(e){}
+  try{SFX.mech('switch')}catch(e){}toast(att?`🔭 ${O.n} — ${att}에 장착 (${O.z}배)`:`🔭 ${O.n} — 배낭에 넣었다. 총을 누르고 '조준경'에서 단다`,3000);return true}
+if(typeof HELP84!=='undefined')HELP84.push(['🔭 조준경 · 성능 카드(v10.8)','조준경 5종 — 도트(1배) · 2배 · 4배 전투 · 6배 · 8배 저격. 총 종류마다 달 수 있는 배율이 다르다(소총 도트~6배 · 기관단총 도트·2배 · 산탄총 도트 · 저격소총 2~8배 · 기관총 도트~4배 · 권총 도트 · 석궁 도트~4배). 달면 배율과 정확도가 오르지만 무게만큼 조준이 느려진다. 무거운 총(7kg 넘는 기관총·대물 저격총·발사기)을 들면 이동도 느려진다. 배낭에서 총을 누르면 성능 카드(위력·치명상·정확도·반동·연사·조준 속도·무게·이동 속도)와 조준경 칸이 뜬다. 구하는 곳: 총포사 \'조준경\' 탭 · 군용 보급 상자 · 교전 노획.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
