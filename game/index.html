@@ -1574,6 +1574,17 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .gun-scope.pip .sc-dim{display:block;position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 0,transparent calc(var(--scd)*.56),rgba(0,0,0,.26) calc(var(--scd)*.85),rgba(0,0,0,.34) 100%)}
 .gun-scope.pip .sc-glass{display:none}
 .gun-scope.pip .sc-mag{top:calc(50% - var(--scd)/2 - var(--scd)*.035)}
+/* ---------- v10.9.1 배낭: 낮은 가로 화면(폰 가로 360px대)에서 '장착'·'버리기'가 화면 밖으로 밀리거나 배경을 눌러 배낭이 닫히던 것 ---------- */
+.overlay.bag-ov{padding:8px}
+.bag-ov .sheet.bag-sheet{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);overflow:hidden}
+.bag-ov .bag-body{flex:1 1 auto;min-height:0;grid-template-rows:minmax(0,1fr)}
+.bag-ov .bag-side{overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.bag-ov .bag-view{min-height:150px}
+.bag-det .bag-acts{margin:2px 0 6px}
+@media (max-width:640px){.bag-ov .bag-body{grid-template-rows:min(38vh,260px) minmax(0,1fr)}}
+@media (max-height:520px){.bag-ov .sheet.bag-sheet{padding:6px 10px 8px}.bag-ov .ov-head h2{font-size:16px}.bag-ov .ov-head .btn{padding:6px 12px;min-height:0}
+  .bag-ov .bag-body{grid-template-columns:minmax(0,1fr) minmax(250px,1fr);min-height:0}.bag-ov .bag-grid{max-height:min(26vh,112px)}
+  .bag-ov .bag-det{font-size:12px;padding-top:6px}.bag-ov .bag-det h3{font-size:14px;margin-bottom:2px}.bag-ov .bag-det p{margin:0 0 4px}.bag-ov .bag-det .btn{padding:8px 12px;min-height:0}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13658,7 +13669,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='10.9';
+const APP_VER='10.9.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -16909,9 +16920,10 @@ function gunAdd(id,o){o=o||{};const W=ARMS[id];if(!W)return false;const L=gunArm
   if(typeof bagRoom==='function'&&bagRoom()<(W.slot||1)&&!o.force)return false;L.push({id,mag:W.mag?(o.mag!=null?o.mag:W.mag):0});if(W.am&&o.ammo!=null)gunAmmoAdd(W.am,o.ammo);return true}
 function gunDrop(id){const L=gunArms();const i=L.findIndex(a=>a.id===id);if(i<0)return;if(GUN.eq===id)gunHolster(true);L.splice(i,1);if(G.eq===id)G.eq=null}
 /* ---------- 장착·넣기 ---------- */
+/* v10.9.1: 지금 손에 못 드는 까닭(예전엔 늘 '밖에 나가면' — 차·탈것·교전 중에도 같은 말이라 장착이 안 되는 줄 알았다) */function gunWhyNot(){try{if(typeof OUT!=='undefined'&&OUT.on){if(OUT.drv||OUT.ride)return '장착됨 · 차·탈것에서 내리면 바로 손에 든다';if(typeof OWC!=='undefined'&&OWC.on)return '장착됨 · 교전이 끝나면 손에 든다';if(typeof APT!=='undefined'&&APT.on)return '장착됨 · 집 밖으로 나가면 손에 든다';if(typeof BR!=='undefined'&&BR.on)return '장착됨 · 격투가 끝나면 손에 든다'}}catch(e){}return '장착됨 · 밖에 나가면 손에 든다'}
 function gunEquip(id,quiet){const W=ARMS[id];if(!W||!gunHas(id))return false;if(GUN.eq&&GUN.eq!==id)gunHolster(true);
   const rec=gunArms().find(a=>a.id===id);GUN.eq=id;G.eq=id;GUN.mag=rec?rec.mag||0:0;GUN.zoomLo=false;GUN.ads=false;GUN.adsK=0;GUN.fire=false;GUN.reload=0;GUN.bloom=0;GUN.sheathed=false;
-  if(!gunFpOk()){GUN.on=false;if(!quiet&&typeof toast==='function')toast(`${W.n} — 밖에 나가면 손에 든다`,2200);return true}
+  if(!gunFpOk()){GUN.on=false;if(!quiet&&typeof toast==='function')toast(`${W.n} — ${gunWhyNot()}`,2600);return true}
   GUN.on=true;GUN.fp=W.cat!=='mel';if(GUN.fp){gunVmBuild(W);if(OUT.me)OUT.me.root.visible=false;if(SV3.cam&&GUN.fov0==null)GUN.fov0=SV3.cam.fov}else gunMeleeAttach(W);
   try{SV3.el.classList.add('gun-on');SV3.el.classList.toggle('gun-fp',GUN.fp)}catch(e){}gunUI();if(!quiet)outNote(`<b>${W.n}</b><div>${GUN.fp?(W.mag?`탄창 ${GUN.mag}/${W.mag} · 남은 탄 ${gunAmmoOf(W.am)} · 사격 버튼을 누르면 쏜다(끌면 조준) · ${gunScoped()?'조준 = 조준경 '+W.zoom+'배':'조준 = 가늠자'}`:''):'주먹 버튼으로 휘두른다 · '+W.d}</div>`,3600);SFX.mech('switch');try{if(typeof pcHint==='function')pcHint()}catch(e){}return true}
 function gunHolster(keep){const was=GUN.on;GUN.sheathed=true;if(GUN.eq){const rec=gunArms().find(a=>a.id===GUN.eq);if(rec)rec.mag=GUN.mag}GUN.on=false;GUN.fire=false;GUN.ads=false;GUN.adsK=0;
@@ -17139,7 +17151,7 @@ function bagOpen(){if(BAG.open||!G)return;if(!HAS3D||!R3.init()){bagOpen2D();ret
     <div class="bag-side"><div class="bag-res" id="bagRes"></div><div class="bag-grid" id="bagGrid"></div><div class="bag-det" id="bagDet"></div></div></div></div>`;
   o.addEventListener('click',e=>{if(e.target===o)bagClose()});document.body.appendChild(o);BAG.wrap=$('#bagView');BAG.canvas=$('#bagC');BAG.lab=$('#bagLab');
   if(!BAG.r){try{BAG.r=new T.WebGLRenderer({canvas:BAG.canvas,antialias:true,alpha:true,powerPreference:'low-power'});BAG.r.outputColorSpace=T.SRGBColorSpace;BAG.r.toneMapping=T.ACESFilmicToneMapping;BAG.r.toneMappingExposure=1.05;BAG.r.shadowMap.enabled=true;BAG.r.shadowMap.type=T.PCFShadowMap}catch(e){BAG.r=null}}
-  else{/* 캔버스가 바뀌었으니 새 렌더러 */try{BAG.r.dispose()}catch(e){}try{BAG.r=new T.WebGLRenderer({canvas:BAG.canvas,antialias:true,alpha:true,powerPreference:'low-power'});BAG.r.outputColorSpace=T.SRGBColorSpace;BAG.r.toneMapping=T.ACESFilmicToneMapping;BAG.r.toneMappingExposure=1.05;BAG.r.shadowMap.enabled=true}catch(e){BAG.r=null}}
+  else{/* 캔버스가 바뀌었으니 새 렌더러 — v10.9.1: 옛 WebGL 문맥은 바로 놓는다(배낭을 여러 번 열면 문맥이 쌓여 본 화면 문맥이 끊길 수 있음) */try{BAG.r.forceContextLoss()}catch(e){}try{BAG.r.dispose()}catch(e){}try{BAG.r=new T.WebGLRenderer({canvas:BAG.canvas,antialias:true,alpha:true,powerPreference:'low-power'});BAG.r.outputColorSpace=T.SRGBColorSpace;BAG.r.toneMapping=T.ACESFilmicToneMapping;BAG.r.toneMappingExposure=1.05;BAG.r.shadowMap.enabled=true}catch(e){BAG.r=null}}
   if(!BAG.r){bagClose();bagOpen2D();return}BAG.r.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
   bagBuild();bagSide();bagResize();BAG.yaw=.35;BAG.pitch=.6;BAG.t=0;bagBind();cancelAnimationFrame(BAG.raf);BAG.last=performance.now();BAG.raf=requestAnimationFrame(bagLoop)}
 function bagClose(){if(!BAG.open)return;BAG.open=false;cancelAnimationFrame(BAG.raf);BAG.raf=0;FP3.lock=BAG.lockWas||false;const o=$('#bagOv');if(o)o.remove();if(BAG.sc){BAG.sc.traverse(x=>{if(x.geometry&&x.userData.own)x.geometry.dispose()});BAG.sc=null}BAG.items=[];BAG.sel=null;BAG.confirmDrop=null;document.removeEventListener('click',bagClick,true);window.removeEventListener('resize',bagResize);document.removeEventListener('keydown',bagKey);const f=$('#bagFab');if(f)f.innerHTML=`🎒<small>${bagUsed()}/${BAG_CAP}</small>`}
@@ -17165,14 +17177,15 @@ function bagBind(){const c=BAG.canvas;if(!c)return;let pid=null,lx=0,ly=0,moved=
   const lab=BAG.lab;if(lab)lab.addEventListener('click',e=>{const s=e.target.closest('span[data-i]');if(!s)return;bagSelect(BAG.items[+s.dataset.i])});
   document.addEventListener('click',bagClick,true);window.addEventListener('resize',bagResize);document.addEventListener('keydown',bagKey)}
 function bagPick(nx,ny){const rc=new T.Raycaster();rc.setFromCamera(new T.Vector2(nx,ny),BAG.cam);const objs=[];BAG.items.forEach(it=>it.g.traverse(o=>{if(o.isMesh)objs.push(o)}));const hs=rc.intersectObjects(objs,false);if(!hs.length){bagSelect(null);return}let o=hs[0].object;while(o&&!o.userData.bag)o=o.parent;const it=o&&BAG.items.find(x=>x.g===o);bagSelect(it||null)}
-function bagSelect(it){BAG.sel=it||null;BAG.confirmDrop=null;bagDet();const g=$('#bagGrid');if(g)g.querySelectorAll('.bg-it').forEach(b=>b.classList.toggle('sel',!!it&&b.dataset.k===it.e.key))}
+/* v10.9.1: 고른 물건의 제목·단추가 오른쪽 칸 안에 보이도록 칸을 굴린다 */function bagDetShow(){const d=$('#bagDet'),sd=d&&d.closest('.bag-side');if(!d||!sd)return;const R=d.getBoundingClientRect(),S=sd.getBoundingClientRect();if(R.top<S.top||R.top+96>S.bottom)sd.scrollTop+=R.top-S.top-4}
+function bagSelect(it){BAG.sel=it||null;BAG.confirmDrop=null;bagDet();if(it)try{bagDetShow()}catch(x){}const g=$('#bagGrid');if(g)g.querySelectorAll('.bg-it').forEach(b=>b.classList.toggle('sel',!!it&&b.dataset.k===it.e.key))}
 function bagSide(){const cnt=$('#bagCnt');if(cnt)cnt.textContent=`${bagUsed()}/${BAG_CAP}칸`;const rs=$('#bagRes');if(rs&&G){rs.innerHTML=`<b>비축(대피소·배낭 공용)</b><span>💧 물 ${(+G.res.water).toFixed(1)}L</span><span>🍚 식량 ${G.res.food}인·일</span><span>💊 의약품 ${G.res.meds}회</span><span>🔋 전력 ${Math.round(G.res.power)}%</span>`}
   const gd=$('#bagGrid');if(gd){const L=bagList();gd.innerHTML=L.map(e=>`<button class="bg-it${e.kind==='arm'?' arm':''}${e.eq?' eq':''}" data-k="${e.key}"><b>${bagName(e.key)}</b><small>${e.kind==='arm'?(e.mag!=null&&ARMS[e.key].mag?`${e.mag}/${ARMS[e.key].mag}`:ARMS_CAT[ARMS[e.key].cat]):e.n>1?'×'+e.n:''}${e.slot?' · '+e.slot+'칸':''}</small></button>`).join('')+(L.length?'':'<p class="small mut">아직 비어 있다 — 길거리·상가·군용 상자에서 모은다.</p>')}
   bagDet()}
 function bagDet(){const d=$('#bagDet');if(!d)return;const it=BAG.sel;if(!it){d.innerHTML='<p class="small mut">물건을 누르면 설명과 할 수 있는 일이 뜬다.</p>';try{if(typeof wsBagPanel==='function')wsBagPanel(null)}catch(x){}return}const e=it.e,k=e.key;const acts=[];
   if(e.kind==='arm'){const W=ARMS[k];const eq=GUN.eq===k||G.eq===k;acts.push(`<button class="btn ${eq?'':'pri'}" data-bag="eq" data-k="${k}">${eq?'넣기(장착 해제)':'장착'}</button>`);if(W.mag&&W.am&&(e.mag||0)<W.mag&&gunAmmoOf(W.am)>0)acts.push(`<button class="btn" data-bag="load" data-k="${k}">탄 채우기</button>`);acts.push(BAG.confirmDrop===k?`<button class="btn dngr" data-bag="drop2" data-k="${k}">정말 버린다</button>`:`<button class="btn ghost" data-bag="drop" data-k="${k}">버리기</button>`)}
   else if(e.kind==='inv'){if(k.startsWith('opt_')&&typeof optBagActs==='function')acts.push(...optBagActs(k));if(k==='drink'||k==='canfood'||k==='snack'||k==='energy')acts.push(`<button class="btn pri" data-bag="use" data-k="${k}">${k==='drink'?'마신다':'먹는다'}</button>`);if(k==='drone'&&typeof lootDroneScan==='function')acts.push(`<button class="btn pri" data-bag="use" data-k="${k}">띄운다(정찰)</button>`);acts.push(BAG.confirmDrop===k?`<button class="btn dngr" data-bag="drop2" data-k="${k}">정말 버린다</button>`:`<button class="btn ghost" data-bag="drop" data-k="${k}">버리기</button>`)}
-  d.innerHTML=`<h3>${bagName(k)}${e.n>1?` <small class="num">×${e.n}</small>`:''}</h3><p>${bagDesc(k)}</p>${e.kind==='arm'&&ARMS[k].mag?`<p class="small">탄창 <b class="num">${e.mag||0}/${ARMS[k].mag}</b> · 남은 탄 <b class="num">${gunAmmoOf(ARMS[k].am)}</b></p>`:''}<div class="row">${acts.join('')}</div>${e.kind==='arm'&&typeof wsBagPanel==='function'?'<p class="small mut">📊 성능 카드·🔭 조준경 칸은 왼쪽 진열 위에 뜬다</p>':''}`;try{if(typeof wsBagPanel==='function')wsBagPanel(e.kind==='arm'?k:null)}catch(x){}}
+  /* v10.9.1: 할 일 단추(장착·버리기)를 제목 바로 아래로 — 낮은 가로 화면에서 아래로 밀려 안 보이던 것 */d.innerHTML=`<h3>${bagName(k)}${e.n>1?` <small class="num">×${e.n}</small>`:''}</h3><div class="row bag-acts">${acts.join('')}</div><p>${bagDesc(k)}</p>${e.kind==='arm'&&ARMS[k].mag?`<p class="small">탄창 <b class="num">${e.mag||0}/${ARMS[k].mag}</b> · 남은 탄 <b class="num">${gunAmmoOf(ARMS[k].am)}</b></p>`:''}${e.kind==='arm'&&typeof wsBagPanel==='function'?'<p class="small mut">📊 성능 카드·🔭 조준경 칸은 왼쪽 진열 위에 뜬다</p>':''}`;try{if(typeof wsBagPanel==='function')wsBagPanel(e.kind==='arm'?k:null)}catch(x){}}
 function bagUse(k){if(!G)return;FX=[];let t='';if(k==='drink'){give(k,-1);res('water',.5);mor(1);t='음료수를 마셨다'}else if(k==='canfood'){give(k,-1);res('food',1);heal('me',3);t='통조림을 먹었다'}else if(k==='snack'){give(k,-1);mor(2);t='간식을 먹었다'}else if(k==='energy'){give(k,-1);heal('me',4);t='에너지바를 먹었다'}
   else if(k==='drone'&&typeof lootDroneScan==='function'){if(lootDroneScan()){give(k,-1);t='드론을 띄웠다'}else{t='밖에서만 띄울 수 있다'}}
   if(G.inv[k]<=0)delete G.inv[k];if(typeof OUT!=='undefined'&&OUT.on){OUT.fx.push(...FX);outStat()}if(t)toast(t+(FX.length?' · '+FX.map(x=>`${x.l} ${x.n>0?'+':''}${x.n}${x.u||''}`).join(' · '):''),2600);bagRefresh()}
@@ -19729,8 +19742,9 @@ setInterval(()=>{try{if(document.hidden)return;const host=typeof SV3!=='undefine
   if(sg===DOCKC.sig2&&now-DOCKC.last<1500)return;DOCKC.sig2=sg;DOCKC.last=now;dockStep()}catch(e){}},200);
 /* 안내 문구가 뜨는 바로 그 순간에도 자리를 잡는다(깜빡임 줄이기) */
 /* v10.9: 새로 나타났을 때만 그 자리에서 바로(그 밖의 갱신은 0.2초 확인이 맡는다) */
-{const DOCK_HK={outNote:'oNote',freeNote:'frNote',misHud:'misHud',txHud:'txHud',adHud:'adHud',evAlert:'evAlert',campPanel:'campPanel'};const vis=id=>{const e=document.getElementById(id);return !!(e&&!e.hidden&&e.isConnected)};
-  Object.keys(DOCK_HK).forEach(n=>{const b=window[n];if(typeof b!=='function')return;const id=DOCK_HK[n];window[n]=function(){const v0=vis(id);const r=b.apply(this,arguments);try{if(!v0&&vis(id))dockStep()}catch(e){}return r}})}
+{const DOCK_HK={outNote:'oNote',freeNote:'frNote',misHud:'misHud',txHud:'txHud',adHud:'adHud',evAlert:'evAlert',campPanel:'campPanel'};/* v10.9.1: 새로 보일 때만이 아니라 글·모양이 바뀌어도(예: 손님이 타서 알림 글이 바뀜) 그 자리에서 다시 쌓는다 — 0.2초 간격을 기다리면 그사이 새 띠와 겹쳐 보였다. 그대로 부르면(택시 띠는 매 프레임) 건너뜀 */
+  const sig=id=>{const e=document.getElementById(id);if(!e||e.hidden||!e.isConnected)return '';return e.className+'|'+e.textContent.length};
+  Object.keys(DOCK_HK).forEach(n=>{const b=window[n];if(typeof b!=='function')return;const id=DOCK_HK[n];window[n]=function(){const s0=sig(id);const r=b.apply(this,arguments);try{if(sig(id)!==s0)dockStep()}catch(e){}return r}})}
 /* ---------- v10.5.2 사용자 제보(2026-11-08): "건물안에 들어갔다가 나오니깐 앉기·점프 등의 플레이 아이콘이 다 사라졌네요" ----------
    원인: 아파트·건물에서 나오면 바깥 화면을 새로 그리며(sv3Mount) 총 단추판(#gunUI)이 지워졌는데, 총은 든 채라 다시 만들지 않았다
    (바깥 화면을 새로 그릴 때 총 상태를 정리하던 vOutside3 감싸기는 화면 목록 SV3.views가 예전 함수를 들고 있어 불리지 않았다)
@@ -20703,7 +20717,9 @@ function stabDecor(sc,dt){STAB.decorT=(STAB.decorT||0)-(dt||0);if(STAB.decorT>0)
   const cp=SV3.cam?SV3.cam.position:null;if(!cp)return;const wp=STAB.wp2||(STAB.wp2=new T.Vector3());const rank=L=>{for(const l of L){l.getWorldPosition(wp);l.userData.dd=(wp.x-cp.x)*(wp.x-cp.x)+(wp.z-cp.z)*(wp.z-cp.z)}L.sort((a,b)=>a.userData.dd-b.userData.dd)};rank(STAB.LD);rank(STAB.LS);stabEnforce(sc)}
 function stabLightCount(sc){sc=sc||SV3.scene;const cam=SV3.cam;let p=0,s=0;if(sc)sc.traverseVisible(o=>{if(!o.isLight||(cam&&!o.layers.test(cam.layers)))return;if(o.isPointLight)p++;else if(o.isSpotLight)s++});return{p,s}}
 /* ---------- ⑤ 행렬 고정 ---------- */
-function stabFreeze(sc){try{if(sc&&sc.matrixAutoUpdate){sc.updateMatrix();sc.matrixAutoUpdate=false;sc.matrixWorldNeedsUpdate=true}}catch(e){}
+function stabFreeze(sc){try{if(sc&&sc.matrixAutoUpdate){sc.updateMatrix();sc.matrixAutoUpdate=false;sc.matrixWorldNeedsUpdate=true;
+  /* v10.9.1: 뿌리를 옮기는 코드가 있다(아파트 창밖 실경 72가 바깥 장면을 실내 좌표로 옮김) — 위치·회전·크기가 바뀐 프레임에만 행렬을 다시 만든다 */
+  const p0=sc.position.clone(),q0=sc.quaternion.clone(),s0=sc.scale.clone(),umw=sc.updateMatrixWorld;sc.updateMatrixWorld=function(force){if(!this.position.equals(p0)||!this.quaternion.equals(q0)||!this.scale.equals(s0)){p0.copy(this.position);q0.copy(this.quaternion);s0.copy(this.scale);this.updateMatrix()}return umw.call(this,force)}}}catch(e){}
   try{const w=typeof TJ!=='undefined'&&TJ.world;if(w&&!w.userData.frozen){w.updateMatrixWorld(true);let n=0;w.traverse(o=>{if(o.isLight)return;if(o.matrixAutoUpdate){o.matrixAutoUpdate=false;n++}});w.userData.frozen=n;STAB.frz=n}}catch(e){}}
 /* ---------- ③ GPU 자원 장부 · 장면이 바뀌면 어디서도 안 쓰는 것 해제 ---------- */
 /* three.js가 처음 GPU에 올릴 때 'dispose' 귀를 단다 → 그 순간을 장부에 적고, dispose되면 지운다(EventDispatcher 원형 한 곳) */
