@@ -1644,6 +1644,52 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .bag-res .bag-cat i{font-style:normal;font:700 10px var(--mono,monospace);color:#8f98a3;background:rgba(255,255,255,.07);border-radius:6px;padding:0 5px}
 .bag-res .bag-cat.on{background:#f5b62e;border-color:#f5b62e;color:#1c1405}.bag-res .bag-cat.on i{color:#3a2a06;background:rgba(0,0,0,.14)}
 .bag-res .bag-cat.none{opacity:.55}
+
+/* ===== v13.1 팀원 레벨·스킬(111) ===== */
+.tl-lv{display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px;margin-top:4px}
+.tl-lv .tl-b{font:900 11px var(--mono);color:#1a1405;background:#e8b43a;border-radius:5px;padding:1px 6px}
+.tl-lv .tl-xp{display:block;width:74px;height:5px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden}
+.tl-lv .tl-xp>i{display:block;height:100%;background:linear-gradient(90deg,#c88a1c,#ffb224)}
+.tl-lv small{font-size:10.5px;color:var(--mut)}
+.tl-sk{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:3px 5px}
+.tl-sk span{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:99px;background:rgba(255,178,36,.13);border:1px solid rgba(255,178,36,.35);color:#ffd98a;white-space:nowrap}
+.tl-sk .tl-no{background:none;border-style:dashed;color:var(--mut);font-weight:600}
+.tl-sk .tl-nx{background:none;border:0;color:var(--mut);font-weight:600;white-space:normal;padding-left:0}
+
+/* ===== v13.1 세력 정치(112) ===== */
+.fc-panel{max-width:min(96%,720px)}
+.fc-top b{color:var(--amber)}
+.fc-msg{border-left:3px solid var(--amber);background:var(--amber-bg);color:var(--fg);border-radius:0 9px 9px 0;padding:7px 10px}
+.fc-row{border:1px solid var(--line2);background:var(--panel2);border-radius:12px;padding:8px 10px;display:grid;gap:5px;margin-bottom:6px}
+.fc-h{display:flex;align-items:flex-start;gap:9px}
+.fc-ico{font-size:22px;line-height:1.1;flex:none}
+.fc-h>div{flex:1;min-width:0;display:grid;gap:1px}
+.fc-h b{font-size:14px}.fc-h b small{font-weight:600;color:var(--mut);font-size:11px;margin-left:4px}
+.fc-say{font-size:11.5px;color:var(--body);font-style:italic}
+.fc-st{flex:none;font:800 11.5px var(--mono);border:1px solid;border-radius:99px;padding:2px 8px;white-space:nowrap}
+.fc-m{display:flex;align-items:center;gap:8px}.fc-m small{font-size:10.5px;color:var(--mut)}
+.fc-p{flex:none;display:block;width:84px;height:6px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}.fc-p>i{display:block;height:100%}
+.fc-a{display:flex;flex-wrap:wrap;gap:5px}
+.fc-a .btn{width:auto;min-height:32px;padding:4px 10px;font-size:12px}
+.fc-a .btn small{font-weight:600;color:var(--mut);font-size:10px;margin-left:3px}
+.fc-a .fc-dk{border-color:#6a4a8a;background:#241a30;color:#d9c2f0}
+.fc-a .fc-rd{border-color:var(--alert);background:var(--alert-bg);color:#ffb3ad}
+.fc-sub{padding:5px 0 0;border-top:1px dashed var(--line2)}
+.fc-rank,.fc-log{display:flex;flex-wrap:wrap;gap:3px 9px;font-size:11.5px;color:var(--body);margin:6px 0}
+.fc-rank b,.fc-log b{flex:1 1 100%;font-size:12px;color:var(--fg)}
+.fc-rank .me{color:var(--amber);font-weight:800}
+.fc-log span{flex:1 1 100%;color:var(--mut)}
+
+/* v13.1 ⑥ 명중·제압 표시 */
+.px-hitm{z-index:30;pointer-events:none}
+.owc-hitm.kl::before,.owc-hitm.kl::after{background:#ff3b2f;height:3px;top:11.5px;box-shadow:0 0 3px #000,0 0 8px rgba(255,59,47,.6)}
+.owc-hitm.kl.on{animation:pxKill .46s ease-out}
+@keyframes pxKill{0%{opacity:1;transform:scale(.6)}30%{opacity:1;transform:scale(1.55)}100%{opacity:0;transform:scale(1.25)}}
+.px-streak{position:absolute;left:50%;top:27%;transform:translateX(-50%);z-index:30;pointer-events:none;font-weight:800;font-size:15px;line-height:1;letter-spacing:.04em;color:#fff;text-shadow:0 1px 3px #000,0 0 10px rgba(255,60,40,.75);white-space:nowrap;opacity:0}
+.px-streak.on{animation:pxStreak 1.5s ease-out}
+@keyframes pxStreak{0%{opacity:0;transform:translateX(-50%) scale(.7)}12%{opacity:1;transform:translateX(-50%) scale(1.12)}22%{transform:translateX(-50%) scale(1)}75%{opacity:1}100%{opacity:0}}
+.sv3.cine-on .px-hitm,.sv3.cine-on .px-streak,.sv3.dfr-on .px-hitm,.sv3.dfr-on .px-streak{display:none}
+@media (prefers-reduced-motion:reduce){.px-streak.on{animation-duration:.01s}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13728,7 +13774,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.0';
+const APP_VER='13.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -21991,7 +22037,7 @@ function fortStep(dt){if(!OUT.on||!OUT.scene)return;if(!fortOn()){if(FORT.g)fort
   if(S.st!=='held'){fortHud(-1);return}if(d>90){FORT.det=Math.max(0,FORT.det-dt*.2);fortHud(-1);FORT.warn=0;FORT.leave=0;return}/* 물러난 직후: 구역을 벗어나기 전에는 다시 붙지 않는다 */if(FORT.leave){fortHud(0,'↩ 물러나는 중 · '+Math.round(d)+'m');return}
   if(!FORT.warn){FORT.warn=1;try{outNote(`<b>⚔ 적 점령지 — 경계 ${S.lv}단계 · 약 ${fortN(S)}명</b><div>망루 경계병 시야 75m. <b>천천히·건물에 가려</b> 다가가면 덜 들킨다. 들키기 전에 36m까지 붙으면 기습, 들키면 적이 먼저 자리를 잡는다. 물러나려면 지금.</div>`,7000)}catch(e){}}
   /* 발각: 가장 잘 보는 경계병 기준 */let see=0;if(d<78&&!FORT.cool){for(const s of FORT.gs){const ex=s.h.root.position.x,ez=s.h.root.position.z,ey=s.kind==='tower'?7.6:1.6;const ds=Math.hypot(p.x-ex,p.z-ez);if(ds>78)continue;let los=true;try{los=owcLos(ex,ey,ez,p.x,1.3,p.z)}catch(e){}if(!los)continue;const k=clamp(1.15-ds/78,.12,1)*(s.kind==='tower'?1.15:.9);see=Math.max(see,k)}}
-  if(see>0){const night=OUT.tod==='night';const mv=FORT.spd>4.6?1.6:FORT.spd>1.2?1:.45;const veh=(OUT.drv||OUT.ride)?1.9:1;FORT.det+=dt*.26*see*mv*veh*(night?.5:OUT.tod==='day'?1:.75)*(1+.25*(S.lv-1))}else FORT.det=Math.max(0,FORT.det-dt*.09);
+  if(see>0){const night=OUT.tod==='night';const mv=FORT.spd>4.6?1.6:FORT.spd>1.2?1:.45;const veh=(OUT.drv||OUT.ride)?1.9:1;FORT.det+=dt*.26*see*mv*veh*(night?.5:OUT.tod==='day'?1:.75)*(1+.25*(S.lv-1))*(typeof tlvFortK==='function'?tlvFortK():1)}else FORT.det=Math.max(0,FORT.det-dt*.09);
   fortHud(FORT.det,FORT.det>=1?'🚨 발각!':see>0?'👁 발각 '+Math.round(FORT.det*100)+'%':'👁 숨음 · '+Math.round(d)+'m');
   if(OUT.enc||OUT.busy||(typeof evBlock==='function'&&evBlock())||(typeof EVD!=='undefined'&&EVD.cur))return;
   if(FORT.det>=1){fortAssault(true);return}if(d<36){fortAssault(false);return}}
@@ -22092,6 +22138,317 @@ function gxStep(dt){for(const V of [typeof GUN!=='undefined'?GUN.vm:null,typeof 
   for(const nm of ['gunFlash','owcFlash']){const b=window[nm];if(typeof b!=='function')continue;window[nm]=function(){const r=b.apply(this,arguments);try{gxFire(nm==='gunFlash'?GUN.vm:OWC.vm)}catch(e){gxErr(e)}return r}}
   for(const nm of ['tjStep','tjAptStep']){const b=window[nm];if(typeof b!=='function')continue;window[nm]=function(dt){const r=b.apply(this,arguments);try{gxStep(dt)}catch(e){gxErr(e)}return r}}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🔫 총기 그래픽(v13.0)','1인칭 총이 부위별 재질로 바뀌었다 — 금속 총몸의 반사와 긁힘, 폴리머 손잡이의 잔 요철, 나뭇결, 렌즈 코팅. 탄창 리브·소염기·조정간·탄피 배출구 같은 디테일과 십자 총구 화염·총구 연기가 붙었다. 적·팀원의 총은 그대로라 그리기 부담은 늘지 않는다.']);
+
+/* ===================== 111 · v13.1 팀원 레벨 · 패시브/자동 스킬 ===================== */
+/* 사용자 요청(2026-11-14 00:31): "팀원들 레벨을 만들어보는 것도 좋을 것 같습니다 같이 미션수행 할 때마다 레벨이 오르고 레벨 마다 소정의 다양한 패시브 또는 자동 스킬 등이 있음 좋을 것 같네요"
+   · 함께 끝낸 일마다 경험치: 미션 +12 · 미션 50(76) +14 · 돌발 상황 대응 +10 · 교전 승리 +16(적 점령지 +30). 그 자리에 함께 있던(중상·후송·전사 아님) 팀원만 받는다
+   · 레벨 1~6(30 · 75 · 140 · 230 · 350). 역할(🎯사격 · ⛑응급 · 🔭정찰 · 💪체력)마다 레벨별 스킬 5개 — [패시브] 늘 적용 / [자동] 조건이 맞으면 스스로 쓴다(말풍선으로 알림)
+   · 팀 화면(👥)에 레벨·경험치 막대·가진 스킬·다음 스킬. 이름표에 Lv. 판에 저장(G.team[].xp · lv)
+   끄기: localStorage sg.tlv=false(경험치·스킬 모두 멈춤 — 레벨은 남는다) */
+const TLV={xp:[0,30,75,140,230,350],err:0,used:{},t:{},pend:[],sayT:0};
+function tlvOn(){try{return store.get('sg.tlv',true)!==false&&!(navigator.webdriver&&!window.__tlvTest)}catch(e){return true}}
+function tlvErr(e){if(TLV.err<4){TLV.err++;console.error(e)}}
+const TLV_SK={
+  사격:[{n:'침착한 조준',t:'p',d:'교전 명중 +12%'},{n:'엄호 사격',t:'a',d:'내가 재장전하는 동안 조준 중인 적 하나를 제압한다(8초마다)'},{n:'급소 사격',t:'p',d:'교전 명중 +12% 더 · 교전 체력 +1'},{n:'제압 사격',t:'a',d:'20초마다 조준 중인 적 전부의 조준을 끊는다'},{n:'명사수',t:'p',d:'교전 명중 +20% 더'}],
+  응급:[{n:'넉넉한 구급낭',t:'p',d:'교전을 시작할 때 구급 +1'},{n:'자동 응급 처치',t:'a',d:'밖에서 다친 사람(나 포함)을 45초마다 +12 회복'},{n:'지혈 달인',t:'p',d:'팀원이 중상을 버티는 시간 +60초 · 내 출혈을 12초 뒤 멈춘다'},{n:'현장 처치',t:'a',d:'자동 회복이 +20 · 30초마다로'},{n:'소생',t:'a',d:'외출마다 한 번, 전사 직전의 팀원을 붙잡아 살린다'}],
+  정찰:[{n:'밝은 눈',t:'a',d:'110m 안 숨은 물자를 먼저 알아채 알려 준다'},{n:'위험 감지',t:'a',d:'50m 안 적대 인물을 10초마다 머리 위에 표시'},{n:'은밀 기동',t:'p',d:'적 점령지 발각 게이지가 30% 느리게 찬다'},{n:'선제 발견',t:'a',d:'교전 첫 무리가 1.5초 더 허둥댄다'},{n:'매의 눈',t:'a',d:'위험 감지가 80m · 6초마다로'}],
+  체력:[{n:'방패막이',t:'a',d:'9m 안에서 내가 맞는 피해의 15%를 대신 받는다'},{n:'버팀목',t:'p',d:'다른 팀원이 받는 피해 −10%'},{n:'강골',t:'p',d:'대신 받는 피해 25% · 교전 체력 +2'},{n:'불굴',t:'a',d:'외출마다 한 번, 중상이 될 타격을 버텨 낸다'},{n:'철벽',t:'p',d:'대신 받는 피해 35% · 다른 팀원 피해 −20%'}]};
+function tlvLv(d){return clamp((d&&d.lv)|0||1,1,6)}
+function tlvHas(role,lv){try{for(const m of tmLive()){const d=m.d;if(d.role===role&&tlvLv(d)>=lv&&d.st!=='crit'&&d.st!=='away')return m}}catch(e){}return null}
+function tlvSkills(d){const L=TLV_SK[d.role]||[];return L.slice(0,tlvLv(d)-1)}
+function tlvNext(d){const L=TLV_SK[d.role]||[];return L[tlvLv(d)-1]||null}
+function tlvSay(m,txt){try{if(m&&m.h&&m.h.root.visible&&typeof bubSay==='function')bubSay(m.h,txt,2.4,'ok')}catch(e){}}
+/* ---------- 경험치 ---------- */
+function tlvGain(n,why){if(!tlvOn()||!n)return 0;let got=0;const ups=[];try{for(const m of tmLive()){const d=m.d;if(d.st==='crit'||d.st==='away'||d.st==='kia')continue;d.xp=(d.xp|0)+n;got++;let lv=tlvLv(d);while(lv<6&&d.xp>=TLV.xp[lv]){lv++;const sk=(TLV_SK[d.role]||[])[lv-2];ups.push({m,lv,sk})}if(lv!==tlvLv(d)){d.lv=lv;try{tmTag(m)}catch(e){}}}}catch(e){tlvErr(e)}
+  if(got){/* 미션 완료 알림 뒤에 뜨게 조금 늦춘다 */TLV.pend.push({t:2.6,fn:()=>{try{if(!OUT.on)return;if(ups.length){const u=ups[ups.length-1];outNote(`<b>⭐ ${ups.map(x=>x.m.d.nm+' Lv '+x.lv).join(' · ')}</b><div>${u.sk?`새 스킬 [${u.sk.t==='a'?'자동':'패시브'}] <b>${u.sk.n}</b> — ${u.sk.d}`:'레벨이 올랐다'} · 팀 화면(👥)에서 본다.</div>`,5200);tlvSay(u.m,'더 잘할 수 있을 것 같아요!');try{vib([30,40,30])}catch(e){}}try{save()}catch(e){}}catch(e){tlvErr(e)}}})}return got}
+(function(){const w=(nm,fn)=>{const b=window[nm];if(typeof b!=='function')return;window[nm]=function(){let pre=null;try{pre=fn.pre?fn.pre.apply(this,arguments):null}catch(e){}const r=b.apply(this,arguments);try{fn.post.call(this,arguments,pre)}catch(e){tlvErr(e)}return r}};
+  w('misDone',{post:a=>{if(a[0])tlvGain(12,'미션')}});
+  w('mxClear',{pre:()=>typeof MX!=='undefined'&&!!MX.cur,post:(a,had)=>{if(a[0]&&had)tlvGain(14,'미션')}});
+  w('evEnd',{pre:()=>typeof EVD!=='undefined'&&!!EVD.cur,post:(a,had)=>{if(had&&a[0]&&a[0].ok)tlvGain(10,'돌발')}});
+  w('owcEnd',{pre:()=>typeof OWC!=='undefined'&&OWC.on&&!OWC.done,post:(a,live)=>{if(live&&a[0])tlvGain(OWC.k==='fort'?30:16,'교전')}})})();
+/* 이름표에 레벨 */(function(){const b=window.tmTag;if(typeof b!=='function')return;window.tmTag=function(m){const r=b.apply(this,arguments);try{const lv=tlvLv(m.d);if(lv>1&&m.tagL&&!/Lv\d/.test(m.tagL))m.tagL+=' · Lv'+lv}catch(e){}return r}})();
+/* ---------- 교전: 패시브 ---------- */
+(function(){const b=window.tmOwcJoin;if(typeof b!=='function')return;window.tmOwcJoin=function(){const r=b.apply(this,arguments);try{if(tlvOn()&&typeof OWC!=='undefined'){let med=0;for(const a of OWC.al||[]){const m=a.team;if(!m||a.tlv)continue;a.tlv=1;const d=m.d,lv=tlvLv(d);if(d.role==='사격'){a.accK=(a.accK||1)*(1+(lv>=2?.12:0)+(lv>=4?.12:0)+(lv>=6?.2:0));if(lv>=4)a.hp+=1}if(d.role==='체력'&&lv>=4)a.hp+=2;if(d.role==='응급'&&lv>=2)med++}if(med&&!OWC.tlvMed){OWC.tlvMed=1;OWC.med=(OWC.med||0)+med}TLV.t.cov=4;TLV.t.sup=12}}catch(e){tlvErr(e)}return r}})();
+/* 정찰 Lv5: 첫 무리가 더 허둥댄다 */(function(){const b=window.owcWave;if(typeof b!=='function')return;window.owcWave=function(i){const r=b.apply(this,arguments);try{if(i===0&&tlvOn()){const m=tlvHas('정찰',5);if(m)owcLater(2.2,()=>{try{if(!OWC.on||OWC.done)return;let n=0;for(const a of OWC.en)if(a.side==='en'&&a.st!=='down'&&!a.prot){a.flinch=Math.max(a.flinch||0,0)+1.5;n++}if(n)owcSay('팀원 '+m.d.nm,'먼저 봤어요 — 지금이에요!',1)}catch(e){}})}}catch(e){tlvErr(e)}return r}})();
+/* ---------- 피해: 체력 · 응급 ---------- */
+(function(){const b=window.hurt;if(typeof b!=='function')return;window.hurt=function(t,n){try{if(t==='me'&&n>=2&&tlvOn()&&typeof OUT!=='undefined'&&OUT.on&&!TLV.inHurt){const m=tlvHas('체력',2);if(m&&m.d.st==='ok'&&m.h&&Math.hypot(m.h.root.position.x-FP3.pos.x,m.h.root.position.z-FP3.pos.z)<9){const lv=tlvLv(m.d);const k=lv>=6?.35:lv>=4?.25:.15;const take=n*k;if(take>=1){n=n-take;TLV.inHurt=1;try{tmHurt(m,take*.5,'대신 막아섰다.')}finally{TLV.inHurt=0}if((TLV.sayT||0)<=0){TLV.sayT=9;tlvSay(m,'제가 막을게요!')}}}}}catch(e){tlvErr(e)}return b.call(this,t,n)}})();
+(function(){const b=window.tmHurt;if(typeof b!=='function')return;window.tmHurt=function(m,dmg,why){try{if(tlvOn()&&m&&m.d&&m.d.st!=='kia'){const d=m.d;/* 버팀목·철벽 */const tk=tlvHas('체력',3);if(tk&&tk!==m)dmg*=tlvLv(tk.d)>=6?.8:.9;/* 불굴: 중상이 될 타격을 한 번 버틴다 */if(d.role==='체력'&&tlvLv(d)>=5&&!TLV.used['grit'+d.id]&&d.st!=='crit'&&dmg<150){const k=d.role==='체력'?.75:1;if(d.hp-dmg*k<25){TLV.used['grit'+d.id]=1;dmg=Math.max(0,(d.hp-27)/k);tlvSay(m,'아직… 괜찮습니다!');try{outNote(`<b>💪 ${d.nm} — 불굴</b><div>쓰러질 타격을 버텨 냈다(외출마다 한 번).</div>`,3200)}catch(e){}}}}}catch(e){tlvErr(e)}const st0=m&&m.d?m.d.st:'';const r=b.call(this,m,dmg,why);try{if(tlvOn()&&m&&m.d&&m.d.st==='crit'&&st0!=='crit'&&m.bleed!=null){const md=tlvHas('응급',4);if(md&&md!==m)m.bleed+=60}}catch(e){tlvErr(e)}return r}})();
+/* 응급 Lv6 소생 */(function(){const b=window.tmKia;if(typeof b!=='function')return;window.tmKia=function(m){try{if(tlvOn()&&m&&m.d&&m.d.st!=='kia'&&!TLV.used.revive&&!/직격/.test(m.why||'')){const md=tlvHas('응급',6);if(md&&md!==m){TLV.used.revive=1;m.d.st='crit';m.d.hp=Math.max(m.d.hp,12);m.bleed=90;tlvSay(md,'안 돼요 — 붙잡았어요!');try{outNote(`<b>⛑ ${md.d.nm} — 소생</b><div>${m.d.nm} 씨의 숨이 돌아왔다. 90초 안에 처치하거나 구급차를 부른다(외출마다 한 번).</div>`,5200)}catch(e){}return}}}catch(e){tlvErr(e)}return b.apply(this,arguments)}})();
+/* 정찰 Lv4: 적 점령지 발각 배율(109가 묻는다) */function tlvFortK(){try{return tlvOn()&&tlvHas('정찰',4)?.7:1}catch(e){return 1}}
+/* ---------- 매 프레임: 자동 스킬 ---------- */
+function tlvStep(dt){if(!OUT.on)return;if(TLV.pend.length){for(const q of TLV.pend)q.t-=dt;const due=TLV.pend.filter(q=>q.t<=0);TLV.pend=TLV.pend.filter(q=>q.t>0);for(const q of due){try{q.fn()}catch(e){tlvErr(e)}}}
+  if(!tlvOn()||!TEAM.list.length)return;TLV.sayT=Math.max(0,(TLV.sayT||0)-dt);const T=TLV.t;const owc=typeof OWC!=='undefined'&&OWC.on&&!OWC.done;
+  if(owc){/* 🎯 엄호 사격 · 제압 사격 */T.cov=(T.cov||0)-dt;T.sup=(T.sup||0)-dt;const aim=()=>OWC.en.filter(a=>a.side==='en'&&a.st!=='down'&&!a.prot&&(a.aimP||0)>.15);
+    if(T.cov<=0&&OWC.reload>0){const m=tlvHas('사격',3);if(m){const L=aim().sort((a,b)=>b.aimP-a.aimP);if(L[0]){L[0].aimP=0;L[0].flinch=Math.max(L[0].flinch||0,1.3);T.cov=8;try{owcSay('팀원 '+m.d.nm,'엄호합니다 — 장전하세요!',1)}catch(e){}}}}
+    if(T.sup<=0){const m=tlvHas('사격',5);if(m){const L=aim();if(L.length>=2){for(const a of L){a.aimP=0;a.flinch=Math.max(a.flinch||0,.9)}T.sup=20;try{owcSay('팀원 '+m.d.nm,'제압 사격! 고개 못 들게 할게요!',1)}catch(e){}}else T.sup=2}}
+    return}
+  /* ⛑ 자동 응급 처치 */T.heal=(T.heal==null?20:T.heal)-dt;if(T.heal<=0){const md=tlvHas('응급',3);if(md&&md.d.st==='ok'&&md.h.root.visible&&!OUT.enc){const lv=tlvLv(md.d),amt=lv>=5?20:12;T.heal=lv>=5?30:45;let done=false;try{const me=M('me');if(me.hp<70&&Math.hypot(md.h.root.position.x-FP3.pos.x,md.h.root.position.z-FP3.pos.z)<12){FX=[];heal('me',amt);OUT.fx.push(...FX);outStat();done=true;tlvSay(md,'잠깐만요 — 붕대 갈게요.')}else{const t=tmLive().find(q=>q!==md&&q.d.st==='hurt'&&q.h.root.visible);if(t){t.d.hp=Math.min(100,t.d.hp+amt);if(t.d.hp>=60){t.d.st='ok';try{tmTag(t);tmUI()}catch(e){}}done=true;tlvSay(md,t.d.nm+' 씨, 이리 와 봐요.')}}}catch(e){tlvErr(e)}if(!done)T.heal=6}else T.heal=8}
+  /* ⛑ 지혈 달인: 내 출혈을 12초 뒤 멈춘다 */try{if(typeof WND!=='undefined'&&WND.on){T.wnd=(T.wnd||0)+dt;if(T.wnd>12){const md=tlvHas('응급',4);if(md&&md.d.st==='ok'&&Math.hypot(md.h.root.position.x-FP3.pos.x,md.h.root.position.z-FP3.pos.z)<10){wndClear();T.wnd=0;tlvSay(md,'지혈했어요. 이제 괜찮아요.');outNote(`<b>⛑ ${md.d.nm} — 지혈 달인</b><div>출혈을 멈췄다.</div>`,2600)}else T.wnd=8}}else T.wnd=0}catch(e){tlvErr(e)}
+  /* 🔭 밝은 눈 · 위험 감지 */T.eye=(T.eye==null?6:T.eye)-dt;if(T.eye<=0){T.eye=12;const sc=tlvHas('정찰',2);if(sc&&sc.h.root.visible)try{const p=FP3.pos;const c=(typeof MIS!=='undefined'&&MIS.cache||[]).filter(x=>!x.found&&!x.tlvSaid&&Math.hypot(x.x-p.x,x.z-p.z)<110).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0];if(c){c.tlvSaid=1;const d=Math.round(Math.hypot(c.x-p.x,c.z-p.z));const a=Math.atan2(c.x-p.x,-(c.z-p.z));const dir=['북','북동','동','남동','남','남서','서','북서'][((Math.round(a/(Math.PI/4))%8)+8)%8];tlvSay(sc,'저쪽에 뭔가 숨겨져 있어요!');outNote(`<b>🔭 ${sc.d.nm} — 밝은 눈</b><div>${dir}쪽 약 ${d}m에 숨은 물자가 있다.</div>`,3600)}}catch(e){tlvErr(e)}}
+  T.dng=(T.dng==null?4:T.dng)-dt;if(T.dng<=0){const sc=tlvHas('정찰',3);if(sc&&sc.h.root.visible&&typeof dfrMark==='function'&&typeof dfrClass==='function'){const lv=tlvLv(sc.d),R=lv>=6?80:50;T.dng=lv>=6?6:10;try{let n=0;const p=FP3.pos;for(const a of OUT.npcs||[]){if(!a||!a.h)continue;const q=a.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)>R)continue;const cls=dfrClass(a);if(cls!=='en')continue;if(dfrMark(a,cls))n++}if(n&&(TLV.sayT||0)<=0){TLV.sayT=14;tlvSay(sc,'조심해요 — 수상한 사람이 '+n+'명!')}}catch(e){tlvErr(e)}}else T.dng=6}}
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{tlvStep(dt)}catch(e){tlvErr(e)}return r}})();
+/* 외출마다 한 번짜리 스킬 초기화 */(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{TLV.used={};TLV.t={};TLV.pend=[]}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 팀 화면 ---------- */
+(function(){const b=window.tmPanel;if(typeof b!=='function')return;window.tmPanel=function(open){const r=b.apply(this,arguments);try{if(!open)return r;const p=document.querySelector('#tmPanel');if(!p)return r;const rows=p.querySelectorAll('.mis-row');const L=tmLive();L.forEach((m,i)=>{const row=rows[i];if(!row||row.querySelector('.tl-lv'))return;const d=m.d,lv=tlvLv(d),xp=d.xp|0;const a=TLV.xp[lv-1],z=TLV.xp[lv]||a;const pc=lv>=6?100:Math.round(clamp((xp-a)/Math.max(1,z-a),0,1)*100);const sk=tlvSkills(d),nx=tlvNext(d);const box=row.querySelector('div');if(!box)return;const e=document.createElement('div');e.className='tl-lv';
+      e.innerHTML=`<span class="tl-b">Lv ${lv}</span><i class="tl-xp"><i style="width:${pc}%"></i></i><small>${lv>=6?'최고 레벨':`다음까지 ${Math.max(0,z-xp)}`}</small><div class="tl-sk">${sk.length?sk.map(s=>`<span title="${s.d}">${s.t==='a'?'⚡':'◆'} ${s.n}</span>`).join(''):'<span class="tl-no">아직 스킬 없음</span>'}${nx?`<span class="tl-nx">다음 Lv ${lv+1}: ${nx.n} — ${nx.d}</span>`:''}</div>`;box.appendChild(e)});
+    if(!p.querySelector('.tl-help')&&L.length){const n=document.createElement('p');n.className='mis-note tl-help';n.textContent='⚡ 자동 스킬 · ◆ 패시브 — 함께 미션·돌발 상황·교전을 끝내면 경험치가 오른다(중상·후송 중인 팀원은 제외).';p.appendChild(n)}}catch(e){tlvErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['⭐ 팀원 레벨·스킬(v13.1)','함께 미션(+12~14)·돌발 상황(+10)·교전(+16, 적 점령지 +30)을 끝낸 팀원은 경험치를 얻어 Lv 6까지 오른다. 역할마다 레벨별 스킬이 있다 — 🎯 엄호·제압 사격, ⛑ 자동 응급 처치·소생, 🔭 숨은 물자·위험 감지·은밀 기동, 💪 방패막이·불굴. ⚡ 자동 스킬은 조건이 맞으면 스스로 쓰고 말풍선으로 알린다. 팀 화면(👥)에서 확인.']);
+
+/* ===================== 112 · v13.1 세력 정치 — 경쟁 팀 5곳 · 동맹 · 배척 · 모략 (무법 모드) ===================== */
+/* 사용자 요청(2026-11-14 00:31): "선의의 경쟁하는 팀들을 여러개 만들어 주세요. 정치적으로 어떤 경쟁구도의 팀과 동맹을 맺고 특정 팀을 배척.모략 등도 할 수 있게 … 생존 본능에 따라 이기적인 플레이 … 윤리적인 부문이 zero인 게임"
+   해석(사용자에게 알림): 세력은 모두 가상의 생존자 모임 — 실제 정당·인물·지역·집단과 무관. '무법 모드' = 이기적 선택(매수·소문·밀고·창고 털기·이간질·배신)을 막지 않고 옳고 그름을 채점하지도 않는다. 대신 결과가 따라온다(평판·들통·보복·동맹 이탈).
+   묘사하지 않는 것: 성폭력, 아이를 해치는 일, 실존 집단·인물
+   · 세력 5곳: 🏭 철문회(산업단지 자경대 — 무기·탄) · 🧺 장터회(상인 연합 — 식량·물) · ⛑ 하얀 천막(의료 봉사단 — 의약품) · 🏢 동대표 연합(아파트 주민 — 사람·자리) · 🚚 바퀴 조합(운송 기사 — 정보·이동)
+     세력마다 세(0~100)·나에 대한 호감(−100~100)·서로의 사이(앙숙·친분). 턴마다 스스로 움직인다(세 변화 · 손잡기·틀어지기)
+   · 내가 할 수 있는 일(턴마다 2번 · 밖에서 상황판 🚨 → 🏛 세력): 지원 · 거래 · 동맹 제안/파기 · 배척 · 모략(소문 · 밀고 · 창고 털기 · 이간질 · 매수) · 배신(동맹만)
+   · 결과: 동맹 보급(턴마다) · 들통(다음 턴) · 보복 추격조(카드: 싸운다=같은 배경 교전 / 물자를 내준다 / 달아난다) · 동맹의 요구 · 주민 총회(구호품 몫) · 평판(신의·교활·배신자)
+   교육용 모드에서는 모략·배신이 나오지 않는다. 끄기: sg.fc=false */
+const FC_DEF=[
+  {id:'iron',ico:'🏭',n:'철문회',sub:'산업단지 자경대',lead:'도상철 회장',say:'"내 구역은 내가 지킨다. 힘없는 약속은 종이다."',give:'ammo',spec:'탄약 · 교전 지원',col:'#8f96a3'},
+  {id:'mart',ico:'🧺',n:'장터회',sub:'상인 연합',lead:'함미란 총무',say:'"값은 시장이 정해요. 우리는 문만 엽니다."',give:'food',spec:'식량 · 생수',col:'#e0a13a'},
+  {id:'tent',ico:'⛑',n:'하얀 천막',sub:'의료 봉사단',lead:'국정아 간호사',say:'"누구 편도 아니에요. 다친 사람 편이에요."',give:'meds',spec:'의약품 · 치료',col:'#e8eef2'},
+  {id:'bloc',ico:'🏢',n:'동대표 연합',sub:'아파트 주민 모임',lead:'선우진 대표',say:'"우리 주민이 먼저입니다. 외부인은 그다음."',give:'water',spec:'물 · 이웃 신뢰',col:'#6fa8dc'},
+  {id:'wheel',ico:'🚚',n:'바퀴 조합',sub:'운송 기사 조합',lead:'마동혁 조합장',say:'"길을 아는 사람이 이깁니다. 기름값은 따로고."',give:'intel',spec:'정보 · 현금',col:'#7cc47c'}];
+const FC_RIVAL=[['iron','bloc',-45],['mart','tent',-30],['wheel','iron',-25],['bloc','mart',-20],['tent','wheel',15],['mart','wheel',25]];
+const FC={err:0,open:false,sub:null,showT:9,notes:[],card:null};
+function fcErr(e){if(FC.err<4){FC.err++;console.error(e)}}
+function fcOn(){try{return store.get('sg.fc',true)!==false&&!(navigator.webdriver&&!window.__fcTest)}catch(e){return true}}
+function fcLawless(){try{return !(typeof eduOn==='function'&&eduOn())}catch(e){return true}}
+function fcDef(id){return FC_DEF.find(d=>d.id===id)}
+function fcKey(a,b){return a<b?a+'|'+b:b+'|'+a}
+function fcS(){const F=G.flags;if(!F.fc||typeof F.fc!=='object'||F.fc.v!==1){let sd=((G.seed||5)*7919+17)>>>0;const rn=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};const f={};for(const d of FC_DEF)f[d.id]={p:Math.round(38+rn()*30),s:Math.round(-8+rn()*22),al:false,mad:0};const rel={};for(const [a,b,v] of FC_RIVAL)rel[fcKey(a,b)]=v;F.fc={v:1,f,rel,rep:{trust:0,cun:0,traitor:0},act:{turn:-1,left:2},log:[],pend:[],feud:null,req:null,asm:0,top:0}}return F.fc}
+function fcRel(S,a,b){return S.rel[fcKey(a,b)]||0}
+function fcRelAdd(S,a,b,n){const k=fcKey(a,b);S.rel[k]=clamp((S.rel[k]||0)+n,-100,100)}
+function fcAdd(S,id,n){const f=S.f[id];if(!f)return 0;const b=f.s;f.s=clamp(Math.round(f.s+n),-100,100);return f.s-b}
+function fcStance(s,al){return al?['동맹','#2ccf7c']:s>=45?['우호','#7cc47c']:s>=15?['호의','#b9d98a']:s>-15?['중립','#aab4bd']:s>-50?['냉담','#e6a23a']:['적대','#ff5449']}
+function fcLog(S,t){S.log.push({t:String(t).slice(0,120),turn:G.turn|0});while(S.log.length>14)S.log.shift()}
+function fcLeft(S){if(S.act.turn!==(G.turn|0)){S.act.turn=G.turn|0;S.act.left=2}return S.act.left}
+function fcUse(S){fcLeft(S);S.act.left=Math.max(0,S.act.left-1)}
+function fcAllies(S){return FC_DEF.filter(d=>S.f[d.id].al)}
+/* 우리 팀의 세: 팀원 수·레벨·이웃 신뢰·동맹 */
+function fcMyPower(S){let p=18;try{const L=(G.team||[]).filter(d=>d.st!=='kia');p+=L.length*8+L.reduce((a,d)=>a+((d.lv|0)||1)-1,0)*3}catch(e){}p+=clamp((G.trust||0)*.6,-10,26)+fcAllies(S).length*10+S.rep.cun*1.5-S.rep.traitor*6;return Math.round(clamp(p,0,100))}
+function fcRank(S){const L=FC_DEF.map(d=>({id:d.id,n:d.n,ico:d.ico,p:S.f[d.id].p})).concat([{id:'me',n:'우리 팀',ico:'⭐',p:fcMyPower(S)}]);L.sort((a,b)=>b.p-a.p);return L}
+function fcHave(k){try{if(k==='cash')return G.inv.cash||0;return G.res[k]||0}catch(e){return 0}}
+function fcTake(k,n){if(k==='cash'){G.inv.cash=Math.max(0,(G.inv.cash||0)-n);return}res(k,-n)}
+function fcGiveMe(k,n){try{if(k==='cash'){G.inv.cash=(G.inv.cash||0)+n;return`현금 봉투 ${n}장`}if(k==='ammo'){gunAmmoAdd('556',n);return`5.56mm 탄 ${n}발`}if(k==='intel'){G.inv.cash=(G.inv.cash||0)+Math.max(1,Math.round(n/2));return`현금 봉투 ${Math.max(1,Math.round(n/2))}장`}res(k,n);return({water:`물 ${n}L`,food:`식량 ${n}일분`,meds:`의약품 ${n}회`})[k]||''}catch(e){return''}}
+/* ---------- 행동 ---------- */
+const FC_GIFT=[['water',2,'물 2L'],['food',1,'식량 1일분'],['meds',1,'의약품 1회'],['cash',1,'현금 봉투 1장']];
+const FC_TRADE={iron:{pay:['food',2,'식량 2일분'],get:['ammo',30]},mart:{pay:['cash',1,'현금 봉투 1장'],get:['food',2]},tent:{pay:['food',2,'식량 2일분'],get:['meds',1]},bloc:{pay:['meds',1,'의약품 1회'],get:['water',3]},wheel:{pay:['water',2,'물 2L'],get:['cash',1]}};
+function fcAct(id,a,arg){const S=fcS();const d=fcDef(id),f=S.f[id];if(!d||!f)return'';if(!OUT.on)return'밖에서만 할 수 있다(전령·무전).';const free=a==='trade';if(!free&&fcLeft(S)<=0)return'이번 턴의 정치 행동 2번을 다 썼다 — 대피소에서 한 턴을 보낸 뒤 다시.';
+  const R=Math.random;let t='';FX=[];
+  if(a==='gift'){const g=FC_GIFT[arg|0]||FC_GIFT[0];if(fcHave(g[0])<g[1])return g[2]+'이(가) 모자란다.';fcTake(g[0],g[1]);const want=(d.give===g[0])?.6:1;const up=fcAdd(S,id,(g[0]==='meds'?11:g[0]==='cash'?9:8)*want+(id==='tent'&&g[0]==='meds'?5:0));f.p=clamp(f.p+2,0,100);fcUse(S);t=`${d.n}에 ${g[2]}을(를) 보냈다 — 호감 +${up}.`}
+  else if(a==='trade'){const T=FC_TRADE[id];if(f.s<=-20)return`${d.n}은(는) 우리와 거래하지 않는다(호감 ${f.s}).`;const k=f.s>=40||f.al?1.5:f.s<0?.7:1;if(fcHave(T.pay[0])<T.pay[1])return T.pay[2]+'이(가) 모자란다.';fcTake(T.pay[0],T.pay[1]);const n=Math.max(1,Math.round(T.get[1]*k));const got=fcGiveMe(T.get[0],n);fcAdd(S,id,1);t=`${d.n}과(와) 거래: ${T.pay[2]} → ${got}${k>1?' (우호 가격)':k<1?' (바가지)':''}.`}
+  else if(a==='ally'){if(f.al){f.al=false;const dn=fcAdd(S,id,-25);S.rep.trust=Math.max(-5,S.rep.trust-1);fcUse(S);t=`${d.n}과의 동맹을 깼다 — 호감 ${dn}. 다른 세력도 지켜본다(신의 −1).`}
+    else{if(fcAllies(S).length>=2)return'동맹은 두 곳까지 — 더 맺으려면 하나를 깨야 한다.';if(f.s<45)return`호감 45 이상이어야 동맹을 청할 수 있다(지금 ${f.s}) — 지원·거래로 올린다.`;let ch=.4+(f.s-45)*.012+S.rep.trust*.05-S.rep.traitor*.2;for(const o of fcAllies(S))if(fcRel(S,id,o.id)<-15)ch-=.25;fcUse(S);if(R()<clamp(ch,.05,.95)){f.al=true;S.rep.trust=Math.min(5,S.rep.trust+1);const cold=[];for(const o of FC_DEF){if(o.id===id)continue;const r=fcRel(S,id,o.id);if(r<-15){fcAdd(S,o.id,-15);cold.push(o.n)}else if(r>15)fcAdd(S,o.id,5)}t=`<b>${d.n}과(와) 동맹을 맺었다.</b> 턴마다 ${d.spec} 지원이 온다.${cold.length?' 앙숙인 '+cold.join('·')+'의 눈길이 차가워졌다(−15).':''}`}else{fcAdd(S,id,-4);t=`${d.lead}: "아직은 이르오." — 동맹 제안이 거절됐다(성공 가능성 ${Math.round(clamp(ch,.05,.95)*100)}%였다).`}}}
+  else if(a==='denounce'){const dn=fcAdd(S,id,-30);f.p=clamp(f.p-6,0,100);f.mad=(f.mad|0)+2;const side=[];for(const o of FC_DEF){if(o.id===id)continue;const r=fcRel(S,id,o.id);if(r<-15){fcAdd(S,o.id,8);side.push(o.n+' +8')}else if(r>15){fcAdd(S,o.id,-10);side.push(o.n+' −10')}}fcUse(S);t=`주민들 앞에서 <b>${d.n}</b>을(를) 배척했다 — 그쪽 호감 ${dn}, 세 −6.${side.length?' '+side.join(' · ')+'.':''} 보복을 조심한다.`}
+  else if(!fcLawless())return'교육용 모드에서는 할 수 없다.';
+  else if(a==='rumor'){f.p=clamp(f.p-5,0,100);for(const o of FC_DEF)if(o.id!==id)fcRelAdd(S,id,o.id,-12-Math.round(R()*10));S.rep.cun++;const ch=clamp(.3-S.rep.cun*.025+(id==='tent'?.15:0),.08,.6);S.pend.push({k:'rumor',id,at:(G.turn|0)+1,ch});fcUse(S);t=`${d.n}에 대한 소문을 흘렸다 — 다른 세력과의 사이가 벌어지고 세 −5. 들통날 가능성 ${Math.round(ch*100)}%(다음 턴에 드러난다).`}
+  else if(a==='tip'){f.p=clamp(f.p-12,0,100);S.rep.cun++;const ch=clamp(.25-S.rep.cun*.02,.08,.5);S.pend.push({k:'tip',id,at:(G.turn|0)+1,ch});const got=fcGiveMe('cash',2);try{trust(1)}catch(e){}fcUse(S);t=`계엄군에 ${d.n}의 숨긴 물자를 알렸다 — 세 −12. 사례로 ${got}. 누가 알렸는지 새어 나갈 가능성 ${Math.round(ch*100)}%.`}
+  else if(a==='raid'){const night=OUT.tod==='night'||OUT.tod==='dusk'||OUT.tod==='dawn';let sc=0;try{sc=(typeof tlvHas==='function'&&tlvHas('정찰',2))?.1:0}catch(e){}const ch=clamp(.45+(night?.15:0)+sc+S.rep.cun*.02-f.p*.002,.15,.85);fcUse(S);S.rep.cun++;if(R()<ch){const loot={iron:[['ammo',60]],mart:[['food',4],['water',3]],tent:[['meds',3]],bloc:[['water',5],['food',1]],wheel:[['cash',4]]}[id];const got=loot.map(l=>fcGiveMe(l[0],l[1])).join(' · ');f.p=clamp(f.p-8,0,100);const ex=clamp(.35-S.rep.cun*.02,.1,.5);S.pend.push({k:'raid',id,at:(G.turn|0)+1,ch:ex});t=`${night?'어둠을 틈타 ':''}${d.n} 창고를 털었다 — ${got}. 누구 짓인지 알려질 가능성 ${Math.round(ex*100)}%.`}else{const dn=fcAdd(S,id,-40);f.mad=(f.mad|0)+3;S.feud={id,at:G.turn|0,why:'창고를 털다 들켰다'};t=`창고 앞에서 들켰다(성공 가능성 ${Math.round(ch*100)}%였다) — ${d.n} 호감 ${dn}. 추격조가 붙는다.`}}
+  else if(a==='wedge'){const o=FC_DEF.filter(x=>x.id!==id).sort((x,y)=>fcRel(S,id,y.id)-fcRel(S,id,x.id))[0];fcRelAdd(S,id,o.id,-30);S.rep.cun++;const ch=clamp(.28-S.rep.cun*.02,.08,.5);S.pend.push({k:'wedge',id,id2:o.id,at:(G.turn|0)+1,ch});fcUse(S);t=`${d.n}과(와) ${o.n} 사이를 벌려 놓았다(사이 −30 → ${fcRel(S,id,o.id)}). 둘이 손잡을 일은 한동안 없다. 들통 가능성 ${Math.round(ch*100)}%.`}
+  else if(a==='bribe'){if(id==='tent')return`${d.lead}: "봉투는 넣어 두세요." — 하얀 천막은 돈을 받지 않는다.`;if(fcHave('cash')<2)return'현금 봉투 2장이 필요하다.';fcTake('cash',2);const up=fcAdd(S,id,15);S.rep.cun++;fcUse(S);t=`${d.lead}에게 봉투 2장을 건넸다 — 호감 +${up}. 묻는 사람은 없다.`}
+  else if(a==='betray'){if(!f.al)return'동맹만 배신할 수 있다.';const loot={iron:[['ammo',120]],mart:[['food',6],['water',5]],tent:[['meds',5]],bloc:[['water',8],['food',3]],wheel:[['cash',8]]}[id];const got=loot.map(l=>fcGiveMe(l[0],l[1])).join(' · ');f.al=false;f.s=-80;f.mad=(f.mad|0)+5;f.p=clamp(f.p-15,0,100);for(const o of FC_DEF)if(o.id!==id)fcAdd(S,o.id,-20);S.rep.traitor++;S.rep.trust=-5;try{trust(-5);mor(-2)}catch(e){}S.feud={id,at:G.turn|0,why:'동맹을 배신했다'};fcUse(S);t=`<b>${d.n}을(를) 배신했다.</b> 동맹 창고를 비웠다 — ${got}. 모든 세력의 호감 −20, 이웃 신뢰 −5. '배신자'라는 말이 따라다닌다. 추격조가 온다.`}
+  else return'';
+  try{OUT.fx.push(...FX);outStat()}catch(e){}fcLog(S,t.replace(/<[^>]+>/g,''));try{save()}catch(e){}return t}
+/* ---------- 턴이 넘어갈 때: 세력이 스스로 움직인다 ---------- */
+function fcTurn(){const S=fcS();const R=Math.random;const N=[];
+  for(const d of FC_DEF){const f=S.f[d.id];f.p=clamp(Math.round(f.p+(R()*7-3)+(f.al?2:0)),5,100);if(Math.abs(f.s)>20&&!f.al)f.s-=Math.sign(f.s);
+    /* 동맹 보급 */if(f.al){if(f.s<10){f.al=false;N.push(`${d.ico} ${d.n}이(가) 동맹에서 떠났다(호감 ${f.s}).`)}else{const turn=G.turn|0;let got='';if(d.give==='ammo'&&turn%2===0)got=fcGiveMe('ammo',20);else if(d.give==='food')got=fcGiveMe('food',1);else if(d.give==='meds'&&turn%2===0)got=fcGiveMe('meds',1);else if(d.give==='water')got=fcGiveMe('water',2);else if(d.give==='intel'&&turn%2===1)got=fcGiveMe('cash',1);if(d.id==='bloc')try{trust(1)}catch(e){}if(got)N.push(`${d.ico} ${d.n} 동맹 보급 — ${got}.`)}}
+    /* 보복 */if(!S.feud&&(f.s<=-60||(f.mad|0)>0)&&R()<(f.s<=-60?.4:.25)){S.feud={id:d.id,at:G.turn|0,why:f.s<=-60?'우리를 적으로 본다':'배척당한 앙금'}}if((f.mad|0)>0)f.mad--}
+  /* 세력끼리 */for(const [a,b] of FC_RIVAL){const k=fcKey(a,b);S.rel[k]=clamp((S.rel[k]||0)+(S.rel[k]<0?-1:1)+Math.round(R()*4-2),-100,100)}
+  if(R()<.3){const a=FC_DEF[(R()*5)|0],b=FC_DEF[(R()*5)|0];if(a.id!==b.id){const up=R()<.5;fcRelAdd(S,a.id,b.id,up?18:-18);N.push(`${a.ico} ${a.n}과(와) ${b.ico} ${b.n}이(가) ${up?'손을 잡았다':'틀어졌다'}.`)}}
+  /* 들통 */const due=S.pend.filter(q=>q.at<=(G.turn|0));S.pend=S.pend.filter(q=>q.at>(G.turn|0));for(const q of due){if(R()>=q.ch)continue;const d=fcDef(q.id);const what={rumor:'소문의 출처',tip:'밀고한 사람',raid:'창고를 턴 사람',wedge:'이간질한 사람'}[q.k];const dn=fcAdd(S,q.id,q.k==='rumor'?-35:-45);for(const o of FC_DEF)if(o.id!==q.id)fcAdd(S,o.id,-8);S.f[q.id].mad=(S.f[q.id].mad|0)+3;try{trust(-3)}catch(e){}N.push(`🕳 들통 — ${what}이(가) 우리라는 것이 ${d.n}에 알려졌다(호감 ${dn}, 다른 세력 −8, 이웃 신뢰 −3).`)}
+  /* 동맹의 요구 · 주민 총회 */const A=fcAllies(S);if(!S.req&&A.length&&R()<.28){const a=A[(R()*A.length)|0];const foe=FC_DEF.filter(o=>o.id!==a.id&&fcRel(S,a.id,o.id)<-15&&!S.f[o.id].al)[0];if(foe)S.req={a:a.id,x:foe.id}}
+  S.asm=(S.asm|0)+1;const rank=fcRank(S);if(rank[0].id==='me'&&!S.top){S.top=1;try{mor(5)}catch(e){}N.push('⭐ 우리 팀이 세력 1위에 올랐다 — 사기 +5.')}
+  for(const t of N)fcLog(S,t);FC.notes=N}
+(function(){const b=window.endTurn;if(typeof b!=='function')return;window.endTurn=function(){const r=b.apply(this,arguments);try{if(fcOn()&&G.flags&&G.flags.fc)fcTurn()}catch(e){fcErr(e)}return r}})();
+/* ---------- 밖에서 뜨는 카드: 보복 · 동맹의 요구 · 주민 총회 ---------- */
+function fcCardFeud(){const S=fcS();const Q=S.feud;if(!Q)return false;const d=fcDef(Q.id);S.feud=null;FC.feudId=d.id;const n=3+((S.f[d.id].p>55)?1:0);
+  outEncShow({id:'fc-feud',cat:`세력 · ${d.n} 추격조`,art:'person',tone:'red',title:`"${d.n}에서 왔다. 빚을 받으러."`,text:`골목 어귀를 ${n}명이 막아선다. 둘은 총을 들었다. ${Q.why} — 그 값을 치르라는 것이다.`,
+    choices:[{t:'싸운다',s:'같은 자리에서 교전 · 팀원이 함께 싸운다',go:()=>{FC.fight={id:d.id,n};return '총을 고쳐 쥔다. 엄폐물로 — '}},
+      {t:'물자를 내주고 넘어간다',s:'물 3L · 식량 2일분',need:()=>fcHave('water')>=3&&fcHave('food')>=2,go:()=>{res('water',-3);res('food',-2);fcAdd(S,d.id,12);S.f[d.id].mad=0;fcLog(S,`${d.n} 추격조에 물자를 내줬다.`);return `자루를 넘기자 조장이 턱짓을 한다. "이번은 이걸로 됐다." ${d.n}의 앙금이 조금 풀렸다(호감 +12).`}},
+      {t:'달아난다',s:'잡히면 더 잃는다',go:()=>{if(Math.random()<.55){fcLog(S,`${d.n} 추격조를 따돌렸다.`);return '담을 넘고 주차장을 가로질러 따돌렸다. 숨이 턱에 찬다 — 다음엔 더 많이 올 것이다.'}res('water',-4);res('food',-2);try{hurt('me',14)}catch(e){}S.f[d.id].mad=1;fcLog(S,`${d.n} 추격조에 붙잡혀 물자를 빼앗겼다.`);return '골목 끝에서 붙잡혔다. 몇 대 맞고 배낭을 털렸다(물 4L · 식량 2일분).'}}]});return true}
+function fcCardReq(){const S=fcS();const Q=S.req;if(!Q)return false;S.req=null;const a=fcDef(Q.a),x=fcDef(Q.x);if(!S.f[a.id].al)return false;
+  outEncShow({id:'fc-req',cat:`세력 · 동맹 ${a.n}의 요구`,art:'person',tone:'blue',title:`"${x.n}을(를) 같이 밀어냅시다"`,text:`${a.lead}의 전령이 왔다. "${x.n}이(가) 구호품 줄을 틀어쥐려 합니다. 총회에서 우리와 함께 배척해 주시오. 동맹이라면."`,
+    choices:[{t:`함께 ${x.n}을(를) 배척한다`,go:()=>{fcAdd(S,x.id,-22);S.f[x.id].mad=(S.f[x.id].mad|0)+2;S.f[x.id].p=clamp(S.f[x.id].p-5,0,100);fcAdd(S,a.id,10);fcLog(S,`${a.n}의 요구로 ${x.n}을(를) 배척했다.`);return `총회에서 ${a.n} 옆에 섰다. ${x.n}은(는) 구호품 줄에서 밀려났다(호감 −22) — 그쪽 사람들이 내 얼굴을 기억한다.`}},
+      {t:'거절한다 — 남의 싸움이다',go:()=>{const dn=fcAdd(S,a.id,-12);fcAdd(S,x.id,6);fcLog(S,`${a.n}의 배척 요구를 거절했다.`);return `전령의 얼굴이 굳는다. "…전하겠습니다." ${a.n} 호감 ${dn}. 소식을 들은 ${x.n}은(는) 고마워한다(+6).`}},
+      {t:'둘을 한자리에 앉힌다(중재)',s:'이웃 신뢰가 높을수록 통한다',go:()=>{const ch=clamp(.3+(G.trust||0)*.012+S.rep.trust*.06,.1,.85);if(Math.random()<ch){fcRelAdd(S,a.id,x.id,25);fcAdd(S,a.id,4);fcAdd(S,x.id,10);S.rep.trust=Math.min(5,S.rep.trust+1);try{trust(2)}catch(e){}fcLog(S,`${a.n}과(와) ${x.n}을(를) 중재했다.`);return `한 시간을 버텨 구호품을 나누는 순서를 정했다. 두 세력 모두 한발 물러섰다(이웃 신뢰 +2 · 신의 +1).`}fcAdd(S,a.id,-6);fcAdd(S,x.id,-4);return `말이 통하지 않았다. 양쪽 다 "어느 편이냐"고 묻는다(성공 가능성 ${Math.round(ch*100)}%였다).`}}]});return true}
+function fcCardAsm(){const S=fcS();S.asm=0;const L=FC_DEF.slice().sort((a,b)=>S.f[b.id].p-S.f[a.id].p);const top=L[0],low=L[L.length-1];const lawless=fcLawless();
+  const ch=[{t:'가구 수대로 고르게 나누자',s:'모두에게 조금씩',go:()=>{for(const d of FC_DEF)fcAdd(S,d.id,3);try{trust(2)}catch(e){}res('food',1);res('water',1);fcLog(S,'주민 총회에서 고른 분배를 밀었다.');return '손이 하나둘 올라간다. 줄은 길지만 싸움은 없다 — 이웃 신뢰 +2, 우리 몫 식량 1 · 물 1.'}},
+    {t:`${top.ico} ${top.n}에 맡기자(가장 센 쪽)`,go:()=>{fcAdd(S,top.id,15);S.f[top.id].p=clamp(S.f[top.id].p+6,0,100);fcAdd(S,low.id,-8);res('food',2);fcLog(S,`주민 총회에서 ${top.n} 편을 들었다.`);return `${top.lead}이(가) 고개를 끄덕인다. 구호품은 ${top.n} 창고로 — 우리 몫은 따로 챙겨 준다(식량 2). ${low.n}은(는) 빈손으로 돌아갔다.`}},
+    {t:`${low.ico} ${low.n}부터 주자(가장 약한 쪽)`,go:()=>{fcAdd(S,low.id,18);S.f[low.id].p=clamp(S.f[low.id].p+6,0,100);fcAdd(S,top.id,-10);try{trust(1)}catch(e){}fcLog(S,`주민 총회에서 ${low.n} 편을 들었다.`);return `${low.lead}이(가) 손을 꼭 잡는다. ${top.n} 쪽에서는 혀 차는 소리가 난다(−10).`}}];
+  if(lawless)ch.push({t:'우리 팀 몫부터 챙긴다',s:'식량 3 · 물 3 — 모두가 본다',go:()=>{res('food',3);res('water',3);for(const d of FC_DEF)fcAdd(S,d.id,-8);try{trust(-3)}catch(e){}S.rep.cun++;fcLog(S,'주민 총회에서 우리 몫부터 챙겼다.');return '상자 세 개를 먼저 끌어냈다. 아무도 막지 못했지만 아무도 잊지 않는다 — 모든 세력 호감 −8, 이웃 신뢰 −3.'}});
+  outEncShow({id:'fc-asm',cat:'세력 · 주민 총회',art:'user',tone:'',title:'구호 트럭 한 대 — 누가 먼저 받나',text:`광장에 다섯 세력이 모였다. 구호 트럭은 한 대뿐이다. ${top.n}은(는) "지킬 힘이 있는 쪽이 맡아야 한다"고 하고, ${low.n}은(는) "우리는 사흘째 빈손"이라고 한다. 사람들이 나를 본다.`,choices:ch});return true}
+/* 보복 교전(같은 배경) */
+OWC_E.fgun={n:'추격조원',hp:2,aim:1.3,acc:.6,dmg:11,burst:3,gap:.16};OWC_E.fled={n:'추격조장',hp:3,aim:1.1,acc:.68,dmg:13,burst:3,gap:.14};
+(function(){const b=window.owcLook;if(typeof b!=='function')return;window.owcLook=function(type,id){if(type==='fgun'||type==='fled'){const c=CIV3[(id||1)%CIV3.length];return Object.assign({skin:SKINC[(id||1)%SKINC.length],seed:id||1},c,{gun:'ak',vest:type==='fled'?'#3a3a32':null})}return b.apply(this,arguments)}})();
+OWC_SC.feud={n:'추격조와 교전',sub:'',timer:0,waves:[{n:'추격조',list:['fgun','fgun','fled'],say:['팀장','골목을 막았다 — 엄폐하고 한 명씩!']},{n:'뒤따라온 무리',list:['fgun','fgun'],say:['팀장','뒤에서 더 온다 — 자리를 지켜!']}],allies:[{id:'fz1',n:'나',r:'팀장',look:'civ',seed:3}],helpers:['','']};
+if(typeof EVO!=='undefined')EVO.kinds.feud=1;
+function fcFightStart(){const Q=FC.fight;FC.fight=null;if(!Q||typeof owcAvail!=='function'||!owcAvail())return false;const S=fcS();const d=fcDef(Q.id);OWC_SC.feud.sub=d.n;OWC_SC.feud.waves[0].list=Q.n>3?['fgun','fgun','fgun','fled']:['fgun','fgun','fled'];/* 🏭 철문회와 동맹이면 사수 둘이 함께 */const al=[];if(S.f.iron.al&&Q.id!=='iron')al.push({id:'fi1',n:'철문회 사수',r:'동맹',look:'civ',seed:11,gun:'k2'},{id:'fi2',n:'철문회 사수',r:'동맹',look:'civ',seed:17,gun:'k2'});OWC_SC.feud.allies=al.length?al:[{id:'fz1',n:'지나던 예비군',r:'도움',look:'civ',seed:3,gun:'k2'}];EVO.intro=`${d.n} 추격조다 — 엄폐하고 한 명씩!`;FC.fightId=d.id;const ok=owcStart('feud');if(!ok){FC.fightId=null;S.feud={id:d.id,at:G.turn|0,why:'빚을 받으러 왔다'}}return ok}
+function evBuildFeud(){const p=FP3.pos;let ent=null;for(let t=0;t<16&&!ent;t++){const a=FP3.yaw+Math.PI+(t%2?1:-1)*t*.35;const x=p.x-Math.sin(a)*52,z=p.z-Math.cos(a)*52;try{if(owcFree(x,z,1))ent={x,z}}catch(e){}}if(!ent)ent={x:p.x+40,z:p.z};const Bs=evOwcBase({ent,emin:10,emax:48,nSpots:6,R:200});evOwcAllies(Bs);OWC.t=3.4;OWC.nade=2}
+(function(){const b=window.owcBuild;if(typeof b!=='function')return;window.owcBuild=function(kind){if(kind==='feud'){evBuildFeud();try{if(typeof tmOwcJoin==='function')tmOwcJoin()}catch(e){fcErr(e)}return}return b.apply(this,arguments)}})();
+if(typeof EVR!=='undefined')EVR.feud={title:(w,q)=>w?'추격조를 물리쳤다':q?'자리를 떴다':'쓰러졌다 — 물자를 빼앗겼다',
+  apply(w,q,s){const S=fcS();const d=fcDef(FC.fightId)||FC_DEF[0];const f=S.f[d.id];if(w){f.p=clamp(f.p-10,0,100);f.mad=0;try{trust(2)}catch(e){}fcLog(S,`${d.n} 추격조를 물리쳤다.`);return`${d.n} 추격조 ${s.kills}명을 물리쳤다. 그쪽 세가 꺾였다(−10) — 한동안은 사람을 보내지 못한다. 그러나 원한은 남는다.`}res('water',-3);res('food',-2);f.mad=1;fcLog(S,`${d.n} 추격조에 밀렸다.`);return q?'엄폐물을 버리고 빠져나왔다. 배낭 하나를 두고 왔다(물 3L · 식량 2일분).':'쓰러진 사이 배낭을 털렸다(물 3L · 식량 2일분). 팀원이 끌어내 지혈했다.'},
+  stats:s=>[[s.kills,'제압'],[(s.shots?Math.round(s.hits/s.shots*100):0)+'%','명중'],[s.dmg,'받은 피해']]};
+/* ---------- 매 프레임(밖): 카드 차례 ---------- */
+function fcStep(dt){if(!OUT.on||!fcOn())return;if(FC.fight&&!OUT.enc&&!(typeof OWC!=='undefined'&&OWC.on)){FC.fT=(FC.fT||0)+dt;if(FC.fT>.6){FC.fT=0;try{fcFightStart()}catch(e){fcErr(e)}}return}
+  FC.showT-=dt;if(FC.showT>0)return;FC.showT=4;if(OUT.busy||OUT.drv||OUT.ride||(typeof evBlock==='function'&&evBlock())||(typeof EVD!=='undefined'&&EVD.cur)||(typeof MX!=='undefined'&&MX.cur)||FC.open)return;const S=fcS();
+  try{if(FC.notes.length){const N=FC.notes.splice(0,3);outNote('<b>🏛 세력 소식</b><div>'+N.join('<br>')+'</div>',6200);FC.showT=14;return}if(S.feud){if(fcCardFeud())FC.showT=30;return}if(S.req){if(fcCardReq())FC.showT=30;return}if((S.asm|0)>=6&&(G.turn|0)>=3){if(fcCardAsm())FC.showT=30}}catch(e){fcErr(e)}}
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{fcStep(dt)}catch(e){fcErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{fcPanel(false);FC.fight=null;FC.showT=9}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 화면 ---------- */
+function fcPanel(open){const el=SV3.el;if(!el)return;let p=document.querySelector('#fcPanel');if(!open){if(p)p.remove();FC.open=false;FC.sub=null;return}FC.open=true;if(!p){p=document.createElement('div');p.id='fcPanel';p.className='mis-panel fc-panel';el.appendChild(p)}const S=fcS();const left=fcLeft(S);const rank=fcRank(S);const my=rank.findIndex(r=>r.id==='me')+1;const lawless=fcLawless();
+  const rep=[S.rep.trust>0?`신의 +${S.rep.trust}`:S.rep.trust<0?`신의 ${S.rep.trust}`:'',S.rep.cun?`교활 ${S.rep.cun}`:'',S.rep.traitor?`배신자 ×${S.rep.traitor}`:''].filter(Boolean).join(' · ')||'평판 없음';
+  const row=d=>{const f=S.f[d.id];const st=fcStance(f.s,f.al);const foe=FC_DEF.filter(o=>o.id!==d.id&&fcRel(S,d.id,o.id)<-15).map(o=>o.ico+o.n).join(' ');const fr=FC_DEF.filter(o=>o.id!==d.id&&fcRel(S,d.id,o.id)>15).map(o=>o.ico+o.n).join(' ');const T=FC_TRADE[d.id];const sub=FC.sub===d.id;const dis=left<=0?' disabled':'';
+    return `<div class="fc-row"><div class="fc-h"><span class="fc-ico">${d.ico}</span><div><b>${d.n} <small>${d.sub} · ${d.lead}</small></b><small class="fc-say">${d.say}</small></div><span class="fc-st" style="color:${st[1]};border-color:${st[1]}">${st[0]} ${f.s>0?'+':''}${f.s}</span></div>
+      <div class="fc-m"><i class="fc-p"><i style="width:${f.p}%;background:${d.col}"></i></i><small>세 ${f.p} · ${d.spec}${foe?` · 앙숙 ${foe}`:''}${fr?` · 친분 ${fr}`:''}</small></div>
+      <div class="fc-a"><button class="btn sm" data-g3="fca" data-id="${d.id}" data-a="giftm"${dis}>지원</button><button class="btn sm" data-g3="fca" data-id="${d.id}" data-a="trade">거래 <small>${T.pay[2]} →</small></button><button class="btn sm${f.al?' ghost':''}" data-g3="fca" data-id="${d.id}" data-a="ally"${dis}>${f.al?'동맹 파기':'동맹 제안'}</button><button class="btn sm" data-g3="fca" data-id="${d.id}" data-a="denounce"${dis}>배척</button>${lawless?`<button class="btn sm fc-dk" data-g3="fca" data-id="${d.id}" data-a="schemem"${dis}>모략 ▾</button>`:''}</div>
+      ${sub&&FC.subK==='gift'?`<div class="fc-a fc-sub">${FC_GIFT.map((g,i)=>`<button class="btn sm" data-g3="fca" data-id="${d.id}" data-a="gift" data-v="${i}"${fcHave(g[0])<g[1]?' disabled':''}>${g[2]}</button>`).join('')}</div>`:''}
+      ${sub&&FC.subK==='scheme'?`<div class="fc-a fc-sub"><button class="btn sm fc-dk" data-g3="fca" data-id="${d.id}" data-a="rumor">소문</button><button class="btn sm fc-dk" data-g3="fca" data-id="${d.id}" data-a="tip">밀고</button><button class="btn sm fc-dk" data-g3="fca" data-id="${d.id}" data-a="raid">창고 털기</button><button class="btn sm fc-dk" data-g3="fca" data-id="${d.id}" data-a="wedge">이간질</button><button class="btn sm fc-dk" data-g3="fca" data-id="${d.id}" data-a="bribe">매수 <small>봉투 2</small></button>${f.al?`<button class="btn sm fc-rd" data-g3="fca" data-id="${d.id}" data-a="betray">배신</button>`:''}</div>`:''}</div>`};
+  p.innerHTML=`<div class="mis-head"><b>🏛 세력 정치</b><button class="btn sm" data-g3="fcclose">닫기</button></div>
+    <p class="mis-note fc-top">${lawless?'🏴 <b>무법 모드</b> — 어떤 선택도 막지 않고 채점하지 않는다. 결과는 따라온다. ':''}정치 행동 <b>${left}/2</b>(턴마다 · 거래는 제한 없음) · 우리 팀 세 <b>${fcMyPower(S)}</b> — ${my}위/6 · ${rep} · 동맹 ${fcAllies(S).length}/2</p>
+    ${FC.msg?`<p class="mis-note fc-msg">${FC.msg}</p>`:''}${FC_DEF.map(row).join('')}
+    <div class="fc-rank"><b>세력 순위</b> ${rank.map((r,i)=>`<span${r.id==='me'?' class="me"':''}>${i+1}. ${r.ico} ${r.n} ${r.p}</span>`).join('')}</div>
+    ${S.log.length?`<div class="fc-log"><b>기록</b>${S.log.slice(-6).reverse().map(l=>`<span>· ${l.t}</span>`).join('')}</div>`:''}
+    <p class="mis-note">모든 세력·인물은 가상이다. 실제 정당·단체·지역과 관계없다.</p>`}
+document.addEventListener('click',e=>{const x=e.target.closest('[data-g3=fcclose]');if(x){e.preventDefault();e.stopPropagation();fcPanel(false);return}const o=e.target.closest('[data-g3=fcopen]');if(o){e.preventDefault();e.stopPropagation();try{evBoard(false)}catch(e){}FC.msg='';fcPanel(true);return}const b=e.target.closest('[data-g3=fca]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();try{const id=b.dataset.id,a=b.dataset.a;if(a==='giftm'||a==='schemem'){const k=a==='giftm'?'gift':'scheme';if(FC.sub===id&&FC.subK===k)FC.sub=null;else{FC.sub=id;FC.subK=k}fcPanel(true);return}FC.msg=fcAct(id,a,b.dataset.v)||'';FC.sub=null;fcPanel(true);const p=document.querySelector('#fcPanel');if(p)p.scrollTop=0}catch(e){fcErr(e)}},true);
+(function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{if(fcOn()){const S=fcS();const rank=fcRank(S);const my=rank.findIndex(r=>r.id==='me')+1;const A=fcAllies(S);h+=row('🏛','세력 정치 — 5개 세력',`우리 팀 ${my}위/6 · 동맹 ${A.length?A.map(d=>d.ico+d.n).join(' '):'없음'} · 이번 턴 행동 ${fcLeft(S)}/2`,S.feud?'⚠ 추격조':'','<button class="btn sm" data-g3="fcopen">열기</button>')}}catch(e){fcErr(e)}return h}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🏛 세력 정치(v13.1)','상황판(🚨) → 🏛 세력. 가상의 다섯 세력(철문회·장터회·하얀 천막·동대표 연합·바퀴 조합)과 지원·거래·동맹(두 곳까지 — 턴마다 보급)·배척을 하고, 무법 모드에서는 소문·밀고·창고 털기·이간질·매수·배신도 할 수 있다. 채점은 없지만 결과가 따라온다 — 들통(다음 턴), 보복 추격조, 동맹 이탈, 평판. 턴마다 정치 행동 2번(거래는 제한 없음).']);
+
+/* ===================== 113 · v13.1 ⑥ 모바일 최적화 · 접지 그림자 · 명중 표시 ===================== */
+/* 사용자 요청(2026-11-14): "클로드 최대치의 그래픽·최대치의 인터페이스 … 모바일 게임 플레이는 원활히 하도록 최적화"
+   측정(중간 화질 · 대피소 앞 한 프레임): 본 화면 그리기 941회 · 삼각형 118만. 그중 120m 밖 인물 40명이 126회·32만 삼각형,
+   화면에서 몇 픽셀도 안 되는 먼 소품(상점 진열품·차 바퀴·작은 묶음)이 수백 회 — 휴대폰에서는 그리기 '횟수'가 프레임을 정한다.
+   ① 작은 것 안 그리기: 화면에 맺히는 크기가 기준(화질 높음 2.5 · 중간 4 · 낮음 6픽셀)보다 작은 부품은 그리지 않는다.
+      0.2초마다 판정하고, 그리는 순간에만 숨겼다가 곧바로 되돌린다 → 게임 논리(충돌·조준·보이기 값)는 전혀 바뀌지 않는다.
+      빛나는 것(가로등·창·불)·투명한 것·표식(스프라이트)은 건드리지 않는다.
+      움직이는 것·공중에 있는 것·방금 생긴 것(수류탄·드론·미사일·낙하물)도 늘 그린다 — 얼려 둔 지형 소품, 차 부품, 오래 놓여 있는 물건만 대상(사람 몸에 붙은 소품은 98이 맡는다).
+   ② 먼 사람 대역: 키가 기준(화질 높음 7 · 중간 11 · 낮음 16픽셀)보다 작게 보이는 사람은 뼈대 인물(약 8천 삼각형·그리기 3회) 대신 70삼각형 대역을 한 묶음(그리기 2회)으로.
+      머리 뼈 높이로 선·앉은·누운 자세를 맞추고, 옷 색은 인물 옷감 그림의 평균색. 조준경으로 당겨 보면 다시 진짜 인물.
+   ③ 그림자: 줄인 그리기 수의 일부로 사람의 진짜 그림자 거리를 늘리고(중간 11 → 16m · 높음 16 → 24m), 그 밖(낮은 화질은 전부)의 사람·차 밑에는 부드러운 접지 그림자 한 묶음(그리기 1회).
+   ④ 명중·제압 표시: 밖에서 총을 쏠 때도 명중 표시 · 제압하면 붉은 표시 · 연속 제압 띠.
+   끄기: localStorage sg.lod=false(①②) · sg.blob=false(③) · sg.hitfx=false(④). 자동 점검에서는 window.__pxTest로만 켠다(옛 점검 화면을 그대로 두려고) */
+const PX={list:[],av:[],hide:[],rest:[],sc:null,evalAt:0,scanAt:0,imp:null,blob:null,tone:{},toneQ:0,n:{cull:0,imp:0,blob:0,list:0,av:0},err:0,streak:0,stT:-99,busy:0};
+function pxErr(e){if(PX.err++<3)console.error(e)}
+function pxGate(){return !(navigator.webdriver&&!window.__pxTest)}
+function pxLodOn(){try{return pxGate()&&store.get('sg.lod',true)!==false}catch(e){return false}}
+function pxBlobOn(){try{return pxGate()&&store.get('sg.blob',true)!==false}catch(e){return false}}
+function pxHitOn(){try{return pxGate()&&store.get('sg.hitfx',true)!==false}catch(e){return false}}
+/* 화면 초점 거리(픽셀): 물체 지름 d·거리 z → 화면 크기 = d·f/z. 그리는 해상도(동적 해상도 포함) 기준 */
+function pxFocal(cam){if(!cam||!cam.isPerspectiveCamera)return 0;const r=R3.r;const H=r&&r.domElement?r.domElement.height:0;if(!H)return 0;return H/(2*Math.tan(cam.fov*Math.PI/360))}
+function pxTier(){const q=SV3.qt;return q==='low'?{cull:6,man:16,st:20}:q==='mid'?{cull:4,man:11,st:32}:{cull:2.5,man:7,st:46}}
+/* ---------- ① 후보 모으기(2.5초마다 · 장면이 바뀌면 바로) ---------- */
+function pxCullable(c){if(c.frustumCulled===false||c.userData.noCull)return false;const g=c.geometry;if(!g||!g.attributes||!g.attributes.position)return false;if(!g.boundingSphere)try{g.computeBoundingSphere()}catch(e){}/* three도 처음 그릴 때 한 번 계산한다 */const bs=g.boundingSphere;if(!bs||!(bs.radius>0)||bs.radius>40)return false;
+  const m=Array.isArray(c.material)?c.material[0]:c.material;if(!m||m.visible===false||m.transparent)return false;if(!(m.isMeshStandardMaterial||m.isMeshLambertMaterial||m.isMeshPhongMaterial))return false;
+  if(m.emissive&&m.emissiveIntensity>.01&&(m.emissive.r+m.emissive.g+m.emissive.b)>.03)return false;return true}
+function pxScan(sc){const L=[],AV=[];const now=performance.now();const cars=new Set();try{if(typeof OUT!=='undefined'&&sc===OUT.scene){(TOWN.cars||[]).forEach(c=>c&&c.obj&&cars.add(c.obj));(OUT.dcars||[]).forEach(c=>c&&c.car&&cars.add(c.car))}}catch(e){}
+  /* 종류(__pxK): 1 = 얼려 둔 지형·건물 소품, 차 부품 → 언제든 판정 · 0 = 그 밖의 움직일 수 있는 것 → 6초 넘게 있었고, 멈춰 있고, 땅 가까이 있을 때만(수류탄·드론·낙하물·방금 생긴 것은 늘 그린다) */
+  const st=[sc],fl=[0];let guard=0;
+  while(st.length){const o=st.pop(),f=fl.pop();const ch=o.children;for(let i=0;i<ch.length;i++){const c=ch[i];if(!c.visible||++guard>80000)continue;const cf=f||cars.has(c)?1:0;
+    /* 뼈대 인물: 몸에 붙은 소품은 98(먼 사람 소품 숨기기)이 이미 맡는다 — 뼈 수천 개를 훑지 않는다 */if(c.isSkinnedMesh){const h=c.parent&&c.parent.userData.rbxH;if(h&&h.mesh===c)AV.push(h);continue}
+    else if(c.isMesh&&!c.isInstancedMesh){if(pxCullable(c)){c.__pxK=cf||!c.matrixAutoUpdate?1:0;if(c.__pxT0==null)c.__pxT0=now;L.push(c)}}
+    if(c.children.length){st.push(c);fl.push(cf)}}}
+  /* 숨김 표시는 새 목록으로 옮긴다(흔들림 방지) */const was=new Set(PX.hide);for(const m of L)m.__pxH=was.has(m);PX.list=L;PX.av=AV;PX.n.list=L.length;PX.n.av=AV.length}
+/* ---------- ① 판정(0.2초마다) ---------- */
+function pxEval(cam,f){const e0=cam.matrixWorld.elements;const px=e0[12],py=e0[13],pz=e0[14];const thr=pxTier().cull;const k=4*f*f,t2=thr*thr;const H=[];const L=PX.list;const now=performance.now();
+  for(let i=0;i<L.length;i++){const m=L[i];const e=m.matrixWorld.elements,bs=m.geometry.boundingSphere;if(!bs)continue;const c=bs.center;
+    const wx=e[0]*c.x+e[4]*c.y+e[8]*c.z+e[12],wy=e[1]*c.x+e[5]*c.y+e[9]*c.z+e[13],wz=e[2]*c.x+e[6]*c.y+e[10]*c.z+e[14];
+    if(!m.__pxK){const moved=m.__pxX==null||Math.abs(wx-m.__pxX)+Math.abs(wy-m.__pxY)+Math.abs(wz-m.__pxZ)>.05;m.__pxX=wx;m.__pxY=wy;m.__pxZ=wz;if(moved||wy>2.2||now-m.__pxT0<6000){m.__pxH=false;continue}}
+    const x=wx-px,y=wy-py,z=wz-pz;const s2=Math.max(e[0]*e[0]+e[1]*e[1]+e[2]*e[2],e[4]*e[4]+e[5]*e[5]+e[6]*e[6],e[8]*e[8]+e[9]*e[9]+e[10]*e[10]);
+    /* (2r·s·f/d)² < 기준² — 이미 숨긴 것은 20% 더 커져야 되돌린다 */const hid=k*bs.radius*bs.radius*s2<t2*(m.__pxH?1.44:1)*(x*x+y*y+z*z);m.__pxH=hid;if(hid)H.push(m)}
+  PX.hide=H;PX.n.cull=H.length}
+/* ---------- ② 먼 사람 대역 ---------- */
+function pxBoxes(parts){const P=[],N=[],C=[],I=[];let base=0;for(const q of parts){const g=new T.BoxGeometry(q[0],q[1],q[2]);g.translate(q[3],q[4],q[5]);const p=g.attributes.position.array,n=g.attributes.normal.array,ix=g.index.array;
+    for(let i=0;i<p.length;i++){P.push(p[i]);N.push(n[i])}for(let i=0;i<p.length/3;i++)C.push(q[6],q[7],q[8]);for(let i=0;i<ix.length;i++)I.push(ix[i]+base);base+=p.length/3;g.dispose()}
+  const G=new T.BufferGeometry();G.setAttribute('position',new T.Float32BufferAttribute(P,3));G.setAttribute('normal',new T.Float32BufferAttribute(N,3));G.setAttribute('color',new T.Float32BufferAttribute(C,3));G.setIndex(I);return G}
+function pxImpInit(sc){let I=PX.imp;if(I&&I.sc===sc&&I.body.parent===sc)return I;
+  if(!I){const CAP=192;/* 몸: 다리(어둡게)·몸통·팔 — 옷 색은 인스턴스 색 · 머리: 살색 + 머리카락 */
+    const bodyG=pxBoxes([[.15,.84,.17,-.095,.42,0,.6,.6,.62],[.15,.84,.17,.095,.42,0,.6,.6,.62],[.4,.62,.24,0,1.14,0,1,1,1],[.1,.6,.13,-.26,1.12,0,.9,.9,.9],[.1,.6,.13,.26,1.12,0,.9,.9,.9]]);
+    const headG=pxBoxes([[.19,.22,.21,0,1.59,0,.58,.35,.23],[.205,.1,.225,0,1.7,-.005,.03,.025,.02],[.09,.07,.1,0,1.46,0,.58,.35,.23]]);
+    const body=new T.InstancedMesh(bodyG,new T.MeshLambertMaterial({vertexColors:true}),CAP);const head=new T.InstancedMesh(headG,new T.MeshLambertMaterial({vertexColors:true}),CAP);
+    body.instanceMatrix.setUsage(T.DynamicDrawUsage);head.instanceMatrix=body.instanceMatrix;/* 한 번만 올린다 */
+    for(const m of [body,head]){m.frustumCulled=false;m.castShadow=false;m.receiveShadow=false;m.visible=false;m.count=0;m.name='pxImp';m.userData.noCull=1;m.userData.dyn=1;m.matrixAutoUpdate=false}
+    const c=new T.Color(.085,.09,.1);for(let i=0;i<CAP;i++)body.setColorAt(i,c);body.instanceColor.setUsage(T.DynamicDrawUsage);
+    I=PX.imp={body,head,cap:CAP,sc:null,M:new T.Matrix4(),P:new T.Vector3(),Q:new T.Quaternion(),S:new T.Vector3(),up:new T.Vector3(0,1,0),D:new T.Vector3(),col:new T.Color()}}
+  for(const m of [I.body,I.head]){if(m.parent)m.parent.remove(m);sc.add(m)}I.sc=sc;return I}
+/* 옷 색: 몸 재질이 실제로 쓰는 그림 자리(꼭짓점 UV 약 240곳)의 평균색 × 재질 색 — 그림 빈 바탕(흰색)이 섞이지 않게. 재질마다 한 번 · 프레임당 1개 */
+function pxTone(h){const ms=h.mesh.material;const arr=Array.isArray(ms);const m=arr?(ms.find(x=>x&&x.map&&!/head|opacity|hair/i.test(x.name||''))||ms[0]):ms;if(!m)return null;const hit=PX.tone[m.uuid];if(hit)return hit;if(PX.toneQ>0)return null;PX.toneQ=1;
+  const out=new T.Color(.085,.09,.1);try{const img=m.map&&m.map.image;if(img&&img.complete&&img.naturalWidth){const S=32;const cv=PX.tcv||(PX.tcv=document.createElement('canvas'));cv.width=cv.height=S;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0,S,S);const d=x.getImageData(0,0,S,S).data;
+      const g=h.mesh.geometry,uv=g.attributes.uv,ix=g.index;let st=0,cnt=ix?ix.count:(uv?uv.count:0);if(arr&&g.groups&&g.groups.length){const G=g.groups.find(q=>q.materialIndex===ms.indexOf(m));if(G){st=G.start;cnt=G.count}}
+      let r=0,gg=0,b=0,n=0;if(uv&&cnt>0){const step=Math.max(1,Math.floor(cnt/240));for(let i=st;i<st+cnt;i+=step){const vi=ix?ix.getX(i):i;let u=uv.getX(vi),v=uv.getY(vi);u=((u%1)+1)%1;v=((v%1)+1)%1;const o=(Math.min(S-1,Math.floor((1-v)*S))*S+Math.min(S-1,Math.floor(u*S)))*4;r+=d[o];gg+=d[o+1];b+=d[o+2];n++}}
+      if(!n){for(let i=0;i<d.length;i+=4){r+=d[i];gg+=d[i+1];b+=d[i+2];n++}}
+      /* 옷 주름·그늘이 없는 민무늬라 조금 어둡게 */out.setRGB(r/n/255,gg/n/255,b/n/255,T.SRGBColorSpace).multiplyScalar(.82);if(m.color)out.multiply(m.color)}else if(m.map)return null/* 그림이 아직 안 풀림 — 다음에 다시 */}catch(e){}
+  return PX.tone[m.uuid]=out}
+/* ---------- ③ 접지 그림자 ---------- */
+function pxBlobInit(sc){let B=PX.blob;if(B&&B.sc===sc&&B.m.parent===sc)return B;
+  if(!B){const CAP=220;const cv=document.createElement('canvas');cv.width=cv.height=64;const x=cv.getContext('2d');const g=x.createRadialGradient(32,32,2,32,32,31);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.45,'rgba(0,0,0,.72)');g.addColorStop(.8,'rgba(0,0,0,.2)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,64,64);
+    const tex=new T.CanvasTexture(cv);const geo=new T.PlaneGeometry(1,1);geo.rotateX(-Math.PI/2);
+    const mat=new T.MeshBasicMaterial({map:tex,color:0x000000,transparent:true,opacity:.42,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4,fog:false,toneMapped:false});
+    const m=new T.InstancedMesh(geo,mat,CAP);m.instanceMatrix.setUsage(T.DynamicDrawUsage);m.frustumCulled=false;m.castShadow=false;m.receiveShadow=false;m.visible=false;m.count=0;m.name='pxBlob';m.userData.noCull=1;m.userData.dyn=1;m.matrixAutoUpdate=false;m.renderOrder=1;
+    B=PX.blob={m,cap:CAP,sc:null,M:new T.Matrix4(),P:new T.Vector3(),Q:new T.Quaternion(),S:new T.Vector3(),E:new T.Euler()}}
+  if(B.m.parent)B.m.parent.remove(B.m);sc.add(B.m);B.sc=sc;return B}
+/* 차 바닥 크기: 자식 메시의 경계 상자를 차 좌표로 모은다(차마다 한 번) — 길이 방향이 x든 z든 맞는다 */
+function pxCarSize(o){let s=o.userData.pxSz;if(s)return s;const bx=PX.bx||(PX.bx=new T.Box3()),tb=PX.tb||(PX.tb=new T.Box3());bx.makeEmpty();
+  for(const c of o.children){if(!c.isMesh||!c.geometry||c.isInstancedMesh)continue;const g=c.geometry;if(!g.boundingBox)g.computeBoundingBox();if(c.matrixAutoUpdate)c.updateMatrix();tb.copy(g.boundingBox).applyMatrix4(c.matrix);bx.union(tb)}
+  s=bx.isEmpty()?{x:2.1,z:4.6,cx:0,cz:0}:{x:clamp(bx.max.x-bx.min.x,.6,13),z:clamp(bx.max.z-bx.min.z,.6,13),cx:(bx.max.x+bx.min.x)/2,cz:(bx.max.z+bx.min.z)/2};o.userData.pxSz=s;return s}
+function pxInScene(o,sc){let p=o;let n=0;while(p&&n++<8){if(!p.visible)return false;if(p===sc)return true;p=p.parent}return false}
+/* ---------- 그리기 직전: 숨길 것 숨기고 대역·그림자 채우기 ---------- */
+function pxApply(sc,cam){const now=performance.now();const f=pxFocal(cam);const lod=f>0&&pxLodOn(),blob=f>0&&pxBlobOn();if(!lod&&!blob){PX.n.cull=PX.n.imp=PX.n.blob=0;PX.hide.length=0;return}
+  if(PX.sc!==sc){PX.sc=sc;PX.scanAt=0;PX.evalAt=0;PX.hide=[];PX.list=[];PX.av=[]}
+  if(now>=PX.scanAt){PX.scanAt=now+2500;pxScan(sc);PX.evalAt=0}
+  const R=PX.rest;const e0=cam.matrixWorld.elements;const cx=e0[12],cy=e0[13],cz=e0[14];
+  /* 기기 점검의 끔/켬 비교: 후보 모으기(물건이 놓인 시간 재기)는 계속하고 적용만 건너뛴다 */if(PX.off){PX.n.cull=PX.n.imp=PX.n.blob=0;return}
+  if(lod){if(now>=PX.evalAt){PX.evalAt=now+200;pxEval(cam,f)}const H=PX.hide;for(let i=0;i<H.length;i++){const m=H[i];if(m.visible){m.visible=false;R.push(m)}}}else if(PX.hide.length){PX.hide=[];PX.n.cull=0}
+  /* 사람 */const tier=pxTier();const battle=typeof OWC!=='undefined'&&OWC.on;let zoom=1;try{zoom=stabZoom()}catch(e){}
+  const Dimp=Math.max(45,(tier.st+6)*zoom,1.7*f/(tier.man*(battle?.7:1)));const sd=(typeof RBX!=='undefined'&&RBX.shadowD)||0;PX.toneQ=0;
+  const I=lod?pxImpInit(sc):null;const B=blob?pxBlobInit(sc):null;let ni=0,nb=0;const AV=PX.av;
+  for(let i=0;i<AV.length;i++){const h=AV[i];const root=h.root,mesh=h.mesh;if(!root||!mesh||!mesh.visible||!pxInScene(root,sc)){if(h)h.__pxI=false;continue}
+    /* 이 시점의 월드 행렬은 지난 프레임 것 — 방금 옮겨 놓인 사람(재배치·등장)이 한 프레임 옛 자리의 대역으로 보이지 않게 뿌리만 지금 값으로 갱신한다. 머리 뼈는 옛 뿌리 기준 상대 위치로 쓴다 */
+    const e=root.matrixWorld.elements;const ox=e[12],oy=e[13],oz=e[14];root.updateWorldMatrix(true,false);const x=e[12],y=e[13],z=e[14];const dx=x-cx,dy=y-cy,dz=z-cz;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);
+    const far=I?(h.__pxI?d>Dimp*.97:d>Dimp*1.05):false;h.__pxI=far;const wantBlob=B&&d>sd-1.5&&d<120;if(!far&&!wantBlob)continue;
+    const k=Math.sqrt(e[0]*e[0]+e[1]*e[1]+e[2]*e[2])||1;const hb=h.bone&&h.bone.Bip01_Head;let hy=1.58*k,hx=x,hz=z;if(hb){const he=hb.matrixWorld.elements;hy=he[13]-oy;hx=x+(he[12]-ox);hz=z+(he[14]-oz)}
+    const lying=hy<.5*k;let lx=hx-x,lz=hz-z;const ll=Math.hypot(lx,lz);if(ll>.05){lx/=ll;lz/=ll}else{lx=0;lz=1}
+    /* 떨어지는 중(세로로 빠르게 움직임)이면 그림자 생략 */const vy=h.__pxY==null?0:Math.abs(y-h.__pxY);h.__pxY=y;
+    if(far&&ni<I.cap){mesh.visible=false;R.push(mesh);
+      if(lying){I.D.set(lx,0,lz);I.Q.setFromUnitVectors(I.up,I.D);I.P.set(hx-lx*1.6*k,y+.13*k,hz-lz*1.6*k);I.S.set(k,k,k)}
+      else{I.Q.setFromAxisAngle(I.up,Math.atan2(e[8],e[10]));I.P.set(x,y,z);I.S.set(k,clamp(hy/1.58,.4,1.2),k)}
+      I.M.compose(I.P,I.Q,I.S);I.body.setMatrixAt(ni,I.M);const c=h.__pxC||(h.__pxC=pxTone(h));if(c)I.body.setColorAt(ni,c);else{/* 옷 색을 아직 못 구했으면 어두운 실루엣 */I.col.setRGB(.085,.09,.1);I.body.setColorAt(ni,I.col)}ni++}
+    if(wantBlob&&nb<B.cap-40&&vy<.06){const a=clamp((d-(sd-1.5))/3,0,1)*clamp((120-d)/25,0,1);if(a>.06){const w=.95*k*(.55+.45*a);
+        if(lying){B.E.set(0,Math.atan2(lx,lz),0);B.Q.setFromEuler(B.E);B.P.set((x+hx)/2,y+.05,(z+hz)/2);B.S.set(w*1.05,1,w*2.1)}else{B.Q.identity();B.P.set(x,y+.05,z);B.S.set(w,1,w)}
+        B.M.compose(B.P,B.Q,B.S);B.m.setMatrixAt(nb++,B.M)}}}
+  /* 차: 진짜 그림자 범위 밖(낮은 화질은 전부) */
+  if(B&&typeof OUT!=='undefined'&&sc===OUT.scene){const sR=SV3.qt==='low'?-1:SV3.qt==='high'?52:44;const car=o=>{if(!o||nb>=B.cap||!pxInScene(o,sc))return;const e=o.matrixWorld.elements;const dx=e[12]-cx,dz=e[14]-cz;const d=Math.hypot(dx,dz);if(d<sR||d>170)return;
+      const a=clamp((d-sR)/5,0,1)*clamp((170-d)/30,0,1);if(a<.06)return;const z=pxCarSize(o);const k=Math.sqrt(e[0]*e[0]+e[1]*e[1]+e[2]*e[2])||1;B.E.set(0,Math.atan2(e[8],e[10]),0);B.Q.setFromEuler(B.E);B.P.set(e[12]+e[0]*z.cx+e[8]*z.cz,e[13]+.06,e[14]+e[2]*z.cx+e[10]*z.cz);const s=(.6+.4*a)*k*1.18;B.S.set(z.x*s,1,z.z*s);B.M.compose(B.P,B.Q,B.S);B.m.setMatrixAt(nb++,B.M)};
+    try{const C=TOWN.cars||[];for(let i=0;i<C.length;i++)car(C[i].obj);const D=OUT.dcars||[];for(let i=0;i<D.length;i++)car(D[i].car)}catch(e){}}
+  if(I){I.body.count=I.head.count=ni;if(ni){I.body.instanceMatrix.needsUpdate=true;I.body.instanceColor.needsUpdate=true;I.body.visible=I.head.visible=true}}PX.n.imp=ni;
+  if(B){B.m.count=nb;if(nb){B.m.instanceMatrix.needsUpdate=true;const tod=sc===(typeof OUT!=='undefined'&&OUT.scene)?(OUT.tod||'day'):'in';B.m.material.opacity=tod==='night'?.2:tod==='day'?.42:.3;B.m.visible=true}}PX.n.blob=nb}
+function pxRestore(){const R=PX.rest;for(let i=0;i<R.length;i++)R[i].visible=true;R.length=0;if(PX.imp){PX.imp.body.visible=false;PX.imp.head.visible=false}if(PX.blob)PX.blob.m.visible=false}
+/* 렌더러의 render를 감싼다: 본 화면(지금 장면 + 본 카메라)을 그릴 때만 적용. 조준경 속 화면·덧그리기는 그대로(대역은 숨긴 채) */
+function pxHook(){const r=R3.r;if(!r||!r.render||r.render.__px)return;const b=r.render;const w=function(sc,cam){
+    if(PX.busy||!sc||sc!==SV3.scene||!(cam===SV3.cam||(SV3.rp&&cam===SV3.rp.camera)))return b.apply(this,arguments);
+    PX.busy=1;try{pxApply(sc,cam)}catch(e){pxErr(e)}try{return b.apply(this,arguments)}finally{try{pxRestore()}catch(e){}PX.busy=0}};
+  w.__px=1;r.render=w}
+(function(){const b=window.sv3Loop;if(typeof b!=='function')return;window.sv3Loop=function(now){try{pxHook()}catch(e){pxErr(e)}return b.apply(this,arguments)}})();
+/* 줄인 그리기 수의 일부를 되돌려 쓴다: 사람의 진짜 그림자 거리 중간 11 → 16m · 높음 16 → 24m(낮음은 그대로 0 — 접지 그림자만) */
+(function(){if(typeof RBX==='undefined'||typeof RBX.frame!=='function')return;const b=RBX.frame;RBX.frame=function(cam){const r=b.apply(this,arguments);try{if(cam&&this.shadowD>0&&pxLodOn()&&!PX.off)this.shadowD=this.shadowD<=11?16:24}catch(e){}return r}})();
+function pxStats(){return{cull:PX.n.cull,imp:PX.n.imp,blob:PX.n.blob,list:PX.n.list,av:PX.n.av}}
+/* ---------- 기기 점검(37)에 끔/켬 비교 한 줄: 밖 장면을 최적화 끈 채 6초 → 켠 채 8초. 결과 복사 글에 두 줄이 나란히 나온다(종합 등급에는 켠 값만) ---------- */
+(function(){const b=window.bnOutside;if(typeof b!=='function'||typeof bnMeasure!=='function')return;const w=async function(out){if(!pxLodOn()||typeof startOutside!=='function')return b.apply(this,arguments);
+    bnBanner('실제 지도 밖',2);if(!outAvail()||!LIFE.exit){out.scenes.push({n:'밖(실제 지도)',skip:'나갈 수 없는 장소'});return}
+    FP3.pos.set(LIFE.exit[0]+.5,0,LIFE.exit[1]+.5);startOutside({mode:'free',h:6});await bnWait(()=>OUT.on&&(!tjUse()||TJ.world),16000);await bnSleep(3000);
+    try{OUT.npcs.filter(a=>a.kind==='loot').forEach(a=>{a.cd=999});OUT.sirenT=1e9}catch(e){}
+    const spin=()=>{FP3.yaw+=.006};let off=null;PX.off=1;try{off=await bnMeasure('밖 · 최적화 끔(비교)',6000,spin)}finally{PX.off=0}if(off)off.ab=1;await bnSleep(700);
+    out.scenes.push(await bnMeasure('밖(실제 지도)',8000,spin));if(off&&!BENCH.cancel)out.scenes.push(off)};
+  w.__px=1;window.bnOutside=w;
+  const g=window.benchGrade;if(typeof g==='function')window.benchGrade=function(out){const all=out&&out.scenes;if(!all)return g.apply(this,arguments);out.scenes=all.filter(s=>!s.ab);try{return g.apply(this,arguments)}finally{out.scenes=all}}})();
+/* ---------- ④ 명중·제압 표시 ---------- */
+function pxHitEl(){let el=document.getElementById('owcHit');if(el&&el.offsetParent!==null)return el;el=document.getElementById('pxHit');if(!el&&SV3.el){el=document.createElement('i');el.id='pxHit';el.className='owc-hitm px-hitm';SV3.el.appendChild(el)}return el}
+function pxMark(head,kill){const el=pxHitEl();if(!el)return;el.classList.remove('on','hd','kl');void el.offsetWidth;el.classList.add('on');if(head)el.classList.add('hd');if(kill)el.classList.add('kl')}
+function pxKill(head){pxMark(head,true);const t=performance.now()/1000;PX.streak=t-PX.stT<5?PX.streak+1:1;PX.stT=t;if(PX.streak>=2&&SV3.el){let s=document.getElementById('pxStreak');if(!s){s=document.createElement('div');s.id='pxStreak';s.className='px-streak';SV3.el.appendChild(s)}s.textContent='연속 제압 ×'+PX.streak;s.classList.remove('on');void s.offsetWidth;s.classList.add('on');try{vib([25,30,25])}catch(e){}}}
+(function(){const k=window.owcKill;if(typeof k==='function')window.owcKill=function(a,by,d,head){const was=a&&a.st;const r=k.apply(this,arguments);try{if(by==='me'&&a&&was!=='down'&&a.st==='down'&&pxHitOn())pxKill(!!head)}catch(e){pxErr(e)}return r};
+  const g=window.gunHitPerson;if(typeof g==='function')window.gunHitPerson=function(t,pt,d,W,first){const a=t&&t.a;const dead0=!!(a&&a.dead);let host0=null;try{host0=a?gunHostile(t):null}catch(e){}const r=g.apply(this,arguments);
+    /* 적대 대상(적·깡패·약탈자·달아나는 간첩)만 — 주민·팀원·군인을 맞힌 것은 표시하지 않는다 */try{if(a&&host0&&W&&!W.nonlethal&&pxHitOn()){const head=t.part==='head';if(a.dead&&!dead0)pxKill(head);else if(!a.dead){pxMark(head,false);try{SFX.mech(head?'head':'hit')}catch(e){}}}}catch(e){pxErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['⚡ 모바일 최적화 · 화면 다듬기(v13.1)','화면에서 몇 픽셀도 안 되는 먼 부품은 그리지 않고, 먼 사람은 가벼운 대역으로 바꿔 그린다(가까이 가거나 조준경으로 당기면 원래 모습). 사람의 진짜 그림자는 더 멀리까지(중간 16m · 높음 24m) 생기고, 그 밖의 사람·차 밑에는 부드러운 접지 그림자가 깔린다. 밖에서 총을 쏠 때도 명중 표시가 뜨고, 제압하면 붉은 표시와 연속 제압 띠가 뜬다. 설정의 기기 점검(약 1분)은 밖 장면을 최적화 끈 채·켠 채 두 번 재서 이 기기에서의 효과를 숫자로 보여 준다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
