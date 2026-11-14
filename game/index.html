@@ -1690,6 +1690,13 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 @keyframes pxStreak{0%{opacity:0;transform:translateX(-50%) scale(.7)}12%{opacity:1;transform:translateX(-50%) scale(1.12)}22%{transform:translateX(-50%) scale(1)}75%{opacity:1}100%{opacity:0}}
 .sv3.cine-on .px-hitm,.sv3.cine-on .px-streak,.sv3.dfr-on .px-hitm,.sv3.dfr-on .px-streak{display:none}
 @media (prefers-reduced-motion:reduce){.px-streak.on{animation-duration:.01s}}
+
+/* v13.2 이동 중 버튼 흐리게 · 알림 배지 */
+#oBar,#oStat{transition:opacity .4s ease}
+.sv3.px-quiet #oBar{opacity:.38!important}.sv3.px-quiet #oStat{opacity:.7!important}
+#oBar.px-bfc [data-g3="mlist"],#oBar.px-btm [data-g3="tmbtn"]{position:relative}
+#oBar.px-bfc [data-g3="mlist"]::after,#oBar.px-btm [data-g3="tmbtn"]::after{content:'';position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:#ff5a36;box-shadow:0 0 0 2px rgba(10,12,14,.75);pointer-events:none}
+#oBar.px-btm [data-g3="tmbtn"]::after{background:#ffb02e}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -12626,13 +12633,15 @@ function tjFarTex(){if(TJ.tex.f)return TJ.tex.f;const D=TJ_DATA,fb=D.farB;const 
   for(const tt of [3,1,2])for(const [t,w,p] of D.roads){if(t!==tt)continue;x.beginPath();for(let i=0;i<p.length;i+=2){i?x.lineTo(X(p[i]),Z(p[i+1])):x.moveTo(X(p[i]),Z(p[i+1]))}x.strokeStyle=t===3?'#7c746a':'#3e4043';x.lineWidth=Math.max(1,w*k);x.stroke()}
   return TJ.tex.f=mkTex(c)}
 /* 가까이서 흐릿하지 않게: 세계 좌표로 깔리는 고운 잡음(지면 셰이더에 곱함) */
-function tjDetTex(){if(TJ.tex.d)return TJ.tex.d;const S=256,c=cvs(S,S),x=c.getContext('2d');const id=x.createImageData(S,S);const r=rng3(77);const G=8,gr=new Float32Array(G*G);for(let i=0;i<G*G;i++)gr[i]=r();const sm=t=>t*t*(3-2*t);
+function tjDetTex(){if(TJ.tex.d)return TJ.tex.d;const S=256,c=cvs(S,S),x=c.getContext('2d');const id=x.createImageData(S,S);const r=rng3(77);const G=8,gr=new Float32Array(G*G);for(let i=0;i<G*G;i++)gr[i]=r();const sm=t=>t*t*(3-2*t);const VN=6,vs=[];for(let i=0;i<VN*VN;i++)vs.push([.18+r()*.64,.18+r()*.64]);
   for(let j=0;j<S;j++)for(let i=0;i<S;i++){const k=(j*S+i)*4;const fx=i/S*G,fy=j/S*G;const x0=fx|0,y0=fy|0,tx=sm(fx-x0),ty=sm(fy-y0);const g=(a,b)=>gr[(b%G)*G+(a%G)];const m=(g(x0,y0)*(1-tx)+g(x0+1,y0)*tx)*(1-ty)+(g(x0,y0+1)*(1-tx)+g(x0+1,y0+1)*tx)*ty;
-    id.data[k]=128+(r()-.5)*170;id.data[k+1]=m*255;id.data[k+2]=128;id.data[k+3]=255}
+    /* v13.2 B = 줄눈·균열: 6×6 칸에 씨앗 하나씩 둔 보로노이의 칸 경계(가장 가까운 두 씨앗까지 거리 차가 작은 곳)를 어둡게. 이어 붙여도 끊기지 않게 칸을 감아 돈다 */
+    const cs=S/VN,ci=Math.floor(i/cs),cj=Math.floor(j/cs);let f1=1e9,f2=1e9;for(let b=-1;b<=1;b++)for(let a=-1;a<=1;a++){const qi=ci+a,qj=cj+b;const sd=vs[((qj+VN)%VN)*VN+((qi+VN)%VN)];const dx=(qi+sd[0])*cs-i,dy=(qj+sd[1])*cs-j;const dd=Math.sqrt(dx*dx+dy*dy);if(dd<f1){f2=f1;f1=dd}else if(dd<f2)f2=dd}
+    id.data[k]=128+(r()-.5)*170;id.data[k+1]=m*255;id.data[k+2]=255*Math.min(1,(f2-f1)/2.4);id.data[k+3]=255}
   x.putImageData(id,0,0);const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=4;return TJ.tex.d=t}
 function tjDetail(m){const d=tjDetTex();m.onBeforeCompile=s=>{s.uniforms.tDet={value:d};
   s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 vWxz;').replace('#include <begin_vertex>','#include <begin_vertex>\nvWxz=(modelMatrix*vec4(transformed,1.0)).xz;');
-  s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vWxz;uniform sampler2D tDet;').replace('#include <map_fragment>','#include <map_fragment>\n{float d1=texture2D(tDet,vWxz*.42).r;float d2=texture2D(tDet,vWxz*.045).g;diffuseColor.rgb*=.80+.30*d1+.22*(d2-.5);}')};m.customProgramCacheKey=()=>'tjdet'}
+  s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vWxz;uniform sampler2D tDet;').replace('#include <map_fragment>','#include <map_fragment>\n{/* v13.2: 가까이(2.4m 타일) + 중간(12m) + 멀리(59m) 세 겹. 바탕색으로 풀·포장·물을 가려 풀에는 뭉치·결, 포장에는 얼룩·줄눈을 얹는다 — 5m 밖에서도 바닥이 민무늬로 보이지 않게 */vec3 dA=texture2D(tDet,vWxz*.42).rgb;vec3 dB=texture2D(tDet,vWxz*.085).rgb;float dC=texture2D(tDet,vWxz*.017).g;float grn=smoothstep(.012,.06,diffuseColor.g-max(diffuseColor.r,diffuseColor.b));float wat=smoothstep(.03,.12,diffuseColor.b-max(diffuseColor.r,diffuseColor.g));float pav=(1.-grn)*(1.-wat);float br=dot(diffuseColor.rgb,vec3(.333));float jk=mix(.4,1.,smoothstep(.22,.5,br));float lum=.80+.30*dA.r+.22*(dC-.5);lum+=grn*(.30*(dA.g-.5)+.26*(dB.g-.5));lum+=pav*(.24*(dB.g-.5)+.10*(dC-.5)-jk*(.20*(1.-dB.b)+.09*(1.-dA.b)));diffuseColor.rgb*=lum;diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.08,1.,.84),grn*clamp((dB.g-.45)*2.2,0.,1.)*.45);}')};m.customProgramCacheKey=()=>'tjdet2'}
 function tjTerrain(root){const D=TJ_DATA,R=D.R;const ras=tjRas('th');const N=ras.w;const tb=D.tB,fb=D.farB;
   const g=new T.PlaneGeometry(tb[2],tb[2],N-1,N-1);g.rotateX(-Math.PI/2);g.translate(tb[0]+tb[2]/2,0,tb[1]+tb[2]/2);const pos=g.attributes.position,uv=g.attributes.uv;
   for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);const ii=Math.round((x-tb[0])/tb[2]*(N-1)),jj=Math.round((z-tb[1])/tb[2]*(N-1));let y=ras.a[clamp(jj,0,N-1)*N+clamp(ii,0,N-1)]*.5;if(Math.abs(x)<R-8&&Math.abs(z)<R-8)y=-.6;pos.setY(i,y);uv.setXY(i,(x-fb[0])/fb[2],1-(z-fb[1])/fb[2])}
@@ -12744,10 +12753,11 @@ function tjCull(pos){if(!TJ.treeCells||TJ_DATA.R<=700)return;TJ.cullT=(TJ.cullT|
 function tjTreeCell(root,L){const n=L.length/4;const sea=(typeof G!=='undefined'&&G&&G.season)||'spring';
   if(!TJ.treeK){const col=(g,c)=>{const a=new Float32Array(g.attributes.position.count*3);for(let i=0;i<a.length;i+=3){a[i]=c[0];a[i+1]=c[1];a[i+2]=c[2]}g.setAttribute('color',new T.BufferAttribute(a,3));return g};
     const tr=()=>{const g=new T.CylinderGeometry(.11,.19,3.4,6);g.translate(0,1.7,0);return g.toNonIndexed()};
-    const cr=new T.SphereGeometry(1,8,6);{const pa=cr.attributes.position,rr=rng3(13);for(let i=0;i<pa.count;i++){const f=.84+rr()*.3;pa.setXYZ(i,pa.getX(i)*f*2.2,pa.getY(i)*f*(pa.getY(i)<0?.7:1)*1.9+4.3,pa.getZ(i)*f*2.2)}}const crN=cr.toNonIndexed();crN.computeVertexNormals();
+    const cr=new T.SphereGeometry(1,8,6);{const pa=cr.attributes.position,rr=rng3(13);for(let i=0;i<pa.count;i++){const f=.84+rr()*.3;pa.setXYZ(i,pa.getX(i)*f*2.2,pa.getY(i)*f*(pa.getY(i)<0?.7:1)*1.9+4.3,pa.getZ(i)*f*2.2)}}/* v13.2: 수관은 부드러운 음영(면마다 각지지 않게) */cr.computeVertexNormals();const crN=cr.toNonIndexed();
     const cone=new T.ConeGeometry(1.5,4.8,7);cone.translate(0,4.3,0);const coN=cone.toNonIndexed();coN.computeVertexNormals();const t1=tr(),t2=tr();t1.computeVertexNormals();t2.computeVertexNormals();
     const strip=g=>{for(const k of Object.keys(g.attributes))if(k!=='position'&&k!=='normal'&&k!=='color')g.deleteAttribute(k);return g};
-    const dec=T.mergeGeometries([strip(col(t1,[.42,.32,.24])),strip(col(crN,[1,1,1]))]),pine=T.mergeGeometries([strip(col(t2,[.42,.32,.24])),strip(col(coN,[1,1,1]))]);
+    /* v13.2: 잎 색을 높이로 물들인다 — 아래·안쪽은 어둡게(그늘), 위는 밝게 + 잎 뭉치 얼룩. 계절 색(인스턴스 색)에 곱해진다 */const shade=(g,y0,y1,lo,hi,seed)=>{const p=g.attributes.position,a=new Float32Array(p.count*3),rr=rng3(seed);for(let i=0;i<p.count;i++){const t=clamp((p.getY(i)-y0)/(y1-y0),0,1);const v=(lo+(hi-lo)*t)*(.93+rr()*.14);a[3*i]=v;a[3*i+1]=v;a[3*i+2]=v*(.94+.06*t)}g.setAttribute('color',new T.BufferAttribute(a,3));return g};
+    const dec=T.mergeGeometries([strip(col(t1,[.42,.32,.24])),strip(shade(crN,2.9,6.4,.6,1.12,7))]),pine=T.mergeGeometries([strip(col(t2,[.42,.32,.24])),strip(shade(coN,1.9,6.7,.68,1.14,9))]);
     TJ.treeK={dec,pine,mD:new T.MeshStandardMaterial({color:'#ffffff',vertexColors:true,roughness:1}),mP:new T.MeshStandardMaterial({color:'#ffffff',vertexColors:true,roughness:1,flatShading:true})}}const K=TJ.treeK;
   const dm=new T.InstancedMesh(K.dec,K.mD,n),pm=new T.InstancedMesh(K.pine,K.mP,n);const M4=new T.Matrix4(),Q=new T.Quaternion(),Vs=new T.Vector3(),Vp=new T.Vector3(),E=new T.Euler(),C=new T.Color();let nd=0,np=0;const r=rng3(41+n);
   const hue=()=>sea==='autumn'?(r()<.5?[.11+r()*.03,.75,.42]:[.04+r()*.04,.6,.36]):sea==='winter'?[.07,.12,.24+r()*.05]:sea==='summer'?[.27+r()*.05,.45,.2+r()*.06]:[.25+r()*.06,.42,.26+r()*.07];
@@ -13774,7 +13784,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.1';
+const APP_VER='13.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -22226,7 +22236,7 @@ function fcLeft(S){if(S.act.turn!==(G.turn|0)){S.act.turn=G.turn|0;S.act.left=2}
 function fcUse(S){fcLeft(S);S.act.left=Math.max(0,S.act.left-1)}
 function fcAllies(S){return FC_DEF.filter(d=>S.f[d.id].al)}
 /* 우리 팀의 세: 팀원 수·레벨·이웃 신뢰·동맹 */
-function fcMyPower(S){let p=18;try{const L=(G.team||[]).filter(d=>d.st!=='kia');p+=L.length*8+L.reduce((a,d)=>a+((d.lv|0)||1)-1,0)*3}catch(e){}p+=clamp((G.trust||0)*.6,-10,26)+fcAllies(S).length*10+S.rep.cun*1.5-S.rep.traitor*6;return Math.round(clamp(p,0,100))}
+function fcMyPower(S){let p=18;try{const L=(G.team||[]).filter(d=>d.st!=='kia');p+=L.length*8+L.reduce((a,d)=>a+((d.lv|0)||1)-1,0)*3}catch(e){}p+=clamp((G.trust||0)*.6,-10,26)+fcAllies(S).length*10+Math.min(S.rep.cun,6)*1.5-(S.heat|0)*.8-S.rep.traitor*6;return Math.round(clamp(p,0,100))}
 function fcRank(S){const L=FC_DEF.map(d=>({id:d.id,n:d.n,ico:d.ico,p:S.f[d.id].p})).concat([{id:'me',n:'우리 팀',ico:'⭐',p:fcMyPower(S)}]);L.sort((a,b)=>b.p-a.p);return L}
 function fcHave(k){try{if(k==='cash')return G.inv.cash||0;return G.res[k]||0}catch(e){return 0}}
 function fcTake(k,n){if(k==='cash'){G.inv.cash=Math.max(0,(G.inv.cash||0)-n);return}res(k,-n)}
@@ -22236,37 +22246,37 @@ const FC_GIFT=[['water',2,'물 2L'],['food',1,'식량 1일분'],['meds',1,'의�
 const FC_TRADE={iron:{pay:['food',2,'식량 2일분'],get:['ammo',30]},mart:{pay:['cash',1,'현금 봉투 1장'],get:['food',2]},tent:{pay:['food',2,'식량 2일분'],get:['meds',1]},bloc:{pay:['meds',1,'의약품 1회'],get:['water',3]},wheel:{pay:['water',2,'물 2L'],get:['cash',1]}};
 function fcAct(id,a,arg){const S=fcS();const d=fcDef(id),f=S.f[id];if(!d||!f)return'';if(!OUT.on)return'밖에서만 할 수 있다(전령·무전).';const free=a==='trade';if(!free&&fcLeft(S)<=0)return'이번 턴의 정치 행동 2번을 다 썼다 — 대피소에서 한 턴을 보낸 뒤 다시.';
   const R=Math.random;let t='';FX=[];
-  if(a==='gift'){const g=FC_GIFT[arg|0]||FC_GIFT[0];if(fcHave(g[0])<g[1])return g[2]+'이(가) 모자란다.';fcTake(g[0],g[1]);const want=(d.give===g[0])?.6:1;const up=fcAdd(S,id,(g[0]==='meds'?11:g[0]==='cash'?9:8)*want+(id==='tent'&&g[0]==='meds'?5:0));f.p=clamp(f.p+2,0,100);fcUse(S);t=`${d.n}에 ${g[2]}을(를) 보냈다 — 호감 +${up}.`}
+  if(a==='gift'){const g=FC_GIFT[arg|0]||FC_GIFT[0];if(fcHave(g[0])<g[1])return g[2]+'이(가) 모자란다.';fcTake(g[0],g[1]);const want=(d.give===g[0])?.6:1;const up=fcAdd(S,id,(g[0]==='meds'?12:g[0]==='cash'?10:9)*want+(id==='tent'&&g[0]==='meds'?5:0));f.p=clamp(f.p+2,0,100);fcUse(S);t=`${d.n}에 ${g[2]}을(를) 보냈다 — 호감 +${up}.`}
   else if(a==='trade'){const T=FC_TRADE[id];if(f.s<=-20)return`${d.n}은(는) 우리와 거래하지 않는다(호감 ${f.s}).`;const k=f.s>=40||f.al?1.5:f.s<0?.7:1;if(fcHave(T.pay[0])<T.pay[1])return T.pay[2]+'이(가) 모자란다.';fcTake(T.pay[0],T.pay[1]);const n=Math.max(1,Math.round(T.get[1]*k));const got=fcGiveMe(T.get[0],n);fcAdd(S,id,1);t=`${d.n}과(와) 거래: ${T.pay[2]} → ${got}${k>1?' (우호 가격)':k<1?' (바가지)':''}.`}
   else if(a==='ally'){if(f.al){f.al=false;const dn=fcAdd(S,id,-25);S.rep.trust=Math.max(-5,S.rep.trust-1);fcUse(S);t=`${d.n}과의 동맹을 깼다 — 호감 ${dn}. 다른 세력도 지켜본다(신의 −1).`}
-    else{if(fcAllies(S).length>=2)return'동맹은 두 곳까지 — 더 맺으려면 하나를 깨야 한다.';if(f.s<45)return`호감 45 이상이어야 동맹을 청할 수 있다(지금 ${f.s}) — 지원·거래로 올린다.`;let ch=.4+(f.s-45)*.012+S.rep.trust*.05-S.rep.traitor*.2;for(const o of fcAllies(S))if(fcRel(S,id,o.id)<-15)ch-=.25;fcUse(S);if(R()<clamp(ch,.05,.95)){f.al=true;S.rep.trust=Math.min(5,S.rep.trust+1);const cold=[];for(const o of FC_DEF){if(o.id===id)continue;const r=fcRel(S,id,o.id);if(r<-15){fcAdd(S,o.id,-15);cold.push(o.n)}else if(r>15)fcAdd(S,o.id,5)}t=`<b>${d.n}과(와) 동맹을 맺었다.</b> 턴마다 ${d.spec} 지원이 온다.${cold.length?' 앙숙인 '+cold.join('·')+'의 눈길이 차가워졌다(−15).':''}`}else{fcAdd(S,id,-4);t=`${d.lead}: "아직은 이르오." — 동맹 제안이 거절됐다(성공 가능성 ${Math.round(clamp(ch,.05,.95)*100)}%였다).`}}}
+    else{if(fcAllies(S).length>=2)return'동맹은 두 곳까지 — 더 맺으려면 하나를 깨야 한다.';if(f.s<42)return`호감 42 이상이어야 동맹을 청할 수 있다(지금 ${f.s}) — 지원·거래로 올린다.`;let ch=.45+(f.s-42)*.012+S.rep.trust*.05-S.rep.traitor*.2;for(const o of fcAllies(S))if(fcRel(S,id,o.id)<-15)ch-=.25;fcUse(S);if(R()<clamp(ch,.05,.95)){f.al=true;S.rep.trust=Math.min(5,S.rep.trust+1);/* v13.2: 동맹 첫 선물 */const wel={ammo:['ammo',40],food:['food',2],meds:['meds',1],water:['water',3],intel:['cash',2]}[d.give];const wg=wel?fcGiveMe(wel[0],wel[1]):'';FC.wel=wg;const cold=[];for(const o of FC_DEF){if(o.id===id)continue;const r=fcRel(S,id,o.id);if(r<-15){fcAdd(S,o.id,-15);cold.push(o.n)}else if(r>15)fcAdd(S,o.id,5)}t=`<b>${d.n}과(와) 동맹을 맺었다.</b> 턴마다 ${d.spec} 지원이 온다.${FC.wel?' 첫 선물 — '+FC.wel+'.':''}${cold.length?' 앙숙인 '+cold.join('·')+'의 눈길이 차가워졌다(−15).':''}`}else{fcAdd(S,id,-4);t=`${d.lead}: "아직은 이르오." — 동맹 제안이 거절됐다(성공 가능성 ${Math.round(clamp(ch,.05,.95)*100)}%였다).`}}}
   else if(a==='denounce'){const dn=fcAdd(S,id,-30);f.p=clamp(f.p-6,0,100);f.mad=(f.mad|0)+2;const side=[];for(const o of FC_DEF){if(o.id===id)continue;const r=fcRel(S,id,o.id);if(r<-15){fcAdd(S,o.id,8);side.push(o.n+' +8')}else if(r>15){fcAdd(S,o.id,-10);side.push(o.n+' −10')}}fcUse(S);t=`주민들 앞에서 <b>${d.n}</b>을(를) 배척했다 — 그쪽 호감 ${dn}, 세 −6.${side.length?' '+side.join(' · ')+'.':''} 보복을 조심한다.`}
   else if(!fcLawless())return'교육용 모드에서는 할 수 없다.';
-  else if(a==='rumor'){f.p=clamp(f.p-5,0,100);for(const o of FC_DEF)if(o.id!==id)fcRelAdd(S,id,o.id,-12-Math.round(R()*10));S.rep.cun++;const ch=clamp(.3-S.rep.cun*.025+(id==='tent'?.15:0),.08,.6);S.pend.push({k:'rumor',id,at:(G.turn|0)+1,ch});fcUse(S);t=`${d.n}에 대한 소문을 흘렸다 — 다른 세력과의 사이가 벌어지고 세 −5. 들통날 가능성 ${Math.round(ch*100)}%(다음 턴에 드러난다).`}
-  else if(a==='tip'){f.p=clamp(f.p-12,0,100);S.rep.cun++;const ch=clamp(.25-S.rep.cun*.02,.08,.5);S.pend.push({k:'tip',id,at:(G.turn|0)+1,ch});const got=fcGiveMe('cash',2);try{trust(1)}catch(e){}fcUse(S);t=`계엄군에 ${d.n}의 숨긴 물자를 알렸다 — 세 −12. 사례로 ${got}. 누가 알렸는지 새어 나갈 가능성 ${Math.round(ch*100)}%.`}
-  else if(a==='raid'){const night=OUT.tod==='night'||OUT.tod==='dusk'||OUT.tod==='dawn';let sc=0;try{sc=(typeof tlvHas==='function'&&tlvHas('정찰',2))?.1:0}catch(e){}const ch=clamp(.45+(night?.15:0)+sc+S.rep.cun*.02-f.p*.002,.15,.85);fcUse(S);S.rep.cun++;if(R()<ch){const loot={iron:[['ammo',60]],mart:[['food',4],['water',3]],tent:[['meds',3]],bloc:[['water',5],['food',1]],wheel:[['cash',4]]}[id];const got=loot.map(l=>fcGiveMe(l[0],l[1])).join(' · ');f.p=clamp(f.p-8,0,100);const ex=clamp(.35-S.rep.cun*.02,.1,.5);S.pend.push({k:'raid',id,at:(G.turn|0)+1,ch:ex});t=`${night?'어둠을 틈타 ':''}${d.n} 창고를 털었다 — ${got}. 누구 짓인지 알려질 가능성 ${Math.round(ex*100)}%.`}else{const dn=fcAdd(S,id,-40);f.mad=(f.mad|0)+3;S.feud={id,at:G.turn|0,why:'창고를 털다 들켰다'};t=`창고 앞에서 들켰다(성공 가능성 ${Math.round(ch*100)}%였다) — ${d.n} 호감 ${dn}. 추격조가 붙는다.`}}
-  else if(a==='wedge'){const o=FC_DEF.filter(x=>x.id!==id).sort((x,y)=>fcRel(S,id,y.id)-fcRel(S,id,x.id))[0];fcRelAdd(S,id,o.id,-30);S.rep.cun++;const ch=clamp(.28-S.rep.cun*.02,.08,.5);S.pend.push({k:'wedge',id,id2:o.id,at:(G.turn|0)+1,ch});fcUse(S);t=`${d.n}과(와) ${o.n} 사이를 벌려 놓았다(사이 −30 → ${fcRel(S,id,o.id)}). 둘이 손잡을 일은 한동안 없다. 들통 가능성 ${Math.round(ch*100)}%.`}
+  else if(a==='rumor'){f.p=clamp(f.p-5,0,100);for(const o of FC_DEF)if(o.id!==id)fcRelAdd(S,id,o.id,-12-Math.round(R()*10));S.rep.cun++;const ch=clamp(.2+(S.heat|0)*.03+(id==='tent'?.15:0),.1,.7);S.heat=(S.heat|0)+1;S.pend.push({k:'rumor',id,at:(G.turn|0)+1,ch});fcUse(S);t=`${d.n}에 대한 소문을 흘렸다 — 다른 세력과의 사이가 벌어지고 세 −5. 들통날 가능성 ${Math.round(ch*100)}%(다음 턴에 드러난다).`}
+  else if(a==='tip'){/* v13.2 시뮬레이션 조정: 밀고가 돈 찍는 기계였다(턴마다 2번이면 12턴에 +100). 같은 세력은 두 번까지만, 두 번째는 사례가 절반, 주목 +2 */const tn=f.tipN|0;if(tn>=2)return`${d.n}에 대해서는 더 알릴 것이 없다 — 계엄군이 이미 두 번 뒤졌다.`;f.tipN=tn+1;f.p=clamp(f.p-12,0,100);S.rep.cun++;const ch=clamp(.25+(S.heat|0)*.03,.1,.7);S.heat=(S.heat|0)+2;S.pend.push({k:'tip',id,at:(G.turn|0)+1,ch});const got=fcGiveMe('cash',tn?1:2);if(!tn)try{trust(1)}catch(e){}fcUse(S);t=`계엄군에 ${d.n}의 숨긴 물자를 알렸다 — 세 −12. 사례로 ${got}${tn?'(두 번째라 절반)':''}. 누가 알렸는지 새어 나갈 가능성 ${Math.round(ch*100)}%.`}
+  else if(a==='raid'){const night=OUT.tod==='night'||OUT.tod==='dusk'||OUT.tod==='dawn';let sc=0;try{sc=(typeof tlvHas==='function'&&tlvHas('정찰',2))?.1:0}catch(e){}/* v13.2 시뮬레이션 조정: 털수록 그 세력의 경계(grd)와 동네의 주목(heat)이 올라 성공률이 떨어지고 들통이 잦아진다. 창고도 비어 간다 */const heat=S.heat|0,grd=f.grd|0;const ch=clamp(.52+(night?.15:0)+sc-f.p*.002-grd*.13-heat*.025,.1,.85);fcUse(S);S.rep.cun++;f.grd=grd+1;S.heat=heat+2;if(R()<ch){const loot={iron:[['ammo',60]],mart:[['food',4],['water',3]],tent:[['meds',3]],bloc:[['water',5],['food',1]],wheel:[['cash',4]]}[id];const lk=Math.max(.4,1-grd*.25);const got=loot.map(l=>fcGiveMe(l[0],Math.max(1,Math.round(l[1]*lk)))).join(' · ');f.p=clamp(f.p-8,0,100);/* 창고가 털렸다는 말은 돈다 */try{trust(-1)}catch(e){}const ex=clamp(.25+heat*.035,.15,.8);S.pend.push({k:'raid',id,at:(G.turn|0)+1,ch:ex});t=`${night?'어둠을 틈타 ':''}${d.n} 창고를 털었다 — ${got}. 누구 짓인지 알려질 가능성 ${Math.round(ex*100)}%.`}else{const dn=fcAdd(S,id,-30);f.mad=(f.mad|0)+2;if(!((f.cool|0)>0))S.feud={id,at:G.turn|0,why:'창고를 털다 들켰다'};t=`창고 앞에서 들켰다(성공 가능성 ${Math.round(ch*100)}%였다) — ${d.n} 호감 ${dn}. 추격조가 붙는다.`}}
+  else if(a==='wedge'){const o=FC_DEF.filter(x=>x.id!==id).sort((x,y)=>fcRel(S,id,y.id)-fcRel(S,id,x.id))[0];fcRelAdd(S,id,o.id,-30);S.rep.cun++;const ch=clamp(.2+(S.heat|0)*.03,.1,.65);S.heat=(S.heat|0)+1;S.pend.push({k:'wedge',id,id2:o.id,at:(G.turn|0)+1,ch});fcUse(S);t=`${d.n}과(와) ${o.n} 사이를 벌려 놓았다(사이 −30 → ${fcRel(S,id,o.id)}). 둘이 손잡을 일은 한동안 없다. 들통 가능성 ${Math.round(ch*100)}%.`}
   else if(a==='bribe'){if(id==='tent')return`${d.lead}: "봉투는 넣어 두세요." — 하얀 천막은 돈을 받지 않는다.`;if(fcHave('cash')<2)return'현금 봉투 2장이 필요하다.';fcTake('cash',2);const up=fcAdd(S,id,15);S.rep.cun++;fcUse(S);t=`${d.lead}에게 봉투 2장을 건넸다 — 호감 +${up}. 묻는 사람은 없다.`}
-  else if(a==='betray'){if(!f.al)return'동맹만 배신할 수 있다.';const loot={iron:[['ammo',120]],mart:[['food',6],['water',5]],tent:[['meds',5]],bloc:[['water',8],['food',3]],wheel:[['cash',8]]}[id];const got=loot.map(l=>fcGiveMe(l[0],l[1])).join(' · ');f.al=false;f.s=-80;f.mad=(f.mad|0)+5;f.p=clamp(f.p-15,0,100);for(const o of FC_DEF)if(o.id!==id)fcAdd(S,o.id,-20);S.rep.traitor++;S.rep.trust=-5;try{trust(-5);mor(-2)}catch(e){}S.feud={id,at:G.turn|0,why:'동맹을 배신했다'};fcUse(S);t=`<b>${d.n}을(를) 배신했다.</b> 동맹 창고를 비웠다 — ${got}. 모든 세력의 호감 −20, 이웃 신뢰 −5. '배신자'라는 말이 따라다닌다. 추격조가 온다.`}
+  else if(a==='betray'){if(!f.al)return'동맹만 배신할 수 있다.';const loot={iron:[['ammo',160]],mart:[['food',8],['water',6]],tent:[['meds',6],['water',2]],bloc:[['water',10],['food',4]],wheel:[['cash',10]]}[id];const got=loot.map(l=>fcGiveMe(l[0],l[1])).join(' · ');f.al=false;f.s=-80;f.mad=(f.mad|0)+5;f.p=clamp(f.p-15,0,100);for(const o of FC_DEF)if(o.id!==id)fcAdd(S,o.id,-20);S.rep.traitor++;S.rep.trust=-5;S.heat=(S.heat|0)+3;try{trust(-5);mor(-2)}catch(e){}S.feud={id,at:G.turn|0,why:'동맹을 배신했다'};fcUse(S);t=`<b>${d.n}을(를) 배신했다.</b> 동맹 창고를 비웠다 — ${got}. 모든 세력의 호감 −20, 이웃 신뢰 −5. '배신자'라는 말이 따라다닌다. 추격조가 온다.`}
   else return'';
   try{OUT.fx.push(...FX);outStat()}catch(e){}fcLog(S,t.replace(/<[^>]+>/g,''));try{save()}catch(e){}return t}
 /* ---------- 턴이 넘어갈 때: 세력이 스스로 움직인다 ---------- */
-function fcTurn(){const S=fcS();const R=Math.random;const N=[];
-  for(const d of FC_DEF){const f=S.f[d.id];f.p=clamp(Math.round(f.p+(R()*7-3)+(f.al?2:0)),5,100);if(Math.abs(f.s)>20&&!f.al)f.s-=Math.sign(f.s);
-    /* 동맹 보급 */if(f.al){if(f.s<10){f.al=false;N.push(`${d.ico} ${d.n}이(가) 동맹에서 떠났다(호감 ${f.s}).`)}else{const turn=G.turn|0;let got='';if(d.give==='ammo'&&turn%2===0)got=fcGiveMe('ammo',20);else if(d.give==='food')got=fcGiveMe('food',1);else if(d.give==='meds'&&turn%2===0)got=fcGiveMe('meds',1);else if(d.give==='water')got=fcGiveMe('water',2);else if(d.give==='intel'&&turn%2===1)got=fcGiveMe('cash',1);if(d.id==='bloc')try{trust(1)}catch(e){}if(got)N.push(`${d.ico} ${d.n} 동맹 보급 — ${got}.`)}}
-    /* 보복 */if(!S.feud&&(f.s<=-60||(f.mad|0)>0)&&R()<(f.s<=-60?.4:.25)){S.feud={id:d.id,at:G.turn|0,why:f.s<=-60?'우리를 적으로 본다':'배척당한 앙금'}}if((f.mad|0)>0)f.mad--}
+function fcTurn(){const S=fcS();const R=Math.random;const N=[];/* 주목은 턴마다 2씩 식는다(턴에 한 번 터는 정도면 쌓이지 않는다) */S.heat=Math.max(0,(S.heat|0)-2);
+  for(const d of FC_DEF){const f=S.f[d.id];if((f.grd|0)>0&&(G.turn|0)%3===0)f.grd--;if((f.cool|0)>0)f.cool--;f.p=clamp(Math.round(f.p+(R()*7-3)+(f.al?2:0)),5,100);if(Math.abs(f.s)>20&&!f.al)f.s-=Math.sign(f.s);
+    /* 동맹 보급 */if(f.al){if(f.s<10){f.al=false;N.push(`${d.ico} ${d.n}이(가) 동맹에서 떠났다(호감 ${f.s}).`)}else{const turn=G.turn|0;let got='';/* v13.2: 동맹 보급을 턴마다 받게 올렸다(시뮬레이션에서 지원 비용을 12턴 안에 못 돌려받았다) */if(d.give==='ammo')got=fcGiveMe('ammo',25);else if(d.give==='food')got=fcGiveMe('food',1)+(turn%2===0?' · '+fcGiveMe('water',1):'');else if(d.give==='meds')got=turn%2===0?fcGiveMe('meds',1):fcGiveMe('water',1);else if(d.give==='water')got=fcGiveMe('water',2);else if(d.give==='intel')got=fcGiveMe('cash',1);if(d.id==='bloc')try{trust(1)}catch(e){}if(got)N.push(`${d.ico} ${d.n} 동맹 보급 — ${got}.`)}}
+    /* 보복(v13.2: 한 번 추격조를 보낸 세력은 3턴 동안 다시 보내지 않는다) */if(!S.feud&&!((f.cool|0)>0)&&(f.s<=-60||(f.mad|0)>0)&&R()<(f.s<=-60?.3:.22)){S.feud={id:d.id,at:G.turn|0,why:f.s<=-60?'우리를 적으로 본다':'배척당한 앙금'}}if((f.mad|0)>0)f.mad--}
   /* 세력끼리 */for(const [a,b] of FC_RIVAL){const k=fcKey(a,b);S.rel[k]=clamp((S.rel[k]||0)+(S.rel[k]<0?-1:1)+Math.round(R()*4-2),-100,100)}
   if(R()<.3){const a=FC_DEF[(R()*5)|0],b=FC_DEF[(R()*5)|0];if(a.id!==b.id){const up=R()<.5;fcRelAdd(S,a.id,b.id,up?18:-18);N.push(`${a.ico} ${a.n}과(와) ${b.ico} ${b.n}이(가) ${up?'손을 잡았다':'틀어졌다'}.`)}}
-  /* 들통 */const due=S.pend.filter(q=>q.at<=(G.turn|0));S.pend=S.pend.filter(q=>q.at>(G.turn|0));for(const q of due){if(R()>=q.ch)continue;const d=fcDef(q.id);const what={rumor:'소문의 출처',tip:'밀고한 사람',raid:'창고를 턴 사람',wedge:'이간질한 사람'}[q.k];const dn=fcAdd(S,q.id,q.k==='rumor'?-35:-45);for(const o of FC_DEF)if(o.id!==q.id)fcAdd(S,o.id,-8);S.f[q.id].mad=(S.f[q.id].mad|0)+3;try{trust(-3)}catch(e){}N.push(`🕳 들통 — ${what}이(가) 우리라는 것이 ${d.n}에 알려졌다(호감 ${dn}, 다른 세력 −8, 이웃 신뢰 −3).`)}
+  /* 들통 */const due=S.pend.filter(q=>q.at<=(G.turn|0));S.pend=S.pend.filter(q=>q.at>(G.turn|0));for(const q of due){if(R()>=q.ch)continue;const d=fcDef(q.id);const what={rumor:'소문의 출처',tip:'밀고한 사람',raid:'창고를 턴 사람',wedge:'이간질한 사람'}[q.k];const dn=fcAdd(S,q.id,q.k==='rumor'?-28:-35);for(const o of FC_DEF)if(o.id!==q.id)fcAdd(S,o.id,-8);S.f[q.id].mad=(S.f[q.id].mad|0)+3;try{trust(-3)}catch(e){}N.push(`🕳 들통 — ${what}이(가) 우리라는 것이 ${d.n}에 알려졌다(호감 ${dn}, 다른 세력 −8, 이웃 신뢰 −3).`)}
   /* 동맹의 요구 · 주민 총회 */const A=fcAllies(S);if(!S.req&&A.length&&R()<.28){const a=A[(R()*A.length)|0];const foe=FC_DEF.filter(o=>o.id!==a.id&&fcRel(S,a.id,o.id)<-15&&!S.f[o.id].al)[0];if(foe)S.req={a:a.id,x:foe.id}}
   S.asm=(S.asm|0)+1;const rank=fcRank(S);if(rank[0].id==='me'&&!S.top){S.top=1;try{mor(5)}catch(e){}N.push('⭐ 우리 팀이 세력 1위에 올랐다 — 사기 +5.')}
   for(const t of N)fcLog(S,t);FC.notes=N}
 (function(){const b=window.endTurn;if(typeof b!=='function')return;window.endTurn=function(){const r=b.apply(this,arguments);try{if(fcOn()&&G.flags&&G.flags.fc)fcTurn()}catch(e){fcErr(e)}return r}})();
 /* ---------- 밖에서 뜨는 카드: 보복 · 동맹의 요구 · 주민 총회 ---------- */
-function fcCardFeud(){const S=fcS();const Q=S.feud;if(!Q)return false;const d=fcDef(Q.id);S.feud=null;FC.feudId=d.id;const n=3+((S.f[d.id].p>55)?1:0);
+function fcCardFeud(){const S=fcS();const Q=S.feud;if(!Q)return false;const d=fcDef(Q.id);S.feud=null;FC.feudId=d.id;const fd=S.f[d.id].fd|0;S.f[d.id].fd=fd+1;S.f[d.id].cool=3;const n=3+((S.f[d.id].p>55)?1:0)+Math.min(2,fd);const pw=Math.min(6,3+fd),pf=2+(fd>=2?1:0);
   outEncShow({id:'fc-feud',cat:`세력 · ${d.n} 추격조`,art:'person',tone:'red',title:`"${d.n}에서 왔다. 빚을 받으러."`,text:`골목 어귀를 ${n}명이 막아선다. 둘은 총을 들었다. ${Q.why} — 그 값을 치르라는 것이다.`,
     choices:[{t:'싸운다',s:'같은 자리에서 교전 · 팀원이 함께 싸운다',go:()=>{FC.fight={id:d.id,n};return '총을 고쳐 쥔다. 엄폐물로 — '}},
-      {t:'물자를 내주고 넘어간다',s:'물 3L · 식량 2일분',need:()=>fcHave('water')>=3&&fcHave('food')>=2,go:()=>{res('water',-3);res('food',-2);fcAdd(S,d.id,12);S.f[d.id].mad=0;fcLog(S,`${d.n} 추격조에 물자를 내줬다.`);return `자루를 넘기자 조장이 턱짓을 한다. "이번은 이걸로 됐다." ${d.n}의 앙금이 조금 풀렸다(호감 +12).`}},
+      {t:'물자를 내주고 넘어간다',s:`물 ${pw}L · 식량 ${pf}일분`,need:()=>fcHave('water')>=pw&&fcHave('food')>=pf,go:()=>{res('water',-pw);res('food',-pf);fcAdd(S,d.id,12);S.f[d.id].mad=0;fcLog(S,`${d.n} 추격조에 물자를 내줬다.`);return `자루를 넘기자 조장이 턱짓을 한다. "이번은 이걸로 됐다." ${d.n}의 앙금이 조금 풀렸다(호감 +12).`}},
       {t:'달아난다',s:'잡히면 더 잃는다',go:()=>{if(Math.random()<.55){fcLog(S,`${d.n} 추격조를 따돌렸다.`);return '담을 넘고 주차장을 가로질러 따돌렸다. 숨이 턱에 찬다 — 다음엔 더 많이 올 것이다.'}res('water',-4);res('food',-2);try{hurt('me',14)}catch(e){}S.f[d.id].mad=1;fcLog(S,`${d.n} 추격조에 붙잡혀 물자를 빼앗겼다.`);return '골목 끝에서 붙잡혔다. 몇 대 맞고 배낭을 털렸다(물 4L · 식량 2일분).'}}]});return true}
 function fcCardReq(){const S=fcS();const Q=S.req;if(!Q)return false;S.req=null;const a=fcDef(Q.a),x=fcDef(Q.x);if(!S.f[a.id].al)return false;
   outEncShow({id:'fc-req',cat:`세력 · 동맹 ${a.n}의 요구`,art:'person',tone:'blue',title:`"${x.n}을(를) 같이 밀어냅시다"`,text:`${a.lead}의 전령이 왔다. "${x.n}이(가) 구호품 줄을 틀어쥐려 합니다. 총회에서 우리와 함께 배척해 주시오. 동맹이라면."`,
@@ -22284,11 +22294,11 @@ OWC_E.fgun={n:'추격조원',hp:2,aim:1.3,acc:.6,dmg:11,burst:3,gap:.16};OWC_E.f
 (function(){const b=window.owcLook;if(typeof b!=='function')return;window.owcLook=function(type,id){if(type==='fgun'||type==='fled'){const c=CIV3[(id||1)%CIV3.length];return Object.assign({skin:SKINC[(id||1)%SKINC.length],seed:id||1},c,{gun:'ak',vest:type==='fled'?'#3a3a32':null})}return b.apply(this,arguments)}})();
 OWC_SC.feud={n:'추격조와 교전',sub:'',timer:0,waves:[{n:'추격조',list:['fgun','fgun','fled'],say:['팀장','골목을 막았다 — 엄폐하고 한 명씩!']},{n:'뒤따라온 무리',list:['fgun','fgun'],say:['팀장','뒤에서 더 온다 — 자리를 지켜!']}],allies:[{id:'fz1',n:'나',r:'팀장',look:'civ',seed:3}],helpers:['','']};
 if(typeof EVO!=='undefined')EVO.kinds.feud=1;
-function fcFightStart(){const Q=FC.fight;FC.fight=null;if(!Q||typeof owcAvail!=='function'||!owcAvail())return false;const S=fcS();const d=fcDef(Q.id);OWC_SC.feud.sub=d.n;OWC_SC.feud.waves[0].list=Q.n>3?['fgun','fgun','fgun','fled']:['fgun','fgun','fled'];/* 🏭 철문회와 동맹이면 사수 둘이 함께 */const al=[];if(S.f.iron.al&&Q.id!=='iron')al.push({id:'fi1',n:'철문회 사수',r:'동맹',look:'civ',seed:11,gun:'k2'},{id:'fi2',n:'철문회 사수',r:'동맹',look:'civ',seed:17,gun:'k2'});OWC_SC.feud.allies=al.length?al:[{id:'fz1',n:'지나던 예비군',r:'도움',look:'civ',seed:3,gun:'k2'}];EVO.intro=`${d.n} 추격조다 — 엄폐하고 한 명씩!`;FC.fightId=d.id;const ok=owcStart('feud');if(!ok){FC.fightId=null;S.feud={id:d.id,at:G.turn|0,why:'빚을 받으러 왔다'}}return ok}
+function fcFightStart(){const Q=FC.fight;FC.fight=null;if(!Q||typeof owcAvail!=='function'||!owcAvail())return false;const S=fcS();const d=fcDef(Q.id);OWC_SC.feud.sub=d.n;OWC_SC.feud.waves[0].list=Q.n>3?['fgun','fgun','fgun','fled']:['fgun','fgun','fled'];OWC_SC.feud.waves[1].list=Q.n>=5?['fgun','fgun','fled']:['fgun','fgun'];/* 🏭 철문회와 동맹이면 사수 둘이 함께 */const al=[];if(S.f.iron.al&&Q.id!=='iron')al.push({id:'fi1',n:'철문회 사수',r:'동맹',look:'civ',seed:11,gun:'k2'},{id:'fi2',n:'철문회 사수',r:'동맹',look:'civ',seed:17,gun:'k2'});OWC_SC.feud.allies=al.length?al:[{id:'fz1',n:'지나던 예비군',r:'도움',look:'civ',seed:3,gun:'k2'}];EVO.intro=`${d.n} 추격조다 — 엄폐하고 한 명씩!`;FC.fightId=d.id;const ok=owcStart('feud');if(!ok){FC.fightId=null;S.feud={id:d.id,at:G.turn|0,why:'빚을 받으러 왔다'}}return ok}
 function evBuildFeud(){const p=FP3.pos;let ent=null;for(let t=0;t<16&&!ent;t++){const a=FP3.yaw+Math.PI+(t%2?1:-1)*t*.35;const x=p.x-Math.sin(a)*52,z=p.z-Math.cos(a)*52;try{if(owcFree(x,z,1))ent={x,z}}catch(e){}}if(!ent)ent={x:p.x+40,z:p.z};const Bs=evOwcBase({ent,emin:10,emax:48,nSpots:6,R:200});evOwcAllies(Bs);OWC.t=3.4;OWC.nade=2}
 (function(){const b=window.owcBuild;if(typeof b!=='function')return;window.owcBuild=function(kind){if(kind==='feud'){evBuildFeud();try{if(typeof tmOwcJoin==='function')tmOwcJoin()}catch(e){fcErr(e)}return}return b.apply(this,arguments)}})();
 if(typeof EVR!=='undefined')EVR.feud={title:(w,q)=>w?'추격조를 물리쳤다':q?'자리를 떴다':'쓰러졌다 — 물자를 빼앗겼다',
-  apply(w,q,s){const S=fcS();const d=fcDef(FC.fightId)||FC_DEF[0];const f=S.f[d.id];if(w){f.p=clamp(f.p-10,0,100);f.mad=0;try{trust(2)}catch(e){}fcLog(S,`${d.n} 추격조를 물리쳤다.`);return`${d.n} 추격조 ${s.kills}명을 물리쳤다. 그쪽 세가 꺾였다(−10) — 한동안은 사람을 보내지 못한다. 그러나 원한은 남는다.`}res('water',-3);res('food',-2);f.mad=1;fcLog(S,`${d.n} 추격조에 밀렸다.`);return q?'엄폐물을 버리고 빠져나왔다. 배낭 하나를 두고 왔다(물 3L · 식량 2일분).':'쓰러진 사이 배낭을 털렸다(물 3L · 식량 2일분). 팀원이 끌어내 지혈했다.'},
+  apply(w,q,s){const S=fcS();const d=fcDef(FC.fightId)||FC_DEF[0];const f=S.f[d.id];if(w){f.p=clamp(f.p-10,0,100);f.mad=0;f.cool=4;/* 모략으로 부른 싸움이면 이겨도 이웃의 박수는 없다 */try{if(!S.rep.cun&&!S.rep.traitor)trust(2)}catch(e){}/* v13.2: 이기면 두고 간 것을 챙긴다 */const sp=fcGiveMe('ammo',20)+' · '+fcGiveMe('cash',1);fcLog(S,`${d.n} 추격조를 물리쳤다.`);return`${d.n} 추격조 ${s.kills}명을 물리쳤다. 그쪽 세가 꺾였다(−10) — 한동안은 사람을 보내지 못한다. 두고 간 것을 챙겼다(${sp}). 그러나 원한은 남는다.`}res('water',-3);res('food',-2);f.mad=1;fcLog(S,`${d.n} 추격조에 밀렸다.`);return q?'엄폐물을 버리고 빠져나왔다. 배낭 하나를 두고 왔다(물 3L · 식량 2일분).':'쓰러진 사이 배낭을 털렸다(물 3L · 식량 2일분). 팀원이 끌어내 지혈했다.'},
   stats:s=>[[s.kills,'제압'],[(s.shots?Math.round(s.hits/s.shots*100):0)+'%','명중'],[s.dmg,'받은 피해']]};
 /* ---------- 매 프레임(밖): 카드 차례 ---------- */
 function fcStep(dt){if(!OUT.on||!fcOn())return;if(FC.fight&&!OUT.enc&&!(typeof OWC!=='undefined'&&OWC.on)){FC.fT=(FC.fT||0)+dt;if(FC.fT>.6){FC.fT=0;try{fcFightStart()}catch(e){fcErr(e)}}return}
@@ -22298,7 +22308,7 @@ function fcStep(dt){if(!OUT.on||!fcOn())return;if(FC.fight&&!OUT.enc&&!(typeof O
 (function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{fcPanel(false);FC.fight=null;FC.showT=9}catch(e){}return b.apply(this,arguments)}})();
 /* ---------- 화면 ---------- */
 function fcPanel(open){const el=SV3.el;if(!el)return;let p=document.querySelector('#fcPanel');if(!open){if(p)p.remove();FC.open=false;FC.sub=null;return}FC.open=true;if(!p){p=document.createElement('div');p.id='fcPanel';p.className='mis-panel fc-panel';el.appendChild(p)}const S=fcS();const left=fcLeft(S);const rank=fcRank(S);const my=rank.findIndex(r=>r.id==='me')+1;const lawless=fcLawless();
-  const rep=[S.rep.trust>0?`신의 +${S.rep.trust}`:S.rep.trust<0?`신의 ${S.rep.trust}`:'',S.rep.cun?`교활 ${S.rep.cun}`:'',S.rep.traitor?`배신자 ×${S.rep.traitor}`:''].filter(Boolean).join(' · ')||'평판 없음';
+  const rep=[S.rep.trust>0?`신의 +${S.rep.trust}`:S.rep.trust<0?`신의 ${S.rep.trust}`:'',S.rep.cun?`교활 ${S.rep.cun}`:'',(S.heat|0)>0?`주목 ${S.heat|0}`:'',S.rep.traitor?`배신자 ×${S.rep.traitor}`:''].filter(Boolean).join(' · ')||'평판 없음';
   const row=d=>{const f=S.f[d.id];const st=fcStance(f.s,f.al);const foe=FC_DEF.filter(o=>o.id!==d.id&&fcRel(S,d.id,o.id)<-15).map(o=>o.ico+o.n).join(' ');const fr=FC_DEF.filter(o=>o.id!==d.id&&fcRel(S,d.id,o.id)>15).map(o=>o.ico+o.n).join(' ');const T=FC_TRADE[d.id];const sub=FC.sub===d.id;const dis=left<=0?' disabled':'';
     return `<div class="fc-row"><div class="fc-h"><span class="fc-ico">${d.ico}</span><div><b>${d.n} <small>${d.sub} · ${d.lead}</small></b><small class="fc-say">${d.say}</small></div><span class="fc-st" style="color:${st[1]};border-color:${st[1]}">${st[0]} ${f.s>0?'+':''}${f.s}</span></div>
       <div class="fc-m"><i class="fc-p"><i style="width:${f.p}%;background:${d.col}"></i></i><small>세 ${f.p} · ${d.spec}${foe?` · 앙숙 ${foe}`:''}${fr?` · 친분 ${fr}`:''}</small></div>
@@ -22313,6 +22323,14 @@ function fcPanel(open){const el=SV3.el;if(!el)return;let p=document.querySelecto
     <p class="mis-note">모든 세력·인물은 가상이다. 실제 정당·단체·지역과 관계없다.</p>`}
 document.addEventListener('click',e=>{const x=e.target.closest('[data-g3=fcclose]');if(x){e.preventDefault();e.stopPropagation();fcPanel(false);return}const o=e.target.closest('[data-g3=fcopen]');if(o){e.preventDefault();e.stopPropagation();try{evBoard(false)}catch(e){}FC.msg='';fcPanel(true);return}const b=e.target.closest('[data-g3=fca]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();try{const id=b.dataset.id,a=b.dataset.a;if(a==='giftm'||a==='schemem'){const k=a==='giftm'?'gift':'scheme';if(FC.sub===id&&FC.subK===k)FC.sub=null;else{FC.sub=id;FC.subK=k}fcPanel(true);return}FC.msg=fcAct(id,a,b.dataset.v)||'';FC.sub=null;fcPanel(true);const p=document.querySelector('#fcPanel');if(p)p.scrollTop=0}catch(e){fcErr(e)}},true);
 (function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{if(fcOn()){const S=fcS();const rank=fcRank(S);const my=rank.findIndex(r=>r.id==='me')+1;const A=fcAllies(S);h+=row('🏛','세력 정치 — 5개 세력',`우리 팀 ${my}위/6 · 동맹 ${A.length?A.map(d=>d.ico+d.n).join(' '):'없음'} · 이번 턴 행동 ${fcLeft(S)}/2`,S.feud?'⚠ 추격조':'','<button class="btn sm" data-g3="fcopen">열기</button>')}}catch(e){fcErr(e)}return h}})();
+/* ---------- v13.2 밸런스(자동 시뮬레이션 t3/sim132.js · 전략 15종 × 400판 × 12턴 · 실제 fcAct/fcTurn/카드 선택지를 그대로 호출, 교전만 승률 약 72% 모형) ----------
+   조정 전: 턴마다 두 번 털고 싸우기 +118 · 밀고 두 번 +100(조정 중 발견) ≫ 정직한 외교 +2 · 외교+거래 +28 → '무조건 이기는 전략'이 있었다.
+   조정 후(평균 · 값 = 물 1·식량 2·의약품 3·현금 2·탄 0.05·이웃 신뢰 1·체력 0.1): 외교+거래 50 · 거래+골라 털기 54 · 막판 배신 48 · 골라 털기 42 · 밀고 27 · 외교 24 · 턴마다 한 번 털기 16 · 마구 털기 10 · 털고 물어 주기 −41.
+   상위 세 전략이 ±7% 안에 있고 성격이 다르다(외교: 싸움 0 · 신뢰 +8 / 털기: 교전 4~5번 · 신뢰 −8 · 적대 세력 3곳 / 배신: 물자 +9 · 신뢰 −10).
+   바꾼 규칙: 주목(heat — 모략마다 +1~3, 턴마다 −2)과 세력별 경계(grd)가 창고 털기 성공률·전리품을 깎고 들통을 늘린다(예전엔 교활할수록 덜 들켰다) · 밀고는 세력당 두 번(2 → 1 봉투) ·
+   추격조는 거듭될수록 3 → 5명·요구도 커지되 한 번 보낸 세력은 3턴 쉰다 · 이기면 전리품(탄 20·봉투 1) · 모략으로 부른 싸움은 이겨도 신뢰가 오르지 않는다 · 턴 중 털기 성공 신뢰 −1 ·
+   동맹 문턱 45 → 42·기본 성공 45%·첫 선물·보급은 턴마다 · 지원 효과 +1 · 배신 전리품 +30% · 세 계산에서 교활은 6까지만 세고 주목은 감점 */
+if(typeof HELP84!=='undefined')HELP84.push(['🏛 세력 정치 — 고친 규칙(v13.2)','창고를 털수록 그 세력의 경계와 동네의 주목이 올라 성공률이 떨어지고 들통이 잦아진다(주목은 턴마다 2씩 식는다 — 세력판에 표시). 같은 세력에 대한 밀고는 두 번까지. 추격조는 거듭 올수록 많아지지만 한 번 보낸 세력은 3턴 쉬고, 물리치면 두고 간 것을 챙긴다. 동맹은 호감 42부터 — 맺으면 첫 선물이 오고 보급은 턴마다 온다.']);
 if(typeof HELP84!=='undefined')HELP84.push(['🏛 세력 정치(v13.1)','상황판(🚨) → 🏛 세력. 가상의 다섯 세력(철문회·장터회·하얀 천막·동대표 연합·바퀴 조합)과 지원·거래·동맹(두 곳까지 — 턴마다 보급)·배척을 하고, 무법 모드에서는 소문·밀고·창고 털기·이간질·매수·배신도 할 수 있다. 채점은 없지만 결과가 따라온다 — 들통(다음 턴), 보복 추격조, 동맹 이탈, 평판. 턴마다 정치 행동 2번(거래는 제한 없음).']);
 
 /* ===================== 113 · v13.1 ⑥ 모바일 최적화 · 접지 그림자 · 명중 표시 ===================== */
@@ -22328,7 +22346,7 @@ if(typeof HELP84!=='undefined')HELP84.push(['🏛 세력 정치(v13.1)','상황�
    ③ 그림자: 줄인 그리기 수의 일부로 사람의 진짜 그림자 거리를 늘리고(중간 11 → 16m · 높음 16 → 24m), 그 밖(낮은 화질은 전부)의 사람·차 밑에는 부드러운 접지 그림자 한 묶음(그리기 1회).
    ④ 명중·제압 표시: 밖에서 총을 쏠 때도 명중 표시 · 제압하면 붉은 표시 · 연속 제압 띠.
    끄기: localStorage sg.lod=false(①②) · sg.blob=false(③) · sg.hitfx=false(④). 자동 점검에서는 window.__pxTest로만 켠다(옛 점검 화면을 그대로 두려고) */
-const PX={list:[],av:[],hide:[],rest:[],sc:null,evalAt:0,scanAt:0,imp:null,blob:null,tone:{},toneQ:0,n:{cull:0,imp:0,blob:0,list:0,av:0},err:0,streak:0,stT:-99,busy:0};
+const PX={list:[],av:[],hide:[],rest:[],sc:null,evalAt:0,scanAt:0,imp:null,blob:null,tone:{},toneQ:0,n:{cull:0,imp:0,blob:0,list:0,av:0,rl:0},err:0,streak:0,stT:-99,busy:0,k:1,kMax:2.2,gov:{lo:0,hi:0,acc:0,n:0,last:0,changes:0,fps:0,held:0},lastAt:0,rlR:26,rlFar:false,rlTone:[]};
 function pxErr(e){if(PX.err++<3)console.error(e)}
 function pxGate(){return !(navigator.webdriver&&!window.__pxTest)}
 function pxLodOn(){try{return pxGate()&&store.get('sg.lod',true)!==false}catch(e){return false}}
@@ -22336,7 +22354,8 @@ function pxBlobOn(){try{return pxGate()&&store.get('sg.blob',true)!==false}catch
 function pxHitOn(){try{return pxGate()&&store.get('sg.hitfx',true)!==false}catch(e){return false}}
 /* 화면 초점 거리(픽셀): 물체 지름 d·거리 z → 화면 크기 = d·f/z. 그리는 해상도(동적 해상도 포함) 기준 */
 function pxFocal(cam){if(!cam||!cam.isPerspectiveCamera)return 0;const r=R3.r;const H=r&&r.domElement?r.domElement.height:0;if(!H)return 0;return H/(2*Math.tan(cam.fov*Math.PI/360))}
-function pxTier(){const q=SV3.qt;return q==='low'?{cull:6,man:16,st:20}:q==='mid'?{cull:4,man:11,st:32}:{cull:2.5,man:7,st:46}}
+/* v13.2: 기준에 자동 조절기 배율 k(1~2.2)를 곱한다 — 프레임이 떨어지면 해상도보다 먼저 '먼 것 생략'을 조인다 */
+function pxTier(){const q=SV3.qt;const k=PX.k||1;return q==='low'?{cull:6*k,man:16*k,st:20}:q==='mid'?{cull:4*k,man:11*k,st:32}:{cull:2.5*k,man:7*k,st:46}}
 /* ---------- ① 후보 모으기(2.5초마다 · 장면이 바뀌면 바로) ---------- */
 function pxCullable(c){if(c.frustumCulled===false||c.userData.noCull)return false;const g=c.geometry;if(!g||!g.attributes||!g.attributes.position)return false;if(!g.boundingSphere)try{g.computeBoundingSphere()}catch(e){}/* three도 처음 그릴 때 한 번 계산한다 */const bs=g.boundingSphere;if(!bs||!(bs.radius>0)||bs.radius>40)return false;
   const m=Array.isArray(c.material)?c.material[0]:c.material;if(!m||m.visible===false||m.transparent)return false;if(!(m.isMeshStandardMaterial||m.isMeshLambertMaterial||m.isMeshPhongMaterial))return false;
@@ -22348,6 +22367,7 @@ function pxScan(sc){const L=[],AV=[];const now=performance.now();const cars=new 
     /* 뼈대 인물: 몸에 붙은 소품은 98(먼 사람 소품 숨기기)이 이미 맡는다 — 뼈 수천 개를 훑지 않는다 */if(c.isSkinnedMesh){const h=c.parent&&c.parent.userData.rbxH;if(h&&h.mesh===c)AV.push(h);continue}
     else if(c.isMesh&&!c.isInstancedMesh){if(pxCullable(c)){c.__pxK=cf||!c.matrixAutoUpdate?1:0;if(c.__pxT0==null)c.__pxT0=now;L.push(c)}}
     if(c.children.length){st.push(c);fl.push(cf)}}}
+  try{if(typeof RL!=='undefined'&&RL.on&&RL.c&&RL.P){let r=8;for(const o of RL.P){if(o.mode==='gone'||o.hide)continue;const d=Math.hypot(o.x-RL.c.x,o.z-RL.c.z);if(d>r)r=d}PX.rlR=Math.min(r+2,90)}}catch(e){}
   /* 숨김 표시는 새 목록으로 옮긴다(흔들림 방지) */const was=new Set(PX.hide);for(const m of L)m.__pxH=was.has(m);PX.list=L;PX.av=AV;PX.n.list=L.length;PX.n.av=AV.length}
 /* ---------- ① 판정(0.2초마다) ---------- */
 function pxEval(cam,f){const e0=cam.matrixWorld.elements;const px=e0[12],py=e0[13],pz=e0[14];const thr=pxTier().cull;const k=4*f*f,t2=thr*thr;const H=[];const L=PX.list;const now=performance.now();
@@ -22358,23 +22378,27 @@ function pxEval(cam,f){const e0=cam.matrixWorld.elements;const px=e0[12],py=e0[1
     /* (2r·s·f/d)² < 기준² — 이미 숨긴 것은 20% 더 커져야 되돌린다 */const hid=k*bs.radius*bs.radius*s2<t2*(m.__pxH?1.44:1)*(x*x+y*y+z*z);m.__pxH=hid;if(hid)H.push(m)}
   PX.hide=H;PX.n.cull=H.length}
 /* ---------- ② 먼 사람 대역 ---------- */
-function pxBoxes(parts){const P=[],N=[],C=[],I=[];let base=0;for(const q of parts){const g=new T.BoxGeometry(q[0],q[1],q[2]);g.translate(q[3],q[4],q[5]);const p=g.attributes.position.array,n=g.attributes.normal.array,ix=g.index.array;
+function pxBoxes(parts){const P=[],N=[],C=[],I=[];let base=0;for(const q of parts){const g=new T.BoxGeometry(q[0],q[1],q[2]);if(q[9]){/* 위 끝(엉덩이·어깨)을 축으로 앞뒤로 흔든 자세 */g.translate(0,-q[1]/2,0);g.rotateX(q[9]);g.translate(q[3],q[10],q[5])}else g.translate(q[3],q[4],q[5]);const p=g.attributes.position.array,n=g.attributes.normal.array,ix=g.index.array;
     for(let i=0;i<p.length;i++){P.push(p[i]);N.push(n[i])}for(let i=0;i<p.length/3;i++)C.push(q[6],q[7],q[8]);for(let i=0;i<ix.length;i++)I.push(ix[i]+base);base+=p.length/3;g.dispose()}
   const G=new T.BufferGeometry();G.setAttribute('position',new T.Float32BufferAttribute(P,3));G.setAttribute('normal',new T.Float32BufferAttribute(N,3));G.setAttribute('color',new T.Float32BufferAttribute(C,3));G.setIndex(I);return G}
-function pxImpInit(sc){let I=PX.imp;if(I&&I.sc===sc&&I.body.parent===sc)return I;
-  if(!I){const CAP=192;/* 몸: 다리(어둡게)·몸통·팔 — 옷 색은 인스턴스 색 · 머리: 살색 + 머리카락 */
-    const bodyG=pxBoxes([[.15,.84,.17,-.095,.42,0,.6,.6,.62],[.15,.84,.17,.095,.42,0,.6,.6,.62],[.4,.62,.24,0,1.14,0,1,1,1],[.1,.6,.13,-.26,1.12,0,.9,.9,.9],[.1,.6,.13,.26,1.12,0,.9,.9,.9]]);
+function pxImpInit(sc){let I=PX.imp;if(I&&I.sc===sc&&I.head.parent===sc)return I;
+  if(!I){const CAP=320;/* 몸: 다리(어둡게)·몸통·팔 — 옷 색은 인스턴스 색 · 머리: 살색 + 머리카락. v13.2: 몸은 선 자세 + 걸음 두 자세(다리·팔을 엇갈려 흔듦) — 움직이는 사람은 두 자세를 번갈아 쓴다 */
+    const leg=(x,a)=>[.15,.84,.17,x,.42,0,.6,.6,.62,a,.84],arm=(x,a)=>[.1,.6,.13,x,1.12,0,.9,.9,.9,a,1.42],torso=[.4,.62,.24,0,1.14,0,1,1,1];
+    const geos=[[0,0],[.44,-.36],[-.44,.36]].map(q=>pxBoxes([leg(-.095,q[0]),leg(.095,-q[0]),torso,arm(-.26,q[1]),arm(.26,-q[1])]));
     const headG=pxBoxes([[.19,.22,.21,0,1.59,0,.58,.35,.23],[.205,.1,.225,0,1.7,-.005,.03,.025,.02],[.09,.07,.1,0,1.46,0,.58,.35,.23]]);
-    const body=new T.InstancedMesh(bodyG,new T.MeshLambertMaterial({vertexColors:true}),CAP);const head=new T.InstancedMesh(headG,new T.MeshLambertMaterial({vertexColors:true}),CAP);
-    body.instanceMatrix.setUsage(T.DynamicDrawUsage);head.instanceMatrix=body.instanceMatrix;/* 한 번만 올린다 */
-    for(const m of [body,head]){m.frustumCulled=false;m.castShadow=false;m.receiveShadow=false;m.visible=false;m.count=0;m.name='pxImp';m.userData.noCull=1;m.userData.dyn=1;m.matrixAutoUpdate=false}
-    const c=new T.Color(.085,.09,.1);for(let i=0;i<CAP;i++)body.setColorAt(i,c);body.instanceColor.setUsage(T.DynamicDrawUsage);
-    I=PX.imp={body,head,cap:CAP,sc:null,M:new T.Matrix4(),P:new T.Vector3(),Q:new T.Quaternion(),S:new T.Vector3(),up:new T.Vector3(0,1,0),D:new T.Vector3(),col:new T.Color()}}
-  for(const m of [I.body,I.head]){if(m.parent)m.parent.remove(m);sc.add(m)}I.sc=sc;return I}
+    const bm=new T.MeshLambertMaterial({vertexColors:true});const c=new T.Color(.085,.09,.1);
+    const body=geos.map(g=>{const m=new T.InstancedMesh(g,bm,CAP);m.instanceMatrix.setUsage(T.DynamicDrawUsage);for(let i=0;i<CAP;i++)m.setColorAt(i,c);m.instanceColor.setUsage(T.DynamicDrawUsage);return m});
+    const head=new T.InstancedMesh(headG,new T.MeshLambertMaterial({vertexColors:true}),CAP);head.instanceMatrix.setUsage(T.DynamicDrawUsage);
+    for(const m of body.concat([head])){m.frustumCulled=false;m.castShadow=false;m.receiveShadow=false;m.visible=false;m.count=0;m.name='pxImp';m.userData.noCull=1;m.userData.dyn=1;m.matrixAutoUpdate=false}
+    I=PX.imp={body,head,all:body.concat([head]),nb:[0,0,0],cap:CAP,sc:null,M:new T.Matrix4(),P:new T.Vector3(),Q:new T.Quaternion(),S:new T.Vector3(),up:new T.Vector3(0,1,0),D:new T.Vector3(),col:new T.Color(.085,.09,.1)}}
+  for(const m of I.all){if(m.parent)m.parent.remove(m);sc.add(m)}I.sc=sc;return I}
+/* 대역 하나 넣기: pose 0 선 자세 · 1/2 걸음 */
+function pxImpPut(I,ni,pose,col){const bm=I.body[pose];const j=I.nb[pose]++;bm.setMatrixAt(j,I.M);bm.setColorAt(j,col||I.col);I.head.setMatrixAt(ni,I.M)}
 /* 옷 색: 몸 재질이 실제로 쓰는 그림 자리(꼭짓점 UV 약 240곳)의 평균색 × 재질 색 — 그림 빈 바탕(흰색)이 섞이지 않게. 재질마다 한 번 · 프레임당 1개 */
-function pxTone(h){const ms=h.mesh.material;const arr=Array.isArray(ms);const m=arr?(ms.find(x=>x&&x.map&&!/head|opacity|hair/i.test(x.name||''))||ms[0]):ms;if(!m)return null;const hit=PX.tone[m.uuid];if(hit)return hit;if(PX.toneQ>0)return null;PX.toneQ=1;
+function pxTone(h){return pxToneOf(h.mesh.material,h.mesh.geometry)}
+function pxToneOf(ms,g){const arr=Array.isArray(ms);const m=arr?(ms.find(x=>x&&x.map&&!/head|opacity|hair/i.test(x.name||''))||ms[0]):ms;if(!m)return null;const hit=PX.tone[m.uuid];if(hit)return hit;if(PX.toneQ>0)return null;PX.toneQ=1;
   const out=new T.Color(.085,.09,.1);try{const img=m.map&&m.map.image;if(img&&img.complete&&img.naturalWidth){const S=32;const cv=PX.tcv||(PX.tcv=document.createElement('canvas'));cv.width=cv.height=S;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0,S,S);const d=x.getImageData(0,0,S,S).data;
-      const g=h.mesh.geometry,uv=g.attributes.uv,ix=g.index;let st=0,cnt=ix?ix.count:(uv?uv.count:0);if(arr&&g.groups&&g.groups.length){const G=g.groups.find(q=>q.materialIndex===ms.indexOf(m));if(G){st=G.start;cnt=G.count}}
+      const uv=g.attributes.uv,ix=g.index;let st=0,cnt=ix?ix.count:(uv?uv.count:0);if(arr&&g.groups&&g.groups.length){const G=g.groups.find(q=>q.materialIndex===ms.indexOf(m));if(G){st=G.start;cnt=G.count}}
       let r=0,gg=0,b=0,n=0;if(uv&&cnt>0){const step=Math.max(1,Math.floor(cnt/240));for(let i=st;i<st+cnt;i+=step){const vi=ix?ix.getX(i):i;let u=uv.getX(vi),v=uv.getY(vi);u=((u%1)+1)%1;v=((v%1)+1)%1;const o=(Math.min(S-1,Math.floor((1-v)*S))*S+Math.min(S-1,Math.floor(u*S)))*4;r+=d[o];gg+=d[o+1];b+=d[o+2];n++}}
       if(!n){for(let i=0;i<d.length;i+=4){r+=d[i];gg+=d[i+1];b+=d[i+2];n++}}
       /* 옷 주름·그늘이 없는 민무늬라 조금 어둡게 */out.setRGB(r/n/255,gg/n/255,b/n/255,T.SRGBColorSpace).multiplyScalar(.82);if(m.color)out.multiply(m.color)}else if(m.map)return null/* 그림이 아직 안 풀림 — 다음에 다시 */}catch(e){}
@@ -22401,7 +22425,8 @@ function pxApply(sc,cam){const now=performance.now();const f=pxFocal(cam);const 
   if(lod){if(now>=PX.evalAt){PX.evalAt=now+200;pxEval(cam,f)}const H=PX.hide;for(let i=0;i<H.length;i++){const m=H[i];if(m.visible){m.visible=false;R.push(m)}}}else if(PX.hide.length){PX.hide=[];PX.n.cull=0}
   /* 사람 */const tier=pxTier();const battle=typeof OWC!=='undefined'&&OWC.on;let zoom=1;try{zoom=stabZoom()}catch(e){}
   const Dimp=Math.max(45,(tier.st+6)*zoom,1.7*f/(tier.man*(battle?.7:1)));const sd=(typeof RBX!=='undefined'&&RBX.shadowD)||0;PX.toneQ=0;
-  const I=lod?pxImpInit(sc):null;const B=blob?pxBlobInit(sc):null;let ni=0,nb=0;const AV=PX.av;
+  const I=lod?pxImpInit(sc):null;const B=blob?pxBlobInit(sc):null;let ni=0,nb=0;const AV=PX.av;if(I)I.nb[0]=I.nb[1]=I.nb[2]=0;
+  const dtf=clamp((now-(PX.lastAt||now))/1000,.008,.1);PX.lastAt=now;const tw=now*.001;
   for(let i=0;i<AV.length;i++){const h=AV[i];const root=h.root,mesh=h.mesh;if(!root||!mesh||!mesh.visible||!pxInScene(root,sc)){if(h)h.__pxI=false;continue}
     /* 이 시점의 월드 행렬은 지난 프레임 것 — 방금 옮겨 놓인 사람(재배치·등장)이 한 프레임 옛 자리의 대역으로 보이지 않게 뿌리만 지금 값으로 갱신한다. 머리 뼈는 옛 뿌리 기준 상대 위치로 쓴다 */
     const e=root.matrixWorld.elements;const ox=e[12],oy=e[13],oz=e[14];root.updateWorldMatrix(true,false);const x=e[12],y=e[13],z=e[14];const dx=x-cx,dy=y-cy,dz=z-cz;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);
@@ -22412,26 +22437,47 @@ function pxApply(sc,cam){const now=performance.now();const f=pxFocal(cam);const 
     if(far&&ni<I.cap){mesh.visible=false;R.push(mesh);
       if(lying){I.D.set(lx,0,lz);I.Q.setFromUnitVectors(I.up,I.D);I.P.set(hx-lx*1.6*k,y+.13*k,hz-lz*1.6*k);I.S.set(k,k,k)}
       else{I.Q.setFromAxisAngle(I.up,Math.atan2(e[8],e[10]));I.P.set(x,y,z);I.S.set(k,clamp(hy/1.58,.4,1.2),k)}
-      I.M.compose(I.P,I.Q,I.S);I.body.setMatrixAt(ni,I.M);const c=h.__pxC||(h.__pxC=pxTone(h));if(c)I.body.setColorAt(ni,c);else{/* 옷 색을 아직 못 구했으면 어두운 실루엣 */I.col.setRGB(.085,.09,.1);I.body.setColorAt(ni,I.col)}ni++}
+      /* 걷는 중이면(뿌리가 초당 0.35m 넘게 움직임) 걸음 두 자세를 번갈아 — 뛰면 더 빠르게 */const mv=h.__pxPx==null?0:Math.hypot(x-h.__pxPx,z-h.__pxPz)/dtf;if(h.__pxPh==null)h.__pxPh=(i*.37)%1;
+      const pose=lying||mv<.35||mv>14?0:(((tw*(mv>2.6?3.3:2.1)+h.__pxPh)%1)<.5?1:2);
+      I.M.compose(I.P,I.Q,I.S);pxImpPut(I,ni,pose,h.__pxC||(h.__pxC=pxTone(h)));ni++}
+    h.__pxPx=x;h.__pxPz=z;
     if(wantBlob&&nb<B.cap-40&&vy<.06){const a=clamp((d-(sd-1.5))/3,0,1)*clamp((120-d)/25,0,1);if(a>.06){const w=.95*k*(.55+.45*a);
         if(lying){B.E.set(0,Math.atan2(lx,lz),0);B.Q.setFromEuler(B.E);B.P.set((x+hx)/2,y+.05,(z+hz)/2);B.S.set(w*1.05,1,w*2.1)}else{B.Q.identity();B.P.set(x,y+.05,z);B.S.set(w,1,w)}
         B.M.compose(B.P,B.Q,B.S);B.m.setMatrixAt(nb++,B.M)}}}
+  /* v13.2 집회 군중(79 · 인스턴스 100여 명 × 7~9천 삼각형, 그리기 40회): 무리 전체가 대역 거리 밖이면 통째로 대역으로 바꾼다 */
+  PX.n.rl=0;if(I&&typeof RLI!=='undefined'&&RLI.m&&typeof RL!=='undefined'&&RL.on&&RL.P&&RL.P.length&&RL.c&&typeof OUT!=='undefined'&&sc===OUT.scene){
+    const dc=Math.hypot(RL.c.x-cx,RL.c.z-cz)-PX.rlR;const farC=PX.rlFar?dc>Dimp*.97:dc>Dimp*1.08;PX.rlFar=farC;
+    if(farC){const hideRow=rows=>{if(rows)for(const row of rows)for(const m of row)if(m&&m.visible&&m.count>0){m.visible=false;R.push(m)}};hideRow(RLI.m);hideRow(RLI.mf);
+      const P=RL.P;for(let i=0;i<P.length&&ni<I.cap;i++){const o=P[i];if(o.mode==='gone'||o.hide)continue;const s=o.s||1;I.Q.setFromAxisAngle(I.up,o.yaw||0);I.P.set(o.x,0,o.z);I.S.set(s,s,s);I.M.compose(I.P,I.Q,I.S);
+        let c=PX.rlTone[o.vi];if(!c){try{const fr=RLI.fr&&RLI.fr[o.vi]&&RLI.fr[o.vi][0];if(fr)c=PX.rlTone[o.vi]=pxToneOf(fr.mats,fr.geo)}catch(e){}}
+        pxImpPut(I,ni,o.mode==='flee'?(((tw*3.3+o.ph)%1)<.5?1:2):0,c);ni++;PX.n.rl++}}}
   /* 차: 진짜 그림자 범위 밖(낮은 화질은 전부) */
   if(B&&typeof OUT!=='undefined'&&sc===OUT.scene){const sR=SV3.qt==='low'?-1:SV3.qt==='high'?52:44;const car=o=>{if(!o||nb>=B.cap||!pxInScene(o,sc))return;const e=o.matrixWorld.elements;const dx=e[12]-cx,dz=e[14]-cz;const d=Math.hypot(dx,dz);if(d<sR||d>170)return;
       const a=clamp((d-sR)/5,0,1)*clamp((170-d)/30,0,1);if(a<.06)return;const z=pxCarSize(o);const k=Math.sqrt(e[0]*e[0]+e[1]*e[1]+e[2]*e[2])||1;B.E.set(0,Math.atan2(e[8],e[10]),0);B.Q.setFromEuler(B.E);B.P.set(e[12]+e[0]*z.cx+e[8]*z.cz,e[13]+.06,e[14]+e[2]*z.cx+e[10]*z.cz);const s=(.6+.4*a)*k*1.18;B.S.set(z.x*s,1,z.z*s);B.M.compose(B.P,B.Q,B.S);B.m.setMatrixAt(nb++,B.M)};
     try{const C=TOWN.cars||[];for(let i=0;i<C.length;i++)car(C[i].obj);const D=OUT.dcars||[];for(let i=0;i<D.length;i++)car(D[i].car)}catch(e){}}
-  if(I){I.body.count=I.head.count=ni;if(ni){I.body.instanceMatrix.needsUpdate=true;I.body.instanceColor.needsUpdate=true;I.body.visible=I.head.visible=true}}PX.n.imp=ni;
+  if(I){I.head.count=ni;if(ni){I.head.instanceMatrix.needsUpdate=true;I.head.visible=true}for(let q=0;q<3;q++){const bm=I.body[q],c=I.nb[q];bm.count=c;if(c){bm.instanceMatrix.needsUpdate=true;bm.instanceColor.needsUpdate=true;bm.visible=true}}}PX.n.imp=ni;
   if(B){B.m.count=nb;if(nb){B.m.instanceMatrix.needsUpdate=true;const tod=sc===(typeof OUT!=='undefined'&&OUT.scene)?(OUT.tod||'day'):'in';B.m.material.opacity=tod==='night'?.2:tod==='day'?.42:.3;B.m.visible=true}}PX.n.blob=nb}
-function pxRestore(){const R=PX.rest;for(let i=0;i<R.length;i++)R[i].visible=true;R.length=0;if(PX.imp){PX.imp.body.visible=false;PX.imp.head.visible=false}if(PX.blob)PX.blob.m.visible=false}
+function pxRestore(){const R=PX.rest;for(let i=0;i<R.length;i++)R[i].visible=true;R.length=0;if(PX.imp){const A=PX.imp.all;for(let i=0;i<A.length;i++)A[i].visible=false}if(PX.blob)PX.blob.m.visible=false}
 /* 렌더러의 render를 감싼다: 본 화면(지금 장면 + 본 카메라)을 그릴 때만 적용. 조준경 속 화면·덧그리기는 그대로(대역은 숨긴 채) */
 function pxHook(){const r=R3.r;if(!r||!r.render||r.render.__px)return;const b=r.render;const w=function(sc,cam){
     if(PX.busy||!sc||sc!==SV3.scene||!(cam===SV3.cam||(SV3.rp&&cam===SV3.rp.camera)))return b.apply(this,arguments);
-    PX.busy=1;try{pxApply(sc,cam)}catch(e){pxErr(e)}try{return b.apply(this,arguments)}finally{try{pxRestore()}catch(e){}PX.busy=0}};
+    PX.busy=1;try{pxApply(sc,cam)}catch(e){pxErr(e)}try{return b.apply(this,arguments)}finally{try{pxRestore()}catch(e){}/* 플레이 기록(114)용: 이 프레임 본 화면의 그리기 횟수 */try{PX.lastCalls=this.info.render.calls;PX.lastTris=this.info.render.triangles}catch(e){}PX.busy=0}};
   w.__px=1;r.render=w}
-(function(){const b=window.sv3Loop;if(typeof b!=='function')return;window.sv3Loop=function(now){try{pxHook()}catch(e){pxErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.sv3Loop;if(typeof b!=='function')return;window.sv3Loop=function(now){try{pxHook();pxGovTick(now)}catch(e){pxErr(e)}return b.apply(this,arguments)}})();
+/* ---------- v13.2 자동 조절기: 2초마다 실제 프레임을 재서 '먼 것 생략' 배율 k를 조인다/푼다 ----------
+   순서: ① 먼 것 생략(k 1 → 2.2 · 눈에 덜 띔) → ② 해상도(35 · k가 끝까지 조여진 뒤에만 내려가게 하한을 붙잡는다) → ③ 화질 단계.
+   풀 때는 거꾸로: 해상도가 다 돌아온 뒤 k를 조금씩. 화질이 '자동'일 때만(수동이면 k=1). 끄기 sg.gov=false */
+function pxGovOn(){try{return pxLodOn()&&store.get('sg.gov',true)!==false&&typeof drsOn==='function'&&drsOn()}catch(e){return false}}
+function pxGovTick(now){const G=PX.gov;if(G.last){const dt=(now-G.last)/1000;if(dt>0&&dt<.5){G.acc+=dt;G.n++}}G.last=now;if(G.acc<2)return;const fps=G.n/G.acc;G.acc=0;G.n=0;G.fps=fps;pxGovern(fps)}
+function pxGovern(fps){const G=PX.gov;if(!pxGovOn()){if(PX.k!==1){PX.k=1;PX.evalAt=0}if(G.held){try{DRS.min=.6}catch(e){}G.held=0}G.lo=G.hi=0;return}
+  if(fps<27){G.lo++;G.hi=0}else if(fps>50){G.hi++;G.lo=0}else{G.lo=0;G.hi=0}
+  if(G.lo>=2){G.lo=0;if(PX.k<PX.kMax-.01){PX.k=Math.min(PX.kMax,+(PX.k+.3).toFixed(2));G.changes++;PX.evalAt=0;try{store.set('sg.lodk',PX.k)}catch(e){}}}
+  else if(G.hi>=2){G.hi=0;if(PX.k>1&&DRS.s>=DRS.max-.01&&DRS.pend==null){PX.k=Math.max(1,+(PX.k-.15).toFixed(2));G.changes++;PX.evalAt=0;try{store.set('sg.lodk',PX.k)}catch(e){}}}
+  if(PX.k<PX.kMax-.01){DRS.min=Math.max(.6,DRS.s);if(DRS.pend!=null&&DRS.pend<DRS.s)DRS.pend=null;G.held=1}else if(G.held){DRS.min=.6;G.held=0}}
+try{if(!navigator.webdriver){const k0=+store.get('sg.lodk',1);if(k0>1&&k0<=PX.kMax)PX.k=k0}}catch(e){}
 /* 줄인 그리기 수의 일부를 되돌려 쓴다: 사람의 진짜 그림자 거리 중간 11 → 16m · 높음 16 → 24m(낮음은 그대로 0 — 접지 그림자만) */
-(function(){if(typeof RBX==='undefined'||typeof RBX.frame!=='function')return;const b=RBX.frame;RBX.frame=function(cam){const r=b.apply(this,arguments);try{if(cam&&this.shadowD>0&&pxLodOn()&&!PX.off)this.shadowD=this.shadowD<=11?16:24}catch(e){}return r}})();
-function pxStats(){return{cull:PX.n.cull,imp:PX.n.imp,blob:PX.n.blob,list:PX.n.list,av:PX.n.av}}
+(function(){if(typeof RBX==='undefined'||typeof RBX.frame!=='function')return;const b=RBX.frame;RBX.frame=function(cam){const r=b.apply(this,arguments);try{if(cam&&this.shadowD>0&&pxLodOn()&&!PX.off&&(PX.k||1)<=1.01)this.shadowD=this.shadowD<=11?16:24}catch(e){}return r}})();
+function pxStats(){return{cull:PX.n.cull,imp:PX.n.imp,blob:PX.n.blob,list:PX.n.list,av:PX.n.av,rl:PX.n.rl,k:PX.k}}
 /* ---------- 기기 점검(37)에 끔/켬 비교 한 줄: 밖 장면을 최적화 끈 채 6초 → 켠 채 8초. 결과 복사 글에 두 줄이 나란히 나온다(종합 등급에는 켠 값만) ---------- */
 (function(){const b=window.bnOutside;if(typeof b!=='function'||typeof bnMeasure!=='function')return;const w=async function(out){if(!pxLodOn()||typeof startOutside!=='function')return b.apply(this,arguments);
     bnBanner('실제 지도 밖',2);if(!outAvail()||!LIFE.exit){out.scenes.push({n:'밖(실제 지도)',skip:'나갈 수 없는 장소'});return}
@@ -22449,6 +22495,76 @@ function pxKill(head){pxMark(head,true);const t=performance.now()/1000;PX.streak
   const g=window.gunHitPerson;if(typeof g==='function')window.gunHitPerson=function(t,pt,d,W,first){const a=t&&t.a;const dead0=!!(a&&a.dead);let host0=null;try{host0=a?gunHostile(t):null}catch(e){}const r=g.apply(this,arguments);
     /* 적대 대상(적·깡패·약탈자·달아나는 간첩)만 — 주민·팀원·군인을 맞힌 것은 표시하지 않는다 */try{if(a&&host0&&W&&!W.nonlethal&&pxHitOn()){const head=t.part==='head';if(a.dead&&!dead0)pxKill(head);else if(!a.dead){pxMark(head,false);try{SFX.mech(head?'head':'hit')}catch(e){}}}}catch(e){pxErr(e)}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['⚡ 모바일 최적화 · 화면 다듬기(v13.1)','화면에서 몇 픽셀도 안 되는 먼 부품은 그리지 않고, 먼 사람은 가벼운 대역으로 바꿔 그린다(가까이 가거나 조준경으로 당기면 원래 모습). 사람의 진짜 그림자는 더 멀리까지(중간 16m · 높음 24m) 생기고, 그 밖의 사람·차 밑에는 부드러운 접지 그림자가 깔린다. 밖에서 총을 쏠 때도 명중 표시가 뜨고, 제압하면 붉은 표시와 연속 제압 띠가 뜬다. 설정의 기기 점검(약 1분)은 밖 장면을 최적화 끈 채·켠 채 두 번 재서 이 기기에서의 효과를 숫자로 보여 준다.']);
+
+/* ===================== 114 · v13.2 플레이 중 자동 기록 · 이동 중 버튼 흐리게 · 알림 배지 ===================== */
+/* 사용자 요청(2026-11-14): "부족 점수 채울 수 있게 자체 upgrade" — 감점의 핵심은 '실기기 측정이 없다'였다.
+   ① 플레이 중 자동 기록: 평소처럼 노는 동안 장면별(밖·교전·실내·전투 장면) 프레임을 이 기기에만 쌓는다(네트워크 전송 없음).
+      평균 프레임 · 30프레임 밑으로 떨어진 시간 비율 · 끊김(50ms+) 횟수 · 그리기 횟수 · 화질 단계별 시간 · 해상도 배율 · 생략 배율,
+      그리고 플레이 요약(교전 승·패·후퇴 · 세력 행동 · 팀 최고 레벨 · 최고 일차). 설정 → 📈 플레이 기록에서 보고 복사한다.
+      기기 점검(약 1분)을 따로 돌리지 않아도 실제 플레이의 숫자가 남는다. 개인정보 없음(기기 종류·GPU·프레임·횟수만).
+   ② 이동 중 버튼 흐리게: 1.5초 넘게 걷거나 타고 가는 동안 위쪽 버튼 띠·상태 줄을 흐리게(만지면 4초 동안 원래대로, 멈추면 바로 복귀).
+   ③ 알림 배지: 이번 턴 정치 행동이 남았거나 세력의 요구가 와 있으면 🚨 상황 버튼에, 팀원 레벨이 올랐으면 👥 팀 버튼에 점.
+   끄기: localStorage sg.plog=false(①) · sg.hudq=false(②) · sg.badge=false(③). 자동 점검에서는 window.__plogTest / __hqTest로만 켠다 */
+const PLOG={cur:null,acc:{},last:0,dirty:0,saveAt:0,callT:0,tm:0};
+const PLOG_K={out:'밖',owc:'교전',in:'실내',bat:'전투 장면'};
+function plogOn(){try{if(navigator.webdriver&&!window.__plogTest)return false;if(typeof BENCH!=='undefined'&&BENCH.on)return false;return store.get('sg.plog',true)!==false}catch(e){return false}}
+function plogBlank(){return{t:0,n:0,s33:0,n50:0,n100:0,calls:0,tris:0,cn:0,q:{low:0,mid:0,high:0},drs:0,k:0}}
+function plogLoad(){if(PLOG.cur)return PLOG.cur;let d=null;try{d=store.get('sg.plogData',null)}catch(e){}
+  if(!d||typeof d!=='object'||d.v!==APP_VER||!d.sc){const prev=d&&d.sc?{v:String(d.v||'').slice(0,8),line:plogLine(d,'out')}:null;d={v:APP_VER,since:new Date().toISOString().slice(0,10),sc:{},play:{bt:{},fc:{},lvMax:1,dayMax:1,games:0},prev}}
+  if(!d.play)d.play={bt:{},fc:{},lvMax:1,dayMax:1,games:0};return PLOG.cur=d}
+function plogSave(force){if(!PLOG.cur||(!PLOG.dirty&&!force))return;PLOG.dirty=0;try{const P=PLOG.cur.play;try{const L=typeof TEAM!=='undefined'&&TEAM.list?TEAM.list:[];for(const m of L)if(m&&m.d&&(m.d.lv|0)>P.lvMax)P.lvMax=m.d.lv|0}catch(e){}try{const day=dayOf(G.turn|0);if(day>P.dayMax)P.dayMax=day}catch(e){}store.set('sg.plogData',PLOG.cur)}catch(e){}}
+/* 프레임 하나 기록(kind: out·owc·in·bat) */
+function plogFrame(kind,now){if(PLOG.last&&PLOG.kind===kind){const dt=now-PLOG.last;if(dt>0&&dt<1000){const D=plogLoad();const a=D.sc[kind]||(D.sc[kind]=plogBlank());const s=dt/1000;a.t+=s;a.n++;if(dt>33.4)a.s33+=s;if(dt>50)a.n50++;if(dt>100)a.n100++;
+      const q=kind==='bat'?(typeof BS!=='undefined'&&BS&&BS.qt)||'mid':SV3.qt||'mid';a.q[q]=(a.q[q]||0)+s;a.drs+=s*((typeof DRS!=='undefined'&&DRS.s)||1);a.k+=s*((typeof PX!=='undefined'&&PX.k)||1);
+      if(now-PLOG.callT>1000&&typeof PX!=='undefined'&&PX.lastCalls>0&&kind!=='bat'){PLOG.callT=now;a.calls+=PX.lastCalls;a.tris+=PX.lastTris||0;a.cn++}
+      PLOG.dirty=1;if(now>PLOG.saveAt){PLOG.saveAt=now+20000;plogSave()}}}PLOG.last=now;PLOG.kind=kind}
+function plogKind(){try{if(typeof OWC!=='undefined'&&OWC.on)return'owc';if(typeof OUT!=='undefined'&&OUT.on)return'out'}catch(e){}return'in'}
+(function(){const b=window.sv3Loop;if(typeof b==='function')window.sv3Loop=function(now){try{if(plogOn())plogFrame(plogKind(),performance.now());else PLOG.last=0;hqStep(performance.now())}catch(e){}return b.apply(this,arguments)};
+  const bl=window.bLoop;if(typeof bl==='function')window.bLoop=function(now){try{if(plogOn()&&typeof BS!=='undefined'&&BS&&!BS.paused&&!BS.done)plogFrame('bat',performance.now());else PLOG.last=0}catch(e){}return bl.apply(this,arguments)}})();
+try{document.addEventListener('visibilitychange',()=>{PLOG.last=0;if(document.hidden)plogSave()});window.addEventListener('pagehide',()=>plogSave())}catch(e){}
+/* 플레이 요약: 교전 결과 · 세력 행동 · 새 판 */
+(function(){const e=window.owcEnd;if(typeof e==='function')window.owcEnd=function(win,why){let kind='';try{kind=(typeof OWC!=='undefined'&&!OWC.done&&OWC.on&&OWC.k)||''}catch(x){}const r=e.apply(this,arguments);try{if(kind&&plogOn()){const P=plogLoad().play;const b=P.bt[kind]||(P.bt[kind]={w:0,l:0,q:0});if(win)b.w++;else if(why==='quit')b.q++;else b.l++;PLOG.dirty=1;plogSave()}}catch(x){}return r};
+  const f=window.fcAct;if(typeof f==='function')window.fcAct=function(id,a){let left0=-1;try{left0=fcS().act.left}catch(x){}const r=f.apply(this,arguments);try{if(plogOn()&&a&&r){const S=fcS();/* 실제로 이뤄진 행동만: 거래는 '거래:' 문구, 그 밖은 행동 수가 줄었을 때 */if(a==='trade'?/거래:/.test(r):S.act.left<left0||left0<0){const P=plogLoad().play;P.fc[a]=(P.fc[a]||0)+1;PLOG.dirty=1}}}catch(x){}return r};
+  const n=window.newGame;if(typeof n==='function')window.newGame=function(){const r=n.apply(this,arguments);try{if(plogOn()){plogLoad().play.games++;PLOG.dirty=1}}catch(x){}return r}})();
+/* 한 줄 요약 · 복사용 글 */
+function plogLine(D,k){const a=D&&D.sc&&D.sc[k];if(!a||a.t<5)return'';const fps=a.n/a.t;const qs=['high','mid','low'].filter(q=>a.q[q]>a.t*.03).map(q=>({high:'높음',mid:'중간',low:'낮음'})[q]+' '+Math.round(a.q[q]/a.t*100)+'%').join('/');
+  return`${PLOG_K[k]}: 평균 ${fps.toFixed(1)}fps · 30fps 미만 ${Math.round(a.s33/a.t*100)}% · 끊김(50ms+) ${a.n50}회(100ms+ ${a.n100}회) · ${Math.round(a.t/60*10)/10}분`+(a.cn?` · 그리기 ${Math.round(a.calls/a.cn)}회 · 삼각형 ${Math.round(a.tris/a.cn/1000)}k`:'')+` · 화질 ${qs||'-'} · 해상도 ×${(a.drs/a.t).toFixed(2)} · 생략 ×${(a.k/a.t).toFixed(2)}`}
+function plogPlayLine(D){const P=D.play||{};const bt=Object.keys(P.bt||{});let w=0,l=0,q=0;for(const k of bt){w+=P.bt[k].w;l+=P.bt[k].l;q+=P.bt[k].q}const FN={gift:'지원',trade:'거래',ally:'동맹',denounce:'배척',rumor:'소문',tip:'밀고',raid:'창고 털기',wedge:'이간질',bribe:'매수',betray:'배신'};const fc=Object.keys(P.fc||{}).map(k=>(FN[k]||k)+' '+P.fc[k]).join('·');
+  return`플레이: 새 판 ${P.games||0}회 · 최고 ${P.dayMax||1}일차 · 교전 승 ${w}·패 ${l}·후퇴 ${q}${bt.length?' ('+bt.map(k=>k+' '+P.bt[k].w+'/'+(P.bt[k].w+P.bt[k].l+P.bt[k].q)).join(', ')+')':''} · 세력 행동 ${fc||'없음'} · 팀 최고 Lv ${P.lvMax||1}`}
+function plogText(){plogSave(true);const D=plogLoad();let d={};try{d=benchDev()}catch(e){}const tot=Object.keys(D.sc).reduce((s,k)=>s+D.sc[k].t,0);
+  const L=[`[생존of탕정 플레이 기록 v${D.v}] ${D.since}부터 · 플레이 ${Math.round(tot/60)}분`,`기기: ${d.ua||'?'}`,`코어 ${d.cores||'?'} · 메모리 ${d.mem||'?'}GB · 화면 ${d.scr||'?'} ×${d.dpr||'?'} · GPU ${d.gpu||'?'}`];
+  for(const k of ['out','owc','in','bat']){const s=plogLine(D,k);if(s)L.push(s)}L.push(plogPlayLine(D));if(D.prev&&D.prev.line)L.push(`이전 판(v${D.prev.v}) ${D.prev.line}`);
+  try{L.push(`지금 설정: 화질 ${(cbGet('sel',{}).qual||'auto')}(${SV3.qt||'-'}) · 해상도 ×${(typeof DRS!=='undefined'&&DRS.s)||1} · 생략 ×${(typeof PX!=='undefined'&&PX.k)||1}`)}catch(e){}return L.join('\n')}
+function plogShow(){try{s4Open('main')}catch(e){}const o=document.getElementById('set84');if(!o)return;plogSave(true);const D=plogLoad();const tot=Object.keys(D.sc).reduce((s,k)=>s+D.sc[k].t,0);
+  const row=k=>{const a=D.sc[k];if(!a||a.t<5)return`<div><span>${PLOG_K[k]}</span><b class="mut">기록 없음</b></div>`;const fps=a.n/a.t;const g=fps>=45?3:fps>=30?2:fps>=20?1:0;return`<div><span>${PLOG_K[k]} <small class="mut">${Math.round(a.t/60*10)/10}분</small></span><b>${fps.toFixed(0)}fps <small class="mut">30 미만 ${Math.round(a.s33/a.t*100)}% · 끊김 ${a.n50}회${a.cn?' · 그리기 '+Math.round(a.calls/a.cn):''}</small> <em class="bn-g g${g}">${['느림','버거움','무난','쾌적'][g]}</em></b></div>`};
+  o.innerHTML=`<div class="sheet s84"><div class="ov-head"><h2>플레이 기록(자동)</h2><button class="btn pri" data-bn="close">닫기</button></div>
+    <p class="s4-p">평소처럼 노는 동안 이 기기에서 잰 값 · ${clean(D.since,12)}부터 · 모두 ${Math.round(tot/60)}분</p>
+    <div class="s4-tbl">${['out','owc','in','bat'].map(row).join('')}</div>
+    <p class="s4-p small">${clean(plogPlayLine(D),260)}</p>
+    <div class="row"><button class="btn pri" data-g3="plogcopy">기록 복사</button><button class="btn" data-g3="plogwipe">기록 지우기</button></div>
+    <p class="s4-p small mut">이 기기에만 저장되고 어디로도 보내지 않는다. 복사해서 대화창에 붙여 주면 이 기기의 실제 숫자로 화질·성능·난이도를 맞춘다. 기기 종류·GPU·프레임·횟수만 있고 개인정보는 없다.</p></div>`}
+(function(){const b=window.s4Html;if(typeof b==='function')window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&h.indexOf('data-g3="plog"')<0)h=h.replace('<button class="btn ghost" data-s4="v" data-v="info">','<button class="btn ghost" data-g3="plog">📈 플레이 기록(자동)</button><button class="btn ghost" data-s4="v" data-v="info">')}catch(e){}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-g3]');if(!b)return;const k=b.dataset.g3;if(k!=='plog'&&k!=='plogcopy'&&k!=='plogwipe')return;e.preventDefault();e.stopPropagation();
+  try{if(k==='plog')plogShow();else if(k==='plogcopy')s4Copy(plogText());else{PLOG.cur=null;try{localStorage.removeItem('sg.plogData')}catch(x){}plogLoad();plogShow();toast('플레이 기록을 지웠다',2200)}}catch(x){console.error(x)}},true);
+/* ---------- ② 이동 중 버튼 흐리게 ---------- */
+const HQ={q:false,mvT:0,hold:0,bT:0};
+function hqOn(){try{if(navigator.webdriver&&!window.__hqTest)return false;return store.get('sg.hudq',true)!==false}catch(e){return false}}
+function hqStep(now){const el=SV3.el;if(!el)return;let quiet=false;
+  if(hqOn()&&typeof OUT!=='undefined'&&OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)){let mv=false;try{mv=FP3.moving>.25||!!OUT.drv||!!(OUT.ride&&Math.abs(OUT.ride.v)>.3)}catch(e){}
+    if(mv){if(!HQ.mvT)HQ.mvT=now}else HQ.mvT=0;quiet=mv&&now-HQ.mvT>1500&&now>HQ.hold&&!OUT.enc&&!OUT.busy}else HQ.mvT=0;
+  if(quiet!==HQ.q){HQ.q=quiet;el.classList.toggle('px-quiet',quiet)}
+  /* ③ 배지: 0.6초마다 */if(now>HQ.bT){HQ.bT=now+600;hqBadge()}}
+try{document.addEventListener('pointerdown',e=>{if(!HQ.q)return;const t=e.target;if(t&&t.closest&&t.closest('#oBar,#oStat,.hud')){HQ.hold=performance.now()+4000;HQ.q=false;if(SV3.el)SV3.el.classList.remove('px-quiet')}},true)}catch(e){}
+/* ---------- ③ 알림 배지 ---------- */
+const BDG={fcSeen:-1,tm:0};
+function bdgOn(){try{if(navigator.webdriver&&!window.__hqTest)return false;return store.get('sg.badge',true)!==false}catch(e){return false}}
+function hqBadge(){const bar=document.getElementById('oBar');if(!bar)return;let fc=false,tm=false;
+  if(bdgOn()){try{if(typeof fcOn==='function'&&fcOn()&&G.flags&&G.flags.fc&&(G.turn|0)>=2){const S=G.flags.fc;const left=S.act&&S.act.turn===(G.turn|0)?S.act.left:2;fc=!!(S.req||S.feud)||(left>0&&BDG.fcSeen!==(G.turn|0))}}catch(e){}tm=!!BDG.tm}
+  if(bar.classList.contains('px-bfc')!==fc)bar.classList.toggle('px-bfc',fc);if(bar.classList.contains('px-btm')!==tm)bar.classList.toggle('px-btm',tm)}
+(function(){const p=window.fcPanel;if(typeof p==='function')window.fcPanel=function(open){try{if(open)BDG.fcSeen=G.turn|0}catch(e){}return p.apply(this,arguments)};
+  const t=window.tmPanel;if(typeof t==='function')window.tmPanel=function(open){try{if(open)BDG.tm=0}catch(e){}return t.apply(this,arguments)};
+  const g=window.tlvGain;if(typeof g==='function')window.tlvGain=function(){let b=0;try{b=(TEAM.list||[]).reduce((s,m)=>s+((m.d&&m.d.lv)|0),0)}catch(e){}const r=g.apply(this,arguments);try{const a=(TEAM.list||[]).reduce((s,m)=>s+((m.d&&m.d.lv)|0),0);if(a>b)BDG.tm=1}catch(e){}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['📈 플레이 기록 · 화면 정리(v13.2)','평소처럼 노는 동안 장면별 프레임·그리기 횟수와 교전·세력 행동 요약이 이 기기에만 쌓인다(설정 → 플레이 기록 → 복사). 프레임이 떨어지면 해상도를 낮추기 전에 먼 것 생략부터 스스로 조인다. 걷거나 타고 가는 동안에는 위쪽 버튼이 흐려지고(만지면 돌아옴), 정치 행동이 남았거나 팀원 레벨이 오르면 버튼에 점이 뜬다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
