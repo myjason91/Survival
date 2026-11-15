@@ -13823,7 +13823,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.5';
+const APP_VER='13.6';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -23032,7 +23032,7 @@ function roeOf(t){if(!t)return null;const a=t.a||{},k=t.kind;if(a.surr)return{la
   if(k==='team')return{law:false,cat:'prot',n:'팀원'};if(k==='fam')return{law:false,cat:'prot',n:'가족'};if(k==='follow')return{law:false,cat:'prot',n:'동행'};if(k==='rok'||k==='gsrok'||k==='gspol'||(a&&a.kind==='rok'))return{law:false,cat:'prot',n:'군·경'};if(a.isAl||k==='ally')return{law:false,cat:'prot',n:'아군'};
   let h=null;try{h=gunHostile(t)}catch(e){}
   if(h==='wanted')return{law:true,cat:'want',n:'수배자'};if(h==='spy')return{law:true,cat:'spy',n:'도주 간첩'};if(h==='thug')return{law:true,cat:'crim',n:'폭력배'};if(h==='loot')return{law:true,cat:'crim',n:'약탈 현행범'};
-  if(h){if(a.roeT)return{law:true,cat:'tgt',n:'사살 허가 대상'};if(a.is)return{law:true,cat:a.isK==='spyamb'?'spy':'ins',n:(a.E&&a.E.n)||'무장 조직원'};return{law:true,cat:'en',n:'적 전투원'}}
+  if(h){if(a.roeT)return{law:true,cat:'tgt',n:'사살 허가 대상'};if(a.is&&a.isK!=='kpa')return{law:true,cat:a.isK==='spyamb'?'spy':'ins',n:(a.E&&a.E.n)||'무장 조직원'};return{law:true,cat:'en',n:'적 전투원'}}
   return{law:false,cat:'civ',n:'비무장 주민'}}
 /* 조준점 아래 표시 */
 (function(){const b=window.gunCast;if(typeof b==='function')window.gunCast=function(){const r=b.apply(this,arguments);ROE.cast=r;return r}})();
@@ -23162,7 +23162,7 @@ const WPK_CAT={ar:'소총',smg:'기관단총',sg:'산탄총',sr:'저격',lmg:'�
 /* 탄약 표시에 '🔁 무기 바꾸기' */
 function wpkChip(){const am=document.querySelector('#gunUI .owc-ammo');if(!am)return;let c=am.querySelector('.wpk-chip');const n=wpkList().length+(wpkAw()?1:0);if(n<2||!wpkCan()){if(c)c.remove();am.classList.remove('wpk-am');return}if(!c){c=document.createElement('i');c.className='wpk-chip';c.textContent='🔁 무기 바꾸기';am.appendChild(c)}am.classList.add('wpk-am');am.dataset.g3='wpk'}
 function wpkHtml(){const L=wpkList();let h='<div class="wpk-h"><b>무기 바꾸기</b><button class="btn sm" data-g3="wpkx">닫기</button></div><div class="wpk-l">';let i=0;
-  if(wpkAw()){const n=wpkGl();i++;h+=`<button class="wpk-r${AW.gl?' on':''}" data-g3="wpkp" data-id="gl"${n>0?'':' disabled'}><em>${i}</em><b>💣 유탄</b><small>포물선 · 창밖 무리에</small><span class="num">${n}발</span>${AW.gl?'<i>✓</i>':''}</button>`}
+  if(wpkAw()&&!AW.raid){const n=wpkGl();i++;h+=`<button class="wpk-r${AW.gl?' on':''}" data-g3="wpkp" data-id="gl"${n>0?'':' disabled'}><em>${i}</em><b>💣 유탄</b><small>포물선 · 창밖 무리에</small><span class="num">${n}발</span>${AW.gl?'<i>✓</i>':''}</button>`}
   for(const a of L){const W=ARMS[a.id];const A=wpkAm(a.id);const cur=GUN.eq===a.id&&!(wpkAw()&&AW.gl);const empty=W.mag&&A.mag+A.res<=0;i++;h+=`<button class="wpk-r${cur?' on':''}" data-g3="wpkp" data-id="${a.id}"${empty?' disabled':''}><em>${i<=9?i:''}</em><b>${W.n}</b><small>${WPK_CAT[W.cat]||''}${W.zoom>1?` · ${W.zoom}배율`:''}${W.quiet?' · 소음':''}</small><span class="num">${W.mag?`${A.mag}/${A.res}`:'—'}</span>${cur?'<i>✓</i>':''}</button>`}
   return h+'</div><p class="wpk-n">PC: Z 열기 · 숫자로 고르기</p>'}
 function wpkOpen(on){let p=document.getElementById('wpk');if(!on){if(p)p.remove();WPK.open=false;return}if(!SV3.el)return;if(!p){p=document.createElement('div');p.id='wpk';p.className='wpk';SV3.el.appendChild(p)}p.innerHTML=wpkHtml();WPK.open=true;GUN.fire=false}
@@ -23190,6 +23190,134 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=wpkaw]'
 /* 아파트 전투를 시작할 때 한 번 알려 준다 */
 (function(){const b=window.awStart;if(typeof b!=='function')return;window.awStart=function(){const r=b.apply(this,arguments);try{if(r&&wpkList().length>=2&&!store.get('sg.wpkTip',false)){store.set('sg.wpkTip',true);setTimeout(()=>{try{outNote('<b>🔁 무기 바꾸기</b><div>탄약 표시(총 이름) 아래 \'무기 바꾸기\'를 누르면 가방의 총으로 바꾼다 · 유탄도 거기서 · PC는 Z키.</div>',5200)}catch(e){}},5600)}}catch(e){}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🔁 무기 바꾸기(v13.5)','총을 든 화면에서 탄약 표시(총 이름) 아래 <b>🔁 무기 바꾸기</b>를 누르면 가방에 있는 총 목록이 뜬다 — 탄창/남은 탄, 지금 든 총 ✓, 탄이 없는 총은 흐리게. 아파트 CQB·창밖 경계(아파트 전투)에서는 맨 위에 <b>💣 유탄</b>이 있다(고르면 유탄 모드, 총을 고르면 꺼진다). 창가 저격 자리에서도 조준경 없는 총으로 바꿀 수 있다. PC: Z키로 열고 숫자 1~9로 고른다. 진지 방식 교전은 시작할 때 든 총으로 싸운다.']);
+
+/* ===================== 122 · v13.6 북한군 점령 아파트 탈환 — 1층부터 꼭대기 층까지 팀원과 층별 CQB ===================== */
+/* 사용자 요청(2026-11-15 17:17): "북한군이 점령한 기지들 중 아파트 설정도 추가해 주시고 아파트 1층부터 CQB를 하면서 북한군을 제거하면서 꼭대기 층까지 팀원들과 점령하는 기능도 추가해 주세요"
+   기준(사용자에게 알림): 28층을 한 층씩 전부 싸우면 한 판이 1시간을 넘는다 → 1층 로비 · 중간 거점 층 4곳 · 꼭대기 층(지휘소)에서 교전, 그 사이 층은 계단으로 빠르게 통과(빈 층 수색 표시는 남긴다)
+   · 첩보: 2턴부터 밖에 나가면 '북한군이 고층 아파트 한 동을 점령'(내 단지는 아니다 · 대피소에서 180~650m). 미니맵 붉은 ⚑ 네모 · 상황판(🚨) 줄 '길 안내'
+   · 현관: 70m 안에 들면 현관 앞 경계병 3명이 보인다 → 먼저 쏘거나 28m 안에서 보이면 그 자리에서 교전(116 제자리 교전)
+   · 진입: 현관을 누르면 '탈환 작전' 카드 → 1층 로비부터. 층마다 실내 근접전(101 아파트 전투의 실내 엔진): 적은 방·주방·베란다 쪽에 자리 잡고(대기) 나를 보면 겨누고, 총성이 나면 찾아 나선다
+     무장한 팀원은 내 뒤 1.5~3m를 따라붙으며 보이는 적을 쏜다(사격 담당 그대로) · 비무장 팀원·가족은 현관 쪽에서 몸을 낮춘다(적은 가족을 겨누지 않는다)
+   · 층을 비우면: 남은 물자 뒤지기 가능 + '⤴ 계단 — N층으로'. 사이 층은 '빈 층 수색' 기록만 남기고 지나간다(층당 1분)
+   · 꼭대기 층 = 지휘소(조장 포함 5명 안팎) → 무너지면 옥상 관측병 2명이 손을 든다(계엄군에 넘김) → 탈환 완료: 이웃 신뢰 +4 · 사기 +3 · 현금 봉투 3 · 노획(PKM 기관총 또는 SVD · 5.45mm 탄)
+   · 버팀(체력 버퍼)은 층을 넘어 이어진다 — 탈환을 끝내거나 건물을 나오면 받은 피해의 40%가 실제 체력에서 빠진다(아파트 전투와 같은 규칙). 0이면 쓰러져 대피소로(진행은 남는다)
+   · 중간에 나와도 진행은 남는다 — 다시 현관을 누르면 다음 층부터
+   · 교육용 모드 · 교전 끔(설정) · 탈환 끔(sg.aptraid=false)이면 나오지 않는다. 등장 인물·부대는 가상이다 */
+const RD={err:0,tT:0,sent:null,mkT:0,lastTurn:-1,uiT:0};
+function rdErr(e){if(RD.err<6){RD.err++;console.error(e)}}
+function rdOn(){try{return store.get('sg.aptraid',true)!==false&&!(typeof eduOn==='function'&&eduOn())&&store.get('sg.owc',true)!==false&&typeof tjUse==='function'&&tjUse()&&!(navigator.webdriver&&!window.__rdTest)}catch(e){return false}}
+function rdS(){const F=G.flags;if(!F.rd||typeof F.rd!=='object'||F.rd.v!==1)F.rd={v:1,st:'none',apt:-1,fls:[],next:0,won:0,hp:100,since:-1,cool:0};return F.rd}
+function rdDoor(){const S=rdS();if(S.apt<0)return null;try{return tjAptDoors()[S.apt]||null}catch(e){return null}}
+function rdTop(d){return Math.max(8,Math.min(30,(d&&d.fl)||20))}
+/* 싸우는 층: 1층 로비 · 25/45/65/85% · 꼭대기 */
+function rdFloors(top){const L=[1];for(const k of [.25,.45,.65,.85]){const f=Math.round(top*k);if(f>L[L.length-1]+1&&f<top-1)L.push(f)}L.push(top);return L}
+function rdDir(dx,dz){const a=(Math.atan2(dx,-dz)*180/Math.PI+360)%360;return['북','북동','동','남동','남','남서','서','북서'][Math.round(a/45)%8]}
+/* ---------- 첩보: 점령된 동 고르기 ---------- */
+function rdMake(force){const S=rdS();if(!force){if(S.st!=='none'&&S.st!=='done')return false;if(S.st==='done'&&(G.turn|0)<(S.cool|0))return false;if((G.turn|0)<2)return false}
+  let L=[];try{const ex=typeof LIFE!=='undefined'&&LIFE.exit?{x:LIFE.exit[0],z:LIFE.exit[1]}:{x:FP3.pos.x,z:FP3.pos.z};L=tjAptDoors().map((d,i)=>({d,i,dist:Math.hypot(d.x-ex.x,d.z-ex.z)})).filter(q=>!q.d.own&&(q.d.fl||0)>=8&&q.dist>180&&q.dist<650&&owcFree(q.d.x+q.d.nx*2.2,q.d.z+q.d.nz*2.2,.6))}catch(e){rdErr(e)}
+  if(!L.length)return false;const r=rng3((((G.seed||1)*977)+(G.turn|0)*31+(S.won|0)*7)>>>0);const q=L[Math.floor(r()*L.length)];const top=rdTop(q.d);
+  Object.assign(S,{st:'intel',apt:q.i,fls:rdFloors(top),next:0,hp:100,since:G.turn|0,top,guard:0});RD.sent=null;
+  try{const p=FP3.pos;const d=Math.round(Math.hypot(q.d.x-p.x,q.d.z-p.z));outNote(`<b>📻 북한군이 아파트 한 동을 점령했다</b><div>${rdDir(q.d.x-p.x,q.d.z-p.z)}쪽 ${d}m · ${top}층 건물 — 꼭대기에 지휘소, 옥상에 관측병. 미니맵 붉은 ⚑ · 상황판(🚨)에서 길 안내. 1층부터 팀원과 층별로 쓸어 올라가 탈환한다.</div>`,7000)}catch(e){}
+  return true}
+/* ---------- 현관 앞 경계병(116 제자리 교전) ---------- */
+function rdKpaO(){return{k:'kpa',ico:'🏢',nm:'점령군 경계병',look:(type,seed)=>owcLook(type==='lead'?'elite':type==='mark'?'rifle':'rifle',seed),more:'건물에서 더 나온다',noSurr:1,stat:{gun:{n:'북한군 경계병'},lead:{n:'북한군 경계 조장'},rush:{n:'북한군 돌격조'}},say:'현관에 북한군이에요!'}}
+function rdGuards(){const S=rdS();const d=rdDoor();if(!d||(RD.sent&&RD.sent.st!=='gone')||typeof isHoldMk!=='function')return;const o=rdKpaO();const ag=[];const rx=-d.nz,rz=d.nx;
+  /* 현관 앞 3~9m에서 세 자리가 비는 곳(현관 앞이 막힌 동도 있다) */let base=null;for(const k of [3.2,5,7,9]){const gx=d.x+d.nx*k,gz=d.z+d.nz*k;let n=0;for(const [u,f] of [[0,0],[-2.2,.8],[2.2,.8]]){try{if(owcFree(gx+rx*u+d.nx*f,gz+rz*u+d.nz*f,.6))n++}catch(e){}}if(n>=2){base={gx,gz};break}}if(!base)base={gx:d.x+d.nx*3.2,gz:d.z+d.nz*3.2};const gx=base.gx,gz=base.gz;
+  [[0,0,'lead'],[-2.2,.8,'gun'],[2.2,.8,'gun']].forEach(([u,f,t],i)=>{let x=gx+rx*u+d.nx*f,z=gz+rz*u+d.nz*f;let ok=false;try{ok=owcFree(x,z,.6);if(!ok){const q=owcNearFree(x,z,3);if(q){x=q.x;z=q.z;ok=true}}}catch(e){}if(!ok)return;const a=isHoldMk(t,x,z,401+i*13,o);if(!a)return;a.h.root.rotation.y=Math.atan2(d.nx,d.nz);try{a.h.setPose(i?'low':'idle',true)}catch(e){}ag.push(a)});
+  RD.sent={ag,o,st:'hold'}}
+function rdGuardFight(first){const C=RD.sent;if(!C||C.st!=='hold')return;const live=C.ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);const d=rdDoor();
+  const o=Object.assign({},C.o,{agents:live,waves:[[],['gun','gun']],grace:first?2.2:1,dmin:26,dmax:46,at:d?{x:d.x+d.nx*4,z:d.z+d.nz*4,r:7}:null,
+    intro:`<b>🏢 점령된 아파트 — 현관 경계병</b><div>${first?'먼저 덮쳤다':'들켰다'} — 건물에서 증원이 나온다. 현관을 확보하면 1층부터 들어간다.</div>`,
+    onEnd:r=>{if(r.win){rdS().guard=1;C.st='done';return`<b>🏢 현관 확보</b><div>경계병 ${r.st.kills+r.st.tk}명 제압. <b>현관을 누르면</b> 1층 로비부터 탈환을 시작한다(팀원이 함께 들어간다).</div>`}C.st='gone';return r.why==='escape'?'<b>현관에서 물러났다</b><div>경계병이 다시 선다.</div>':''}});
+  if(typeof isStart==='function'&&isStart(o))C.st='fight';else{try{isHoldDrop(C.ag)}catch(e){}RD.sent=null}}
+function rdStep(dt){RD.tT-=dt;if(RD.tT>0)return;RD.tT=.3;if(!OUT.on||(typeof APT!=='undefined'&&APT.on)||(typeof OWC!=='undefined'&&OWC.on))return;if(!rdOn())return;const S=rdS();
+  if((S.st==='none'||S.st==='done')&&RD.lastTurn!==(G.turn|0)){RD.mkT+=.3;if(RD.mkT>6){RD.mkT=0;RD.lastTurn=G.turn|0;rdMake(false)}return}
+  if(S.st!=='intel'&&S.st!=='raid')return;const d=rdDoor();if(!d)return;const p=FP3.pos;const dist=Math.hypot(d.x-p.x,d.z-p.z);
+  if(S.guard)return;
+  if(!RD.sent||RD.sent.st==='gone'){if(RD.sent&&RD.sent.st==='gone'&&dist<120)return;if(dist<70&&!IS.on&&!IS.pre.length&&!OUT.drv)rdGuards();return}
+  const C=RD.sent;if(C.st!=='hold')return;const live=C.ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);if(!live.length){S.guard=1;return}if(IS.on)return;
+  const hit=C.ag.some(a=>a.dead||a.h.dead||a.flinch>0);if(hit){rdGuardFight(true);return}if(dist>160){try{isHoldDrop(C.ag)}catch(e){}RD.sent=null;return}
+  let los=false;try{const q=live[0].h.root.position;los=owcLos(q.x,1.45,q.z,p.x,1.4,p.z)}catch(e){}const q0=live[0].h.root.position;const dd=Math.hypot(q0.x-p.x,q0.z-p.z);if((dd<28&&los)||dd<12){if(!OUT.enc&&!OUT.busy&&!OUT.mapOpen)rdGuardFight(false)}}
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(OUT.on)rdStep(dt)}catch(e){rdErr(e)}return r}})();
+(function(){const b=window.tjPopulate;if(typeof b==='function')window.tjPopulate=function(){try{if(RD.sent&&RD.sent.st==='hold'&&RD.sent.ag)isHoldDrop(RD.sent.ag)}catch(e){}RD.sent=null;return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;if(typeof b==='function')window.outReturn=function(){try{if(RD.sent&&RD.sent.ag)isHoldDrop(RD.sent.ag)}catch(e){}RD.sent=null;return b.apply(this,arguments)}})();
+/* ---------- 현관: 탈환 카드 ---------- */
+(function(){const b=window.tjAptAsk;if(typeof b!=='function')return;window.tjAptAsk=function(c){try{const S=rdS();if(c&&c.apt===S.apt&&(S.st==='intel'||S.st==='raid')&&rdOn()){rdCard(c);return}}catch(e){rdErr(e)}return b.apply(this,arguments)}})();
+function rdCard(c){const S=rdS();const d=rdDoor();const el=$('#oEnc');if(!el||!d)return;OUT.enc={id:'rd-card',cat:'탈환 작전',title:'점령된 아파트',noLog:1};FP3.lock=true;FP3.mv.x=FP3.mv.y=0;const fl=S.fls[S.next]||1;const n=S.fls.length;const team=(typeof tmLive==='function'?tmLive():[]).filter(m=>m.d.st==='ok'||m.d.st==='hurt');const arm=team.filter(m=>typeof taBest==='function'&&taBest(m.d)).length;
+  const guard=!S.guard&&RD.sent&&RD.sent.st==='hold'&&RD.sent.ag.some(a=>!a.dead&&!a.h.dead&&!a.gone);
+  el.hidden=false;el.innerHTML=`<div class="sheet"><div class="lead"><div class="badge">${ic('stairs')}</div><div><div class="eyebrow">탈환 작전 · ${S.top}층 건물 · 싸우는 층 ${n}곳</div><h2>${S.next?`${fl}층부터 다시`:'1층 로비부터 올라간다'}</h2></div></div>
+    <p>북한군이 이 동을 차지하고 꼭대기 층에 지휘소를 차렸다. 엘리베이터는 멈췄다 — 계단으로 한 층씩. 싸우는 층: ${S.fls.map((f,i)=>i<S.next?`<s>${f}</s>`:i===S.next?`<b>${f}</b>`:f).join(' → ')}${S.next?` (지금까지 ${S.next}곳 탈환)`:''}. 무장한 팀원 ${arm}명이 뒤를 따른다${team.length>arm?` · 비무장 ${team.length-arm}명은 현관 쪽에서 몸을 낮춘다`:''}.</p>
+    ${guard?'<p class="mis-note">현관 앞 경계병이 아직 있다 — 먼저 제압해야 들어간다.</p>':''}
+    <div class="choices"><button class="choice" data-g3="rdgo" data-v="in" ${guard?'disabled':''}><span class="k">A</span><span class="ct"><b>들어간다 — ${fl}층${fl===1?' 로비':''}</b><small>층별 실내 근접전 · 버팀 ${Math.round(S.hp)}</small></span></button>
+    <button class="choice" data-g3="rdgo" data-v="no"><span class="k">✕</span><span class="ct"><b>지금은 들어가지 않는다</b><small>진행은 남는다</small></span></button></div></div>`;APT.ask=c}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=rdgo]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.disabled)return;const el=$('#oEnc');if(el){el.hidden=true;el.innerHTML=''}OUT.enc=null;FP3.lock=false;if(b.dataset.v==='in')try{rdEnter()}catch(x){rdErr(x)}},true);
+/* ---------- 층 들어가기 ---------- */
+function rdEnter(){const S=rdS();const d=rdDoor();if(!d)return false;const fl=S.fls[S.next];if(!fl)return false;S.st='raid';
+  OUT.apt={k:S.apt,fl,key:'rd:'+S.apt+':'+fl,door:d,seed:(S.apt*131+fl*17+G.turn*7)>>>0,visited:false,lobby:fl===1,raid:1};APT.back={x:d.x,z:d.z,yaw:Math.atan2(-d.nx,-d.nz)};UI.screen='apt';render();return true}
+/* 실내가 그려진 뒤: 팀원(로비에도) · 적 배치 · 전투 시작 */
+(function(){const b=window.vApt3;if(typeof b!=='function')return;window.vApt3=function(){const r=b.apply(this,arguments);try{if(APT.on&&OUT.apt&&OUT.apt.raid){if(OUT.apt.lobby&&typeof apttIn==='function')apttIn(SV3.scene);setTimeout(()=>{try{if(APT.on&&OUT.apt&&OUT.apt.raid&&!AW.on)rdFloorStart()}catch(e){rdErr(e)}},400)}}catch(e){rdErr(e)}return r};SV3.views.apt=window.vApt3})();
+const RD_SP=[[204,84],[250,30],[372,170],[220,228],[360,30],[112,80],[300,120],[150,200],[330,240],[56,180],[280,200]];
+function rdFloorStart(){const S=rdS();const A=OUT.apt;const an=aptwAnchor();if(!an)return false;const q=new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),an.yaw);const top=A.fl===S.top;const idx=S.fls.indexOf(A.fl);
+  Object.assign(AW,{on:true,ph:'cqb',t:0,en:[],cq:[],kills:0,inN:0,cr:false,crK:0,gl:false,glN:0,glT:0,nades:[],E:null,an,q,qi:q.clone().invert(),uiT:0,winT:0,q_:[],qT:0,stat:{dmg:0,tk:0},key:A.key,fl:A.fl,brN:0,stT:0,outT:0,cqDead:0,gaveK2:0,sc:SV3.scene,boxes:FP3.boxes,hid:1,raid:1,rdTop:top});
+  AW.hp0=clamp(S.hp,20,100);AW.hp=AW.hp0;
+  /* 방 자리: 현관에서 4.5m 넘게 · 막히지 않고 현관까지 길이 이어진 곳(갇힌 자리에 서면 영영 못 찾는다) · 현관에서 바로 보이는 자리는 한 곳까지(방을 하나씩 확인하며 들어가게) */const ex=hpX(60),ez=hpZ(126);const r=rng3(A.seed);let P=RD_SP.map(([x,z])=>({x:hpX(x),z:hpZ(z)})).filter(p=>{if(Math.hypot(p.x-ex,p.z-ez)<=4.5||apttBlocked(p.x,p.z))return false;let path=null;try{path=apttPath(p.x,p.z,ex+.6,ez,1.3)}catch(e){}return !!(path&&path.length)});P.forEach(p=>{p.vis=awLosIn(ex+.6,1.5,ez,p.x,1.4,p.z)});P.sort(()=>r()-.5);const vis=P.filter(p=>p.vis),hid=P.filter(p=>!p.vis);P=hid.concat(vis.slice(0,1),vis.slice(1));if(!P.length)P=[{x:hpX(220),z:hpZ(228)}];
+  const n=top?5:A.fl===1?3:3+(idx>=3?1:0)+(r()<.35?1:0);const kinds=[];for(let i=0;i<n;i++)kinds.push(top&&i===0?'elite':(i%4===3?'mg':'rifle'));
+  kinds.forEach((t,i)=>{const p=P[i%P.length];const a=awCqSpawn(t,i);if(!a)return;a.h.root.position.set(p.x+(i>=P.length?.6:0),0,p.z);a.path=null;a.pi=0;a.st='hold';a.holdT=i===0&&!top?2.5:5+r()*9;a.nm=t==='elite'?'북한군 지휘소장':'북한군 점령군';a.rd=1;try{a.h.setPose(r()<.5?'crouch':'aim',true)}catch(e){}a.h.root.rotation.y=Math.atan2(ex-p.x,ez-p.z)});
+  /* 팀원: 무장은 따라붙고, 비무장은 현관 쪽 · 가족은 현관 옆 */
+  try{if(typeof APTT!=='undefined'){APTT.team.forEach((t,i)=>{t.aw0=t.st;t.st='aw';t.tgt=null;t.awArmed=typeof taBest==='function'&&!!taBest(t.m.d);t.hpath=null;t.hide=null;t.awT=1+i*.4;t.h.root.position.set(ex+.8+(i%2)*.5,0,ez+(i%2?-.6:.6));try{t.h.setPose('crouch')}catch(e){}});APTT.fam.forEach((a,i)=>{a.h.root.position.set(ex+.2,0,ez+(i%2?1.1:-1.1));try{a.h.setPose('crouch')}catch(e){}})}}catch(e){rdErr(e)}
+  try{if(APT.spots&&!AW.spots0){AW.spots0=APT.spots;APT.spots=APT.spots.filter(c=>c.k==='out')}if(APT.npc&&APT.npc.h){try{APT.npc.h.root.removeFromParent()}catch(e){}APT.npc=null}}catch(e){}
+  awUI();vib([60,40,60]);try{SND.tone(880,.16,'square',.05);SND.tone(620,.2,'square',.05,.2)}catch(e){}
+  outNote(`<b>🏢 ${A.fl===1?'1층 로비':A.fl+'층'}${top?' — 꼭대기 층 지휘소':''} · 탈환 ${idx+1}/${S.fls.length}</b><div>${top?'지휘소장과 경호조가 버틴다.':'점령군이 방마다 자리를 잡고 있다.'} ${AW.cq.length}명 — 모서리에서 한 방씩 확인하며 나아간다. 무장한 팀원이 뒤를 따른다.</div>`,4600);return true}
+/* 대기하는 적: 나를 보면 겨누고, 시간이 지나거나 맞으면 찾아 나선다 */
+(function(){const b=window.awCqStep;if(typeof b!=='function')return;window.awCqStep=function(a,dt){if(a.st!=='hold')return b.apply(this,arguments);const h=a.h,P=h.root.position;try{h.update(dt)}catch(e){}if(a.dead||h.dead){if(!a.cnt){a.cnt=1;AW.kills++;AW.cqDead++;AW.uiT=0}return}a.t+=dt;a.flinch=Math.max(0,(a.flinch||0)-dt*3);const tp=FP3.pos;const d=Math.hypot(tp.x-P.x,tp.z-P.z);
+    a.losT-=dt;if(a.losT<=0){a.losT=.2;a.los=awLosIn(P.x,1.4,P.z,tp.x,1.45-.6*AW.crK,tp.z)}
+    /* 알아차리기: 나를 본 뒤 0.9초(4m 안이면 0.4초) — 모서리를 돌자마자 먼저 쏠 틈 */if(a.los&&d<12.5){a.ntc=(a.ntc||0)+dt;if(a.ntc>=(d<4?.4:.9)||a.flinch>0){a.st='aim';a.aimP=-.2;try{h.setPose('aim')}catch(e){}}else owcFace(h,tp.x,tp.z,dt,3);return}else a.ntc=Math.max(0,(a.ntc||0)-dt*.5);
+    if(a.t>a.holdT||a.flinch>0||(AW.kills>0&&a.t>a.holdT*.5)){a.st='hunt';a.pathT=0;return}}})();
+/* 탈환은 여러 층을 잇는다 — 실내 적의 피해를 0.5배(한 층짜리 아파트 전투와 같은 사격이면 세 층을 넘기 어렵다) */
+(function(){const b=window.awHurt;if(typeof b!=='function')return;window.awHurt=function(n,from){if(AW.on&&AW.raid)n=n*.5;return b.call(this,n,from)}})();
+/* 무장 팀원: 내 뒤 1.5~3m로 따라붙는다(길찾기) — 걷는 것은 101 awHideStep이 한다 */
+function rdTeamFollow(dt){RD.fT=(RD.fT||0)-dt;if(RD.fT>0||typeof APTT==='undefined')return;RD.fT=.9;const p=FP3.pos;const fx=-Math.sin(FP3.yaw),fz=-Math.cos(FP3.yaw);let k=0;
+  for(const t of APTT.team){if(t.st!=='aw'||!t.awArmed||t.hpath)continue;const m=t.m;if(m.d.st!=='ok'&&m.d.st!=='hurt')continue;const P=t.h.root.position;const d=Math.hypot(P.x-p.x,P.z-p.z);if(d<3.4){k++;continue}
+    let got=null;for(const [bk,sd] of [[1.8,.7*(k%2?1:-1)],[2.4,-.7*(k%2?1:-1)],[1.3,0],[3,0]]){const x=p.x-fx*bk+(-fz)*sd,z=p.z-fz*bk+fx*sd;if(apttBlocked(x,z))continue;let path=null;try{path=apttPath(P.x,P.z,x,z,.3)}catch(e){}if(path&&path.length){got=path;break}}if(got){t.hpath=got;t.hpi=0;try{t.h.setPose('run')}catch(e){}}k++}}
+(function(){const b=window.awStep;if(typeof b!=='function')return;window.awStep=function(dt,ow){const r=b.apply(this,arguments);try{if(AW.on&&AW.raid&&AW.ph==='cqb')rdTeamFollow(dt)}catch(e){rdErr(e)}return r}})();
+/* 띠 제목 */
+(function(){const b=window.awUI;if(typeof b!=='function')return;window.awUI=function(){const r=b.apply(this,arguments);try{if(AW.on&&AW.raid){const S=rdS();const t=$('#awT');const idx=S.fls.indexOf(AW.fl);const T0=`🏢 탈환 ${AW.fl===1?'로비':AW.fl+'층'} · ${idx+1}/${S.fls.length}`;if(t&&t.textContent!==T0)t.textContent=T0;const g=$('#awGl');if(g&&!g.hidden)g.hidden=true;const tip=$('#awTip');const tt=AW.rdTop?'꼭대기 층 지휘소 — 지휘소장을 쓰러뜨리면 옥상이 무너진다':'모서리에서 한 방씩 — 무장한 팀원이 뒤를 따른다';if(tip&&!AW.gl&&tip.textContent!==tt)tip.textContent=tt}}catch(e){}return r}})();
+(function(){const b=window.awStart;if(typeof b==='function')window.awStart=function(){AW.raid=0;return b.apply(this,arguments)}})();
+/* 탈환 중에는 '창밖 경계'를 따로 열지 않는다 */
+(function(){const b=window.awCan;if(typeof b!=='function')return;window.awCan=function(){try{if(OUT.apt&&OUT.apt.raid)return false}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 층 끝 ---------- */
+(function(){const b=window.awEnd;if(typeof b!=='function')return;window.awEnd=function(why){if(!(AW.on&&AW.raid))return b.apply(this,arguments);if(AW.ph==='end')return;try{rdFloorEnd(why)}catch(e){rdErr(e);AW.on=false}}})();
+function rdHpApply(){const S=rdS();const loss=Math.round((100-S.hp)*.4);S.hp=100;if(loss>0){FX=[];const small=loss<12&&typeof WND!=='undefined';if(small)WND.self=true;try{hurt('me',loss)}catch(e){}finally{if(small)WND.self=false}OUT.fx.push(...FX);try{outStat()}catch(e){}}return loss}
+function rdFloorEnd(why){try{rdFloorEnd0(why)}finally{AW.raid=0}}
+function rdFloorEnd0(why){const S=rdS();AW.ph='end';AW.gl=false;AW.cr=false;FP3.eye=1.55;S.hp=Math.max(0,AW.hp);const fl=AW.fl,top=!!AW.rdTop,kills=AW.kills,tk=AW.stat.tk||0,dmg=AW.stat.dmg||0;
+  awClear(false);AW.on=false;awUI();awSpotsBack();try{if(typeof APTT!=='undefined')APTT.team.forEach(t=>{t.hpath=null;t.hide=null;if(t.st==='aw'){t.st='wait';t.t=1.5;try{t.h.setPose('idle')}catch(e){}}})}catch(e){}
+  if(why==='win'){S.next++;try{gunAmmoAdd('545',12+kills*6)}catch(e){}
+    /* 숨 고르기: 팀원이 붕대를 감아 준다(응급 담당이 있으면 더) — 버팀 +35(+45) */let med=false;try{med=(typeof APTT!=='undefined')&&APTT.team.some(t=>t.m&&t.m.d&&t.m.d.role==='응급'&&(t.m.d.st==='ok'||t.m.d.st==='hurt'))}catch(e){}const rec=Math.min(100-S.hp,med?45:35);S.hp=Math.min(100,S.hp+rec);
+    if(top||S.next>=S.fls.length){rdDone(kills,tk);return}
+    const nf=S.fls[S.next];APT.spots=APT.spots||[];APT.spots.push({id:'rdup',k:'rdup',x:hpX(60),z:hpZ(140),r:1.6,g:'⤴',n:`계단 — ${nf}층으로`,s:`${fl+1}~${nf-1}층은 빠르게 수색하며 지나간다`,h:0});
+    outNote(`<b>🏢 ${fl===1?'1층 로비':fl+'층'} 탈환 — ${kills}명 제압${tk?` (팀원 ${tk})`:''}</b><div>받은 피해 ${dmg} · 숨 고르기 +${Math.round(rec)}${med?'(응급 담당)':''} → 버팀 ${Math.round(S.hp)}. 남은 물자를 뒤져도 된다. 준비되면 현관 옆 <b>⤴ 계단 — ${nf}층으로</b>. 5.45mm 탄 +${12+kills*6}.</div>`,5600);try{SND.ok&&SND.ok()}catch(e){}try{save()}catch(e){}return}
+  if(why==='down'){const loss=rdHpApply();try{mor(-3)}catch(e){}try{outNote(`<b>쓰러졌다 — 끌려 나왔다</b><div>팀원이 계단으로 끌어내 대피소 의료실로 옮겼다. 탈환은 ${S.fls[S.next]}층부터 다시 할 수 있다.</div>`,5200)}catch(e){}try{const me=M('me');me.hp=Math.max(me.hp,25)}catch(e){}setTimeout(()=>{try{if(APT.on)tjAptLeave(true);if(OUT.on)outReturn('fast')}catch(e){rdErr(e)}},2400);return}
+  /* left: 건물을 나왔다 — 진행은 남는다 */const loss=rdHpApply();try{outNote(`<b>건물을 나왔다</b><div>탈환 ${S.next}/${S.fls.length}곳까지. 다시 현관을 누르면 ${S.fls[S.next]}층부터.${loss?` 받은 피해가 체력에 남았다(−${loss}).`:''}</div>`,4200)}catch(e){}}
+function rdDone(kills,tk){const S=rdS();S.st='done';S.won=(S.won|0)+1;S.cool=(G.turn|0)+2;const loss=rdHpApply();FX=[];trust(4);mor(3);G.inv.cash=(G.inv.cash||0)+3;let loot='현금 봉투 3';try{const w=!gunHas('pkm')?'pkm':!gunHas('svd')?'svd':null;gunAmmoAdd('545',60);if(w&&bagGive(w,1))loot+=' · '+ARMS[w].n;loot+=' · 5.45mm 탄 60'}catch(e){}
+  /* 옥상 관측병은 손을 든다 — 계엄군에 넘긴다(전시 교전 수칙이 켜져 있으면 생포로 기록) */let cap='';try{if(typeof roeCredit==='function'){roeCredit('cap',{});roeCredit('cap',{})}cap=' 옥상 관측병 2명은 지휘소가 무너지자 손을 들었다 — 계엄군에 넘겼다.'}catch(e){}
+  OUT.fx.push(...FX);try{outStat()}catch(e){}const fx=FX.slice();try{if(typeof tlvGain==='function')tlvGain(30,'아파트 탈환')}catch(e){}
+  try{outNote(`<b>🏢 탈환 완료 — ${S.top}층 지휘소 장악</b><div>${S.fls.length}개 층을 쓸어 올라왔다(이 층 ${kills}명${tk?` · 팀원 ${tk}`:''}).${cap} 옥상에 깃발을 올렸다. 노획: ${loot}.${loss?` 받은 피해가 체력에 남았다(−${loss}).`:''}</div>${typeof fxChips==='function'?fxChips(fx):''}`,8000)}catch(e){}
+  try{SND.ok&&SND.ok();vib([40,40,90])}catch(e){}try{if(typeof plogOn==='function'&&plogOn()){const P=plogLoad().play;const b=P.bt.rd||(P.bt.rd={w:0,l:0,q:0});b.w++;PLOG.dirty=1;plogSave()}}catch(e){}try{save()}catch(e){}}
+/* 계단: 다음 싸우는 층으로(사이 층은 빠르게 · 층당 1분) */
+(function(){const b=window.tjAptDo;if(typeof b!=='function')return;window.tjAptDo=function(c){if(c&&c.k==='rdup'){try{rdUp()}catch(e){rdErr(e)}return}return b.apply(this,arguments)}})();
+function rdUp(){const S=rdS();const A=OUT.apt;if(!A||!A.raid||AW.on)return;const nf=S.fls[S.next];if(!nf)return;const n=Math.max(1,nf-A.fl-1);OUT.h=Math.max(0,OUT.h-n/60);try{SND.tone(64,.07,'sine',.16)}catch(e){}
+  outNote(`<b>⤴ 계단 — ${A.fl+1}~${nf-1}층 수색</b><div>문이 열린 세대를 빠르게 훑으며 올라간다 — 빈 층 ${n}개 · ${n}분.</div>`,2600);rdEnter()}
+/* 중간에 나가면 진행 저장 + 실제 체력 정산(101 tjAptLeave 감싸기가 awEnd('left')를 부른다) · 층을 비운 뒤 나가도 버팀 정산 */
+(function(){const b=window.tjAptLeave;if(typeof b!=='function')return;window.tjAptLeave=function(){try{if(OUT.apt&&OUT.apt.raid&&!AW.on){const S=rdS();if(S.st==='raid'&&S.hp<100){const loss=rdHpApply();if(loss)outNote(`<b>건물을 나왔다</b><div>탈환 ${S.next}/${S.fls.length}곳까지 — 받은 피해가 체력에 남았다(−${loss}).</div>`,3600)}}}catch(e){rdErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 지도 · 상황판 ---------- */
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{const S=rdS();if(OUT.on&&rdOn()&&(S.st==='intel'||S.st==='raid')){const d=rdDoor();if(d){const [sx,sy]=toS(d.x,d.z);const s=6*scale;x.fillStyle='#d8352a';x.strokeStyle='#0a0c10';x.lineWidth=1.6*scale;x.fillRect(sx-s,sy-s,2*s,2*s);x.strokeRect(sx-s,sy-s,2*s,2*s);x.fillStyle='#fff';x.font=`900 ${Math.round(8*scale)}px system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('⚑',sx,sy+.5*scale)}}}catch(e){}return r}})();
+(function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{const S=rdS();if(rdOn()&&S.st!=='none'){const d=rdDoor();const p=FP3.pos;const dist=d?Math.round(Math.hypot(d.x-p.x,d.z-p.z)):0;
+      h+=row('🏢',`점령된 아파트 · ${S.top||''}층`,S.st==='done'?`탈환 완료 ${S.won}회 · 다음 첩보는 ${Math.max(0,(S.cool|0)-(G.turn|0))}턴 뒤`:`${d?rdDir(d.x-p.x,d.z-p.z)+'쪽 '+dist+'m · ':''}싸우는 층 ${S.fls.join('→')} · 탈환 ${S.next}/${S.fls.length}${S.guard?' · 현관 확보':' · 현관 경계병'}`,S.st==='done'?'':'1층부터 팀원과',S.st==='done'?'':'<button class="btn sm" data-g3="rdnav">길 안내</button>',S.st==='done'?'ev-done':'')}}catch(e){rdErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=rdnav]');if(!b)return;e.preventDefault();e.stopPropagation();try{const d=rdDoor();if(d){TJ.goal={bx:d.x+d.nx*2,bz:d.z+d.nz*2};try{evBoard(false)}catch(x){}outNote('<b>🏢 점령된 아파트 쪽으로 길 안내</b><div>미니맵의 초록 점 · 70m 안에 들면 현관 경계병이 보인다.</div>',3000)}}catch(x){rdErr(x)}},true);
+/* 설정: 탈환 작전 켜기/끄기 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="aptraid"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){h=h.replace('<div class="s4-sec">교육용 모드</div>',s4Seg('aptraid','점령된 아파트 탈환','북한군이 차지한 고층 동을 1층부터 꼭대기 층까지 팀원과 층별 근접전으로',[[1,'나옴'],[0,'끔']],store.get('sg.aptraid',true)!==false?1:0)+'<div class="s4-sec">교육용 모드</div>')}}catch(e){}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='aptraid')return;try{store.set('sg.aptraid',b.dataset.v==='1');toast(b.dataset.v==='1'?'점령된 아파트 탈환이 나온다':'점령된 아파트 탈환을 껐다',2400)}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🏢 점령된 아파트 탈환(v13.6)','2턴부터 북한군이 고층 아파트 한 동을 점령한다(내 단지는 아니다). 미니맵 붉은 ⚑ 네모 · 상황판(🚨) 줄에서 길 안내. 70m 안에 들면 현관 앞 경계병 3명 — 그 자리에서 싸워 현관을 확보한다. 현관을 누르면 <b>1층 로비부터</b> 들어간다. 싸우는 층은 로비 · 중간 거점 층 4곳 안팎 · 꼭대기 층 지휘소 — 그 사이 층은 계단으로 빠르게 수색하며 지나간다(층당 1분). 층마다 실내 근접전: 적은 방마다 자리 잡고 기다리다 나를 보면 겨누고, 총성이 나면 찾아 나선다. 무장한 팀원은 내 뒤를 따라붙으며 쏘고, 비무장 팀원·가족은 현관 쪽에서 몸을 낮춘다. 층을 비우면 물자를 뒤지고 <b>⤴ 계단</b>으로 다음 층. 꼭대기 지휘소가 무너지면 옥상 관측병이 손을 든다 → 탈환 완료(신뢰·사기·현금 봉투·노획). 버팀은 층을 넘어 이어지고, 끝나거나 나오면 받은 피해의 40%가 체력에 남는다. 중간에 나와도 진행은 남는다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
