@@ -13165,11 +13165,11 @@ function tjCarHit(x,z,yaw){return tjCarHitN(x,z,yaw,false)>0}
 function tjObjBoxes(obj,h){const ry=obj.rotation.y;obj.rotation.y=0;obj.updateMatrixWorld(true);const bb=new T.Box3().setFromObject(obj);obj.rotation.y=ry;obj.updateMatrixWorld(true);const hl=Math.max(.5,(bb.max.z-bb.min.z)/2),hw=Math.max(.4,(bb.max.x-bb.min.x)/2);
   const fx=Math.sin(ry),fz=Math.cos(ry);const o=tjOBB(obj.position.x,obj.position.z,ry,hl,hw);const n=Math.max(1,Math.ceil(hl/hw));const out=[];for(let i=0;i<n;i++){const k=n>1?-hl+hw+i*(2*hl-2*hw)/(n-1):0;const cx=obj.position.x+fx*k,cz=obj.position.z+fz*k;const b=new T.Box3(new T.Vector3(cx-hw,0,cz-hw),new T.Vector3(cx+hw,h||bb.max.y||2.6,cz+hw));b.obb=o;out.push(b)}return out}
 function tjDrivePre(dt){const D=OUT.drv;if(!D)return;const car=D.car;D.t+=dt;const mv=FP3.mv;const th=OUT.enc?0:mv.y;const st=OUT.enc?0:mv.x;
-  const steerT=-st*.45*clamp(1.15-Math.abs(D.v)/26,.45,1);D.steer+=(steerT-D.steer)*Math.min(1,dt*6);const acc=th>0?th*5.5:th<0?th*9:0;D.v+=acc*dt;D.v-=D.v*.3*dt;if(th===0)D.v-=Math.sign(D.v)*Math.min(Math.abs(D.v),1.6*dt);D.v=clamp(D.v,-4,16);
+  /* v14.1: 차종별 가속(127 car.userData.vk) · 최고 130km/h · 빠를수록 핸들이 덜 꺾인다 */const VK=(car.userData&&car.userData.vk)||{};const steerT=-st*.45*clamp(1.15-Math.abs(D.v)/26,.2,1);D.steer+=(steerT-D.steer)*Math.min(1,dt*6);const acc=th>0?th*(VK.acc||7.2):th<0?th*9:0;D.v+=acc*dt;D.v-=D.v*(VK.drag||.18)*dt;if(th===0)D.v-=Math.sign(D.v)*Math.min(Math.abs(D.v),1.6*dt);D.v=clamp(D.v,-5,VK.vmax||36.1);
   const yawRate=(D.v/3.0)*Math.tan(D.steer*Math.min(1,.45+Math.abs(D.v)/10));const y0=D.yaw;D.yaw+=yawRate*dt;const nx=car.position.x+Math.sin(D.yaw)*D.v*dt,nz=car.position.z+Math.cos(D.yaw)*D.v*dt;const R=TJ_DATA.R-14;
   /* v10.5.2: 이미 무언가와 겹쳐 있으면(내린 자리·돌던 중) 겹침을 늘리지 않는 쪽으로는 움직이게 둔다 — 앞뒤 모두 막혀 서 버리던 것. 막히면 방향도 되돌린다 */
   const n0=tjCarHitN(car.position.x,car.position.z,y0,true);const inR=Math.abs(nx)<R&&Math.abs(nz)<R;const n1=inR?tjCarHitN(nx,nz,D.yaw,n0>0):99;
-  if(inR&&(n0?n1<=n0:n1===0)){car.position.x=nx;car.position.z=nz;D.blk=0}else{D.yaw=y0;if(Math.abs(D.v)>3){sv3Shake(.5);SND.boom(false,.22);vib(50);FX=[];if(Math.abs(D.v)>9){hurt('me',4);OUT.fx.push(...FX);outStat()}}D.v*=-.25;if(Math.abs(th)>.3)D.blk=(D.blk||0)+dt}
+  if(inR&&(n0?n1<=n0:n1===0)){car.position.x=nx;car.position.z=nz;D.blk=0}else{D.yaw=y0;if(Math.abs(D.v)>3){sv3Shake(.5);SND.boom(false,.22);vib(50);FX=[];if(Math.abs(D.v)>9){hurt('me',Math.min(22,Math.round(4+(Math.abs(D.v)-9)*.7)));OUT.fx.push(...FX);outStat()}}D.v*=-.25;if(Math.abs(th)>.3)D.blk=(D.blk||0)+dt}
   /* 안전장치: 가속·후진을 1.2초 넘게 눌러도 앞뒤 모두 막혀 있으면 가까운 빈자리로 차를 빼낸다 */if((D.blk||0)>1.2){D.blk=0;const fx0=Math.sin(D.yaw),fz0=Math.cos(D.yaw);if(tjCarHit(car.position.x+fx0*.45,car.position.z+fz0*.45,D.yaw)&&tjCarHit(car.position.x-fx0*.45,car.position.z-fz0*.45,D.yaw)){const p=tjCarFree(car.position.x,car.position.z,D.yaw);if(p){car.position.x=p[0];car.position.z=p[1];D.yaw=p[2];D.v=0;D.unstuck=(D.unstuck||0)+1;outNote('<b>차를 빼냈다</b><div>끼인 자리에서 가까운 빈자리로 옮겼다.</div>',1800)}}}
   /* 낮은 잔해: 넘어가되 덜컹거리며 느려진다 */if(Math.abs(D.v)>2){const A=tjOBB(car.position.x,car.position.z,D.yaw,2.15,.97);for(const b of TOWN.solids){if(b.rub&&tjObbHit(A,tjBoxObb(b))){D.v*=Math.pow(.35,dt);D.bumpT=(D.bumpT||0)-dt;if(D.bumpT<=0){D.bumpT=.35;sv3Shake(.18);vib(15)}break}}}
   car.rotation.y=D.yaw;const accL=(D.v-D.prevV)/Math.max(dt,1e-3);D.prevV=D.v;D.pitch+=((-accL*.012)-D.pitch)*Math.min(1,dt*5);D.roll+=((yawRate*D.v*.02)-D.roll)*Math.min(1,dt*5);car.rotation.x=clamp(D.pitch,-.06,.06)*.5;car.rotation.z=clamp(D.roll,-.07,.07)*.5;
@@ -13833,7 +13833,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='14.0';
+const APP_VER='14.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -14556,7 +14556,7 @@ const fpdActive=()=>typeof OUT!=='undefined'&&OUT.on&&!!(OUT.drv||OUT.ride)&&!(t
 /* ---------- 차 실내(운전석 기준, 차 좌표: +z 앞, +x 왼쪽) ---------- */
 function fpdClusterTex(car){const ud=car.userData;if(!ud.clC){const c=cvs(256,96);ud.clC=c;const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;ud.clT=t}return ud.clT}
 function fpdClusterDraw(car,kmh,rev){const ud=car.userData;const c=ud.clC;if(!c)return;const x=c.getContext('2d');x.fillStyle='#07090c';x.fillRect(0,0,256,96);
-  x.strokeStyle='rgba(120,200,255,.35)';x.lineWidth=3;x.beginPath();x.arc(52,60,38,Math.PI*.8,Math.PI*2.2);x.stroke();x.strokeStyle='#5cd0ff';x.lineWidth=5;x.beginPath();x.arc(52,60,38,Math.PI*.8,Math.PI*(.8+1.4*Math.min(1,kmh/120)));x.stroke();
+  x.strokeStyle='rgba(120,200,255,.35)';x.lineWidth=3;x.beginPath();x.arc(52,60,38,Math.PI*.8,Math.PI*2.2);x.stroke();x.strokeStyle='#5cd0ff';x.lineWidth=5;x.beginPath();x.arc(52,60,38,Math.PI*.8,Math.PI*(.8+1.4*Math.min(1,kmh/140)));x.stroke();
   x.fillStyle='#e8f6ff';x.font='800 44px system-ui,sans-serif';x.textAlign='right';x.textBaseline='middle';x.fillText(String(Math.round(kmh)),196,50);x.fillStyle='#8fb4c8';x.font='700 18px system-ui,sans-serif';x.textAlign='left';x.fillText('km/h',202,58);
   x.fillStyle=rev?'#ffb224':'#3a4652';x.fillRect(110,80,120*Math.min(1,rev||0),8);ud.clT.needsUpdate=true}
 function fpdCockpit(car){if(car.userData.cock)return car.userData.cock;const g=new T.Group();g.name='cockpit';const dk=mat('#1b1e22',{r:.85}),dk2=mat('#24282d',{r:.7}),trim=mat('#3a3f45',{r:.5,m:.3}),hl=mat('#2d3035',{r:.95});
@@ -14569,15 +14569,15 @@ function fpdCockpit(car){if(car.userData.cock)return car.userData.cock;const g=n
   /* 앞유리 기둥·천장·룸미러·문 위 */for(const sx of [-1,1]){const p=MM(GG.box(.06,.44,.07),trim,sx*.76,1.1,.62,{p:g,cast:false});p.rotation.x=-.75;MM(GG.box(.05,.36,.06),trim,sx*.79,1.1,-.62,{p:g,cast:false});MM(GG.box(.04,.04,1.6),trim,sx*.8,1.28,-.25,{p:g,cast:false})}
   MM(GG.pl(1.6,1.5),hl,0,1.29,-.42,{p:g,rx:Math.PI/2,cast:false,recv:false});MM(GG.box(1.6,.05,.06),trim,0,1.27,.37,{p:g,cast:false});MM(GG.box(.22,.06,.02,.01),mat('#9aa3ad',{r:.15,m:.9}),0,1.2,.33,{p:g,cast:false});
   /* 좌석 등받이(옆 자리) */MM(GG.box(.48,.55,.12,.05),dk2,-.38,1.0,-.5,{p:g,cast:false});
-  g.visible=false;car.add(g);car.userData.cock=g;car.userData.wheel=wh;return g}
+  /* v14.1: 차종별 눈높이(127) — 운전석 안 물건을 같이 올리고 내린다 */g.position.y=(car.userData.eyeY||1.16)-1.16;g.visible=false;car.add(g);car.userData.cock=g;car.userData.wheel=wh;return g}
 /* ---------- 카메라 ---------- */
 function fpdFov(sp,fp,dt){const k=Math.min(1,Math.max(0,(sp-4)/14));const want=(fp&&OUT.ride?70:62)+k*(fp?14:9);FPD.fov+=(want-FPD.fov)*Math.min(1,dt*3);const cam=SV3.cam;if(Math.abs(cam.fov-FPD.fov)>.05){cam.fov=FPD.fov;cam.updateProjectionMatrix()}}
 function fpdFovReset(){const cam=SV3.cam;FPD.fov=62;if(cam&&Math.abs(cam.fov-62)>.01){cam.fov=62;cam.updateProjectionMatrix()}}
 function fpdLookBack(dt){/* 둘러보기를 놓으면 앞으로 돌아온다 · v9.5.1: 놓는 이벤트를 놓쳐 남은 포인터(2.5초 넘게 안 움직임)는 놓은 것으로 본다 */let looking=false;const now=performance.now();for(const k in FP3.ptr){const q=FP3.ptr[k];if(q.role==='look'&&(q.pc||now-(q.tm||q.t0||0)<2500)){looking=true;break}}if(!looking){FP3.yaw*=Math.max(0,1-dt*2.2);FP3.pitch+=(-.08-FP3.pitch)*Math.min(1,dt*1.5)}FP3.yaw=clamp(FP3.yaw,-1.9,1.9)}
 (function(){const base=window.tjDrivePost;if(typeof base!=='function')return;window.tjDrivePost=function(dt){const r=base.apply(this,arguments);const D=OUT.drv;if(!D)return r;const car=D.car;const fp=FPD.mode==='fp';/* v9.5.1 안전장치: 차가 장면에서 빠졌거나 숨겨졌으면 되살린다(1인칭에서 차·계기판이 안 보이는 제보) */if(!car.visible)car.visible=true;if(!car.parent&&OUT.scene)OUT.scene.add(car);const ck=fpdCockpit(car);ck.visible=fp;
   /* v9.4: 3인칭에서도 둘러보기를 놓으면 앞으로 돌아온다(전엔 돌린 시점·기울기가 그대로 남아 카메라가 옆·바닥에 붙었다) */if(!fp)fpdLookBack(dt);
-  if(fp){fpdLookBack(dt);car.updateMatrixWorld(true);const e=car.localToWorld(_fv[0].set(.38,1.16,-.2));const cam=SV3.cam;cam.position.copy(e);cam.rotation.order='YXZ';const sh=SV3.shake||0;cam.rotation.set(clamp(FP3.pitch*.7,-.5,.35)-.05+(car.rotation.x||0)+sh*Math.sin(SV3.t*47)*.02,D.yaw+Math.PI+FP3.yaw,-(car.rotation.z||0)+sh*Math.sin(SV3.t*37)*.02)}
-  if(car.userData.wheel)car.userData.wheel.rotation.z=-(D.steer||0)*3;FPD.clT-=dt;if(fp&&FPD.clT<=0){FPD.clT=.12;fpdClusterDraw(car,Math.abs(D.v)*3.6,Math.min(1,Math.abs(D.v)/16+Math.max(0,FP3.mv.y)*.2))}
+  if(fp){fpdLookBack(dt);car.updateMatrixWorld(true);const e=car.localToWorld(_fv[0].set(.38,car.userData.eyeY||1.16,-.2));const cam=SV3.cam;cam.position.copy(e);cam.rotation.order='YXZ';const sh=SV3.shake||0;cam.rotation.set(clamp(FP3.pitch*.7,-.5,.35)-.05+(car.rotation.x||0)+sh*Math.sin(SV3.t*47)*.02,D.yaw+Math.PI+FP3.yaw,-(car.rotation.z||0)+sh*Math.sin(SV3.t*37)*.02)}
+  if(car.userData.wheel)car.userData.wheel.rotation.z=-(D.steer||0)*3;FPD.clT-=dt;if(fp&&FPD.clT<=0){FPD.clT=.12;fpdClusterDraw(car,Math.abs(D.v)*3.6,Math.min(1,Math.abs(D.v)/36+Math.max(0,FP3.mv.y)*.2))}
   fpdFov(Math.abs(D.v),fp,dt);return r}})();
 /* 탈것 1인칭 손잡이(카메라 앞에 따로 그린다 — 머리에서 보면 실제 손잡이는 시야 아래로 빠진다): 손잡이·두 손·계기 */
 function fpdVM(kind){const sc=OUT.scene;if(!sc)return null;const k='vm_'+kind;if(FPD[k]&&FPD[k].parent===sc)return FPD[k];const g=new T.Group();const Mt=mat('#9aa0a6',{r:.35,m:.7}),Dk=mat('#1d1f22',{r:.7}),sk=mat('#c99b78',{r:.75}),sl=mat('#7a1e1e',{r:.8});
@@ -23709,6 +23709,120 @@ function gvHide(){try{return !!(typeof DFR!=='undefined'&&DFR.B&&typeof GUN!=='u
     h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){adErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||(b.dataset.k!=='autof'&&b.dataset.k!=='amdock'))return;try{const on=b.dataset.v==='1';if(b.dataset.k==='autof'){store.set('sg.autof',on);toast(on?'자동사격을 켰다 — 무장한 적·적 드론에만':'자동사격을 껐다',2200)}else{store.set('sg.amDock',on);adTick();toast(on?'탄약 표시를 사격 버튼 옆 아래로':'탄약 표시는 버튼 배치 편집대로',2200)}}catch(x){adErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🎯 자동사격 · 탄약 표시(v14.0)','<b>자동사격</b>(설정, 기본 켬): 조준점이 무장한 적이나 적 드론 위에 잠깐 머물면 저절로 쏜다. 주민·투항자·인질·아이·가족·군경에게는 절대 쏘지 않고, 불량배·약탈자·수배자는 직접 쏴야 한다. 유탄·로켓은 자동사격하지 않는다. <b>탄약 표시</b>는 사격 버튼 왼쪽 아래 — 숫자 위를 문질러도 화면이 돌아간다. 총을 바꾸려면 작은 🔁 무기 칩(PC Z). 드론을 조종하는 동안에는 손·총이 보이지 않는다.']);
+
+/* ===================== 127 · v14.1 차량 — 차종 8가지(독자 디자인) · 자동차 130km/h · 오토바이 80km/h ===================== */
+/* 사용자 요청(2026-11-15 21:25): 자동차 130km/h · 오토바이 80km/h로 상향, 차량 종류 다양화 — 실제 유명 차종의 외관을 로고 없이 구현해 달라는 요청
+   · 실제 제조사 차의 외관은 로고를 빼도 차체 디자인 자체가 보호 대상이라 본뜨지 않는다 — 같은 차급을 독자 디자인으로 만든다(로고·제조사명·모델명 없음, 번호판은 빈 판)
+   · 8종: 스포츠 쿠페 · 중형 세단 · 대형 고급 세단 · 전기 세단 · SUV · 해치백 · 픽업트럭 · 승합차. 차종마다 옆선(실루엣)을 따로 깎고(옆모습 다각형을 폭만큼 밀어 낸 몸체 +
+     바퀴 자리 아치), 유리 지붕·지붕 판·기둥·바퀴 크기·지상고·전조등/후미등 모양·그릴·휠 색으로 가른다. 재질별로 합쳐 차 한 대 = 그리기 7번(예전과 같다)
+   · 쓰는 곳: 밖(자유 이동)의 주차·버려진·불탄·운전할 수 있는 차, 길 정체·달리는 차, 대피소·주차장 장면. 예전 진지 전투 지도(12c)와 첫 탈출 운전 차(21)는 그대로
+   · 운전: 최고 130km/h(모든 차종) — 가속은 차종마다(쿠페·전기 세단이 빠르고 승합차·픽업은 굼뜨다). 빠를수록 핸들이 덜 꺾인다. 1인칭 눈높이도 차종별
+     부딪힐 때 다침은 속도에 비례(상한 22). 오토바이 최고 80km/h
+   · 발자국 크기는 예전 차와 같은 틀(길이 4.0~4.45m · 폭 1.8~1.9m) — 차끼리·건물과의 충돌 판정을 바꾸지 않는다 */
+const VEH={legacy:0,seq:0,n:{},geo:{},err:0};
+function vehErr(e){if(VEH.err<5){VEH.err++;try{console.error(e)}catch(x){}}}
+/* 옆모습: [z(앞 +), y] — 뒤 아래에서 시작해 위를 지나 앞 아래까지(바닥·바퀴 아치는 자동) */
+const VEH_T={
+  coupe:{n:'스포츠 쿠페',L:4.3,W:1.86,sill:.2,acc:9.6,drag:.2,eye:1.0,
+    top:[[-2.15,.3],[-2.15,.66],[-2.02,.79],[-1.6,.83],[.9,.84],[1.85,.7],[2.13,.55],[2.15,.33]],
+    gh:[[-1.6,.82],[-.62,1.2],[.12,1.23],[.98,.84]],ghW:1.5,roof:[-.6,.1],bp:null,
+    wr:.32,wz:[-1.36,1.3],wt:.27,rim:'dark',grille:'intake',head:'slim',headY:.62,tail:'bar',tailY:.72,spoiler:1,
+    pal:['#c21f1f','#f2b705','#e86a10','#f2f2ee','#16181b','#2a5bd7','#7d8288']},
+  sedan:{n:'중형 세단',L:4.25,W:1.82,sill:.22,acc:7.2,drag:.18,eye:1.16,
+    top:[[-2.12,.32],[-2.12,.76],[-2.0,.85],[-1.35,.88],[.95,.88],[1.95,.76],[2.12,.62],[2.12,.34]],
+    gh:[[-1.4,.87],[-.85,1.32],[.25,1.34],[1.0,.89]],ghW:1.56,roof:[-.82,.22],bp:-.3,
+    wr:.32,wz:[-1.33,1.35],wt:.24,rim:'silver',grille:'wide',head:'slim',headY:.7,tail:'pair',tailY:.76,
+    pal:['#e9eaec','#1c1e21','#8d939a','#3a4a66','#6b1f24','#b8bcc0','#4c5a50']},
+  lux:{n:'대형 고급 세단',L:4.42,W:1.9,sill:.22,acc:7.8,drag:.19,eye:1.18,
+    top:[[-2.21,.34],[-2.21,.8],[-2.08,.9],[-1.45,.93],[1.08,.93],[2.02,.84],[2.21,.7],[2.21,.36]],
+    gh:[[-1.48,.92],[-.98,1.38],[.3,1.4],[1.12,.94]],ghW:1.62,roof:[-.95,.27],bp:-.32,
+    wr:.34,wz:[-1.42,1.44],wt:.25,rim:'silver',grille:'tall',head:'slim',headY:.74,tail:'bar',tailY:.8,chrome:1,
+    pal:['#121417','#2b2f35','#c4c7cb','#1f2a44','#f0f0ee','#3d3a36']},
+  ev:{n:'전기 세단',L:4.3,W:1.85,sill:.21,acc:9.0,drag:.2,eye:1.1,
+    top:[[-2.15,.34],[-2.15,.72],[-1.98,.83],[-1.7,.86],[.82,.87],[1.72,.76],[2.1,.6],[2.15,.44],[2.12,.32]],
+    gh:[[-1.78,.85],[-1.05,1.22],[-.1,1.35],[.52,1.31],[1.0,.88]],ghW:1.54,roof:null,bp:null,glassRoof:1,
+    wr:.33,wz:[-1.38,1.4],wt:.25,rim:'aero',grille:'none',head:'bar',headY:.66,tail:'bar',tailY:.8,
+    pal:['#f3f4f5','#101214','#9ea4aa','#24467a','#a3161b','#5c636a']},
+  suv:{n:'SUV',L:4.42,W:1.9,sill:.32,acc:6.5,drag:.17,eye:1.42,
+    top:[[-2.21,.42],[-2.21,1.0],[-2.12,1.08],[1.2,1.08],[2.04,.98],[2.21,.86],[2.21,.44]],
+    gh:[[-2.05,1.07],[-1.96,1.7],[.66,1.72],[1.26,1.09]],ghW:1.66,roof:[-1.95,.64],bp:-.55,bp2:-1.45,rails:1,clad:1,
+    wr:.38,wz:[-1.42,1.42],wt:.27,rim:'silver',grille:'big',head:'slim',headY:.92,tail:'pair',tailY:1.0,
+    pal:['#f0f0ee','#17191c','#6f757b','#4a5240','#26405e','#7a2a22','#b9a98c']},
+  hatch:{n:'해치백',L:4.0,W:1.78,sill:.22,acc:6.8,drag:.18,eye:1.16,
+    top:[[-2.0,.32],[-2.0,.86],[-1.92,.9],[1.0,.9],[1.8,.78],[2.0,.62],[2.0,.34]],
+    gh:[[-1.95,.89],[-1.82,1.36],[.2,1.4],[1.05,.91]],ghW:1.54,roof:[-1.8,.18],bp:-.3,
+    wr:.3,wz:[-1.3,1.3],wt:.23,rim:'silver',grille:'wide',head:'round',headY:.7,tail:'pair',tailY:.98,
+    pal:['#e4572e','#f2d649','#2e86ab','#f3f3f1','#76b041','#1a1c1f','#a23b72']},
+  pickup:{n:'픽업트럭',L:4.42,W:1.9,sill:.32,acc:6.0,drag:.16,eye:1.4,
+    top:[[-2.21,.42],[-2.21,1.0],[1.25,1.02],[2.05,.98],[2.21,.86],[2.21,.44]],
+    gh:[[-.62,1.01],[-.56,1.66],[.58,1.68],[1.22,1.03]],ghW:1.66,roof:[-.55,.56],bp:null,bed:[-2.12,-.7],clad:1,
+    wr:.38,wz:[-1.45,1.42],wt:.28,rim:'dark',grille:'big',head:'slim',headY:.9,tail:'pair',tailY:.9,
+    pal:['#f0f0ee','#8e1c1c','#1a1c1f','#55603f','#2f4f6f','#9a9fa5']},
+  van:{n:'승합차',L:4.45,W:1.9,sill:.26,acc:5.2,drag:.14,eye:1.5,
+    top:[[-2.22,.36],[-2.22,1.0],[1.4,1.0],[2.1,.92],[2.22,.78],[2.22,.38]],
+    gh:[[-2.18,.99],[-2.15,1.94],[1.0,1.97],[1.78,1.01]],ghW:1.7,roof:[-2.12,.98],bp:-.2,bp2:-1.2,
+    wr:.32,wz:[-1.45,1.5],wt:.24,rim:'silver',grille:'wide',head:'slim',headY:.86,tail:'pair',tailY:1.15,
+    pal:['#f2f2f0','#c9ccd0','#7c8288','#1f2124','#2d4a6b']}};
+const VEH_ORD=['sedan','suv','hatch','ev','lux','coupe','van','pickup','sedan','suv','ev','hatch'];
+function vehOk(){return !VEH.legacy}
+/* ---------- 지오메트리 조각 ---------- */
+function vehNI(g){return g.index?g.toNonIndexed():g}
+function vehBox(w,h,d,x,y,z,rx,ry,rz){const g=new T.BoxGeometry(w,h,d);if(rx)g.rotateX(rx);if(ry)g.rotateY(ry);if(rz)g.rotateZ(rz);g.translate(x,y,z);return vehNI(g)}
+function vehCyl(r,h,seg,x,y,z,axis){const g=new T.CylinderGeometry(r,r,h,seg||16);if(axis==='x')g.rotateZ(Math.PI/2);else if(axis==='z')g.rotateX(Math.PI/2);g.translate(x,y,z);return vehNI(g)}
+function vehExt(pts,W,bv){const s=new T.Shape();s.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)s.lineTo(pts[i][0],pts[i][1]);s.closePath();const bt=bv||.05;
+  const g=new T.ExtrudeGeometry(s,{depth:Math.max(.1,W-2*bt),bevelEnabled:true,bevelThickness:bt,bevelSize:bt*.8,bevelOffset:-bt*.8,bevelSegments:2,curveSegments:4});g.rotateY(-Math.PI/2);g.translate((W-2*bt)/2,0,0);return vehNI(g)}
+/* 몸체 옆모습: 위 윤곽 + 바닥(문턱 높이) + 바퀴 아치 */
+function vehProfile(D){const P=D.top.slice();const sill=D.sill,ra=D.wr+.05,yc=D.wr;const zf=Math.max(...D.wz),zr=Math.min(...D.wz);const L2=D.L/2;
+  const front=P[P.length-1];P.push([front[0]-.04,sill]);const arch=zc=>{const a0=Math.asin(clamp((sill-yc)/ra,-1,1));const out=[];const N=9;for(let k=0;k<=N;k++){const a=a0+(Math.PI-2*a0)*k/N;out.push([zc+ra*Math.cos(a),yc+ra*Math.sin(a)])}return out};
+  if(zf+ra<L2-.05)P.push(...arch(zf));if(zr-ra>-L2+.05)P.push(...arch(zr));P.push([P[0][0]+.04,sill]);return P}
+/* 윤곽에서 높이 y가 되는 앞(뒤) 끝 z — 등·그릴·번호판을 차체 면에 붙인다 */
+function vehZ(D,y,front){const P=D.top;let best=front?-9:9;for(let i=0;i+1<P.length;i++){const [z1,y1]=P[i],[z2,y2]=P[i+1];if((front&&Math.max(z1,z2)<0)||(!front&&Math.min(z1,z2)>0))continue;const lo=Math.min(y1,y2),hi=Math.max(y1,y2);if(y<lo-1e-6||y>hi+1e-6)continue;const z=Math.abs(y2-y1)<1e-6?(front?Math.max(z1,z2):Math.min(z1,z2)):z1+(z2-z1)*(y-y1)/(y2-y1);best=front?Math.max(best,z):Math.min(best,z)}
+  if(best===-9||best===9)best=front?D.L/2-.02:-D.L/2+.02;return best}
+function vehGeo(type){if(VEH.geo[type])return VEH.geo[type];const D=VEH_T[type];const W=D.W,L2=D.L/2;const G={paint:[],glass:[],dark:[],chrome:[],rim:[],head:[],tail:[]};
+  G.paint.push(vehExt(vehProfile(D),W,.09));G.glass.push(vehExt(D.gh,D.ghW,.04));
+  const ghTop=Math.max(...D.gh.map(p=>p[1]));const belt=D.gh[0][1];
+  if(D.roof)G.paint.push(vehBox(D.ghW+.02,.05,D.roof[1]-D.roof[0],0,ghTop+.012,(D.roof[0]+D.roof[1])/2));
+  for(const bz of [D.bp,D.bp2]){if(bz==null)continue;G.paint.push(vehBox(D.ghW+.02,(ghTop-belt)*.92,.09,0,belt+(ghTop-belt)*.46,bz))}
+  /* 바퀴: 타이어 · 휠 · 바퀴집(안쪽 어둡게 — 아치 너머로 반대편이 비치지 않게) */const tx=W/2-D.wt/2-.015;
+  for(const z of D.wz){G.dark.push(vehBox(W-.36,D.wr+.05+D.wr-D.sill+.02,2*(D.wr+.05)-.02,0,(D.sill+2*D.wr+.05)/2,z));for(const s of [-1,1]){G.dark.push(vehCyl(D.wr,D.wt,18,s*tx,D.wr,z,'x'));const rr=D.rim==='aero'?D.wr*.72:D.wr*.62;G.rim.push(vehCyl(rr,.03,18,s*(tx+D.wt/2+.004),D.wr,z,'x'));G.dark.push(vehCyl(rr*.25,.035,10,s*(tx+D.wt/2+.012),D.wr,z,'x'))}}
+  /* 앞 · 뒤 얼굴 */const hy=D.headY,ty=D.tailY;const fz=vehZ(D,hy,1)-.015,rz=vehZ(D,ty,0)+.015;const gz=y=>vehZ(D,y,1)-.01;
+  if(D.head==='bar'){G.head.push(vehBox(W-.34,.045,.04,0,hy,fz))}else if(D.head==='round'){for(const s of [-1,1])G.head.push(vehCyl(.11,.05,16,s*(W/2-.32),hy,fz,'z'))}else{for(const s of [-1,1])G.head.push(vehBox(.44,.075,.05,s*(W/2-.34),hy,fz-.01,0,s*.12,0))}
+  if(D.tail==='bar'){G.tail.push(vehBox(W-.22,.06,.04,0,ty,rz))}else{for(const s of [-1,1])G.tail.push(vehBox(.36,.13,.04,s*(W/2-.27),ty,rz))}
+  if(D.grille==='wide'){G.dark.push(vehBox(W*.5,.15,.04,0,hy-.1,gz(hy-.1)));G.chrome.push(vehBox(W*.5+.04,.02,.045,0,hy-.02,gz(hy-.02)))}
+  else if(D.grille==='tall'){G.dark.push(vehBox(W*.36,.28,.04,0,hy-.12,gz(hy-.12)));for(let i=0;i<4;i++)G.chrome.push(vehBox(W*.36,.018,.05,0,hy-.23+i*.07,gz(hy-.12)+.004));G.chrome.push(vehBox(W*.36+.05,.3,.02,0,hy-.12,gz(hy-.12)-.012))}
+  else if(D.grille==='big'){G.dark.push(vehBox(W*.6,.26,.04,0,hy-.12,gz(hy-.12)));for(let i=0;i<2;i++)G.chrome.push(vehBox(W*.6,.025,.05,0,hy-.18+i*.12,gz(hy-.12)+.004))}
+  else if(D.grille==='intake'){G.dark.push(vehBox(W*.62,.1,.04,0,.36,gz(.36)));for(const s of [-1,1])G.dark.push(vehBox(.26,.12,.04,s*(W/2-.3),.4,gz(.4)))}
+  else{G.dark.push(vehBox(W*.4,.05,.04,0,.36,gz(.36)))}
+  /* 번호판(빈 판) */{const py=Math.max(.36,hy-.3),qy=Math.max(.42,ty-.26);G.rim.push(vehBox(.5,.12,.02,0,py,gz(py)+.005));G.rim.push(vehBox(.5,.12,.02,0,qy,vehZ(D,qy,0)-.005))}
+  /* 범퍼 아래 · 문턱 검은 띠 */G.dark.push(vehBox(W-.1,.07,.06,0,D.sill+.06,L2-.05));G.dark.push(vehBox(W-.1,.07,.06,0,D.sill+.06,-L2+.05));
+  if(D.clad){for(const s of [-1,1])G.dark.push(vehBox(.03,.12,D.L-1.6,s*(W/2+.004),D.sill+.08,0))}
+  /* 사이드미러 */for(const s of [-1,1])G.paint.push(vehBox(.16,.09,.2,s*(D.ghW/2+.1),belt+.07,D.gh[D.gh.length-1][0]-.18));
+  if(D.chrome){for(const s of [-1,1])G.chrome.push(vehBox(.02,.025,D.gh[D.gh.length-1][0]-D.gh[0][0]-.1,s*(D.ghW/2+.012),belt+.02,(D.gh[0][0]+D.gh[D.gh.length-1][0])/2))}
+  if(D.spoiler){G.paint.push(vehBox(W-.36,.035,.26,0,.97,-L2+.22));for(const s of [-1,1])G.dark.push(vehBox(.05,.12,.08,s*(W/2-.45),.89,-L2+.24))}
+  if(D.rails){for(const s of [-1,1])G.chrome.push(vehBox(.04,.05,(D.roof[1]-D.roof[0])-.2,s*(D.ghW/2-.12),ghTop+.07,(D.roof[0]+D.roof[1])/2))}
+  if(D.bed){const len=D.bed[1]-D.bed[0];G.dark.push(vehBox(W-.24,.04,len,0,1.0,(D.bed[0]+D.bed[1])/2));G.paint.push(vehBox(W-.24,.06,.06,0,1.02,D.bed[0]))}
+  const out={};for(const k in G){if(!G[k].length)continue;try{out[k]=T.mergeGeometries(G[k],false);out[k].computeBoundingSphere()}catch(e){vehErr(e)}}VEH.geo[type]=out;return out}
+/* ---------- 차 한 대 ---------- */
+function vehPickType(){const t=VEH_ORD[VEH.seq%VEH_ORD.length];VEH.seq++;return t}
+function vehMake(type,col,p,burnt){const D=VEH_T[type];const G=vehGeo(type);const g=new T.Group();if(p)p.add(g);
+  const pick=col&&Math.random()<.45?col:D.pal[Math.floor(Math.random()*D.pal.length)];
+  const M={paint:burnt?mat('#2b2725',{r:1,m:0}):mat(pick,{r:.3,m:.5}),glass:burnt?mat('#0d0c0b',{r:1}):mat(D.glassRoof?'#1a2733':'#263644',{r:.1,m:.75}),dark:mat('#141619',{r:.85}),chrome:burnt?mat('#3a3633',{r:.9}):mat('#c8cdd2',{r:.22,m:.9}),
+    rim:burnt?mat('#2d2a28',{r:.95}):D.rim==='aero'?mat('#d6d9dc',{r:.35,m:.45}):D.rim==='dark'?mat('#2b2e33',{r:.4,m:.6}):mat('#b9bec4',{r:.3,m:.85}),
+    head:burnt?mat('#2a2826',{r:1}):mat('#f1efe6',{r:.25,m:.2,e:'#fff1cc',ei:.35}),tail:burnt?mat('#2a2220',{r:1}):mat('#8a1010',{r:.35,e:'#ff2a1a',ei:.45})};
+  for(const k of ['paint','glass','dark','chrome','rim','head','tail']){if(!G[k])continue;const m=new T.Mesh(G[k],M[k]);const big=k==='paint'||k==='dark'||k==='glass';m.castShadow=big;m.receiveShadow=k==='paint';if(k==='paint'||k==='glass'){m.userData.solid=true}m.name='veh-'+k;g.add(m)}
+  g.userData.vk={t:type,n:D.n,acc:D.acc,drag:D.drag,vmax:36.1,eye:D.eye};g.userData.eyeY=D.eye;g.userData.vehT=type;VEH.n[type]=(VEH.n[type]|0)+1;return g}
+(function(){const b=PK.car;if(typeof b!=='function')return;PK.car=function(col,p,burnt){if(!vehOk())return b.apply(this,arguments);try{return vehMake(vehPickType(),col,p,burnt)}catch(e){vehErr(e);return b.apply(this,arguments)}}})();
+/* 예전 그대로: 진지 전투 지도(12c) · 첫 탈출 운전 차(21 — 바퀴가 도는 모델) */
+for(const fn of ['buildMap3','playerCover','spotCover','mkPlayerCar']){(function(){const b=window[fn];if(typeof b!=='function')return;window[fn]=function(){VEH.legacy++;try{return b.apply(this,arguments)}finally{VEH.legacy--}}})()}
+/* ---------- 운전 ---------- */
+/* 운전석 자리 이름: 차종 */
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){const r=b.apply(this,arguments);try{for(const s of OUT.spots||[]){if(s.k!=='drive'||!s.dc||!s.dc.car)continue;const vk=s.dc.car.userData.vk;if(!vk)continue;s.n=`${vk.n} 운전석에 타기`;s.s=`${vk.n} · 최고 130km/h · 시동이 걸리면 몰고 갈 수 있다`}}catch(e){vehErr(e)}return r}})();
+/* 엔진 소리: 기어를 올리듯 회전이 오르내린다(예전엔 시속 60km에서 소리가 멈춰 있었다) */
+(function(){if(typeof SND==='undefined'||typeof SND.engine!=='function')return;const b=SND.engine;SND.engine=function(v,th){const sp=Math.abs(v||0);if(sp<=9)return b.call(this,v,th);const G=[9,17,25,33,45];let i=0;while(i<G.length-1&&sp>G[i+1])i++;const lo=G[i],hi=G[i+1]||45;const f=clamp((sp-lo)/(hi-lo),0,1);return b.call(this,(v<0?-1:1)*(7+f*10),th)}})();
+/* 오토바이 80km/h */
+try{if(typeof RIDE_K!=='undefined'&&RIDE_K.moto){Object.assign(RIDE_K.moto,{vmax:22.2,acc:6.4,brk:11,s:'최고 약 80km/h · 실제로는 안전모 필수'})}}catch(e){vehErr(e)}
+try{if(typeof HELP84!=='undefined'){const h=HELP84.find(x=>x[0]==='자전거·킥보드·오토바이');if(h)h[1]=h[1].replace('오토바이 60km/h','오토바이 80km/h')}}catch(e){}
+if(typeof HELP84!=='undefined')HELP84.push(['🚗 차종 · 130km/h(v14.1)','밖에 세워 둔 차는 이제 8가지 — 스포츠 쿠페 · 중형 세단 · 대형 고급 세단 · 전기 세단 · SUV · 해치백 · 픽업트럭 · 승합차(가상의 독자 디자인, 로고 없음). 운전석에 다가가면 차종이 보인다. 모든 차 최고 130km/h — 쿠페·전기 세단은 빨리 붙고, 승합차·픽업은 굼뜨다. 빠를수록 핸들이 덜 꺾이고, 세게 부딪히면 그만큼 다친다. 오토바이 최고 80km/h.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
