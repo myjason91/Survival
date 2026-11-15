@@ -1756,6 +1756,18 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .sw-btn.on{background:rgba(16,22,30,.82);border-color:rgba(255,255,255,.42);color:#f3f1ea;font-size:12px}
 .sv3.dfr-on .sw-btn{display:none}
 @media (max-height:420px){.sw-btn{top:128px;padding:7px 14px;font-size:12.5px}}
+/* v15.0 수배 ★ */
+.ol-hud{position:absolute;right:calc(10px + env(safe-area-inset-right));top:84px;z-index:7;display:flex;flex-direction:column;align-items:flex-end;gap:3px;pointer-events:none;font:800 11.5px/1.2 var(--sans,system-ui)}
+.ol-hud b{display:flex;gap:1px;font-size:22px;line-height:1;letter-spacing:-1px}
+.ol-hud b i{font-style:normal;color:rgba(255,255,255,.22);text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.ol-hud b i.on{color:#ffd23a;text-shadow:0 0 6px rgba(255,180,40,.6),0 1px 3px rgba(0,0,0,.9)}
+.ol-hud.srch b i.on{animation:olBlink .8s steps(2,start) infinite}
+.ol-hud span{padding:2px 8px;border-radius:7px;background:rgba(10,12,16,.74);color:#e9eef3;border:1px solid rgba(90,140,255,.55);white-space:nowrap}
+.ol-hud.srch span{border-color:rgba(120,170,255,.8);color:#cfe0ff}
+.ol-hud.bust span{background:#b3261e;border-color:#ffb3a8;color:#fff}
+@keyframes olBlink{to{opacity:.22}}
+.sv3.cine-on .ol-hud,.sv3.br-on .ol-hud{visibility:hidden}
+@media (max-height:420px){.ol-hud b{font-size:19px}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13843,7 +13855,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='14.4';
+const APP_VER='15.0';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -24023,7 +24035,7 @@ function crDrop(sc){try{isHoldDrop(sc.ag.filter(a=>typeof IS!=='undefined'&&IS.p
   const v=sc.vic;if(v){try{v.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(v.h)}catch(e){}v.gone=1}for(const s of sc.props)try{s.removeFromParent()}catch(e){}OUT.npcs=(OUT.npcs||[]).filter(x=>!sc.ag.includes(x)&&x!==v);CR.list=CR.list.filter(x=>x!==sc);try{GUN.hits=[]}catch(e){}}
 /* ---------- 교전 ---------- */
 function crFight(sc,first){const live=sc.ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);if(!live.length){crDrop(sc);return false}const K=sc.K;
-  const o=Object.assign({},sc.o,{agents:live,waves:[[]],grace:first?2.2:1.0,dmin:20,dmax:40,intro:`<b>⚖ ${K.ico} ${K.n} — 무장 강도(복면)</b><div>${K.why}. ${first?'먼저 덮쳤다':'들켰다'} — 그 자리에서 교전. 피해 주민은 쏘지 않는다.</div>`,onEnd:r=>crAfter(sc,r)});
+  const o=Object.assign({},sc.o,{agents:live,waves:[[]],grace:first?2.2:1.0,dmin:20,dmax:40,intro:`<b>⚖ ${K.ico} ${K.n} — 무장 강도(복면)</b><div>${K.why}. ${first?'먼저 덮쳤다':'들켰다'} — 그 자리에서 교전.${sc.vic?' 피해 주민은 쏘지 않는다.':' 손 든 자는 쏘지 않는다.'}</div>`,onEnd:r=>crAfter(sc,r)});
   if(!isStart(o)){crDrop(sc);return false}sc.st='fight';try{if(sc.vic)bubSay(sc.vic.h,'엎드릴게요!',1.8,'bad')}catch(e){}return true}
 function crAfter(sc,r){sc.st='done';sc.doneT=0;const v=sc.vic;const vOk=!!(v&&!v.dead&&!(v.h&&v.h.dead));const boss=sc.ag.find(a=>a.type==='lead');const bossDown=!!(boss&&(boss.dead||boss.h.dead));const n=r.st.kills+r.st.tk;CR.kills+=r.st.kills||0;
   if(r.win){let cash=1+(bossDown?1:0);G.inv=G.inv||{};G.inv.cash=(G.inv.cash||0)+cash;try{gunAmmoAdd(Math.random()<.5?'9mm':'45',12)}catch(e){}if(vOk){try{trust(1)}catch(e){}try{v.h.setPose('idle');bubSay(v.h,'살았다… 고맙습니다!',2.6,'ok')}catch(e){}}
@@ -24053,6 +24065,171 @@ function crStep(dt){if(!OUT.on||!OUT.scene)return;if(!crOn()){if(CR.list.length)
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="crime"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('crime','길거리 범죄','복면 강도·약탈 무리가 범행 중으로 나타난다 — 전시 포고령(가상) 기준 사살·생포 대상',[[1,'켬'],[0,'끔']],store.get('sg.crime',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){crErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='crime')return;try{store.set('sg.crime',b.dataset.v==='1');toast(b.dataset.v==='1'?'길거리 범죄 현장이 나온다':'길거리 범죄 현장을 끈다',2000)}catch(x){crErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🎭 복면 범죄자(v14.4)','밖을 다니면 앞쪽 70~120m에 <b>복면 무리</b>가 범행 중으로 나타난다(미니맵 붉은 마름모 !) — 🎭 강도단(주민을 세워 놓고 턴다) · 🎒 약탈단(자루를 옮긴다). 조준점 아래 <b>⚖ 적법 · 무장 강도(복면)</b> — 전시 포고령(가상)으로 사살할 수 있다. 피해 주민은 <b>⛔ 위법</b>. 먼저 쏘거나 22m 안에서 들키면 그 자리에서 교전 — 손 든 자는 쏘지 말고 E로 묶어서 넘긴다. 끝나면 현금 봉투·권총탄, 주민이 무사하면 이웃 신뢰 +1. 자동사격은 이들에게 쏘지 않는다(직접 판단). 설정 \'길거리 범죄\'로 끈다.']);
+
+/* ===================== 131 · v15.0 무법자 모드 · 수배 ★1~5 — 가상의 '계엄 치안대'가 쫓는다 ===================== */
+/* 사용자 요청(2026-11-16 00:36): "Gta같은 게임처럼 하고자 하는데 미션 및 시나리오 등 어때" → 제안(성향 · 수배 단계 · 임무 틀) → 답(06:45): "무법자"
+   · 주인공 성향(설정): 🏴 무법자(기본) — 주민·군인을 쏘거나 사람을 치어도 게임이 막지 않는다. 대신 수배(★)로 돌아온다
+                        ⚖ 해결사 — 예전 그대로(주민 사격 두 번째 · 군인 사격 = 즉시 군 연행)
+   · 수배 점수 → ★: 주민 사살 +2.5 · 사람 치기 +2 · 투항자 사격 +2.5 · 군인 사격 +3(사살 +4.5) · 치안대 사격 +0.8 · 치안대 사살 +2.2 · 감시 드론 격추 +1
+     ★1 >0 · ★2 ≥4 · ★3 ≥8 · ★4 ≥13 · ★5 ≥19. 본 사람(45m 안 · 시야)이 없으면 바로 오르지 않고 18~28초 뒤 절반만 '늦은 신고'로 오른다(군인·치안대는 늘 본다)
+   · 대응(가상의 계엄 치안대 — 실존 경찰·군 조직과 무관): ★1 2인 순찰조(권총 · 붙어서 체포하려 든다) · ★2 무장 4명 · ★3 + 감시 드론
+     ★4 체포조 6명 + 도로 검문선(차로 달아나면 앞을 막는다) · ★5 + 저격조 2 · 드론 떼(섬광탄)
+     싸움은 제자리 교전(116) 그대로 — 화면이 바뀌지 않는다. 오른쪽 위 교전 띠 아래 ★ · 미니맵에 수색 범위(원) · 치안대(파란 점) · 드론(하늘색 삼각)
+   · 따돌리기: 치안대·드론 시야에서 벗어나면 ★가 깜빡이고 수색 시간이 준다(★1 20초 … ★5 80초). 수색 범위 밖이면 ×2 · 건물(집·상가) 안이면 ×3
+     들키지 않은 채 다른 차로 갈아타면 남은 수색 −40%. 수색이 끝나면 수배 해제 — 다시 들키면 처음부터
+   · 체포: 치안대가 4.6m 안에서 나를 보고, 내가 멈춰 있고 2.5초 넘게 쏘지 않으면 2초 만에 체포 — 총·탄 압수, 현금 봉투 절반, 대피소로
+     쓰러지면 대피소 의료실(현금 봉투 1 치료비). 둘 다 수배 해제
+   · 자동사격(126)은 치안대·드론에 쏘지 않는다(직접 판단). 조준점 아래 '⛔ 위법 · 계엄 치안대'. 가족·아이 보호(116)는 그대로
+   · 대피소로 돌아가도 수배는 남는다(턴마다 ★ 하나씩 흐려진다) — 다음 외출에 아직 찾고 있으면 순찰조가 돈다
+   · 끄기: 설정 '주인공 성향' = 해결사. 교육용 모드·교전 끔이면 쓰지 않는다. 모든 인물·조직은 가상 — 실존 기관·정당·지역과 무관 */
+const OL={pts:0,star:0,cool:0,full:0,lx:0,lz:0,seen:false,hotT:0,spT:0,bust:0,car:null,swT:0,ro:-1,late:[],dr:[],drT:0,drK:0,rb:[],rbT:0,uiT:0,hitT:-9,shotAt:-99,clock:0,err:0,fbT:6,sync:[],seq:0,busts:0,wasted:0,clears:0,adds:0,lastWhy:'',quiet:0,retF:0,bustF:0,boom:null,inCiv:0,fee:0};
+const OL_T=[0,0,4,8,13,19],OL_SR=[0,20,30,45,60,80],OL_R=[0,70,90,120,150,180];
+const OL_W=[[],['rush','rush'],['gun','gun','gun','rush'],['gun','gun','gun','rush'],['lead','gun','gun','gun','rush','rush'],['lead','gun','gun','gun','rush','mark','mark']];
+const OL_SAY=['','계엄 치안대 2인 순찰조가 온다','무장 치안대 4명이 출동했다','감시 드론이 떴다 — 지붕 아래·건물 안으로','체포조 6명 · 차로 달아나면 도로 검문선이 앞을 막는다','저격조와 드론 떼까지 — 끝까지 쫓는다'];
+function olErr(e){if(OL.err<6){OL.err++;try{console.error(e)}catch(x){}}}
+function olOn(){try{return store.get('sg.outlaw',true)!==false&&!(typeof eduOn==='function'&&eduOn())&&store.get('sg.owc',true)!==false&&typeof tjUse==='function'&&tjUse()&&!(navigator.webdriver&&!window.__olTest)}catch(e){return false}}
+function olStarOf(p){if(!(p>0))return 0;let s=1;for(let i=2;i<=5;i++)if(p>=OL_T[i])s=i;return s}
+function olIn(){return (typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on)}
+function olLawOn(){return typeof IS!=='undefined'&&IS.on&&IS.k==='law'}
+/* ---------- 본 사람: 45m 안 · 시야(가족·팀원·범죄 무리·치안대 빼고) ---------- */
+function olWit(x,z,skip){let n=0;const chk=a=>{if(n>=3||!a||a===skip||!a.h||!a.h.root||a.dead||a.h.dead||a.gone||a.is||a.crime||a.law||a.isAl)return;const k=a.kind;if(k==='team'||k==='fam'||k==='dead'||k==='follow'||k==='en'||k==='enemy')return;const q=a.h.root.position;const d=Math.hypot(q.x-x,q.z-z);if(d>45)return;let los=d<8;if(!los)try{los=owcLos(q.x,1.5,q.z,x,1.4,z)}catch(e){los=false}if(los)n++};
+  try{(OUT.npcs||[]).forEach(chk);if(typeof PED!=='undefined')(PED.list||[]).forEach(chk)}catch(e){olErr(e)}return n}
+/* ---------- 점수 · 별 ---------- */
+function olSiren(){try{[0,.18,.36,.54].forEach((t,i)=>SND.tone(i%2?720:960,.16,'square',.045,t))}catch(e){}try{vib([60,40,60,40,90])}catch(e){}}
+function olAdd(v,why,o){if(!olOn()||!OUT.on)return null;o=o||{};const P=FP3.pos;
+  if(o.wit!=null&&o.wit<=0){OL.late.push({t:18+Math.random()*10,v:v*.5,why,x:o.x!=null?o.x:P.x,z:o.z!=null?o.z:P.z});try{toast('<b>🤫 본 사람이 없다</b> — 늦게 신고될 수 있다',2400)}catch(e){}return{late:1,up:0}}
+  const s0=OL.star;OL.pts=Math.min(30,OL.pts+v);let s=olStarOf(OL.pts);if(s<s0)s=s0;OL.star=s;if(s>s0)OL.pts=Math.max(OL.pts,OL_T[s]);OL.adds++;OL.lastWhy=why;OL.full=OL_SR[s];
+  if(o.late){OL.lx=o.x;OL.lz=o.z;OL.cool=Math.max(OL.cool,OL.full*.7)}else{OL.lx=P.x;OL.lz=P.z;OL.cool=OL.full;OL.hotT=12;OL.seen=true}
+  if(s>s0){olSiren();if(!s0)OL.spT=o.late?2:4+Math.random()*3;else OL.spT=Math.min(OL.spT,3);
+    if(!o.noNote)try{outNote(`<b>🚨 수배 ${'★'.repeat(s)} — ${why}</b><div>${OL_SAY[s]}.${s0?'':' 시야를 끊고 수색 범위(미니맵 원) 밖으로 — 건물 안이면 더 빨리 잊힌다.'}</div>`,s0?3600:6000)}catch(e){}
+    if(olLawOn())try{olReinforce(s0,s)}catch(e){olErr(e)}}
+  OL.uiT=0;return{late:0,up:s-s0,star:s}}
+/* ---------- 치안대 겉모습: 군 아바타에 남색 물 · 가슴 반사띠 · 파란 완장(가상 조직 — 실존 제복을 본뜨지 않는다) ---------- */
+function olLook(type,seed){seed=Math.abs(seed|0)||1;return Object.assign({skin:SKINC[(seed*7)%SKINC.length],seed},LOOKS3.rok,{law:1,patch:'#2f6fe0'})}
+(function(){const b=window.soldAvatar;if(typeof b!=='function')return;window.soldAvatar=function(sp){if(sp&&sp.law)return{k:'military_m_1',v:'law'};return b.apply(this,arguments)}})();
+function olSync(){for(const s of OL.sync){if(s.c.map!==s.src.map&&s.src.map){s.c.map=s.src.map;s.c.needsUpdate=true}}}
+(function(){if(typeof RBX==='undefined'||!RBX.materials)return;const prev=RBX.materials;RBX.materials=function(k,variant,tint){if(variant!=='law')return prev.call(this,k,variant,tint);const key=k+'|law|'+(tint||'');if(RBX.mats[key])return RBX.mats[key];
+  const ms=prev.call(this,k,'rok',tint);if(!ms)return ms;const C={body:[.34,.41,.64],helmet:[.27,.31,.46],equipment:[.32,.35,.42]};
+  const out=ms.map(x=>{const n=x.name||'';const m=/body/.test(n)?C.body:/helmet/.test(n)?C.helmet:/equipment/.test(n)?C.equipment:null;if(!m)return x;const c=x.clone();c.color=new T.Color(m[0],m[1],m[2]);OL.sync.push({c,src:x});return c});
+  [0,300,1500,4000].forEach(t=>setTimeout(olSync,t));return RBX.mats[key]=out}})();
+function olDress(h,type,seed){try{if(!h||h.olD||!h.b)return;h.olD=1;const M=OL.mat||(OL.mat={s:mat('#e4e8ee',{r:.45,e:'#3a3e44'}),b:mat('#2f6fe0',{r:.7}),w:mat('#f2f4f7',{r:.6})});
+  if(h.b.chest&&h.offQ){const g=new T.Group();g.quaternion.copy(h.offQ);h.b.chest.add(g);MM(GG.box(.34,.032,.012),M.s,0,-.075,.142,{p:g,cast:false});MM(GG.box(.34,.032,.012),M.s,0,-.075,-.15,{p:g,cast:false});h.olStripe=g}
+  /* 완장: 위팔뼈(x = 뼈 방향) 둘레 */for(const k of ['shL','shR']){const bn=h.b[k];if(!bn)continue;const g=new T.Group();g.position.set(.1,0,0);bn.add(g);MM(GG.cyl(.062,.062,.055,10),M.b,0,0,0,{p:g,cast:false,rz:Math.PI/2});MM(GG.cyl(.064,.064,.012,10),M.w,0,0,0,{p:g,cast:false,rz:Math.PI/2})}}catch(e){olErr(e)}}
+/* ---------- 출동 ---------- */
+function olOpt(s){OL.seq++;return{k:'law',ico:'🚔',nm:'계엄 치안대',more:'치안대 증원',say:'치안대예요! 엎드려요!',
+  arms:{rush:['k5','p9'],gun:['k1a','k2c1','mp9'],lead:['k2c1'],mark:['k14','dmr762']},look:(t,seed)=>olLook(t,seed),dress:(h,t,seed)=>olDress(h,t,seed),
+  stat:{rush:{n:'계엄 치안대',hp:2,aim:1.35,acc:.46,dmg:9,burst:2,gap:.28,want:[2.8,4.2],sp:4.6},gun:{n:'계엄 치안대(무장)',hp:2.3},lead:{n:'치안대 조장',hp:3.2},mark:{n:'치안대 저격조',hp:2}},
+  noSurr:1,fanatic:1,dmin:38,dmax:72,grace:1.8,seed:900+OL.seq*37,waves:[OL_W[Math.max(1,Math.min(5,s))].slice()],
+  intro:`<b>🚔 계엄 치안대 ${'★'.repeat(Math.max(1,s))}</b><div>${OL_SAY[Math.max(1,s)]}. 가까이 붙은 채 멈춰 있으면 체포된다 — 움직이거나 맞선다.</div>`,onEnd:r=>olFightEnd(r)}}
+function olTag(a){if(!a)return;a.law=1;a.nm=a.tagL=(a.E&&a.E.n)||'계엄 치안대'}
+function olSpawn(extra){if(typeof IS==='undefined'||IS.on)return false;let av=false;try{av=isAvail()}catch(e){}if(!av)return false;const s=Math.max(1,OL.star);const o=olOpt(s);o.agents=extra||[];if(o.agents.length)o.grace=1.2;
+  /* 들키지 않은 수색 중: 순찰조만 — 마지막으로 본 쪽에서 */if(!OL.seen&&OL.hotT<=0){o.waves=[OL_W[Math.min(s,2)].slice(0,s>=3?3:2)];const P=FP3.pos;o.ang=Math.atan2(OL.lx-P.x,OL.lz-P.z);o.intro=`<b>🚔 치안대 수색조 ${'★'.repeat(s)}</b><div>마지막으로 들킨 쪽에서 훑으며 온다. 보이기 전에 자리를 뜬다.</div>`}
+  let ok=false;try{ok=isStart(o)}catch(e){olErr(e)}if(ok){for(const a of IS.en)olTag(a);OL.spawns=(OL.spawns|0)+1}return ok}
+function olReinforce(s0,s){if(!olLawOn())return 0;const want=OL_W[s].length,live=isLive().length;const n=Math.max(2,Math.min(4,want-live+1));const add=OL_W[s].slice(0,n);IS.o.waves=IS.o.waves||[];IS.o.waves.push(add);IS.flee=0;const before=IS.en.length;const made=isWave(IS.o.waves.length-1);for(const a of IS.en.slice(before))olTag(a);
+  if(made)try{toast(`<b>🚔 치안대 증원 ${made}명</b> — ${OL_SAY[s]}`,2600)}catch(e){}return made}
+function olFightEnd(r){try{if(OL.bustF||OL.quiet)return'';if(r.why==='down'&&!OL.retF){olWasted();return`<b>🚑 쓰러졌다 — 치안대가 대피소 의료실에 넘겼다</b><div>수배는 풀렸다${OL.fee?` · 치료비 현금 봉투 ${OL.fee}`:''}.</div>`}
+  if(!OL.star)return'';if(r.why==='escape'||r.why==='down'){OL.spT=Math.max(OL.spT,16+Math.random()*8);return`<b>🚔 치안대를 따돌렸다 — 수색 중 ${'★'.repeat(OL.star)}</b><div>★가 깜빡이는 동안 들키지 않으면 수배가 풀린다. 수색 범위 밖·건물 안이면 더 빨리.</div>`}
+  OL.spT=Math.max(OL.spT,9+Math.random()*5);const n=r.st.kills+r.st.tk;return`<b>🚔 치안대 ${n}명이 쓰러졌다 — 수배 ${'★'.repeat(OL.star)}</b><div>증원이 온다. 지금 시야를 끊고 달아날 때다.</div>`}catch(e){olErr(e);return''}}
+/* ---------- 끝: 해제 · 체포 · 쓰러짐 ---------- */
+function olDrop(){for(const d of OL.dr){try{d.g.removeFromParent()}catch(e){}d.dead=true;if(d.px)d.px.dead=true}OL.dr=[];for(const k of OL.rb)olRbDrop(k);OL.rb=[];try{GUN.hits=[]}catch(e){}}
+function olReset(){OL.pts=0;OL.star=0;OL.cool=0;OL.full=0;OL.seen=false;OL.hotT=0;OL.late=[];OL.bust=0;OL.car=null;OL.spT=0;olDrop();try{G.flags.olPts=0}catch(e){}OL.uiT=0;try{olUI()}catch(e){}}
+function olClear(){const st=OL.star;if(olLawOn()){OL.quiet=1;try{isEnd('escape',true)}catch(e){olErr(e)}finally{OL.quiet=0}}olReset();OL.clears++;try{SND.ok&&SND.ok()}catch(e){}
+  try{outNote(`<b>✅ 수배 해제 — ${'★'.repeat(st)} 사라짐</b><div>치안대가 수색을 접었다. 다시 들키기 전까지는 자유다.</div>`,4200)}catch(e){}}
+function olWasted(){const c=(G.inv&&G.inv.cash)|0;OL.fee=c>0?1:0;if(OL.fee)G.inv.cash=c-1;OL.wasted++;olReset()}
+function olBust(){if(OL.bustF)return;OL.bustF=1;const st=OL.star;try{if(olLawOn())isEnd('escape',true)}catch(e){olErr(e)}
+  let lost=[];try{lost=gunArms().map(a=>ARMS[a.id]?ARMS[a.id].n:a.id)}catch(e){}G.arms=[];G.ammo={};G.eq=null;try{gunHolster()}catch(e){}G.inv=G.inv||{};const c=G.inv.cash|0;const fine=Math.ceil(c/2);G.inv.cash=c-fine;
+  FX=[];try{hurt('me',8);trust(-3);mor(-8)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}olReset();OL.busts++;try{vib([160,60,160])}catch(e){}try{SND.bad&&SND.bad()}catch(e){}
+  try{outEncShow({id:'ol-bust',cat:'밖 · 수배',art:'shield',tone:'red',title:`🚔 체포 — 수배 ${'★'.repeat(Math.max(1,st))}`,text:`계엄 치안대에 붙잡혔다. 가진 총·탄(${lost.join(', ')||'없음'})을 압수당했고 현금 봉투 ${fine}개를 빼앗겼다. 조사 뒤 대피소로 돌려보내졌다.`,lesson:'무법 모드는 막지 않는다 — 대가가 돌아온다. 쫓기면 멈추지 말고 시야를 끊는다.',src:'게임 규칙(가상 — 계엄 치안대는 실존 조직이 아니다)',guide:'now',noLog:1,
+    choices:[{t:'대피소로 돌아간다',ok:null,go:()=>{setTimeout(()=>{OL.bustF=0;try{outReturn('fast')}catch(e){olErr(e)}},300);return '치안대 차량이 대피소 입구에 당신을 내려놓고 떠났다.'}}]})}catch(e){olErr(e);OL.bustF=0}}
+/* ---------- 감시 드론(★3) · 드론 떼(★5) ---------- */
+function olDrMk(){let m=null;try{m=d2Mesh()}catch(e){olErr(e);return null}try{m.led.material=m.led.material.clone();m.led.material.color.set('#3a7bff')}catch(e){}const P=FP3.pos;const fol=OL.seen||OL.hotT>0;const cx=fol?P.x:OL.lx,cz=fol?P.z:OL.lz;const a=Math.random()*6.283,R=fol?70:30;m.g.position.set(cx+Math.sin(a)*R,32,cz+Math.cos(a)*R);
+  const d={g:m.g,led:m.led,hm:m.hm,p:m.g.position,ph:Math.random()*6.283,see:false,dead:false,t:0};d.ag={side:'law',kind:'oldrone',dr:d,nm:'치안대 감시 드론',hp:1,law:1};d.px={root:m.g,dead:false,hits:[m.hm]};OL.dr.push(d);try{GUN.hits=[]}catch(e){}return d}
+function olDroneKill(d){if(!d||d.dead)return;d.dead=true;d.px.dead=true;try{FX3.explode(d.p.clone(),{r:2.2,kind:'small',lite:true})}catch(e){}try{d.g.removeFromParent()}catch(e){}try{GUN.hits=[]}catch(e){}OL.drT=30;OL.drK++;OL.dr=OL.dr.filter(x=>x!==d);olAdd(1,'감시 드론 격추',{noNote:0});try{toast('<b>🛸 감시 드론을 떨어뜨렸다</b> — 30초 동안 그 하늘이 빈다',2400)}catch(e){}}
+function olDrStep(dt){const P=FP3.pos;const inn=olIn();const want=OL.star>=5?3:OL.star>=3?1:0;OL.drT-=dt;
+  if(OL.dr.length<want&&OL.drT<=0&&OUT.scene&&!inn){olDrMk();OL.drT=OL.dr.length<want?2.5:0}
+  while(OL.dr.length>want){const d=OL.dr.pop();try{d.g.removeFromParent()}catch(e){}d.dead=true;d.px.dead=true}
+  for(const d of OL.dr){d.t+=dt;d.ph+=dt*.6;const fol=OL.seen||OL.hotT>0;const cx=fol?P.x:OL.lx,cz=fol?P.z:OL.lz;const R=fol?9:22;const tx=cx+Math.sin(d.ph)*R,tz=cz+Math.cos(d.ph)*R,ty=fol?22:28;
+    const dx=tx-d.p.x,dy=ty-d.p.y,dz=tz-d.p.z;const L=Math.hypot(dx,dy,dz);const sp=Math.min(L,(fol?17:12)*dt);if(L>.01){d.p.x+=dx/L*sp;d.p.y+=dy/L*sp;d.p.z+=dz/L*sp;d.g.rotation.y=Math.atan2(dx,dz)}
+    d.see=!inn&&Math.hypot(P.x-d.p.x,P.z-d.p.z)<42;try{d.led.material.color.set(Math.sin(d.t*12)>0?'#3a7bff':'#ff3a2a')}catch(e){}}
+  /* ★5 드론 떼: 보이면 9~13초마다 섬광탄 하나(게임 사건 — 작은 피해) */if(OL.star>=5){OL.fbT-=dt;const d=OL.dr.find(q=>q.see);if(d&&OL.fbT<=0){OL.fbT=9+Math.random()*4;const a=Math.random()*6.283,r=1.5+Math.random()*2;const p=new T.Vector3(P.x+Math.sin(a)*r,.5,P.z+Math.cos(a)*r);
+    try{FX3.explode(p,{r:2.4,kind:'small'})}catch(e){}try{SND.boom(true,.5);sv3Shake(.35)}catch(e){}try{if(typeof IS!=='undefined'&&IS.on)isHurt(6,{x:d.p.x,z:d.p.z});else hurt('me',3)}catch(e){}OL.fb=(OL.fb|0)+1;try{toast('<b>💥 드론 섬광탄</b> — 지붕 아래로!',1600)}catch(e){}}}}
+/* ---------- 도로 검문선(★4 · 운전 중) ---------- */
+function olRbDrop(k){for(const m of k.parts)try{m.removeFromParent()}catch(e){}k.parts=[]}
+function olRoadblock(){const D=OUT.drv;if(!D||!D.car)return null;const c=D.car.position,y=D.car.rotation.y;const fx=Math.sin(y),fz=Math.cos(y),lx=Math.cos(y),lz=-Math.sin(y);let at=null;
+  for(let d=85;d<=140&&!at;d+=5){const x=c.x+fx*d,z=c.z+fz*d;let ok=false;try{ok=!tjCarHit(x,z,y)&&owcFree(x,z,.8)}catch(e){}if(ok)at={x,z}}if(!at)return null;
+  const Mw=OL.rbM||(OL.rbM={w:mat('#eef0f2',{r:.6}),r:mat('#d2302a',{r:.6}),l:mat('#2f6fe0',{r:.4,e:'#1a3a90'})});const k={x:at.x,z:at.z,y,parts:[],t:0,hit:0,ag:[]};
+  for(const s of [-2.6,0,2.6]){const g=new T.Group();g.position.set(at.x+lx*s,0,at.z+lz*s);g.rotation.y=y+Math.PI/2;OUT.scene.add(g);MM(GG.box(2.1,.18,.32),Mw.w,0,.86,0,{p:g});MM(GG.box(.45,.19,.33),Mw.r,-.62,.86,0,{p:g,cast:false});MM(GG.box(.45,.19,.33),Mw.r,.62,.86,0,{p:g,cast:false});for(const e of [-.85,.85])MM(GG.box(.08,.8,.5),Mw.w,e,.4,0,{p:g});MM(GG.box(.12,.08,.12),Mw.l,0,1.0,0,{p:g,cast:false});g.userData.olRb=1;k.parts.push(g)}
+  /* 지키는 둘(무장) */const o=olLawOn()?IS.o:olOpt(OL.star);for(const s of [-4.6,4.6]){const x=at.x+lx*s+fx*1.6,z=at.z+lz*s+fz*1.6;let q=null;try{q=owcFree(x,z,.5)?{x,z}:owcNearFree(x,z,3)}catch(e){}if(!q)continue;let a=null;try{a=isHoldMk('gun',q.x,q.z,1300+OL.seq*11+(s>0?1:0),o)}catch(e){olErr(e)}if(!a)continue;olTag(a);a.h.root.rotation.y=Math.atan2(c.x-q.x,c.z-q.z);k.ag.push(a)}
+  if(olLawOn()){for(const a of k.ag){IS.pre=IS.pre.filter(x=>x!==a);a.st='kneel';a.t=.3;try{a.h.setPose('kneel')}catch(e){}IS.en.push(a);IS.n0++}}else if(k.ag.length){if(!olSpawn(k.ag)){try{isHoldDrop(k.ag)}catch(e){}k.ag=[]}}
+  OL.rb.push(k);OL.rbN=(OL.rbN|0)+1;try{toast('<b>🚧 앞에 치안대 검문선</b> — 돌아가거나, 들이받거나',2600)}catch(e){}return k}
+function olRbStep(dt){const D=OUT.drv;OL.rbT-=dt;if(OL.star>=4&&D&&Math.abs(D.v||0)>10&&!OL.rb.length&&OL.rbT<=0){OL.rbT=25;olRoadblock()}
+  const P=FP3.pos;for(const k of OL.rb){k.t+=dt;if(D&&D.car){const c=D.car.position;for(const g of k.parts){if(g.userData.hit)continue;if(Math.hypot(g.position.x-c.x,g.position.z-c.z)<1.9&&Math.abs(D.v||0)>5){g.userData.hit=1;k.hit++;const v=Math.abs(D.v);D.v*=.35;g.position.y=.3;g.rotation.z=1.25;g.position.x+=Math.sin(D.car.rotation.y)*2.2;g.position.z+=Math.cos(D.car.rotation.y)*2.2;
+      const n=Math.min(12,Math.round(3+v*.2));try{if(typeof IS!=='undefined'&&IS.on)isHurt(n,{x:g.position.x,z:g.position.z});else hurt('me',Math.round(n/2))}catch(e){}try{sv3Shake(.9);SND.boom(false,.4);vib([90,40,120])}catch(e){}try{outNote('<b>🚧 검문선을 들이받았다</b><div>차가 크게 꺾였다 — 속도가 뚝 떨어졌다.</div>',2400)}catch(e){}}}}
+    const d=Math.hypot(k.x-P.x,k.z-P.z);if(d>220||k.t>90){olRbDrop(k);k.gone=1}}OL.rb=OL.rb.filter(k=>!k.gone)}
+/* ---------- 매 프레임 ---------- */
+function olTick(dt){if(!OUT.on)return;OL.clock+=dt;if(!olOn()){if(OL.star)olReset();return}
+  for(const L of OL.late.slice()){L.t-=dt;if(L.t<=0){OL.late=OL.late.filter(x=>x!==L);olAdd(L.v,'늦은 신고 · '+L.why,{late:1,x:L.x,z:L.z})}}
+  /* 사람 치기 */try{const ro=(G.flags&&G.flags.ranOver)|0;if(OL.ro<0)OL.ro=ro;else if(ro>OL.ro){const n=ro-OL.ro;OL.ro=ro;const P=FP3.pos;olAdd(2*n,'사람을 쳤다',{wit:olWit(P.x,P.z)})}}catch(e){olErr(e)}
+  /* 쓰러진 치안대(내가 · 팀원이) */if(typeof IS!=='undefined'&&IS.k==='law')for(const a of IS.en){if(a.law&&!a.olD&&(a.dead||(a.h&&a.h.dead))){a.olD=1;OL.lawK=(OL.lawK|0)+1;const q=a.h.root.position;/* 팀원이 쓰러뜨렸으면 내 자리가 아니라 그 자리가 드러난다 */olAdd(2.2,'치안대원 사살',a.tk?{late:1,x:q.x,z:q.z}:{})}}
+  if(!OL.star){olUI2(dt);return}
+  if(OL.carryPos){OL.carryPos=0;OL.lx=FP3.pos.x;OL.lz=FP3.pos.z}
+  OL.hotT=Math.max(0,OL.hotT-dt);OL.swT=Math.max(0,OL.swT-dt);const P=FP3.pos;const inn=olIn();
+  try{olDrStep(dt)}catch(e){olErr(e)}if(!inn)try{olRbStep(dt)}catch(e){olErr(e)}
+  let see=false;if(olLawOn())for(const a of isLive()){if(!a.law||!a.los||a.st==='flee')continue;const dd=Math.hypot(a.h.root.position.x-P.x,a.h.root.position.z-P.z);if(dd>84)continue;/* 시야 판정은 0.3초마다 — 그 사이 멀어졌으면 옛 값 */see='law:'+a.type+':'+Math.round(dd);break}if(!see&&!inn)for(const d of OL.dr)if(!d.dead&&d.see){see='drone';break}
+  const inA=Math.hypot(P.x-OL.lx,P.z-OL.lz)<OL_R[OL.star];
+  if(see||OL.hotT>0){if(see)OL.seeBy=see;OL.seen=true;OL.full=OL_SR[OL.star];OL.cool=OL.full;if(!inn){OL.lx=P.x;OL.lz=P.z}if(see)OL.car=OUT.drv?OUT.drv.car:'foot'}
+  else{OL.seen=false;OL.cool-=dt*(inn?3:inA?1:2);if(OL.cool<=0){olClear();olUI2(dt);return}}
+  /* 체포: 붙어서 보고 있고 · 내가 멈춰 있고 · 쏘지 않으면 */if(olLawOn()&&!inn){let close=false;for(const a of isLive()){if(!a.law||a.st==='flee'||!a.los)continue;const q=a.h.root.position;if(Math.hypot(q.x-P.x,q.z-P.z)<4.6){close=true;break}}
+    const still=(IS.pv||0)<1.6&&!OUT.drv&&!OUT.ride;const quiet=OL.clock-OL.shotAt>2.5;if(close&&still&&quiet&&!OUT.enc){OL.bust+=dt;if(OL.bust>=2){olBust();olUI2(dt);return}}else OL.bust=Math.max(0,OL.bust-dt*1.5)}else OL.bust=0;
+  /* 출동 · 수색조 */if(!inn&&!OUT.enc&&!OUT.busy&&!OUT.mapOpen){OL.spT-=dt;if(OL.spT<=0&&!(typeof IS!=='undefined'&&IS.on)&&(OL.seen||inA)){if(olSpawn())OL.spT=24+Math.random()*10;else OL.spT=3}}
+  olUI2(dt)}
+function olUI2(dt){OL.uiT-=dt;if(OL.uiT<=0){OL.uiT=.25;try{olUI()}catch(e){olErr(e)}}}
+function olUI(){let el=document.getElementById('olHud');if(!OL.star||!OUT.on||!SV3.el){if(el)el.remove();return}if(!el||el.parentNode!==SV3.el){if(el)el.remove();el=document.createElement('div');el.id='olHud';el.className='ol-hud';SV3.el.appendChild(el);el.innerHTML='<b id="olS"></b><span id="olT"></span>'}
+  /* 교전 띠(116)가 있으면 그 아래, 없으면 그 자리 */try{const B=document.getElementById('isHud');const top=B&&B.offsetHeight?Math.round(B.offsetTop+B.offsetHeight+5):0;const v=top?top+'px':'';if(el.style.top!==v)el.style.top=v}catch(e){}
+  el.classList.toggle('srch',!OL.seen&&OL.hotT<=0);el.classList.toggle('bust',OL.bust>.2);const s=document.getElementById('olS');if(s.dataset.s!==String(OL.star)){let h='';for(let i=1;i<=5;i++)h+=`<i class="${i<=OL.star?'on':''}">★</i>`;s.innerHTML=h;s.dataset.s=String(OL.star)}
+  const P=FP3.pos;const inA=Math.hypot(P.x-OL.lx,P.z-OL.lz)<OL_R[OL.star];const t=document.getElementById('olT');
+  const txt=OL.bust>.2?`🚔 체포 중 ${Math.min(99,Math.round(OL.bust/2*100))}% — 움직여라!`:(OL.seen||OL.hotT>0)?'🚨 추격 중 — 시야를 끊어라':`수색 ${Math.max(0,Math.ceil(OL.cool))}초${olIn()?' · 숨음 ×3':inA?'':' · 범위 밖 ×2'}`;if(t.textContent!==txt)t.textContent=txt}
+/* ---------- 연결: 매 프레임(밖 · 집 안 · 상가 안) ---------- */
+for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[nm];if(typeof b!=='function')return;window[nm]=function(dt){const r=b.apply(this,arguments);try{if(OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)&&(nm!=='outStep'||!olIn()))olTick(dt||0)}catch(e){olErr(e)}return r}})(nm);
+(function(){const b=window.gunShoot;if(typeof b==='function')window.gunShoot=function(){const r=b.apply(this,arguments);if(r)OL.shotAt=OL.clock;return r}})();
+/* 새 외출: 남은 수배를 이어받는다(턴마다 ★ 하나씩 흐려진다) */
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){OL.dr=[];OL.rb=[];OL.late=[];OL.star=0;OL.pts=0;OL.bust=0;OL.hotT=0;OL.ro=-1;const r=b.apply(this,arguments);
+  try{const p=+((G.flags&&G.flags.olPts)||0);if(p>0&&olOn()){const gone=Math.max(0,(G.turn|0)-((G.flags.olTurn)|0));const s=olStarOf(p)-gone;if(s>0){OL.star=s;OL.pts=Math.max(OL_T[s],.5);OL.full=OL_SR[s];OL.cool=OL.full;OL.seen=false;OL.carryPos=1;OL.spT=10;OL.carry=s;
+    setTimeout(()=>{try{if(OUT.on&&OL.star)outNote(`<b>🚨 아직 수배 중 ${'★'.repeat(OL.star)}</b><div>치안대가 이 근처를 훑고 있다. ${OL.full}초 동안 들키지 않으면 풀린다.</div>`,5200)}catch(e){}},1600)}else G.flags.olPts=0}}catch(e){olErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(why){OL.retF=1;try{G.flags.olPts=OL.star?Math.max(OL.pts,OL_T[OL.star]||.5):0;G.flags.olTurn=G.turn|0}catch(e){}try{return b.apply(this,arguments)}finally{OL.retF=0;olDrop();OL.star=0;OL.pts=0;OL.late=[];OL.bust=0;try{const el=document.getElementById('olHud');if(el)el.remove()}catch(e){}}}})();
+/* 들키지 않은 채 다른 차로 */
+(function(){const b=window.tjDriveStart;if(typeof b!=='function')return;window.tjDriveStart=function(){const r=b.apply(this,arguments);try{if(OL.star&&OUT.drv&&!OL.seen&&OL.hotT<=0&&OL.car!==OUT.drv.car&&OL.swT<=0){OL.cool=Math.max(1,OL.cool-OL.full*.4);OL.car=OUT.drv.car;OL.swT=15;OL.swaps=(OL.swaps|0)+1;outNote('<b>🚗 차를 바꿨다 — 인상착의가 흐려진다</b><div>남은 수색 −40%. 들키지만 않으면 곧 풀린다.</div>',3200)}}catch(e){olErr(e)}return r}})();
+/* ---------- 무법자: 막지 않고 수배로 ---------- */
+(function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t,d,head){if(t&&t.kind==='oldrone'){olDroneKill(t.a&&t.a.dr);return}
+  const on=olOn()&&OUT.on;const a=t&&t.a;const surr=!!(a&&a.surr);const nm=(a&&a.nm)||'주민';let w=0;if(on)try{const q=t.h.root.position;w=olWit(q.x,q.z,a)}catch(e){}
+  OL.inCiv=on?1:0;let r;try{r=b.apply(this,arguments)}finally{OL.inCiv=0}
+  if(on){const R=olAdd(2.5,surr?'투항자 사격':`${nm} 사살`,{wit:w});if(R&&!R.up&&!R.late)try{outNote(`<b>${surr?'🏳 손 든 사람':nm} — 쓰러졌다</b><div>무장하지 않은 사람이었다. 수배 ${'★'.repeat(OL.star)} 그대로 — 점수가 쌓인다(다음 ★까지 ${Math.max(0,(OL_T[Math.min(5,OL.star+1)]||99)-OL.pts).toFixed(1)}).</div>`,3600)}catch(e){}}return r}})();
+(function(){const b=window.gunBoom;if(typeof b!=='function')return;window.gunBoom=function(pt,r){OL.boom={pt,r};try{return b.apply(this,arguments)}finally{OL.boom=null}}})();
+function olBoomRok(){const B=OL.boom;if(!B||!B.pt)return 0;let n=0;for(const a of OUT.npcs||[]){if(!a||a.dead||!a.h||a.h.dead||a.kind!=='rok')continue;const q=a.h.root.position;if(Math.hypot(q.x-B.pt.x,q.z-B.pt.z)<=B.r){try{humanDie(a.h,null)}catch(e){}a.dead=1;a.lying=1;n++}}try{GUN.hits=[]}catch(e){}return n}
+(function(){const b=window.gunArrest;if(typeof b!=='function')return;OL.arr0=b;window.gunArrest=function(title,text){if(olOn()&&OUT.on){const T0=String(title||'');if(OL.inCiv||/주민 사격|투항자/.test(T0))return;/* 이미 셌다 */
+  if(/폭발/.test(T0)){const n=olBoomRok();olAdd(n?4.5:3,'군인에게 폭발물',{});return}olAdd(3,T0||'군경 사격',{});return}return b.apply(this,arguments)}})();
+/* 군인·총포사 경찰관·군인: 무법자 모드에서는 맞으면 쓰러진다 */
+function olHitGuard(t,pt,d,W){const a=t.a||{};const h=t.h;if(a.dead||(h&&h.dead))return;const head=t.part==='head';const dmg=((W&&W.dmg)||2)*(head?2.2:t.part==='legs'?.7:1);try{owcBlood(pt)}catch(e){}a.hp=(a.hp==null?2:a.hp)-dmg;a.flinch=1;const who=t.kind==='gspol'?'경찰관':'군인';
+  try{(OUT.npcs||[]).forEach(b=>{if(b===a||!b.h||b.kind==='rok'||b.is)return;const q=b.h.root.position;if(Math.hypot(q.x-FP3.pos.x,q.z-FP3.pos.z)<30){b.flee=6;if(b.mode==='stand'){b.mode='run';b.sp=3.4}}})}catch(e){}
+  try{if(typeof roeRevoke==='function'&&typeof roeOn==='function'&&roeOn())roeRevoke(who+' 사격')}catch(e){}
+  if(a.hp<=0){try{humanDie(h,d?{x:Math.sign(d.x),z:0}:null)}catch(e){}a.dead=1;a.lying=1;a.hit=1;try{GUN.hits=[];SFX.mech(head?'head':'hit')}catch(e){}FX=[];try{trust(-3);mor(-6)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}OL.guardK=(OL.guardK|0)+1;olAdd(4.5,`${who} 사살`,{});return}
+  if(!a.olH){a.olH=1;olAdd(3,`${who} 사격`,{})}}
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){if(t&&t.kind==='oldrone'){if(first!==false)olDroneKill(t.a&&t.a.dr);return}const a=t&&t.a;
+  if(t&&olOn()&&OUT.on&&(t.kind==='rok'||t.kind==='gsrok'||t.kind==='gspol'||(a&&a.kind==='rok'))){if(!first)return;olHitGuard(t,pt,d,W);return}
+  const law=!!(a&&a.law&&!a.dead&&first);const r=b.apply(this,arguments);if(law&&olOn()&&OL.clock-OL.hitT>1){OL.hitT=OL.clock;olAdd(.8,'치안대 사격',{})}return r}})();
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t){if(t&&t.kind==='oldrone'){olDroneKill(t.a&&t.a.dr);return}return b.apply(this,arguments)}})();
+(function(){const b=window.gunHitList;if(typeof b!=='function')return;window.gunHitList=function(){const r=b.apply(this,arguments);try{if(OL.dr.length&&GUN.hits&&GUN.hitMap)for(const d of OL.dr){if(d.dead||GUN.hitMap.has(d.hm))continue;GUN.hits.push(d.hm);GUN.hitMap.set(d.hm,{a:d.ag,h:d.px,kind:'oldrone',part:'body'})}}catch(e){olErr(e)}return r}})();
+/* ---------- 판정 · 표시 ---------- */
+(function(){const b=window.roeOf;if(typeof b!=='function')return;window.roeOf=function(t){if(t&&t.kind==='oldrone')return{law:false,cat:'law',n:'치안대 감시 드론'};const a=t&&t.a;if(a&&a.law&&!a.dead)return{law:false,cat:'law',n:'계엄 치안대'};return b.apply(this,arguments)}})();
+(function(){const b=window.afOk;if(typeof b!=='function')return;window.afOk=function(t){if(t&&(t.kind==='oldrone'||(t.a&&t.a.law)))return false;return b.apply(this,arguments)}})();
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{if(OUT.on&&OL.star>0){const [cx,cy]=toS(OL.lx,OL.lz);const [ex,ey]=toS(OL.lx+OL_R[OL.star],OL.lz);const R=Math.hypot(ex-cx,ey-cy);x.save();x.beginPath();x.arc(cx,cy,R,0,6.2832);x.fillStyle=OL.seen?'rgba(255,70,60,.14)':'rgba(70,130,255,.14)';x.fill();if(x.setLineDash)x.setLineDash([4*scale,3*scale]);x.lineWidth=1.4*scale;x.strokeStyle=OL.seen?'rgba(255,110,90,.85)':'rgba(120,170,255,.9)';x.stroke();x.restore();
+  if(olLawOn())for(const a of IS.en){if(!a.law||a.dead||a.gone||(a.h&&a.h.dead))continue;const q=a.h.root.position;const [sx,sy]=toS(q.x,q.z);x.beginPath();x.arc(sx,sy,3.2*scale,0,6.2832);x.fillStyle='#3a7bff';x.fill();x.lineWidth=1.2*scale;x.strokeStyle='#ffffff';x.stroke()}
+  for(const d of OL.dr){if(d.dead)continue;const [sx,sy]=toS(d.p.x,d.p.z);const s=3.4*scale;x.beginPath();x.moveTo(sx,sy-s);x.lineTo(sx+s,sy+s*.8);x.lineTo(sx-s,sy+s*.8);x.closePath();x.fillStyle='#7fd0ff';x.fill();x.lineWidth=1*scale;x.strokeStyle='#0a0c10';x.stroke()}
+  for(const k of OL.rb){const [sx,sy]=toS(k.x,k.z);x.fillStyle='#ff5a4a';x.fillRect(sx-5*scale,sy-1.6*scale,10*scale,3.2*scale)}}}catch(e){olErr(e)}return r}})();
+/* 설정 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="outlaw"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('outlaw','주인공 성향','무법자: 무슨 짓이든 막지 않지만 수배(★)·치안대 추격으로 돌아온다 · 해결사: 주민·군경을 쏘면 바로 연행(예전 방식)',[[1,'🏴 무법자'],[0,'⚖ 해결사']],store.get('sg.outlaw',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){olErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='outlaw')return;try{store.set('sg.outlaw',b.dataset.v==='1');if(b.dataset.v!=='1'&&OL.star)olReset();toast(b.dataset.v==='1'?'🏴 무법자 — 막지 않는다. 대신 수배가 따라온다':'⚖ 해결사 — 주민·군경을 쏘면 바로 연행된다',2400)}catch(x){olErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🚨 무법자 · 수배 ★(v15.0)','설정 <b>주인공 성향</b> — 🏴 무법자(기본)는 주민·군인을 쏘거나 사람을 쳐도 막지 않는다. 대신 <b>수배 ★1~5</b>가 오른다(오른쪽 위). 본 사람이 없으면 늦게 신고된다. ★1 치안대 2인 순찰조 · ★2 무장 4명 · ★3 감시 드론 · ★4 체포조 6명과 도로 검문선 · ★5 저격조·드론 떼. 미니맵의 원이 수색 범위, 파란 점이 치안대. <b>시야를 끊으면 ★가 깜빡이며 수색 시간이 준다</b> — 범위 밖 ×2, 집·상가 안 ×3, 들키지 않고 차를 바꾸면 −40%. 끝나면 해제. 치안대가 붙은 채 멈춰 있으면 <b>체포</b>(총·탄 압수 · 현금 절반), 쓰러지면 의료실. 치안대·드론은 <b>⛔ 위법</b> — 쏘면 ★가 오르고 자동사격은 쏘지 않는다. 계엄 치안대는 가상의 조직이다. ⚖ 해결사를 고르면 예전처럼 바로 연행된다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
