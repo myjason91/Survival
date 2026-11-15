@@ -1751,6 +1751,11 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .wl-btn.on{background:#e8a33a;border-color:#ffd38a;color:#14171c}
 .sv3.dfr-on .wl-btn{display:none}
 @media (max-height:420px){.wl-btn{top:96px;padding:6px 12px;font-size:12px}}
+/* v14.3 계단 전투 */
+.sw-btn{position:absolute;left:50%;top:136px;transform:translateX(-50%);z-index:12;padding:8px 16px;border-radius:999px;border:1.5px solid #ffd38a;background:rgba(122,58,20,.88);color:#fff4e0;font:800 13px var(--sans,system-ui);pointer-events:auto;box-shadow:0 4px 14px -6px rgba(0,0,0,.8);touch-action:manipulation;white-space:nowrap}
+.sw-btn.on{background:rgba(16,22,30,.82);border-color:rgba(255,255,255,.42);color:#f3f1ea;font-size:12px}
+.sv3.dfr-on .sw-btn{display:none}
+@media (max-height:420px){.sw-btn{top:128px;padding:7px 14px;font-size:12.5px}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13838,7 +13843,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='14.2';
+const APP_VER='14.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -23841,7 +23846,7 @@ if(typeof HELP84!=='undefined')HELP84.push(['🚗 차종 · 130km/h(v14.1)','밖
 const WLN={on:0,st:'',t:0,dur:.45,win:null,from:null,to:null,pane:null,p0:null,n:0,err:0,shown:false};
 const WL_WINS=[['f',20,80],['f',108,170],['f',200,300],['f',330,400],['b',110,170],['b',200,300],['b',330,400],['r',170,230]];
 function wlErr(e){if(WLN.err<5){WLN.err++;try{console.error(e)}catch(x){}}}
-function wlOk(){try{return typeof APT!=='undefined'&&APT.on&&typeof APTW!=='undefined'&&APTW.on&&!(typeof GUN!=='undefined'&&GUN.ow)&&!!OUT.apt&&!OUT.apt.lobby&&!OUT.enc&&!OUT.busy&&!OUT.mapOpen&&!(typeof DFR!=='undefined'&&DFR.B)&&!(typeof AW!=='undefined'&&AW.on&&AW.ph==='end')}catch(e){return false}}
+function wlOk(){try{return typeof APT!=='undefined'&&APT.on&&typeof APTW!=='undefined'&&APTW.on&&!(typeof GUN!=='undefined'&&GUN.ow)&&!!OUT.apt&&!OUT.apt.lobby&&!OUT.enc&&!OUT.busy&&!OUT.mapOpen&&!(typeof DFR!=='undefined'&&DFR.B)&&!(typeof AW!=='undefined'&&AW.on&&AW.ph==='end')&&!(typeof SW!=='undefined'&&SW.on)}catch(e){return false}}
 /* 창 하나: 벽면 좌표 · 바깥 방향 · 옆 범위(m) */
 function wlGeo(w){const [k,a,b]=w;if(k==='f')return{k,n:{x:0,z:1},c:hpZ(292),lo:hpX(a),hi:hpX(b),yaw:Math.PI,lat:'x'};if(k==='b')return{k,n:{x:0,z:-1},c:hpZ(8),lo:hpX(a),hi:hpX(b),yaw:0,lat:'x'};return{k,n:{x:1,z:0},c:hpX(412),lo:hpZ(a),hi:hpZ(b),yaw:-Math.PI/2,lat:'z'}}
 function wlNear(){if(!wlOk())return null;const P=FP3.pos;let best=null;for(const w of WL_WINS){const g=wlGeo(w);const nd=g.lat==='x'?(g.c-P.z)*g.n.z:(g.c-P.x)*g.n.x;const L=g.lat==='x'?P.x:P.z;if(nd<0||nd>1.25||L<g.lo-.15||L>g.hi+.15)continue;if(!best||nd<best.nd)best=Object.assign(g,{nd,L})}return best}
@@ -23881,6 +23886,101 @@ document.addEventListener('keydown',e=>{if(e.code==='KeyG')setTimeout(()=>{try{w
 /* 유탄 모드 중에는 💣 버튼 = '🔫 총으로' */
 (function(){const b=window.awUI;if(typeof b!=='function')return;window.awUI=function(){const r=b.apply(this,arguments);try{if(typeof AW!=='undefined'&&AW.on){const btn=document.getElementById('awGl');if(btn){const i=btn.querySelector('b'),s=btn.querySelector('span');const ic=AW.gl?'🔫':'💣',tx=AW.gl?'총으로':`유탄 ${wlGlStock()}`;if(i&&i.textContent!==ic)i.textContent=ic;if(s&&s.textContent!==tx)s.textContent=tx}const tip=document.getElementById('awTip');if(tip&&AW.gl&&!/총으로/.test(tip.textContent))tip.textContent=tip.textContent+' · 🔫 총으로 = 총 사격'}}catch(e){wlErr(e)}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🪟 창가 사격(v14.2)','아파트 안에서 바깥 창(거실 큰 창 포함) 가까이 서면 위쪽 가운데 <b>🪟 창밖으로 내밀기</b>(PC L) — 창이 열리고 몸이 창틀 밖으로 나가 바로 아래 길까지 겨눈다. 막대를 밀거나 숙이면 들어온다. 아파트 전투에서 앞쪽 창으로 내밀면 적에게 더 잘 보인다. <b>유탄</b>: 0발이면 저절로 총으로 바뀌고, 유탄 모드 중에는 💣 버튼이 <b>🔫 총으로</b>가 된다.']);
+
+/* ===================== 129 · v14.3 계단 전투 — 아파트 전투의 '돌입조가 올라온다' 단계에 현관 밖 비상계단으로 나가 맞선다 ===================== */
+/* 사용자 요청(2026-11-15 22:48): "CQB플레이 시, 계단에서 전투를 하고싶은데 이 부문을 구현해 주시면 감사하겠습니다"
+   · 아파트 전투(101)에서 밖의 정찰대를 다 막으면 '뒤 계단 돌입조 N명이 올라온다'(타이머) → 위쪽 가운데 '🪜 계단에서 맞선다'(PC B)
+   · 현관문이 열리고 현관 밖 비상계단(엘리베이터 코어 자리 — 집 평면 밖)으로 나간다. 계단실: 우리 층 계단참 → 꺾이는 계단 두 번(반 층씩) → 아래층 계단참, 두 층 아래까지
+     한 층 = 9단 두 계단(디딤 0.27 · 높이 0.161 — 18 하강 장면과 같은 치수) · 계단 사이 난간벽(0.95m) · 층 표시
+   · 움직임: 계단 길을 따라간다 — 막대를 보는 쪽으로 밀면 그쪽으로(내려다보며 밀면 내려가고, 올려다보며 밀면 올라간다). ⤓ 숙이기 = 난간벽 뒤로(아래에서 잘 안 보인다)
+   · 적: 돌입조가 아래층에서 계단을 타고 올라온다(남은 시간만큼 아래에서 시작). 나를 보면 멈춰 겨누고(0.7초) 3점사. 위에서 아래를 쏘는 쪽이 유리하다(아래에서 올려 쏘면 덜 맞는다)
+   · 다 막으면 현관 돌파 없이 아파트 전투 승리 · '🚪 집으로 물러나기'를 누르면 남은 적이 그대로 현관을 부수고 들어온다(예전 실내 근접전) · 쓰러지면 아파트 전투 패배와 같다
+   · 유탄은 계단실에서 쓰지 않는다(좁은 콘크리트 통로) · 등장 인물·부대는 가상이다 */
+const SW={on:0,ph:'',t:0,g:null,boxes:[],path:null,d:0,en:[],kills:0,err:0,uiT:0,go:0,back:null,winT:0,mv:0};
+function swErr(e){if(SW.err<6){SW.err++;try{console.error(e)}catch(x){}}}
+/* ---------- 계단실 치수(집 평면 좌표 · 현관 북쪽 코어 자리) ---------- */
+function swDim(){const X0=hpX(8),X1=hpX(96),XM=(X0+X1)/2,ZD=hpZ(100);const LD=1.3,FL=9*.27,MD=1.2,H2=1.45,FH=2.9;return{X0,X1,XM,ZD,LD,FL,MD,H2,FH,ZN:ZD-LD-FL-MD,DX:hpX(67)}}
+function swMats(){if(SW.M)return SW.M;SW.M={wall:mat('#8e908b',{r:.95,e:'#2a2b29',ei:.55}),step:mat('#b3b4ad',{r:.9,e:'#3a3b37',ei:.5}),land:mat('#9fa09a',{r:.92,e:'#323330',ei:.5}),par:mat('#7d807b',{r:.9,e:'#252624',ei:.5}),rail:mat('#4a4f55',{r:.4,m:.6}),door:mat('#5d6a74',{r:.6,m:.3}),lamp:mat('#fff6dc',{r:.3,e:'#fff1c8',ei:1.6}),stripe:mat('#d9b23a',{r:.6})};return SW.M}
+function swNumTex(t){const k='swnum'+t;if(TEX[k])return TEX[k];const c=cvs(128,64),x=c.getContext('2d');x.fillStyle='#2d3238';x.fillRect(0,0,128,64);x.fillStyle='#f2efe6';x.font='900 40px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(t,64,34);const tx=new T.CanvasTexture(c);tx.colorSpace=T.SRGBColorSpace;return TEX[k]=tx}
+/* 계단실을 짓는다: 우리 층(0)부터 두 층 아래(-2)까지 · 상자 목록(맞힘·시야)도 함께 */
+function swBuild(fl){const D=swDim();const M=swMats();const g=new T.Group();g.name='stairwell';const boxes=[];const B=(w,h,d,x,y,z,m,solid)=>{const e=MM(GG.box(w,h,d),m,x,y,z,{p:g,cast:false,recv:true});if(solid!==false){const b=new T.Box3(new T.Vector3(x-w/2,y-h/2,z-d/2),new T.Vector3(x+w/2,y+h/2,z+d/2));boxes.push(b)}return e};
+  const W=D.X1-D.X0,lw=W/2,run=.27,rise=.161;const zA=D.ZD-D.LD,zB=zA-D.FL;
+  for(let k=0;k>=-2;k--){const y0=k*D.FH;/* 층 계단참 */B(W,.2,D.LD,(D.X0+D.X1)/2,y0-.1,D.ZD-D.LD/2,M.land);
+    /* 층 표시(남쪽 벽 · 문 옆) */const fl0=Math.max(1,(fl||10)+k);const sg=MM(GG.pl(.5,.25),new T.MeshBasicMaterial({map:swNumTex(fl0+'F'),toneMapped:false}),D.X0+.45,y0+1.65,D.ZD-.08,{p:g,cast:false,recv:false});sg.rotation.y=Math.PI;
+    if(k===-2)break;
+    /* 왼쪽 계단(내려감 · 북쪽으로) */for(let i=0;i<9;i++){const top=y0-(i+1)*rise;const z1=zA-i*run,z2=zA-(i+1)*run;B(lw,rise+.3,run,D.X0+lw/2,top-(rise+.3)/2,(z1+z2)/2,M.step)}
+    /* 중간 계단참(반 층 아래) */const ym=y0-D.H2;B(W,.2,D.MD,(D.X0+D.X1)/2,ym-.1,zB-D.MD/2,M.land);
+    /* 오른쪽 계단(내려감 · 남쪽으로) */for(let i=0;i<9;i++){const top=ym-(i+1)*rise;const z1=zB+i*run,z2=zB+(i+1)*run;B(lw,rise+.3,run,D.X1-lw/2,top-(rise+.3)/2,(z1+z2)/2,M.step)}
+    /* 계단 사이 난간벽(세 토막 계단꼴) + 손잡이 */for(let s=0;s<3;s++){const za=zA-s*D.FL/3,zb=zA-(s+1)*D.FL/3;const ytA=y0-(s*3)*rise,ytB=ym-(9-(s+1)*3)*rise;const hi=Math.max(ytA,ytB)+.95,lo=Math.min(y0-(s+1)*3*rise,ym-(9-s*3)*rise)-.3;B(.1,hi-lo,za-zb,D.XM,(hi+lo)/2,(za+zb)/2,M.par);MM(GG.box(.06,.05,za-zb),M.rail,D.XM,hi+.03,(za+zb)/2,{p:g,cast:false})}
+    /* 비상등 */MM(GG.box(.3,.08,.08),M.lamp,(D.X0+D.X1)/2,ym+2.25,D.ZN+.06,{p:g,cast:false,recv:false})}
+  /* 벽: 서·동·북 + 남쪽(우리 층 아래) + 천장 */const yb=-2*D.FH-.4,yt=2.6;const H=yt-yb;const zc=(D.ZN+D.ZD)/2,zl=D.ZD-D.ZN;
+  B(.16,H,zl,D.X0-.08,(yt+yb)/2,zc,M.wall);B(.16,-yb,zl,D.X1+.08,yb/2,zc,M.wall);B(.16,yt,(hpZ(8)-D.ZN),D.X1+.08,yt/2,(hpZ(8)+D.ZN)/2,M.wall);B(W+.32,H,.16,(D.X0+D.X1)/2,(yt+yb)/2,D.ZN-.08,M.wall);B(W+.32,-yb,.16,(D.X0+D.X1)/2,yb/2,D.ZD+.08,M.wall);B(W+.32,.16,zl+.32,(D.X0+D.X1)/2,yt+.08,zc,M.wall,false);
+  /* 아래층 현관문(닫힘) */for(const k of [-1,-2])MM(GG.box(.9,2.05,.05),M.door,D.DX,k*D.FH+1.03,D.ZD-.02,{p:g,cast:false});
+  /* 계단 끝 노란 띠 */for(let k=0;k>-2;k--){MM(GG.box(W/2,.012,.06),M.stripe,D.X0+W/4,k*D.FH+.006,zA+.03,{p:g,cast:false,recv:false})}
+  g.userData.swBoxes=boxes;return g}
+/* ---------- 계단 길(사람이 다니는 선) ---------- */
+function swPathMake(){const D=swDim();const xl=D.X0+(D.X1-D.X0)/4,xr=D.X1-(D.X1-D.X0)/4,zA=D.ZD-D.LD,zB=zA-D.FL,zm=zB-D.MD/2;const P=[[D.DX,0,D.ZD-.55]];
+  for(let k=0;k>-2;k--){const y0=k*D.FH,ym=y0-D.H2;P.push([xl,y0,zA+.25],[xl,ym,zB],[(xl+xr)/2,ym,zm],[xr,ym,zB],[xr,y0-D.FH,zA+.15],[(D.X0+D.X1)/2,y0-D.FH,D.ZD-.7])}
+  const L=[0];for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i];L.push(L[i-1]+Math.hypot(b[0]-a[0],b[1]-a[1],b[2]-a[2]))}return{P,L,len:L[L.length-1]}}
+function swAt(d,out){const S=SW.path;d=clamp(d,0,S.len);let i=1;while(i<S.L.length-1&&S.L[i]<d)i++;const a=S.P[i-1],b=S.P[i];const k=(d-S.L[i-1])/Math.max(1e-6,S.L[i]-S.L[i-1]);out=out||new T.Vector3();out.set(a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,a[2]+(b[2]-a[2])*k);out.tx=b[0]-a[0];out.tz=b[2]-a[2];return out}
+/* ---------- 시야 · 맞힘 ---------- */
+const _swO=new T.Vector3(),_swD=new T.Vector3();
+function swRayBoxes(o,d,maxD){let bd=maxD;for(const b of SW.boxes){const t=aptwRayBox(o,d,b);if(t!=null&&t>.04&&t<bd)bd=t}return bd}
+function swLos(a,b){_swO.copy(a);_swD.subVectors(b,a);const L=_swD.length();if(L<.05)return true;_swD.divideScalar(L);return swRayBoxes(_swO,_swD,L)>=L-.05}
+function swMyEye(){const e=1.6-.62*(AW.crK||0);return new T.Vector3(FP3.pos.x,FP3.pos.y+e,FP3.pos.z)}
+/* 계단실에서의 사격: 적(사람) → 계단실 상자 */
+(function(){const b=window.gunCast;if(typeof b!=='function')return;window.gunCast=function(o,d,maxD){if(!SW.on)return b.apply(this,arguments);gunHitList();GUN.ray=GUN.ray||new T.Raycaster();GUN.ray.set(o,d);GUN.ray.far=maxD;let best=null,bd=maxD;
+  try{const hs=GUN.ray.intersectObjects(GUN.hits,false);for(const h of hs){const t=GUN.hitMap.get(h.object);if(!t||t.h.dead)continue;best={pt:h.point,tgt:t,d:h.distance};bd=h.distance;break}}catch(e){}
+  const tb=swRayBoxes(o,d,bd);if(tb<bd){bd=tb;best={pt:o.clone().addScaledVector(d,tb),wall:1,inside:1,d:tb}}return best}})();
+/* 총 화면의 눈높이: 계단 높이를 더한다 */
+(function(){const b=window.gunStep;if(typeof b!=='function')return;window.gunStep=function(dt){const r=b.apply(this,arguments);try{if(SW.on&&GUN.on&&SV3.cam){SV3.cam.position.y+=FP3.pos.y||0;SV3.cam.updateMatrixWorld(true)}}catch(e){swErr(e)}return r}})();
+/* ---------- 시작 · 끝 ---------- */
+function swCan(){try{return typeof AW!=='undefined'&&AW.on&&AW.ph==='stairs'&&!AW.raid&&!SW.on&&!GUN.ow&&typeof APTW!=='undefined'&&APTW.on&&!!GUN.eq&&!OUT.enc&&!OUT.busy}catch(e){return false}}
+function swStart(){if(!swCan())return false;try{if(typeof WLN!=='undefined'&&WLN.on)wlBack(true)}catch(e){}const sc=AW.sc||SV3.scene;AW.sc=sc;if(!SW.g||SW.g.parent!==sc||SW.fl!==(AW.fl||OUT.apt.fl)){if(SW.g)try{SW.g.removeFromParent()}catch(e){}SW.fl=AW.fl||OUT.apt.fl;SW.g=swBuild(SW.fl);sc.add(SW.g)}SW.boxes=SW.g.userData.swBoxes;SW.path=swPathMake();
+  AW.boxes=AW.boxes||FP3.boxes;try{awDoorOpen()}catch(e){swErr(e)}AW.gl=false;AW.cr=false;AW.ph='sw';AW.t=0;AW.uiT=0;SW.on=1;SW.ph='go';SW.t=0;SW.kills=0;SW.back={x:FP3.pos.x,z:FP3.pos.z,yaw:FP3.yaw};SW.d=0;SW.go=0;SW.winT=0;SW.en=[];
+  FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;
+  /* 적: 남은 시간만큼 아래에서 · 1.6m 간격 */const n=clamp(AW.brN|0,2,5);const d0=clamp(8+(AW.stT||6)*.9,9,SW.path.len-1.5);for(let i=0;i<n;i++){const a=swSpawn(i===0&&n>=4?'elite':'rifle',i,Math.min(SW.path.len-.2,d0+i*1.6));if(a)SW.en.push(a)}
+  try{SND.boom(false,.5)}catch(e){}outNote(`<b>🪜 비상계단으로 나왔다 — 돌입조 ${SW.en.length}명</b><div>아래층에서 올라온다. 막대를 보는 쪽으로 밀면 계단을 오르내린다 · ⤓ 숙이면 난간벽 뒤 · 위에서 아래로 쏘는 쪽이 유리하다.</div>`,5200);swBtn();return true}
+function swSpawn(type,i,d){let h=null;try{h=makeHuman(owcLook(type,970+i))}catch(e){h=null}if(!h)return null;const p=swAt(d);h.root.position.copy(p);h.root.rotation.y=Math.atan2(-p.tx,-p.tz);h.lookKeep=true;(AW.sc||SV3.scene).add(h.root);try{h.setPose('run',true)}catch(e){}
+  const a={h,kind:'en',side:'en',aw:4,sw:1,hp:type==='elite'?3.4:2,nm:'북한군 돌입조',st:'up',t:0,d,aimP:0,burst:0,shotT:0,los:false,losT:Math.random()*.2,flinch:0};OUT.npcs.push(a);try{GUN.hits=[]}catch(e){}return a}
+function swCleanup(){const L=SW.en;for(const a of L){try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}a.gone=1}if(L.length&&OUT.npcs)OUT.npcs=OUT.npcs.filter(x=>!L.includes(x));SW.en=[];try{GUN.hits=[]}catch(e){}}
+function swHome(){/* 집 안(현관 안쪽)으로 */const D=swDim();FP3.pos.set(D.DX,0,D.ZD+.85);FP3.pos.y=0;FP3.yaw=0;FP3.noWalk=false;FP3.mv.x=FP3.mv.y=0}
+function swEnd(why){if(!SW.on)return;SW.on=0;SW.ph='';const live=SW.en.filter(a=>!a.dead&&!a.h.dead).length;swCleanup();swHome();swBtn();
+  if(why==='retreat'&&typeof AW!=='undefined'&&AW.on&&AW.ph==='sw'){AW.brN=live;AW.ph='stairs';AW.stT=0;try{awBreach()}catch(e){swErr(e)}outNote(`<b>🚪 집으로 물러났다</b><div>남은 돌입조 ${live}명이 현관으로 밀고 들어온다 — 모서리·가구 뒤에서 문을 겨눈다.</div>`,3600)}}
+/* ---------- 매 프레임 ---------- */
+const _swP=new T.Vector3();
+function swStep(dt){if(!SW.on)return;SW.t+=dt;const live=SW.en.filter(a=>!a.dead&&!a.h.dead);
+  /* 나: 계단 길을 따라 — 보는 쪽으로 민다 */const mv=FP3.mv;const p=swAt(SW.d,_swP);const tl=Math.hypot(p.tx,p.tz)||1;const tx=p.tx/tl,tz=p.tz/tl;const fx=-Math.sin(FP3.yaw),fz=-Math.cos(FP3.yaw),rx=Math.cos(FP3.yaw),rz=-Math.sin(FP3.yaw);
+  const pr=mv.y*(fx*tx+fz*tz)+mv.x*(rx*tx+rz*tz);const sp=(AW.cr?1.0:2.1)*(Math.abs(pr)>.15?1:0);SW.d=clamp(SW.d+Math.sign(pr)*Math.min(1,Math.abs(pr)*1.4)*sp*dt,0,SW.path.len-.3);SW.mv=Math.abs(pr)>.15?1:0;
+  const q=swAt(SW.d,_swP);FP3.pos.set(q.x,q.y,q.z);FP3.moving=SW.mv;
+  /* 적 */const me=swMyEye();const occ=new Set();for(const a of SW.en){if(a.dead||a.h.dead){if(!a.cnt){a.cnt=1;SW.kills++;AW.kills=(AW.kills|0)+1;AW.uiT=0;try{a.h.root.position.y=swAt(a.d).y}catch(e){}}continue}swEnStep(a,dt,me,occ)}
+  if(!live.length&&SW.en.length&&SW.ph!=='won'){SW.ph='won';SW.winT=1.4;outNote(`<b>🪜 계단에서 막았다 — 돌입조 ${SW.kills}명</b><div>현관은 그대로다.</div>`,3600);try{SND.ok&&SND.ok()}catch(e){}}
+  if(SW.ph==='won'){SW.winT-=dt;if(SW.winT<=0){AW.stat.sw=1;swEnd('win');try{awEnd('win')}catch(e){swErr(e)}}}
+  SW.uiT-=dt;if(SW.uiT<=0){SW.uiT=.25;swBtn()}}
+function swEnStep(a,dt,me,occ){const h=a.h;try{h.update(dt)}catch(e){}a.t+=dt;a.flinch=Math.max(0,(a.flinch||0)-dt*3);const P=h.root.position;const eye=new T.Vector3(P.x,P.y+(a.st==='aim'||a.st==='fire'?1.35:1.45),P.z);const dist=me.distanceTo(eye);
+  a.losT-=dt;if(a.losT<=0){a.losT=.2;a.los=swLos(eye,me)}
+  const gap=a.d-SW.d;/* 앞 사람과 1m 띄운다 */let block=false;for(const o of SW.en){if(o===a||o.dead||o.h.dead)continue;if(o.d<a.d&&a.d-o.d<1.0){block=true;break}}
+  if(a.st==='up'){if(a.los&&dist<13&&a.t>.6){a.st='aim';a.aimP=0;try{h.setPose('aim')}catch(e){}return}if(gap>1.1&&!block){a.d=Math.max(SW.d+1.1,a.d-1.45*dt);const q=swAt(a.d);P.copy(q);owcFace(h,P.x-q.tx,P.z-q.tz,dt,10);if(h.pose!=='run')try{h.setPose('run')}catch(e){}}else{if(h.pose!=='aim')try{h.setPose('aim')}catch(e){}owcFace(h,FP3.pos.x,FP3.pos.z,dt,8)}return}
+  if(a.st==='aim'){owcFace(h,FP3.pos.x,FP3.pos.z,dt,11);if(!a.los){a.st='up';return}a.aimP+=dt/(.7/(owcDiff()+.25)*(a.flinch>0?1.7:1));if(a.aimP>=1){a.st='fire';a.burst=3;a.shotT=0}return}
+  if(a.st==='fire'){owcFace(h,FP3.pos.x,FP3.pos.z,dt,11);a.shotT-=dt;if(a.shotT<=0){swShot(a,dist,eye,me);a.burst--;a.shotT=.14;if(a.burst<=0){a.st=a.los&&Math.random()<.55?'aim':'up';a.aimP=.15;a.t=0}}}}
+function swShot(a,d,eye,me){const h=a.h;const mz=owcMuz(h,new T.Vector3()).clone();try{owcNpcFlash(APTW.on?awToW(mz):mz)}catch(e){}try{owcShotSnd('rifle',mz)}catch(e){}
+  /* 아래에서 올려 쏘면 덜 맞는다 · 숙이면 덜 맞는다 */const up=me.y-eye.y>.6?.7:1;const p=.34*owcDiff()*clamp(1.25-d/12,.35,1)*(AW.crK>.6?.55:1)*(SW.mv?.8:1)*(a.flinch>0?.5:1)*up;const hit=a.los&&Math.random()<p;
+  const tp=me.clone();tp.y-=.25;const end=hit?tp:tp.clone().add(new T.Vector3((Math.random()-.5)*1.4,(Math.random()-.3)*.8,(Math.random()-.5)*1.4));try{owcTracer(mz,end,1)}catch(e){}
+  if(hit)awHurt((9+Math.random()*5)*(G&&G.diff==='train'?.72:G&&G.diff==='hard'?1.15:1),mz);else{try{owcImpact(end,'#d8d2c4',null)}catch(e){}}}
+/* ---------- 아파트 전투와 잇기 ---------- */
+(function(){const b=window.awStep;if(typeof b!=='function')return;window.awStep=function(dt,ow){const r=b.apply(this,arguments);try{if(SW.on)swStep(dt);else swBtnTick(dt)}catch(e){swErr(e)}return r}})();
+(function(){const b=window.awEnd;if(typeof b!=='function')return;window.awEnd=function(why){try{if(SW.on)swEnd('end')}catch(e){swErr(e)}const r=b.apply(this,arguments);try{if(SW.g){SW.g.removeFromParent();SW.g=null;SW.boxes=[]}}catch(e){}swBtn();return r}})();
+(function(){const b=window.tjAptLeave;if(typeof b!=='function')return;window.tjAptLeave=function(){try{if(SW.on){SW.on=0;swCleanup();FP3.noWalk=false;FP3.pos.y=0}if(SW.g){SW.g.removeFromParent();SW.g=null;SW.boxes=[]}}catch(e){swErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.awUI;if(typeof b!=='function')return;window.awUI=function(){const r=b.apply(this,arguments);try{if(typeof AW!=='undefined'&&AW.on&&AW.ph==='sw'){const set=(id,t)=>{const e=document.getElementById(id);if(e&&e.textContent!==t)e.textContent=t};const live=SW.en.filter(a=>!a.dead&&!a.h.dead).length;set('awT','🪜 계단 전투');set('awC',`계단 ${live}명 · 아래층에서 올라온다`);set('awTip',AW.cr?'숙였다 — 난간벽 뒤는 아래에서 잘 안 보인다':'막대를 보는 쪽으로 밀면 오르내린다 · 숙이기 ⤓ · 위에서 아래로 쏜다');const gl=document.getElementById('awGl');if(gl)gl.style.display='none'}else{const gl=document.getElementById('awGl');if(gl&&gl.style.display==='none')gl.style.display=''}}catch(e){swErr(e)}return r}})();
+/* 계단실에서는 집 안 행동(뒤지기·현관으로 나가기)을 띄우지 않는다 */(function(){const b=window.tjAptUI;if(typeof b!=='function')return;window.tjAptUI=function(){if(SW.on){const a=document.getElementById('oActs');if(a&&a.innerHTML)a.innerHTML='';try{APT.near=[];APT.sig=''}catch(e){}return}return b.apply(this,arguments)}})();
+/* 계단실에서는 유탄을 쓰지 않는다 */(function(){const b=window.awLaunch;if(typeof b!=='function')return;window.awLaunch=function(){if(SW.on){AW.gl=false;return false}return b.apply(this,arguments)}})();
+/* ---------- 버튼 ---------- */
+function swBtn(){let el=document.getElementById('swBtn');const show=SW.on||swCan();if(!show||!SV3.el){if(el)el.remove();return}if(!el){el=document.createElement('button');el.id='swBtn';el.className='sw-btn';el.dataset.g3='sw';SV3.el.appendChild(el)}const t=SW.on?'🚪 집으로 물러나기':'🪜 계단에서 맞선다';if(el.textContent!==t)el.textContent=t;el.classList.toggle('on',!!SW.on)}
+function swBtnTick(dt){SW.bt=(SW.bt||0)-dt;if(SW.bt>0)return;SW.bt=.25;try{swBtn()}catch(e){swErr(e)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=sw]');if(!b)return;e.preventDefault();e.stopPropagation();try{if(SW.on){if(SW.ph!=='won')swEnd('retreat')}else swStart()}catch(x){swErr(x)}},true);
+['pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,e=>{const a=e.target.closest&&e.target.closest('#swBtn');if(a)e.stopPropagation()},{capture:true,passive:true}));
+document.addEventListener('keydown',e=>{if(e.repeat||e.code!=='KeyB')return;const tg=e.target;if(tg&&/INPUT|TEXTAREA/.test(tg.tagName))return;try{if(SW.on){if(SW.ph!=='won')swEnd('retreat')}else if(swCan())swStart()}catch(x){swErr(x)}});
+if(typeof HELP84!=='undefined')HELP84.push(['🪜 계단 전투(v14.3)','아파트 전투에서 \'돌입조가 올라온다\'가 뜨면 위쪽 가운데 <b>🪜 계단에서 맞선다</b>(PC B) — 현관 밖 비상계단으로 나가 아래층에서 올라오는 돌입조와 싸운다. 막대를 보는 쪽으로 밀면 계단을 오르내리고, ⤓ 숙이면 난간벽 뒤로 숨는다. 위에서 아래로 쏘는 쪽이 유리하다. 다 막으면 현관 돌파 없이 승리 — <b>🚪 집으로 물러나기</b>를 누르면 남은 적이 현관을 부수고 들어온다(실내 근접전).']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
