@@ -1697,6 +1697,9 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 #oBar.px-bfc [data-g3="mlist"],#oBar.px-btm [data-g3="tmbtn"]{position:relative}
 #oBar.px-bfc [data-g3="mlist"]::after,#oBar.px-btm [data-g3="tmbtn"]::after{content:'';position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:#ff5a36;box-shadow:0 0 0 2px rgba(10,12,14,.75);pointer-events:none}
 #oBar.px-btm [data-g3="tmbtn"]::after{background:#ffb02e}
+
+/* v13.2.1 창가 저격 자리: 이름표·말풍선은 그리지 않는다 */
+.sv3.gun-ow .ntag,.sv3.gun-ow .cw-bubs{display:none}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13784,7 +13787,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.2';
+const APP_VER='13.2.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -21721,7 +21724,7 @@ if(typeof HELP84!=='undefined')HELP84.push(['🛸 평시 드론(v12.0)','밖에�
    ■ 🌙 야간 투시경(기본 지급): 밤·새벽·노을에 위쪽 띠(밖) · 아이템 줄(교전) · 아파트 띠에 '🌙 야시경' 버튼(PC: N)
      · 켜면 화면이 녹색 증폭 영상이 된다 — 장면 밝기를 시간대만큼 올리고(밤 ×4.6) 흑백→녹색, 관 모양 가장자리·주사선. 밤에 사람·적이 또렷이 보인다
      · 낮에 켜면 하얗게 날아간다(눈부심 — 끄라는 안내). 끄면 원래대로. 화면 필터는 켰을 때만 돈다
-   ■ 야간 조준경(기본 지급): 밤·새벽·노을에 배율 조준경으로 겨누면 렌즈 안이 저절로 야간 영상(녹색 증폭)이 된다 — 바깥 화면은 그대로 어둡다. 야시경을 켠 상태면 화면 전체가 이미 녹색이라 따로 바꾸지 않는다
+   ■ 야간 조준경(기본 지급): 밤(22~4시 · v13.2.1부터 밤에만)에 배율 조준경으로 겨누면 렌즈 안이 저절로 야간 영상(녹색 증폭)이 된다 — 바깥 화면은 그대로 어둡다. 야시경을 켠 상태면 화면 전체가 이미 녹색이라 따로 바꾸지 않는다
    끄기: localStorage sg.cas=false(탄피) */
 /* ---------- 탄피 ---------- */
 const CAS={im:null,sc:null,L:[],max:36,next:0,clinkT:0,n:0,m4:null,col:null};
@@ -21754,8 +21757,9 @@ function nvTod(){try{return OUT.on?(OUT.tod||'day'):'day'}catch(e){return 'day'}
 function nvDark(){const t=nvTod();return t==='night'||t==='dusk'||t==='dawn'}
 function nvGain(){const t=nvTod();return t==='night'?4.6:t==='dusk'?1.7:t==='dawn'?2:1.9}
 function nvCan(){try{return !!SV3.el&&OUT.on&&!OUT.mapOpen}catch(e){return false}}
-/* 조준경 렌즈 안 증폭 배수(0=끔): 어두운 시간대 + 야시경을 안 켠 상태에서만 */
-function nvScope(){if(NV.on||!nvDark())return 0;try{if(store.get('sg.nvs',true)===false)return 0}catch(e){}const t=nvTod();return t==='night'?5.2:t==='dusk'?1.8:2.1}
+/* 조준경 렌즈 안 증폭 배수(0=끔): 밤(22~4시) + 야시경을 안 켠 상태에서만.
+   v13.2.1: 노을(16~22시)·새벽(4~8시)에도 저절로 켜져, 아직 환한데 줌만 하면 녹색 야간 영상이 됐다(사용자 신고) → 밤에만. 그 밖의 시간에는 야시경 버튼을 직접 켠다 */
+function nvScope(){if(NV.on||nvTod()!=='night')return 0;try{if(store.get('sg.nvs',true)===false)return 0}catch(e){}return 5.2}
 function nvSet(on){on=!!on&&nvCan();if(on===NV.on){nvBtns();return}NV.on=on;NV.n++;const el=SV3.el;const cv=R3.r&&R3.r.domElement;
   if(on){if(el){el.classList.add('nvg-on');if(!NV.ov||!NV.ov.isConnected){const o=document.createElement('div');o.className='nvg-ov';o.innerHTML='<i class="nvg-g"></i><i class="nvg-s"></i><i class="nvg-t"></i><b class="nvg-l">NVG · ×'+nvGain().toFixed(1)+'</b>';/* 캔버스와 같은 상자 안에 둔다 — 녹색 곱하기 겹침이 캔버스에 바로 섞이게 */const wrap=el.querySelector('#sv3Wrap')||el;wrap.appendChild(o);NV.ov=o}}if(cv){NV.cv=cv;NV.f0=cv.style.filter||'';cv.style.filter='grayscale(1) contrast(1.22) brightness(1.08)'}
     try{SND.tone(1900,.05,'square',.03);SND.tone(2600,.08,'sine',.025,.06)}catch(e){}if(!nvDark()&&!NV.tipDay){NV.tipDay=1;try{outNote('<b>🌙 낮에는 눈부시다</b><div>야간 투시경은 빛을 증폭한다 — 밤·새벽·노을에 쓴다.</div>',2600)}catch(e){}}}
@@ -21777,7 +21781,7 @@ function gfxGunStep(dt){try{casStep(dt)}catch(e){if(!CAS.err){CAS.err=1;console.
 (function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{gfxGunStep(dt)}catch(e){}return r}})();
 (function(){const b=window.tjAptStep;if(typeof b!=='function')return;window.tjAptStep=function(dt){const r=b.apply(this,arguments);try{if(typeof APT!=='undefined'&&APT.on&&!(typeof GUN!=='undefined'&&GUN.ow))gfxGunStep(dt)}catch(e){}return r}})();
 (function(){const b=window.outReturn;window.outReturn=function(){try{nvSet(false);CAS.L=[];if(CAS.im){CAS.im.removeFromParent();CAS.im.dispose();CAS.im=null;CAS.sc=null}}catch(e){}return b.apply(this,arguments)}})();
-if(typeof HELP84!=='undefined')HELP84.push(['🌙 야간 투시경·야간 조준경 · 탄피(v12.0)','밤·새벽·노을에는 \'🌙 야시경\' 버튼이 생긴다(밖 위쪽 띠 · 교전 아이템 줄 · 아파트 띠, PC: N). 켜면 화면이 녹색 증폭 영상이 되어 어둠 속 사람·적이 또렷이 보인다. 낮에는 눈부시니 끈다. 배율 조준경은 어두운 시간대에 겨누면 렌즈 안이 저절로 야간 영상이 된다. 총을 쏘면 탄피가 오른쪽으로 튀어나와 바닥에 떨어진다(산탄총은 붉은 탄피).']);
+if(typeof HELP84!=='undefined')HELP84.push(['🌙 야간 투시경·야간 조준경 · 탄피(v12.0)','밤·새벽·노을에는 \'🌙 야시경\' 버튼이 생긴다(밖 위쪽 띠 · 교전 아이템 줄 · 아파트 띠, PC: N). 켜면 화면이 녹색 증폭 영상이 되어 어둠 속 사람·적이 또렷이 보인다. 낮에는 눈부시니 끈다. 배율 조준경은 밤(22~4시)에 겨누면 렌즈 안이 저절로 야간 영상이 된다. 총을 쏘면 탄피가 오른쪽으로 튀어나와 바닥에 떨어진다(산탄총은 붉은 탄피).']);
 
 /* ===================== 107 · v12.0 북한군 외형 다양화 ===================== */
 /* 사용자 요청(2026-11-14): "북한군 외형도 다양하게 구현해 주세요. 너무 단조로워요"
@@ -22510,6 +22514,7 @@ const PLOG_K={out:'밖',owc:'교전',in:'실내',bat:'전투 장면'};
 function plogOn(){try{if(navigator.webdriver&&!window.__plogTest)return false;if(typeof BENCH!=='undefined'&&BENCH.on)return false;return store.get('sg.plog',true)!==false}catch(e){return false}}
 function plogBlank(){return{t:0,n:0,s33:0,n50:0,n100:0,calls:0,tris:0,cn:0,q:{low:0,mid:0,high:0},drs:0,k:0}}
 function plogLoad(){if(PLOG.cur)return PLOG.cur;let d=null;try{d=store.get('sg.plogData',null)}catch(e){}
+  /* 판 번호의 앞 두 자리(13.2)가 같으면 이어서 잰다 — 고침 판(13.2.1)이 나와도 쌓인 기록을 지우지 않는다 */const mm=v=>String(v||'').split('.').slice(0,2).join('.');if(d&&typeof d==='object'&&d.sc&&mm(d.v)===mm(APP_VER))d.v=APP_VER;
   if(!d||typeof d!=='object'||d.v!==APP_VER||!d.sc){const prev=d&&d.sc?{v:String(d.v||'').slice(0,8),line:plogLine(d,'out')}:null;d={v:APP_VER,since:new Date().toISOString().slice(0,10),sc:{},play:{bt:{},fc:{},lvMax:1,dayMax:1,games:0},prev}}
   if(!d.play)d.play={bt:{},fc:{},lvMax:1,dayMax:1,games:0};return PLOG.cur=d}
 function plogSave(force){if(!PLOG.cur||(!PLOG.dirty&&!force))return;PLOG.dirty=0;try{const P=PLOG.cur.play;try{const L=typeof TEAM!=='undefined'&&TEAM.list?TEAM.list:[];for(const m of L)if(m&&m.d&&(m.d.lv|0)>P.lvMax)P.lvMax=m.d.lv|0}catch(e){}try{const day=dayOf(G.turn|0);if(day>P.dayMax)P.dayMax=day}catch(e){}store.set('sg.plogData',PLOG.cur)}catch(e){}}
@@ -22565,6 +22570,28 @@ function hqBadge(){const bar=document.getElementById('oBar');if(!bar)return;let 
   const t=window.tmPanel;if(typeof t==='function')window.tmPanel=function(open){try{if(open)BDG.tm=0}catch(e){}return t.apply(this,arguments)};
   const g=window.tlvGain;if(typeof g==='function')window.tlvGain=function(){let b=0;try{b=(TEAM.list||[]).reduce((s,m)=>s+((m.d&&m.d.lv)|0),0)}catch(e){}const r=g.apply(this,arguments);try{const a=(TEAM.list||[]).reduce((s,m)=>s+((m.d&&m.d.lv)|0),0);if(a>b)BDG.tm=1}catch(e){}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['📈 플레이 기록 · 화면 정리(v13.2)','평소처럼 노는 동안 장면별 프레임·그리기 횟수와 교전·세력 행동 요약이 이 기기에만 쌓인다(설정 → 플레이 기록 → 복사). 프레임이 떨어지면 해상도를 낮추기 전에 먼 것 생략부터 스스로 조인다. 걷거나 타고 가는 동안에는 위쪽 버튼이 흐려지고(만지면 돌아옴), 정치 행동이 남았거나 팀원 레벨이 오르면 버튼에 점이 뜬다.']);
+
+/* ===================== 115 · v13.2.1 창가 저격 자리(창밖 경계) 고침 · 야간 조준경은 밤에만 ===================== */
+/* 사용자 신고(2026-11-15 · 캡처): "창밖 경계 모드에서 이러한 형태로 버그가 발생" — 밖 화면(위쪽 띠·지도·주먹 버튼)인데 시점이 아파트 높이에 떠 있고, 팀원·가족 이름표가 하늘과 버튼 위에 뜬다.
+   원인(재현함): 창가 저격 자리(65 · 그 층 높이에서 밖을 보는 화면)에서 곧바로 '밖으로' 나가면, tjAptLeave를 감싼 순서가 72(창밖 실경 떼기) → 65(저격 자리 끝내기)라서
+   65가 저격 자리를 끝내는 순간 72의 gunOwEnd 쪽이 '아직 아파트 안'으로 보고 밖 장면을 실내 좌표(층 높이만큼 아래 · 건물 정면 방향으로 회전)로 다시 붙였다.
+   그 상태로 밖에 나오니 마을 전체가 78m 아래로 내려가 돌아가 있고(28층 기준), 이름표는 원래 자리 기준으로 계산돼 허공에 떴다. v9.8부터 있던 잠복 오류.
+   ① 나갈 때 저격 자리를 먼저 끝낸 뒤 창밖 실경을 뗀다(맨 바깥에서 감쌈) + 안전망: 실내가 아닌데 밖 장면이 옮겨져 있으면 1초 안에 되돌린다(대피소로 돌아갈 때도 뗀다)
+   ② 창가 저격 자리에서 '넣기'로 총을 넣으면 돌아갈 '창가에서' 버튼이 총 화면과 함께 사라져 그 시점에 갇혔다(재현함) → 총을 넣으면 0.45초 뒤 방으로 돌아온다 · 무기를 바꿔도 '창가에서' 버튼이 남는다
+   ③ 창가 저격 자리에서는 이름표·말풍선을 그리지 않는다(80m 아래 사람의 것이 땅 높이 시점으로 계산돼 엉뚱한 곳에 떴다)
+   "주간(낮시간대)저녁 줌 활성화 시 야시경쓴 것 처럼 자동으로" → 야간 조준경(106 · 렌즈 안 녹색 증폭)은 밤(22~4시)에만 저절로 켜지게 고쳤다(106) */
+function owfHeal(){const S=typeof OUT!=='undefined'&&OUT.scene;if(!S||typeof APTW==='undefined')return false;if(typeof APT!=='undefined'&&APT.on)return false;const p=S.position,q=S.quaternion;
+  if(!S.parent&&!APTW.on&&!p.x&&!p.y&&!p.z&&!q.x&&!q.y&&!q.z)return false;
+  try{const sc=APTW.sc;if(S.parent)S.parent.remove(S);p.set(0,0,0);q.identity();S.updateMatrixWorld(true);if(APTW.on&&sc){try{sc.background=APTW.bg;sc.fog=APTW.fog}catch(e){}}APTW.on=false;APTW.sc=null}catch(e){console.error(e)}return true}
+/* ① 나가기: 저격 자리 먼저 끝내고(그때 72가 창밖 실경을 다시 붙여도) 그다음 안쪽 순서가 뗀다 */
+(function(){const b=window.tjAptLeave;if(typeof b!=='function')return;window.tjAptLeave=function(){try{if(typeof GUN!=='undefined'&&GUN.ow)gunOwEnd()}catch(e){console.error(e)}const r=b.apply(this,arguments);try{owfHeal()}catch(e){}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{if(typeof APTW!=='undefined'&&APTW.on)aptwOff()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.tjStep;if(typeof b!=='function')return;let t=0;window.tjStep=function(dt){const r=b.apply(this,arguments);try{t+=dt;if(t>1){t=0;if(OUT.on&&SV3.scene===OUT.scene)owfHeal()}}catch(e){}return r}})();
+/* ② 저격 자리: 총을 넣으면 방으로 · '창가에서' 버튼은 총 화면을 다시 그려도 남긴다 */
+function owfBackBtn(){const u=document.getElementById('gunUI');const f=u&&u.querySelector('.gun-fire');if(!f)return;const L=f.querySelectorAll('[data-gun=ow]');for(let i=1;i<L.length;i++)L[i].remove();if(!L.length){const bb=document.createElement('button');bb.className='owc-b gun-ow';bb.dataset.gun='ow';bb.innerHTML=`${ic('back')}<span>창가에서</span>`;f.appendChild(bb)}}
+(function(){const b=window.gunUI;if(typeof b==='function')window.gunUI=function(){const r=b.apply(this,arguments);try{if(GUN.ow&&GUN.on)owfBackBtn()}catch(e){}return r};
+  const s=window.gunOwStart;if(typeof s==='function')window.gunOwStart=function(){const r=s.apply(this,arguments);try{if(GUN.ow&&!GUN.ow.fx){GUN.ow.fx=1;owfBackBtn();const st=SV3.step;let idle=0;SV3.step=dt=>{st(dt);try{if(GUN.ow){if(!GUN.on){idle+=dt;if(idle>.45){idle=0;gunOwEnd()}}else idle=0}}catch(e){console.error(e)}}}}catch(e){console.error(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🔭 창가 저격 자리 고침(v13.2.1)','창가 저격 자리에서 곧바로 \'밖으로\' 나가면 마을이 통째로 내려앉아 시점이 공중에 뜨던 오류를 고쳤다. 그 자리에서 총을 넣으면 방으로 돌아온다(예전에는 돌아갈 버튼이 사라졌다). 야간 조준경의 녹색 영상은 밤(22~4시)에만 저절로 켜진다 — 노을·새벽에 필요하면 🌙 야시경 버튼을 직접 켠다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
