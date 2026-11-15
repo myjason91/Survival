@@ -13823,7 +13823,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.6';
+const APP_VER='13.7';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -22698,7 +22698,7 @@ function isArmE(E,wp,type){const W=wp&&typeof ARMS!=='undefined'&&ARMS[wp];if(!W
 function isMk(type,x,z,seed,o,hold){o=o||IS.o||{};const E=Object.assign({},IS_E[type]||IS_E.gun,(o.stat&&o.stat[type])||{});E.want=E.want.slice();let h=null,wp=null;try{const P=o.arms&&(o.arms[type]||o.arms.gun);if(P&&P.length){wp=P[(Math.abs(seed|0)*7+3)%P.length];if(typeof ARMS==='undefined'||!ARMS[wp])wp=null}}catch(e){}
   try{const sp=(o.look||isLook)(type,seed);if(sp&&!sp.camo&&!sp.police)sp.seed=isSeed(sp.seed||seed);if(wp&&sp)sp.gun=wp;h=makeHuman(sp)}catch(e){isErr(e);h=null}if(!h)return null;if(wp)isArmE(E,wp,type);
   h.root.position.set(x,0,z);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose(hold?'idle':'run',true)}catch(e){}try{if(o.dress)o.dress(h,type,seed)}catch(e){isErr(e)}
-  const a={h,kind:'en',side:'en',is:1,type,E,wp,isK:o.k||'',hp:E.hp,nm:E.n,tagL:E.n,st:hold?'hold':'adv',t:0,goT:0,aimP:0,burst:0,shotT:0,flinch:0,los:false,losT:Math.random()*.2,want:E.want[0]+Math.random()*(E.want[1]-E.want[0]),tg:null,stk:0,seenT:0};
+  const a={h,kind:'en',side:'en',is:1,type,E,wp,isK:o.k||'',kpa:!!o.kpa,hp:E.hp,nm:E.n,tagL:E.n,st:hold?'hold':'adv',t:0,goT:0,aimP:0,burst:0,shotT:0,flinch:0,los:false,losT:Math.random()*.2,want:E.want[0]+Math.random()*(E.want[1]-E.want[0]),tg:null,stk:0,seenT:0};
   OUT.npcs.push(a);if(!hold)IS.en.push(a);try{GUN.hits=[]}catch(e){}return a}
 /* 싸움 전부터 서 있는 사람들(검문조 등): 장면에 세워 두기만 한다 — 싸움이 나면 isStart({agents})가 넘겨받는다 */
 function isHoldMk(type,x,z,seed,o){const a=isMk(type,x,z,seed,o,true);if(a)IS.pre.push(a);return a}
@@ -22818,7 +22818,7 @@ function isAfterStep(dt){IS.capT=(IS.capT||0)-dt;if(IS.capT<=0){IS.capT=.2;if(IS
 function isTick(dt){if(!OUT.on)return;try{if(IS.on){if(OUT.enc||OUT.busy||OUT.mapOpen){/* 카드·지도가 떠 있으면 멈춘다 */}else isStep(dt);if(!(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)&&typeof gunFxStep==='function')gunFxStep(dt)}else if(IS.after.length&&!(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)&&typeof gunFxStep==='function'&&!(typeof OWC!=='undefined'&&OWC.on))gunFxStep(dt);isAfterStep(dt)}catch(e){isErr(e)}}
 (function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);if(!OUT.on||(typeof OWC!=='undefined'&&OWC.on))return r;isTick(dt);return r}})();
 /* ---------- 끝 ---------- */
-function isLoot(){try{const D=IS.en.filter(a=>(a.dead||a.h.dead)&&!a.gone);const key='is'+(G.turn|0)+'_'+Math.floor(IS.t*10)+'_'+(IS.st.kills+IS.st.tk);let n=0,gave=0;const names=[],given=new Set();const rnd=k=>Math.floor(Math.random()*k);
+function isLoot(){try{const D=IS.en.filter(a=>(a.dead||a.h.dead)&&!a.gone&&!a.perch);const key='is'+(G.turn|0)+'_'+Math.floor(IS.t*10)+'_'+(IS.st.kills+IS.st.tk);let n=0,gave=0;const names=[],given=new Set();const rnd=k=>Math.floor(Math.random()*k);
     for(const a of D){if(n>=4)break;const P=a.h.root.position;const ox=(n%2?.7:-.7),oz=.5;/* 든 총대로 남는다(v13.4) — 예전 모형 이름은 가까운 총으로 */const g0=a.h.sp&&a.h.sp.gun;const wp=a.wp&&ARMS[a.wp]?a.wp:g0==='k2'?'k2c1':g0==='k14'?'k14':'ak74';const W=ARMS[wp];if(!W){n++;continue}
       if(gave<2&&typeof gunHas==='function'&&!gunHas(wp)&&!given.has(wp)){lootMk(OUT.scene,{id:key+':w'+n,key:wp,n:1,x:P.x+ox,z:P.z+oz});names.push(W.n);given.add(wp);gave++}
       else if(W.am&&AMMO[W.am]){const c=W.cat==='sg'?6+rnd(6):W.cat==='sr'?5+rnd(6):W.cat==='pst'?10+rnd(10):18+rnd(14);lootMk(OUT.scene,{id:key+':a'+n,key:'ammo:'+W.am,n:c,x:P.x+ox,z:P.z+oz});if(!names.includes('탄'))names.push('탄')}n++}return names}catch(e){isErr(e);return[]}}
@@ -23032,7 +23032,7 @@ function roeOf(t){if(!t)return null;const a=t.a||{},k=t.kind;if(a.surr)return{la
   if(k==='team')return{law:false,cat:'prot',n:'팀원'};if(k==='fam')return{law:false,cat:'prot',n:'가족'};if(k==='follow')return{law:false,cat:'prot',n:'동행'};if(k==='rok'||k==='gsrok'||k==='gspol'||(a&&a.kind==='rok'))return{law:false,cat:'prot',n:'군·경'};if(a.isAl||k==='ally')return{law:false,cat:'prot',n:'아군'};
   let h=null;try{h=gunHostile(t)}catch(e){}
   if(h==='wanted')return{law:true,cat:'want',n:'수배자'};if(h==='spy')return{law:true,cat:'spy',n:'도주 간첩'};if(h==='thug')return{law:true,cat:'crim',n:'폭력배'};if(h==='loot')return{law:true,cat:'crim',n:'약탈 현행범'};
-  if(h){if(a.roeT)return{law:true,cat:'tgt',n:'사살 허가 대상'};if(a.is&&a.isK!=='kpa')return{law:true,cat:a.isK==='spyamb'?'spy':'ins',n:(a.E&&a.E.n)||'무장 조직원'};return{law:true,cat:'en',n:'적 전투원'}}
+  if(h){if(a.roeT)return{law:true,cat:'tgt',n:'사살 허가 대상'};if(a.is&&a.isK!=='kpa'&&!a.kpa)return{law:true,cat:a.isK==='spyamb'?'spy':'ins',n:(a.E&&a.E.n)||'무장 조직원'};return{law:true,cat:'en',n:'적 전투원'}}
   return{law:false,cat:'civ',n:'비무장 주민'}}
 /* 조준점 아래 표시 */
 (function(){const b=window.gunCast;if(typeof b==='function')window.gunCast=function(){const r=b.apply(this,arguments);ROE.cast=r;return r}})();
@@ -23154,20 +23154,22 @@ for(const fn of ['owcUI','gunUI','awUI','hudeLive']){(function(){const b=window[
 const WPK={open:false,err:0};
 function wpkErr(e){if(WPK.err<5){WPK.err++;console.error(e)}}
 function wpkList(){try{return gunArms().filter(a=>ARMS[a.id]&&ARMS[a.id].cat!=='mel')}catch(e){return[]}}
-function wpkAm(id){const W=ARMS[id];const rec=gunArms().find(a=>a.id===id);const mag=GUN.eq===id&&GUN.on?GUN.mag:(rec?rec.mag|0:0);return{mag,res:W&&W.am?gunAmmoOf(W.am):0,n:W?W.mag||0:0}}
+function wpkOwc(){try{return typeof OWC!=='undefined'&&OWC.on&&!OWC.done}catch(e){return false}}
+function wpkCur(){return wpkOwc()?(OWC.ownGun||''):GUN.eq}
+function wpkAm(id){const W=ARMS[id];const rec=gunArms().find(a=>a.id===id);if(wpkOwc()&&OWC.ownGun===id)return{mag:OWC.mag|0,res:OWC.res|0,n:W?W.mag||0:0};const mag=GUN.eq===id&&GUN.on?GUN.mag:(rec?rec.mag|0:0);return{mag,res:W&&W.am?gunAmmoOf(W.am):0,n:W?W.mag||0:0}}
 function wpkAw(){return typeof AW!=='undefined'&&AW.on&&AW.ph!=='end'}
-function wpkCan(){try{return ((GUN.on&&GUN.fp)||(wpkAw()&&gunFpOk()))&&!(typeof OWC!=='undefined'&&OWC.on)&&!OUT.enc&&!OUT.busy&&!(typeof BR!=='undefined'&&BR.on)}catch(e){return false}}
+function wpkCan(){try{if(wpkOwc())return !OWC.D&&!OWC.B;return ((GUN.on&&GUN.fp)||(wpkAw()&&gunFpOk()))&&!(typeof OWC!=='undefined'&&OWC.on)&&!OUT.enc&&!OUT.busy&&!(typeof BR!=='undefined'&&BR.on)}catch(e){return false}}
 function wpkGl(){try{return(AW.glN|0)+(typeof gunAmmoOf==='function'?gunAmmoOf('40mm'):0)}catch(e){return 0}}
 const WPK_CAT={ar:'소총',smg:'기관단총',sg:'산탄총',sr:'저격',lmg:'기관총',pst:'권총',lch:'발사기',spc:'특수'};
 /* 탄약 표시에 '🔁 무기 바꾸기' */
 function wpkChip(){const am=document.querySelector('#gunUI .owc-ammo');if(!am)return;let c=am.querySelector('.wpk-chip');const n=wpkList().length+(wpkAw()?1:0);if(n<2||!wpkCan()){if(c)c.remove();am.classList.remove('wpk-am');return}if(!c){c=document.createElement('i');c.className='wpk-chip';c.textContent='🔁 무기 바꾸기';am.appendChild(c)}am.classList.add('wpk-am');am.dataset.g3='wpk'}
 function wpkHtml(){const L=wpkList();let h='<div class="wpk-h"><b>무기 바꾸기</b><button class="btn sm" data-g3="wpkx">닫기</button></div><div class="wpk-l">';let i=0;
   if(wpkAw()&&!AW.raid){const n=wpkGl();i++;h+=`<button class="wpk-r${AW.gl?' on':''}" data-g3="wpkp" data-id="gl"${n>0?'':' disabled'}><em>${i}</em><b>💣 유탄</b><small>포물선 · 창밖 무리에</small><span class="num">${n}발</span>${AW.gl?'<i>✓</i>':''}</button>`}
-  for(const a of L){const W=ARMS[a.id];const A=wpkAm(a.id);const cur=GUN.eq===a.id&&!(wpkAw()&&AW.gl);const empty=W.mag&&A.mag+A.res<=0;i++;h+=`<button class="wpk-r${cur?' on':''}" data-g3="wpkp" data-id="${a.id}"${empty?' disabled':''}><em>${i<=9?i:''}</em><b>${W.n}</b><small>${WPK_CAT[W.cat]||''}${W.zoom>1?` · ${W.zoom}배율`:''}${W.quiet?' · 소음':''}</small><span class="num">${W.mag?`${A.mag}/${A.res}`:'—'}</span>${cur?'<i>✓</i>':''}</button>`}
+  for(const a of L){const W=ARMS[a.id];const A=wpkAm(a.id);const cur=wpkCur()===a.id&&!(wpkAw()&&AW.gl);const empty=(W.mag&&A.mag+A.res<=0)||(wpkOwc()&&typeof is2OwcOk==='function'&&!is2OwcOk(a.id));i++;h+=`<button class="wpk-r${cur?' on':''}" data-g3="wpkp" data-id="${a.id}"${empty?' disabled':''}><em>${i<=9?i:''}</em><b>${W.n}</b><small>${WPK_CAT[W.cat]||''}${W.zoom>1?` · ${W.zoom}배율`:''}${W.quiet?' · 소음':''}</small><span class="num">${W.mag?`${A.mag}/${A.res}`:'—'}</span>${cur?'<i>✓</i>':''}</button>`}
   return h+'</div><p class="wpk-n">PC: Z 열기 · 숫자로 고르기</p>'}
 function wpkOpen(on){let p=document.getElementById('wpk');if(!on){if(p)p.remove();WPK.open=false;return}if(!SV3.el)return;if(!p){p=document.createElement('div');p.id='wpk';p.className='wpk';SV3.el.appendChild(p)}p.innerHTML=wpkHtml();WPK.open=true;GUN.fire=false}
 function wpkPick(id){try{if(id==='gl'){if(!wpkAw())return false;if(!AW.gl){AW.gl=true;AW.uiT=0;AW.rgT=0}wpkOpen(false);try{awUI()}catch(e){}outNote('<b>💣 유탄 모드</b><div>붉은 원 = 떨어질 곳 · 사격 버튼 = 유탄 발사. 총을 고르면 유탄 모드가 꺼진다.</div>',2600);return true}
-    const W=ARMS[id];if(!W||!gunHas(id))return false;if(wpkAw()&&AW.gl){AW.gl=false;AW.uiT=0}const ow=!!GUN.ow;if(GUN.eq!==id||!GUN.on)gunEquip(id,true);wpkOpen(false);if(ow)wpkOwBtn();try{if(wpkAw())awUI()}catch(e){}
+    const W=ARMS[id];if(!W||!gunHas(id))return false;if(wpkOwc()){wpkOpen(false);if(typeof is2OwcSwap==='function'&&is2OwcSwap(id))outNote(`<b>${W.n}</b><div>탄창 ${OWC.mag}/${W.mag} · 남은 탄 ${OWC.res}</div>`,1600);return true}if(wpkAw()&&AW.gl){AW.gl=false;AW.uiT=0}const ow=!!GUN.ow;if(GUN.eq!==id||!GUN.on)gunEquip(id,true);wpkOpen(false);if(ow)wpkOwBtn();try{if(wpkAw())awUI()}catch(e){}
     const A=wpkAm(id);outNote(`<b>${W.n}</b><div>${W.mag?`탄창 ${A.mag}/${W.mag} · 남은 탄 ${A.res}`:''}${W.zoom>1?` · 조준경 ${W.zoom}배`:''}</div>`,1800);return true}catch(e){wpkErr(e);return false}}
 /* 창가 저격 자리: 총을 바꾸면 #gunUI가 새로 그려진다 — '창가에서' 버튼을 다시 붙인다 */
 function wpkOwBtn(){const u=document.getElementById('gunUI');if(!u||!GUN.ow||u.querySelector('[data-gun=ow]'))return;const bb=document.createElement('button');bb.className='owc-b gun-ow';bb.dataset.gun='ow';bb.innerHTML=`${ic('back')}<span>창가에서</span>`;const f=u.querySelector('.gun-fire');if(f)f.appendChild(bb)}
@@ -23176,7 +23178,9 @@ function wpkOwBtn(){const u=document.getElementById('gunUI');if(!u||!GUN.ow||u.q
 /* 창가 저격 자리: 조준경 총으로 들어가되(자리는 그대로), 들어간 뒤에는 무엇이든 든다 */
 document.addEventListener('click',e=>{const t=e.target;const x=t.closest('[data-g3=wpkx]');if(x){e.preventDefault();e.stopPropagation();wpkOpen(false);return}
   const p=t.closest('[data-g3=wpkp]');if(p){e.preventDefault();e.stopPropagation();if(!p.disabled)wpkPick(p.dataset.id);return}
-  const a=t.closest('[data-g3=wpk]');if(a&&a.classList.contains('wpk-am')){e.preventDefault();e.stopPropagation();if(wpkCan())wpkOpen(!WPK.open)}},true);
+  const a=t.closest('[data-g3=wpk]');if(a&&a.classList.contains('wpk-am')){e.preventDefault();e.stopPropagation();if(a.closest('#owcUI'))return;if(wpkCan())wpkOpen(!WPK.open)}},true);
+/* 진지 교전(48)의 버튼은 pointerdown으로 움직인다 — 탄약 표시 누름이 사격·시점 끌기로 새지 않게 막고 여기서 연다 */
+document.addEventListener('pointerdown',e=>{const a=e.target.closest&&e.target.closest('#owcUI .wpk-am');if(!a)return;e.preventDefault();e.stopImmediatePropagation();try{if(wpkCan())wpkOpen(!WPK.open)}catch(x){wpkErr(x)}},true);
 /* 탄약 표시를 누르는 손가락이 사격(화면 끌기)으로 새지 않게 */
 ['pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,e=>{const a=e.target.closest&&e.target.closest('.wpk-am,.wpk');if(a)e.stopPropagation()},{capture:true,passive:true}));
 document.addEventListener('keydown',e=>{if(e.repeat)return;const c=e.code;if(c==='KeyZ'&&wpkCan()&&!e.ctrlKey&&!e.metaKey){const tg=e.target;if(tg&&/INPUT|TEXTAREA/.test(tg.tagName))return;e.preventDefault();wpkOpen(!WPK.open);return}
@@ -23318,6 +23322,103 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=rdnav]'
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="aptraid"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){h=h.replace('<div class="s4-sec">교육용 모드</div>',s4Seg('aptraid','점령된 아파트 탈환','북한군이 차지한 고층 동을 1층부터 꼭대기 층까지 팀원과 층별 근접전으로',[[1,'나옴'],[0,'끔']],store.get('sg.aptraid',true)!==false?1:0)+'<div class="s4-sec">교육용 모드</div>')}}catch(e){}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='aptraid')return;try{store.set('sg.aptraid',b.dataset.v==='1');toast(b.dataset.v==='1'?'점령된 아파트 탈환이 나온다':'점령된 아파트 탈환을 껐다',2400)}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🏢 점령된 아파트 탈환(v13.6)','2턴부터 북한군이 고층 아파트 한 동을 점령한다(내 단지는 아니다). 미니맵 붉은 ⚑ 네모 · 상황판(🚨) 줄에서 길 안내. 70m 안에 들면 현관 앞 경계병 3명 — 그 자리에서 싸워 현관을 확보한다. 현관을 누르면 <b>1층 로비부터</b> 들어간다. 싸우는 층은 로비 · 중간 거점 층 4곳 안팎 · 꼭대기 층 지휘소 — 그 사이 층은 계단으로 빠르게 수색하며 지나간다(층당 1분). 층마다 실내 근접전: 적은 방마다 자리 잡고 기다리다 나를 보면 겨누고, 총성이 나면 찾아 나선다. 무장한 팀원은 내 뒤를 따라붙으며 쏘고, 비무장 팀원·가족은 현관 쪽에서 몸을 낮춘다. 층을 비우면 물자를 뒤지고 <b>⤴ 계단</b>으로 다음 층. 꼭대기 지휘소가 무너지면 옥상 관측병이 손을 든다 → 탈환 완료(신뢰·사기·현금 봉투·노획). 버팀은 층을 넘어 이어지고, 끝나거나 나오면 받은 피해의 40%가 체력에 남는다. 중간에 나와도 진행은 남는다.']);
+
+/* ===================== 123 · v13.7 진지 방식 교전 → 제자리 교전(보병형 6종) · 높은 곳의 적 · 지원군 타이머 ===================== */
+/* 사용자 승인(2026-11-15 19:26): "네 제안 수용합니다. 후속 진행해 주세요" — v13.6 보고의 제안: 진지 방식(모래주머니·전용 화면) 교전 11종을 제자리 방식으로, 교전 중 총 바꾸기 포함
+   이번 판(v13.7): 보병형 6종 — 🪂 우리 아파트 지키기(공수 강하 · 현관 방어) · 🪂 공수부대 기습 강하 · 🕵 무장 간첩(권총) · 🎯 저격수 색출(옥상 저격수 + 관측조) · 🏚 적 기지 기습 · 🧭 미션 정찰(정찰조 저지)
+   방법: 교전이 시작되는 한 곳(owcStart)을 감싸, 설정 '길거리 교전'이 '제자리'(기본)이면 116 제자리 교전으로 연다. 각 교전의 규칙·결과(신뢰·사기·보급·플래그·문장)는 원래 결과 함수를 그대로 부른다
+   · 적 종류: 소총 → 소총수 · 기관총 → 기관총 사수(PKM · 6발) · 조장 → 조장 · 돌격 → 돌격조 · 저격 → 높은 곳(옥상)의 저격수 — 모습은 원래 교전과 같은 군복/사복
+   · 높은 곳의 적(신규): 옥상 가장자리에 서서 움직이지 않는다. 나를 보면 조준경이 번쩍이고(겨누는 동안) 한 발 — 세게 맞는다. 건물 모퉁이 뒤로 가면 못 쏜다
+   · '버티면 지원군' 타이머(우리 아파트 지키기 4분 · 미션 정찰 2분 30초): 시간이 되면 기동타격대가 도착해 남은 적이 물러간다
+   · 무장 간첩은 맞고 버티면 절반쯤 손을 든다 → 묶어서 넘기면 생포(원래 교전의 '생포' 보상)
+   · 진지(예전) 방식을 고르면 지금처럼 진지 교전 — 그때도 탄약 표시의 '🔁 무기 바꾸기'로 교전 중 총을 바꾼다(아래) */
+const IS2={err:0,k:'',ctx:null,qrfDone:0};
+function is2Err(e){if(IS2.err<6){IS2.err++;console.error(e)}}
+const IS2_TY={rifle:'gun',mg:'mg',elite:'lead',rusher:'rush',spy:'gun',spyg:'gun',spyL:'lead',raider:'gun',raidL:'lead',sentry:'gun',sentryA:'gun',heavy:'mg',fgun:'gun',fled:'lead',op:'gun',opL:'lead'};
+const IS2_KPA={look:(t,seed)=>owcLook(t==='lead'?'elite':t==='mg'?'mg':t==='rush'?'rusher':'rifle',900+seed),kpa:1,arms:{mg:['pkm'],gun:['ak74','t88','ak47'],lead:['ak74'],rush:['ak74','t88']},
+  stat:{gun:{n:'북한군 소총수'},mg:{n:'북한군 기관총 사수',hp:3,aim:1.05,acc:.6,dmg:9,burst:6,gap:.09,want:[24,36],sp:3.2},lead:{n:'북한군 조장'},rush:{n:'북한군 돌격조'},mark:{n:'북한군 저격수',hp:2,aim:2.4,acc:3.2,dmg:34,burst:1,gap:2.6,want:[40,80],sp:0}}};
+function is2Waves(S){return(S.waves||[]).map(w=>[...(w.list||[]),...(w.flank||[])].map(t=>IS2_TY[t]||'gun')).filter(w=>w.length)}
+function is2Allies(S,n,delay){const L=[];for(const A of (S.allies||[])){if(L.length>=n)break;if(!A||!A.n)continue;L.push({n:A.n,r:A.r,rok:A.look==='rok',id:A.id||('a'+L.length),seed:A.seed||(4+L.length*3),ml:A.ml,delay:(delay||8)+L.length*.8,acc:A.lead?.34:.28,say:L.length?null:`<b>🪖 ${A.r||''} ${A.n} 합류</b><div>총성을 듣고 달려왔다 — 아군을 쏘지 않게 조심한다.</div>`})}return L}
+/* 자동 점검(webdriver)에서는 예전 진지 교전을 그대로 시험하도록 __is2Test가 있을 때만 바꾼다(다른 새 기능과 같은 규칙) */
+function is2Use(kind){try{return !!IS2_SPEC[kind]&&typeof isOn==='function'&&isOn()&&isAvail()&&!IS.on&&!(typeof GUN!=='undefined'&&GUN.ow)&&!(navigator.webdriver&&!window.__is2Test)}catch(e){return false}}
+/* 원래 교전의 통계 모양(결과 함수가 쓰는 것) */
+function is2Stats(r){const st=r.st||{};return{shots:IS.shots|0,hits:IS.hits|0,kills:(st.kills|0)+(st.tk|0),heads:0,dmg:st.dmg|0,civ:0,surr:0,cap:IS2.cap|0,alHurt:st.tmHit|0,ff:0}}
+/* ---------- 높은 곳의 적(옥상 저격수) ---------- */
+function is2Perch(type,x,y,z,seed,o){const a=isMk(type,x,z,seed,o,false);if(!a)return null;a.perch=1;a.h.root.position.y=y;a.st='hold';a.t=1.2+Math.random();a.E.sp=0;try{a.h.setPose('kneel',true)}catch(e){}
+  try{const g=PK.sprite(glowTex(),'#fff6c8',.9,null,{add:1});g.visible=false;OUT.scene.add(g);a.glint=g}catch(e){}return a}
+function is2PerchStep(a,dt){const h=a.h,P=h.root.position;if(a.dead||h.dead){if(a.glint)a.glint.visible=false;if(!a.cnt){a.cnt=1;a.nm=a.tagL='';if(a.tk)IS.st.tk++;else IS.st.kills++;IS.uiT=0;try{isMorale()}catch(e){}}return}
+  const p=FP3.pos;const d=Math.hypot(p.x-P.x,p.z-P.z);a.flinch=Math.max(0,a.flinch-dt*2.2);a.t-=dt;a.seenT=Math.max(0,a.seenT-dt);a.losT-=dt;if(a.losT<=0){a.losT=.25;a.los=d<150&&owcLos(P.x,P.y+1.45,P.z,p.x,1.35,p.z)}
+  if(a.st==='flee'){a.goT=(a.goT||0)+dt;if(a.glint)a.glint.visible=false;if(a.goT>2.2)isGone(a);return}
+  try{owcFace(h,p.x,p.z,dt,4)}catch(e){}
+  const glint=on=>{const g=a.glint;if(!g)return;g.visible=on;if(on){g.position.set(P.x,P.y+1.55,P.z);const k=.55+.45*Math.abs(Math.sin(IS.t*9));g.scale.setScalar(.7+k*.9)}};
+  if(a.st==='aim'){if(!a.los){a.st='hold';a.aimP=0;glint(false);isPose(h,'kneel');return}a.aimP+=dt/(a.E.aim*(a.flinch>0?1.7:1)*(IS.grace>0?1.5:1));glint(true);if(a.aimP>=1){a.tg='me';a.seenT=3;try{isShot(a)}catch(e){is2Err(e)}a.aimP=0;a.t=a.E.gap||2.6;a.st='cool';glint(false)}return}
+  if(a.st==='cool'){if(a.t<=0)a.st=a.los?'aim':'hold';return}
+  glint(false);if(a.los&&a.t<=0){a.st='aim';a.aimP=0;isPose(h,'aim')}else isPose(h,'kneel')}
+(function(){const b=window.isEnStep;if(typeof b!=='function')return;window.isEnStep=function(a,dt){if(a&&a.perch&&!a.gone)return is2PerchStep(a,dt);return b.apply(this,arguments)}})();
+(function(){const b=window.isFleeGo;if(typeof b!=='function')return;window.isFleeGo=function(a,dt){if(a&&a.perch){a.goT=(a.goT||0)+dt;if(a.glint)a.glint.visible=false;if(a.goT>2.2)isGone(a);return}return b.apply(this,arguments)}})();
+(function(){const b=window.isGone;if(typeof b!=='function')return;window.isGone=function(a){try{if(a&&a.glint){a.glint.removeFromParent();a.glint=null}}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 지원군 타이머 · 사격 기록 · 간첩 투항 ---------- */
+(function(){const b=window.isStep;if(typeof b!=='function')return;window.isStep=function(dt){const r=b.apply(this,arguments);try{const o=IS.o||{};if(IS.on&&o.qrf&&!IS.qrfDone){if(!IS.qrfT0)IS.qrfT0=IS.t;const left=o.qrf-IS.t;if(left<=30&&!IS.qrf30){IS.qrf30=1;outNote(`<b>📻 기동타격대 — 30초</b><div>"30초만 버텨요! 거의 다 왔습니다!"</div>`,2600)}if(left<=0){IS.qrfDone=1;const L=isLive();for(const a of L){a.st='flee';a.goT=0}IS.flee=1;try{outNote(`<b>🚛 기동타격대 도착</b><div>장갑차가 골목으로 들어온다 — 남은 ${L.length}명이 물러간다.</div>`,3600);vib([40,40,90])}catch(e){}}}}catch(e){is2Err(e)}return r}})();
+(function(){const b=window.isStart;if(typeof b!=='function')return;window.isStart=function(o){const r=b.apply(this,arguments);if(r){IS.shots=0;IS.hits=0;IS.qrfDone=0;IS.qrf30=0;IS.qrfT0=0}return r}})();
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){const r=b.apply(this,arguments);try{if(r&&IS.on)IS.shots=(IS.shots|0)+1}catch(e){}return r}})();
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){const a=t&&t.a;const mine=IS.on&&a&&a.is&&first;const r=b.apply(this,arguments);try{if(mine){IS.hits=(IS.hits|0)+1;const o=IS.o||{};if(o.surrHit&&!a.dead&&!a.h.dead&&!a.surr&&a.hp>0&&a.hp<a.E.hp&&Math.random()<o.surrHit&&isLive().length===1)isSurr(a)}}catch(e){is2Err(e)}return r}})();
+/* 생포: 간첩이면 원래 교전의 생포 보상 */
+(function(){const b=IS.onCapture;IS.onCapture=function(a){let t='';try{t=typeof b==='function'?(b(a)||''):''}catch(e){}try{if(a&&a.spyCap){IS2.cap=(IS2.cap|0)+1;FX=[];trust(2);G.flags.spyCap=(G.flags.spyCap||0)+1;OUT.fx.push(...FX);outStat();t+='<div>🕵 간첩을 생포했다 — 무전기·위조 신분증·좌표 메모가 나왔다. 검문소 국군에 넘겼다(이웃 신뢰 +2).</div>'}}catch(e){is2Err(e)}return t}})();
+/* ---------- 이벤트형 교전(공수부대 기습 · 저격수 색출 …)의 끝: 원래 결과 함수(EVR) 그대로 ---------- */
+function is2EvEnd(k,r,ico){const C=(typeof EVR!=='undefined'&&EVR[k])||{};const win=r.win,quit=r.why==='escape';const s=is2Stats(r);let txt='';try{txt=C.apply?C.apply(win,quit,s):''}catch(e){is2Err(e)}
+  try{if(typeof evCalm==='function')evCalm()}catch(e){}
+  try{const E=EVD.cur;if(E&&E.owc){E.owc=0;evEnd({ok:win,short:C.short?C.short(win,{win,quit,k,s}):(win?'대응':'실패'),quiet:1})}}catch(e){is2Err(e)}
+  return`<b>${ico} ${C.title?C.title(win,quit,s):(win?'상황 정리':'물러났다')}</b><div>${txt} 받은 피해 ${r.st.dmg}.</div>`}
+/* ---------- 종류별 ---------- */
+const IS2_SPEC={
+  /* 🪂 우리 아파트 지키기(현관 방어) — 4분 버티면 기동타격대 */
+  para:()=>{const S=OWC_SC.para;const L=tjHomeLobby();return Object.assign({},IS2_KPA,{k:'para',ico:'🪂',nm:S.n,waves:is2Waves(S),split:1,dmin:30,dmax:60,grace:2.6,qrf:S.timer||240,more:'다음 무리가 온다',
+    allies:is2Allies(S,2,6),say:'정문이에요! 바리케이드 뒤로!',intro:`<b>🪂 ${HD()}동 현관 방어 — 화면은 그대로</b><div>예비군·주민과 현관을 지킨다. ${Math.round((S.timer||240)/60)}분 버티면 기동타격대가 온다. 투항자·주민은 쏘지 않는다.</div>`,
+    onEnd:r=>{const s=is2Stats(r);G.flags.paraN=(G.flags.paraN||0)+1;let txt='';try{if(r.why==='down'){G.flags.paraDone=1;mor(-6);try{addC(M('me'),'injury')}catch(e){}txt=INTEG_MIS.m7.lose+' 상처는 깊지 않지만 소독과 붕대가 필요하다.'}else txt=integApply(r.win,{mid:'m7',s,hpFrac:1,quit:r.why==='escape'})}catch(e){is2Err(e)}
+      try{const E=EVD.cur;if(E&&E.k==='para101')E.win=!!r.win}catch(e){}try{if(typeof PARA!=='undefined'&&PARA.on)paraClear()}catch(e){}
+      return`<b>🪂 ${r.win?HD()+'동 현관을 지켰다':r.why==='escape'?'현관을 내주고 물러났다':'부상 — 계단실로 끌려 올라왔다'}</b><div>${txt}</div>`}})},
+  /* 🧭 미션 정찰: 정찰조 셋 저지(2분 30초 버티면 지원) — 76 미션이 결과(OWC.res0)를 읽는다 */
+  mxrecon:()=>{const S=OWC_SC.mxrecon;return Object.assign({},IS2_KPA,{k:'mxrecon',ico:'🧭',nm:S.n,waves:is2Waves(S),dmin:30,dmax:56,grace:2.4,qrf:S.timer||150,allies:is2Allies(S,1,7),say:'정찰조예요! 엄폐!',
+    intro:`<b>🧭 ${S.n} — 화면은 그대로</b><div>정찰조 셋이 다가온다. 막아 내면 임무가 이어진다.</div>`,
+    onEnd:r=>{try{OWC.res0={win:!!r.win,quit:r.why==='escape',txt:''}}catch(e){}return r.win?`<b>🧭 정찰조를 막았다</b><div>${r.st.kills+r.st.tk}명 제압 · 받은 피해 ${r.st.dmg}.</div>`:''}})},
+  /* 🪂 공수부대 기습 강하: 낙하산 내린 자리에서 */
+  praid:()=>{const S=OWC_SC.praid;const E=EVO.E||EVD.cur;const at=E&&E.site?{x:E.site.x,z:E.site.z,r:18}:null;return Object.assign({},IS2_KPA,{k:'praid',ico:'🪂',nm:S.n,waves:is2Waves(S),at,dmin:30,dmax:62,grace:2.6,qrf:S.timer||0,more:'강하 본대가 온다',allies:is2Allies(S,2,9),say:'낙하산 내린 쪽이에요! 엄폐!',
+    intro:`<b>🪂 ${S.n} — 화면은 그대로</b><div>${EVO.intro||'낙하산 내린 쪽에서 적이 모인다.'}</div>`,onEnd:r=>is2EvEnd('praid',r,'🪂')})},
+  /* 🎯 저격수 색출: 옥상 저격수(높은 곳) + 관측조 · 엄호조 */
+  tsnipe:()=>{const S=OWC_SC.tsnipe;const E=EVO.E||EVD.cur;const pr=E&&E.site&&E.site.perch;return Object.assign({},IS2_KPA,{k:'tsnipe',ico:'🎯',nm:S.n,look:(t,seed)=>owcLook(t==='lead'?'spyL':'spyg',seed+3),kpa:0,arms:{gun:['ak74','mpst'],lead:['ak74'],mark:['svd']},
+    stat:Object.assign({},IS2_KPA.stat,{gun:{n:'관측조'},mark:{n:'옥상 저격수',hp:2,aim:2.4,acc:3.2,dmg:34,burst:1,gap:2.6,want:[40,80],sp:0}}),waves:is2Waves(S),dmin:28,dmax:52,grace:2.2,allies:is2Allies(S,1,10),say:'옥상이에요! 번쩍이면 숙여요!',perch:pr||null,
+    intro:`<b>🎯 ${S.n} — 화면은 그대로</b><div>옥상에서 번쩍이면 저격수가 겨누는 것이다 — 건물 모퉁이 뒤로. 밑의 관측조부터.</div>`,onEnd:r=>is2EvEnd('tsnipe',r,'🎯')})},
+  /* 🕵 무장 간첩(권총): 검문에서 총을 뽑았다 — 맞고 버티면 손을 들기도 한다 */
+  spy:()=>{const sp=(typeof SPY!=='undefined'&&SPY.arm)||null;return{k:'spy',ico:'🕵',nm:'무장 간첩',look:(t,seed)=>owcLook('spyg',seed+5),arms:{gun:['p9','k5']},waves:[['gun']],at:sp?{x:sp.x,z:sp.z,r:4}:null,dmin:14,dmax:30,grace:1.6,noSurr:1,surrHit:.5,
+    stat:{gun:{n:sp&&sp.nm?`${sp.nm}(무장 간첩)`:'무장 간첩',hp:2.4,acc:.62,dmg:12,want:[8,14]}},say:'권총이다! 엄폐해요!',
+    intro:'<b>🕵 무장 간첩 — 권총을 뽑았다</b><div>화면은 그대로. 엄폐하고 제압한다 — 맞고 버티면 손을 들기도 한다(묶어서 넘기면 생포).</div>',
+    onEnd:r=>{const win=r.win,quit=r.why==='escape';const live=IS.en.filter(a=>a.surr&&!a.gone);live.forEach(a=>{a.spyCap=1});if(win){trust(3);mor(2);G.flags.spyKill=(G.flags.spyKill||0)+(r.st.kills|0)}else mor(-3);
+      return`<b>🕵 ${win?(live.length?'간첩이 손을 들었다':'무장 간첩을 제압했다'):quit?'물러섰다':'총에 맞았다'}</b><div>${win?(live.length?'총을 버리고 손을 들었다 — 다가가 <b>묶어서 넘기면</b> 생포다(무전기·위조 신분증이 나온다).':'검문조가 현장을 정리한다.'):quit?'간첩이 골목으로 사라졌다.':'팀원들이 끌어내 지혈했다.'} 받은 피해 ${r.st.dmg}.</div>`}}},
+  /* 🏚 적 기지 기습: 경계병은 제자리에서 기다리고, 천막 쪽에서 증원 */
+  base:()=>{const B=typeof EB!=='undefined'&&EB.cur;if(!B)return null;const o=Object.assign({},IS2_KPA,{k:'base',ico:B.d.ico||'🏚',nm:B.d.n,more:'천막 쪽에서 증원이 나온다',dmin:26,dmax:48,grace:2,allies:[],say:'경계병이에요! 엄폐하고 하나씩!'});
+    const ag=[];const n=Math.min(4,B.d.g.length);for(let i=0;i<n;i++){const t=IS2_TY[B.d.g[i]]||'gun';const a0=i/n*6.283+.4;let x=B.x+Math.cos(a0)*4.6,z=B.z+Math.sin(a0)*4.6;try{if(!owcFree(x,z,.6)){const q=owcNearFree(x,z,4);if(q){x=q.x;z=q.z}}}catch(e){}const a=isHoldMk(t,x,z,400+i*11,o);if(a){a.h.root.rotation.y=a0+Math.PI*.5;ag.push(a)}}
+    return Object.assign(o,{agents:ag,waves:[[],['gun','gun']],at:{x:B.x,z:B.z,r:9},intro:`<b>${B.d.ico} ${B.d.n} — 화면은 그대로</b><div>${EVO.intro||'경계병이 있다 — 엄폐하고 하나씩.'}</div>`,
+      onEnd:r=>{EB.cur=null;if(r.win){B.st=B.S.st='cleared';B.S.pl=B.S.pl||[];try{ebPlantSpots(B)}catch(e){is2Err(e)}try{save()}catch(e){}return`<b>${B.d.ico} 기지 장악 — ${r.st.kills+r.st.tk}명 제압</b><div>💣 표시 3곳에 다가가 <b>폭약 설치</b>(2초씩). 그다음 30m 밖에서 기폭. 받은 피해 ${r.st.dmg}.</div>`}
+        B.st=B.S.st='found';setTimeout(()=>{try{if(OUT.on&&!IS.on)ebGuards(B)}catch(e){}},1500);try{save()}catch(e){}return'<b>기지에서 물러났다</b><div>경계병이 다시 자리를 잡았다. 준비되면 다시 34m 안으로.</div>'}})}};
+/* 시작: owcStart(종류) 하나를 감싼다 — 이벤트(evOwcGo)·기지(ebAssault)·현관 방어(28)·미션(76)·간첩(55)이 모두 이 길로 온다 */
+(function(){const b=window.owcStart;if(typeof b!=='function')return;window.owcStart=function(kind){try{if(is2Use(kind)){const o=IS2_SPEC[kind]();if(o){IS2.k=kind;IS2.cap=0;if(kind==='para'&&typeof PARA!=='undefined'&&PARA.on){try{paraClear()}catch(e){}}if(kind==='mxrecon'){try{OWC.res0=null}catch(e){}}
+        const pr=o.perch;delete o.perch;const ok=isStart(o);if(ok){if(pr){try{const a=is2Perch('mark',pr.x,pr.y,pr.z,77,IS.o);if(a)IS.n0++}catch(e){is2Err(e)}}return true}
+        /* 제자리로 못 열면(빈자리 없음 등) 예전 방식 */if(kind==='base'&&o.agents)try{isHoldDrop(o.agents)}catch(e){}}}}catch(e){is2Err(e)}return b.apply(this,arguments)}})();
+/* 진행 중에는 기다린다: 현관 방어 이벤트(para101)는 결과(E.win)를 읽고 끝낸다 · 미션 정찰은 OWC.res0를 읽는다 */
+(function(){const K=typeof EVK!=='undefined'&&EVK.para101;if(!K||typeof K.step!=='function')return;const b=K.step;K.step=function(E,dt){if(IS.on&&IS.k==='para')return;return b.apply(this,arguments)}})();
+(function(){const b=window.mxStep;if(typeof b!=='function')return;window.mxStep=function(){if(IS.on&&IS.k==='mxrecon')return;return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🪂 진지 교전 → 제자리 1차(v13.7)','우리 아파트 지키기(공수 강하 · 현관 방어) · 공수부대 기습 강하 · 무장 간첩(권총) · 저격수 색출 · 적 기지 기습 · 미션 정찰도 이제 걷던 화면 그대로 싸운다(모래주머니·전용 화면·결과 창 없음). 결과(신뢰·사기·보급·기지 장악 → 폭약 설치)는 예전과 같다. <b>옥상 저격수</b>: 지붕 가장자리에서 조준경이 번쩍이면 겨누는 중 — 건물 모퉁이 뒤로. <b>버티면 지원군</b>: 현관 방어는 4분, 정찰조 저지는 2분 30초 뒤 기동타격대가 도착해 남은 적이 물러간다. 무장 간첩은 맞고 버티면 손을 들기도 한다(묶어서 넘기면 생포). 설정 → 길거리 교전 = 진지(예전)이면 예전 방식.']);
+/* ---------- 진지 방식(예전)에서도 교전 중 총 바꾸기 — 121 목록을 같이 쓴다 ---------- */
+function is2OwcOk(id){const W=ARMS[id];return !!(W&&gunHas(id)&&W.cat!=='mel'&&W.mag&&!W.rocket&&!W.nade&&!W.nonlethal)}
+function is2OwcSwap(id){if(!(typeof OWC!=='undefined'&&OWC.on&&!OWC.done)||!is2OwcOk(id))return false;const W=ARMS[id];
+  try{if(OWC.ownGun){const rec=gunArms().find(a=>a.id===OWC.ownGun);if(rec)rec.mag=OWC.mag;const W0=ARMS[OWC.ownGun];if(W0&&W0.am){G.ammo=G.ammo||{};G.ammo[W0.am]=Math.max(0,OWC.res)}}}catch(e){is2Err(e)}
+  OWC.gunType=id;Object.assign(OWC_W,{n:W.n,mag:W.mag,res:gunAmmoOf(W.am),rate:W.rate,sp:W.sp,spA:W.spA,bl:W.bl,bmax:W.bmax,reload:W.reload,dmg:W.dmg,pel:W.pel||1,snd:W.snd,auto:W.auto});
+  const rec=gunArms().find(a=>a.id===id);OWC.mag=rec?rec.mag|0:W.mag;OWC.res=gunAmmoOf(W.am);OWC.ownGun=id;OWC.reload=0;OWC.fire=false;OWC.ads=false;OWC.adsK=0;GUN.eq=id;G.eq=id;
+  try{owcVmBuild()}catch(e){is2Err(e)}try{owcAmmoUI()}catch(e){}const sm=document.querySelector('#owcUI .owc-ammo small');if(sm)sm.textContent=W.n;try{if(typeof owcBtn==='function')owcBtn()}catch(e){}try{SFX.mech('switch')}catch(e){}
+  try{const sc=document.getElementById('gunScopeOwc');if(sc)sc.remove()}catch(e){}return true}
+(function(){const b=window.owcAmmoUI;if(typeof b!=='function')return;window.owcAmmoUI=function(){const r=b.apply(this,arguments);try{is2OwcChip()}catch(e){}return r}})();
+function is2OwcChip(){const am=document.querySelector('#owcUI .owc-ammo');if(!am)return;let c=am.querySelector('.wpk-chip');const n=wpkList().filter(a=>is2OwcOk(a.id)).length;const show=OWC.on&&!OWC.done&&n>=1&&!(n===1&&OWC.ownGun===wpkList().find(a=>is2OwcOk(a.id)).id);if(!show){if(c)c.remove();am.classList.remove('wpk-am');return}if(!c){c=document.createElement('i');c.className='wpk-chip';c.textContent='🔁 무기 바꾸기';am.appendChild(c)}am.classList.add('wpk-am');am.dataset.g3='wpk'}
+(function(){const b=window.owcUI;if(typeof b!=='function')return;window.owcUI=function(){const r=b.apply(this,arguments);try{is2OwcChip()}catch(e){}return r}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
