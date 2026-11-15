@@ -13823,7 +13823,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.7';
+const APP_VER='13.8';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -22708,7 +22708,7 @@ function isScare(x,z,r){try{const flee=a=>{if(!a||!a.h||a.is||a.isAl||a.kind==='
 /* ---------- 시작 ---------- */
 function isSpotAt(c,r){for(let t=0;t<40;t++){const a=Math.random()*6.283,d=1.5+Math.random()*(r||9);const x=c.x+Math.sin(a)*d,z=c.z+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,.7)&&owcFD(IS.F,x,z)<60000}catch(e){}if(!ok)continue;if(IS.en.some(e=>Math.hypot(e.h.root.position.x-x,e.h.root.position.z-z)<1.4))continue;return{x,z}}return null}
 function isWave(i){const o=IS.o,W=(o.waves||[])[i];if(!W||!W.length)return 0;IS.wave=i;IS.waveT=0;let base=o.ang!=null?o.ang:Math.random()*6.283;if(i>0)base+=(Math.random()<.5?1:-1)*(1.5+Math.random()*1.3);let made=0;
-  W.forEach((type,k)=>{const ang=o.ring?base+((k*3+i)%8)*Math.PI/4:(o.split&&k%2?base+Math.PI*(.75+Math.random()*.4):base)+(k-(W.length-1)/2)*.17;const q=(o.at&&i===0?isSpotAt(o.at,o.at.r):null)||isSpot(ang,o.dmin||34,o.dmax||62,i===0&&o.vis?'vis':'hid');if(!q)return;const a=isMk(type,q.x,q.z,(o.seed||7)+IS.en.length*3+i*11+k);if(a){a.t=.4+k*.3+Math.random()*.7;made++}});
+  W.forEach((type,k)=>{const ang=o.ring?base+((k*3+i)%8)*Math.PI/4:(o.split&&k%2?base+Math.PI*(.75+Math.random()*.4):base)+(k-(W.length-1)/2)*.17;const q=(o.at&&(i===0||o.atAll)?isSpotAt(o.at,o.at.r):null)||isSpot(ang,o.dmin||34,o.dmax||62,i===0&&o.vis?'vis':'hid');if(!q)return;const a=isMk(type,q.x,q.z,(o.seed||7)+IS.en.length*3+i*11+k);if(a){a.t=.4+k*.3+Math.random()*.7;made++}});
   IS.n0+=made;return made}
 function isStart(o){if(IS.on||!isAvail())return false;o=o||{};const p=FP3.pos;try{if(typeof tjBigClose==='function')tjBigClose()}catch(e){}
   Object.assign(IS,{on:true,k:o.k||'amb',o,en:[],al:[],t:0,dmg:0,st:{kills:0,tk:0,fled:0,tmHit:0,dmg:0},fT:0,uiT:0,lostT:0,wave:0,waveT:0,tmT:1.1,grace:o.grace==null?2.4:o.grace,hide:null,res:null,pv:0,lp:null,tmHitT:2,alQ:[],flee:0,n0:0,sndN:0,sndT:0,contact:(o.agents&&o.agents.length)?1:0});
@@ -23406,7 +23406,7 @@ const IS2_SPEC={
         /* 제자리로 못 열면(빈자리 없음 등) 예전 방식 */if(kind==='base'&&o.agents)try{isHoldDrop(o.agents)}catch(e){}}}}catch(e){is2Err(e)}return b.apply(this,arguments)}})();
 /* 진행 중에는 기다린다: 현관 방어 이벤트(para101)는 결과(E.win)를 읽고 끝낸다 · 미션 정찰은 OWC.res0를 읽는다 */
 (function(){const K=typeof EVK!=='undefined'&&EVK.para101;if(!K||typeof K.step!=='function')return;const b=K.step;K.step=function(E,dt){if(IS.on&&IS.k==='para')return;return b.apply(this,arguments)}})();
-(function(){const b=window.mxStep;if(typeof b!=='function')return;window.mxStep=function(){if(IS.on&&IS.k==='mxrecon')return;return b.apply(this,arguments)}})();
+(function(){const b=window.mxStep;if(typeof b!=='function')return;window.mxStep=function(){if(IS.on&&(IS.k==='mxrecon'||IS.k==='rlop'))return;return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🪂 진지 교전 → 제자리 1차(v13.7)','우리 아파트 지키기(공수 강하 · 현관 방어) · 공수부대 기습 강하 · 무장 간첩(권총) · 저격수 색출 · 적 기지 기습 · 미션 정찰도 이제 걷던 화면 그대로 싸운다(모래주머니·전용 화면·결과 창 없음). 결과(신뢰·사기·보급·기지 장악 → 폭약 설치)는 예전과 같다. <b>옥상 저격수</b>: 지붕 가장자리에서 조준경이 번쩍이면 겨누는 중 — 건물 모퉁이 뒤로. <b>버티면 지원군</b>: 현관 방어는 4분, 정찰조 저지는 2분 30초 뒤 기동타격대가 도착해 남은 적이 물러간다. 무장 간첩은 맞고 버티면 손을 들기도 한다(묶어서 넘기면 생포). 설정 → 길거리 교전 = 진지(예전)이면 예전 방식.']);
 /* ---------- 진지 방식(예전)에서도 교전 중 총 바꾸기 — 121 목록을 같이 쓴다 ---------- */
 function is2OwcOk(id){const W=ARMS[id];return !!(W&&gunHas(id)&&W.cat!=='mel'&&W.mag&&!W.rocket&&!W.nade&&!W.nonlethal)}
@@ -23419,6 +23419,128 @@ function is2OwcSwap(id){if(!(typeof OWC!=='undefined'&&OWC.on&&!OWC.done)||!is2O
 (function(){const b=window.owcAmmoUI;if(typeof b!=='function')return;window.owcAmmoUI=function(){const r=b.apply(this,arguments);try{is2OwcChip()}catch(e){}return r}})();
 function is2OwcChip(){const am=document.querySelector('#owcUI .owc-ammo');if(!am)return;let c=am.querySelector('.wpk-chip');const n=wpkList().filter(a=>is2OwcOk(a.id)).length;const show=OWC.on&&!OWC.done&&n>=1&&!(n===1&&OWC.ownGun===wpkList().find(a=>is2OwcOk(a.id)).id);if(!show){if(c)c.remove();am.classList.remove('wpk-am');return}if(!c){c=document.createElement('i');c.className='wpk-chip';c.textContent='🔁 무기 바꾸기';am.appendChild(c)}am.classList.add('wpk-am');am.dataset.g3='wpk'}
 (function(){const b=window.owcUI;if(typeof b!=='function')return;window.owcUI=function(){const r=b.apply(this,arguments);try{is2OwcChip()}catch(e){}return r}})();
+
+/* ===================== 124 · v13.8 진지 교전 → 제자리 2차(특수형 5종) — 자폭 드론 떼 · 옥상 저격수 · 구호 트럭 탈환(인질) · 적 점령지 · 집회 공작조 ===================== */
+/* v13.6 보고의 제안(사용자 승인 19:26)의 나머지 다섯. 123(IS2)의 시작 감싸기(owcStart)에 종류를 더하고, 드론 떼만 따로 작은 진행기(D2)를 둔다 — 사람 적이 없는 싸움이라
+   · 🛸 자폭 드론 떼: 북쪽 하늘에서 3·4·5대. 대부분 모여 있는 주민 6명을, 일부는 나를 노리고 내리꽂는다. 내 총으로 맞히면 떨어진다(한 발) · '📡 재머'(2번) = 95m 안 드론 추락 · 아군 대공 사격(가끔 한 대)
+     주민 피해 2명까지면 성공(예전과 같다). 결과 = 예전 결과 함수(EVR.drone)
+   · 🎯 옥상 저격수 제압: 123의 옥상 저격수(높은 곳의 적) + 관측병·지원조(군복). 결과 = EVR.sniper
+   · 🚚 구호 트럭 탈환: 트럭·승합차 둘레 먼 쪽에 공작조 넷(제자리에서 기다림) + 증원 둘. 승합차 옆에 웅크린 인질(운전사) — 쏘면 안 된다(맞히면 실패 · 범죄). 95초 안에 못 끝내면 승합차가 인질을 태우고 달아난다(25초 전 경고)
+   · ⚔ 적 점령지: 망루 위 경계병(높은 곳) · 문 경계병 · 순찰 — 제자리에서 기다림 → 본대 · 증원은 점령지 안에서 나온다. 발각(경보)이면 적이 먼저 자리를 잡고(유예 짧게), 기습이면 처음 몇 초 허둥댄다. 결과(장악·노획·연기·재점령 주기)는 109 그대로
+   · 🎭 집회 공작조: 군중 속 공작원 셋이 권총을 뽑는다(사복). 맞고 버티면 손을 들기도 한다 — 끝나면 경찰이 손 든 자를 연행(생포로 센다). 결과 = 미션이 읽는 값(OWC.res0 · OWC.rlres) */
+const D2={on:false,list:[],civ:[],wave:-1,waveT:0,q:[],qT:0,hp:100,hp0:100,dmg:0,t:0,T:null,allyT:1,E:null,uiT:0,end:0,err:0};
+function d2Err(e){if(D2.err<6){D2.err++;console.error(e)}}
+/* ---------- 🎯 옥상 저격수 제압 ---------- */
+IS2_SPEC.sniper=()=>{const S=OWC_SC.sniper;const E=EVO.E||EVD.cur;const pr=E&&E.site&&E.site.perch;return Object.assign({},IS2_KPA,{k:'sniper',ico:'🎯',nm:S.n,waves:is2Waves(S),dmin:26,dmax:52,grace:2.2,allies:is2Allies(S,2,9),say:'옥상 저격수 — 번쩍이면 엎드려요!',perch:pr||null,
+  intro:`<b>🎯 ${S.n} — 화면은 그대로</b><div>옥상에서 조준경이 번쩍이면 겨누는 중 — 건물 모퉁이 뒤로. 밑의 관측병부터.</div>`,onEnd:r=>is2EvEnd('sniper',r,'🎯')})};
+/* ---------- 🚚 구호 트럭 탈환(인질) ---------- */
+IS2_SPEC.hijack=()=>{if(typeof HJ==='undefined'||!HJ.van)return null;const S=OWC_SC.hijack;const o=Object.assign({},IS2_KPA,{k:'hijack',ico:'🚚',nm:S.n,kpa:0,look:(t,seed)=>owcLook(t==='lead'?'raidL':'raider',seed+300),arms:{gun:['ak74','uzi','t88'],lead:['ak74']},
+    stat:{gun:{n:'무장 공작원'},lead:{n:'공작조 조장',hp:3}},dmin:26,dmax:48,grace:2.2,allies:is2Allies(S,1,11),say:'인질 쏘지 마요!'});
+  (HJ.fig||[]).forEach(h=>{try{h.root.removeFromParent()}catch(e){}});HJ.fig=[];HJ.t=0;HJ.said=0;HJ.hostDead=0;HJ.gone=false;HJ.go=0;
+  const A=FP3.pos;const C=[];for(const [cx,cz,hw,hd] of [[HJ.tx,HJ.tz,3.4,1.25],[HJ.vx,HJ.vz,2.3,.98]]){for(const [u,v] of [[1,0],[-1,0],[0,1],[0,-1],[.7,1],[-.7,1],[.7,-1],[-.7,-1]]){const x=cx+HJ.ux*u*(hw+.9)+(-HJ.uz)*v*(hd+.9),z=cz+HJ.uz*u*(hw+.9)+HJ.ux*v*(hd+.9);let ok=false;try{ok=owcFree(x,z,.4)}catch(e){}if(!ok)continue;const far=((x-cx)*(A.x-cx)+(z-cz)*(A.z-cz))<0;C.push({x,z,far})}}
+  C.sort((a,b)=>(b.far-a.far)||Math.random()-.5);const pick=[];for(const c of C){if(pick.length>=4)break;if(pick.some(q=>Math.hypot(q.x-c.x,q.z-c.z)<2.2))continue;pick.push(c)}
+  const ag=[];pick.forEach((c,k)=>{const a=isHoldMk(k===0?'lead':'gun',c.x,c.z,310+k*9,o);if(a){try{a.h.setPose('crouch',true)}catch(e){}ag.push(a)}});
+  /* 인질: 승합차 옆에 웅크린 운전사 */let hx=HJ.vx+(-HJ.uz)*1.6+HJ.ux*1.2,hz=HJ.vz+HJ.ux*1.6+HJ.uz*1.2;try{if(!owcFree(hx,hz,.35)){const q=owcNearFree(hx,hz,4);if(q){hx=q.x;hz=q.z}}}catch(e){}
+  let h=null;try{h=makeHuman(owcLook('civ',88))}catch(e){h=null}if(h){h.root.position.set(hx,0,hz);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose('crouch',true)}catch(e){}const H={h,kind:'host',host:1,nm:'운전사(인질)',tagL:'인질 — 쏘지 마라'};OUT.npcs.push(H);HJ.host=H}
+  return Object.assign(o,{agents:ag,waves:[[],['gun','gun']],intro:`<b>🚚 ${S.n} — 화면은 그대로</b><div>트럭 옆에 넷 · 승합차 옆에 <b>인질(운전사)</b> — 쏘지 않는다. 95초 안에 못 끝내면 승합차가 달아난다.</div>`,
+    onEnd:r=>{const H=HJ.host;if(r.win&&H&&!HJ.hostDead){try{H.h.setPose('idle');bubSay(H.h,'살았다… 고맙습니다!',2.6,'ok')}catch(e){}H.nm=H.tagL='운전사'}setTimeout(()=>{try{if(H&&!HJ.gone){H.h.root.removeFromParent();OUT.npcs=OUT.npcs.filter(x=>x!==H)}}catch(e){}},9000);return is2EvEnd('hijack',r,'🚚')}})};
+/* 인질을 맞히면 실패(범죄 처리는 65 주민 사격 그대로) */
+(function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t,d,head){try{if(t&&t.a&&t.a.host&&IS.on&&IS.k==='hijack'){HJ.hostDead=1;IS.st.civ=(IS.st.civ|0)+1;setTimeout(()=>{try{if(IS.on&&IS.k==='hijack')outNote('<b>🚚 인질이 맞았다!</b><div>"사격 중지! 인질이 맞았어요!" — 인질 탈환은 실패다.</div>',3600)}catch(e){}},50)}}catch(e){}return b.apply(this,arguments)}})();
+/* 95초: 승합차 출발 */
+function d2HjTick(dt){if(!(IS.on&&IS.k==='hijack')||!HJ.van)return;HJ.t+=dt;const left=(HJ.esc||95)-HJ.t;if(left<25&&!HJ.said){HJ.said=1;outNote('<b>🚚 승합차 시동 — 25초!</b><div>"시동 걸었어요 — 25초!"</div>',2600)}
+  if(left<=0&&!HJ.gone){const L=isLive();if(L.length){HJ.gone=true;HJ.go=0;for(const a of L)try{isGone(a)}catch(e){}const H=HJ.host;if(H&&!HJ.hostDead){try{H.h.root.removeFromParent()}catch(e){}OUT.npcs=OUT.npcs.filter(x=>x!==H)}try{if(IS.on&&IS.k==='hijack')isEnd('escape')}catch(e){d2Err(e)}}}}
+function d2VanStep(dt){if(!HJ||!HJ.gone||!HJ.van||(typeof OWC!=='undefined'&&OWC.on))return;HJ.go=(HJ.go||0)+dt;if(HJ.go>14)return;const sp=Math.min(14,HJ.go*5);HJ.van.position.x+=HJ.ux*sp*dt;HJ.van.position.z+=HJ.uz*sp*dt}
+/* ---------- ⚔ 적 점령지 ---------- */
+const D2_FT={sentry:'sentry',sentryA:'sentry',sniper:'mark',heavy:'heavy',mg:'mg',elite:'lead',rusher:'rush',rifle:'gun'};
+IS2_SPEC.fort=()=>{if(typeof fortState!=='function')return null;const S=fortState();if(S.x==null)return null;const alert=!!FORT.alert;const W=fortWaves(S,alert);
+  const o=Object.assign({},IS2_KPA,{k:'fort',ico:'⚔',nm:'적 점령지 강습',more:'점령지 안에서 더 나온다',dmin:20,dmax:44,grace:alert?.8:3.6,allies:is2Allies(OWC_SC.fort,2,12),say:alert?'들켰어요! 엄폐!':'기습이에요 — 하나씩!',at:{x:S.x,z:S.z,r:12},atAll:1,
+    arms:Object.assign({},IS2_KPA.arms,{heavy:['pkm'],sentry:['ak74','t88'],mark:['svd']}),stat:Object.assign({},IS2_KPA.stat,{sentry:{n:alert?'적 경계병(경계 태세)':'적 경계병',hp:3,aim:alert?.82:1.05,acc:alert?.84:.78,dmg:alert?14:13,burst:alert?4:3,gap:.14,want:[18,30],sp:3.4},heavy:{n:'적 중무장 사수',hp:6,aim:1.15,acc:.74,dmg:11,burst:7,gap:.08,want:[22,34],sp:2.8},mark:{n:'적 저격수',hp:2,aim:2.2,acc:3.2,dmg:30,burst:1,gap:2.4,want:[40,80],sp:0}})});
+  /* 외곽 경계조: 망루(높은 곳) · 문 · 순찰 자리에서 — 남는 병종은 점령지 안 */const w1=W[0].map(t=>D2_FT[t]||'gun');const spots=[];(FORT.towers||[]).forEach(t=>spots.push({x:t.x,z:t.z,y:6.1,tower:1}));(FORT.gates||[]).forEach(g=>spots.push({x:g.x+Math.cos(g.a)*1.6-Math.sin(g.a)*1.3,z:g.z+Math.sin(g.a)*1.6+Math.cos(g.a)*1.3}));spots.push({x:S.x+27,z:S.z});
+  const ag=[],perch=[];w1.forEach((t,i)=>{const sp=spots[i];if(sp&&sp.tower){perch.push({t:t==='mark'?'mark':t,x:sp.x,y:sp.y,z:sp.z});return}let x=sp?sp.x:S.x+(Math.random()-.5)*14,z=sp?sp.z:S.z+(Math.random()-.5)*14;try{if(!owcFree(x,z,.5)){const q=owcNearFree(x,z,5);if(q){x=q.x;z=q.z}}}catch(e){}const a=isHoldMk(t,x,z,700+i*7,o);if(a)ag.push(a)});
+  return Object.assign(o,{agents:ag,perchList:perch,waves:[[],W[1].map(t=>D2_FT[t]||'gun'),W[2].map(t=>D2_FT[t]||'gun')],
+    intro:'',/* 109 fortAssault가 발각/기습 알림을 띄운다 */
+    onEnd:r=>{const S2=fortState();FORT.det=0;FORT.cool=8;if(r.win){S2.st='cleared';S2.n=(S2.n||0)+1;S2.at=G.turn|0;if(FORT.flag)FORT.flag.visible=false;try{const key='fort'+G.turn+'_'+Date.now()%1e5;const Wp=['ak74','ak47','t88'].filter(k=>ARMS[k]);Wp.slice(0,2).forEach((w,i)=>{lootMk(OUT.scene,{id:key+':w'+i,key:w,n:1,x:S2.x+1.2+i,z:S2.z-1.4});lootMk(OUT.scene,{id:key+':a'+i,key:'ammo:'+ARMS[w].am,n:30+((Math.random()*30)|0),x:S2.x-1+i,z:S2.z+1.5})})}catch(e){d2Err(e)}
+        try{if(typeof mslCol==='function'&&typeof mslInit==='function'){if(!MSL.pool||MSL.sc!==OUT.scene)mslInit();mslCol(S2.x+6,2,S2.z+5,90,.8,{dark:true});mslFlame(S2.x+6,1,S2.z+5,3,60)}}catch(e){}try{save()}catch(e){}
+        return`<b>⚔ 점령지 장악 — ${r.st.kills+r.st.tk}명 제압</b><div>지휘소 옆에 노획 무기·탄이 있다. 깃발을 내렸다 — 이 일대 교전 돌발이 줄어든다. 받은 피해 ${r.st.dmg}.</div>`}
+      FORT.leave=1;setTimeout(()=>{try{if(OUT.on&&!IS.on)fortSentries()}catch(e){}},1500);try{save()}catch(e){}return'<b>점령지에서 물러났다</b><div>경계병이 다시 자리를 잡았다. <b>90m 밖으로</b> 벗어난 뒤 다시 다가갈 수 있다.</div>'}})};
+/* 점령지 교전 중에는 발각 게이지·재돌입을 멈춘다 */
+(function(){const b=window.fortStep;if(typeof b!=='function')return;window.fortStep=function(){if(IS.on&&IS.k==='fort')return;return b.apply(this,arguments)}})();
+/* ---------- 🎭 집회 공작조 ---------- */
+IS2_SPEC.rlop=()=>{const L=(typeof RL!=='undefined'&&RL.ops||[]).filter(op=>!op.gone&&op.h);if(!L.length)return null;
+  const o={k:'rlop',ico:'🎭',nm:'숨은 공작조',look:(t,seed)=>Object.assign(isLook('gun',seed+40),{gun:'p9'}),arms:{gun:['p9','k5'],lead:['p9']},stat:{gun:{n:'무장 공작원',hp:2,acc:.55,dmg:11,want:[7,14]},lead:{n:'공작조장',hp:2.6,acc:.6,dmg:12,want:[8,15]}},dmin:14,dmax:30,grace:2,surrHit:.35,allies:[],say:'권총이다 — 시민들 엎드려!'};
+  const ag=[];L.forEach((op,i)=>{const q=op.h.root.position;const x=q.x,z=q.z;try{rlOpGone(op)}catch(e){}const a=isHoldMk(i===0?'lead':'gun',x,z,40+i*7,o);if(a)ag.push(a)});
+  return Object.assign(o,{agents:ag,waves:[[]],intro:'<b>🎭 숨은 공작조 — 권총을 뽑았다(화면은 그대로)</b><div>군중 전체가 적이 아니다 — 권총을 든 사람만. 손을 들면 쏘지 않는다.</div>',
+    onEnd:r=>{const win=r.win,quit=r.why==='escape';let cap=0;for(const a of IS.en){if(a.surr&&!a.cap&&!a.gone&&!a.dead){try{isCapture(a);cap++}catch(e){}}}if(win){trust(cap?4:2);mor(2)}else mor(-3);
+      try{OWC.rlres={cap,kills:(r.st.kills|0)+(r.st.tk|0),civ:r.st.civ|0,surr:0};OWC.res0={win,quit,txt:''}}catch(e){}
+      return`<b>🎭 ${win?'숨은 공작조 제압':quit?'놓쳤다':'부상'}</b><div>${win?`생포 ${cap} · 무력화 ${(r.st.kills|0)+(r.st.tk|0)}. 경찰이 손 든 자에게 수갑을 채우고, 다친 사람을 살핀다.`:quit?'공작원들이 흩어진 시민 속으로 섞여 사라졌다.':'팀원들이 끌어내 지혈했다.'} 받은 피해 ${r.st.dmg}.</div>`}})};
+/* 점령지 망루 위 경계병(높은 곳) — 123 시작 뒤에 세운다 */
+(function(){const b=window.isStart;if(typeof b!=='function')return;window.isStart=function(o){const r=b.apply(this,arguments);try{if(r&&o&&o.perchList)for(const q of o.perchList){const a=is2Perch(q.t,q.x,q.y,q.z,720+IS.n0,IS.o);if(a)IS.n0++}}catch(e){d2Err(e)}return r}})();
+/* 123 진행 틱 + 승합차 */
+(function(){const b=window.isStep;if(typeof b!=='function')return;window.isStep=function(dt){const r=b.apply(this,arguments);try{d2HjTick(dt)}catch(e){d2Err(e)}return r}})();
+/* ---------- 🛸 자폭 드론 떼(D2) ---------- */
+function d2Mesh(){const M=drnMats();const g=new T.Group();g.add(new T.Mesh(M.bodyG,M.body));for(const r of [Math.PI/4,-Math.PI/4]){const a=new T.Mesh(M.armG,M.arm);a.rotation.y=r;g.add(a)}const w=new T.Mesh(M.warG,M.war);w.rotation.x=Math.PI/2;w.position.set(0,-.1,.12);g.add(w);
+  for(const [x,z] of [[.32,.32],[-.32,.32],[.32,-.32],[-.32,-.32]]){const r=new T.Mesh(M.rotG,M.rot);r.position.set(x,.06,z);g.add(r)}const led=PK.sprite(glowTex(),'#ff3a2a',.5,g,{add:1});led.position.set(0,.12,-.2);g.scale.setScalar(1.35);g.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false}});
+  const hm=new T.Mesh(M.hitG,M.hitM);g.add(hm);OUT.scene.add(g);return{g,led,hm}}
+function d2Spawn(){const T0=D2.T;const a=-Math.PI/2+(Math.random()-.5)*2.1;const R=190+Math.random()*45;const m=d2Mesh();const p=new T.Vector3(T0.x+Math.cos(a)*R,40+Math.random()*18,T0.z+Math.sin(a)*R);m.g.position.copy(p);
+  const r=Math.random();const tg=r<.66?'civ':'me';const d={g:m.g,led:m.led,hm:m.hm,p,v:new T.Vector3(),sp:12.5+D2.wave*1.2+Math.random()*2,alt:p.y,tg,ti:Math.floor(Math.random()*1000),ph:Math.random()*6,dead:false,jam:0,dive:false};
+  const ag={side:'en',kind:'d2drone',d2:d,nm:'자폭 드론',hp:1};d.ag=ag;d.px={root:m.g,dead:false,hits:[m.hm]};D2.list.push(d);try{GUN.hits=[]}catch(e){}}
+function d2Tgt(d){if(d.tg==='me')return{x:FP3.pos.x,y:1.2,z:FP3.pos.z};const C=D2.civ.filter(c=>!c.down);if(C.length){const c=C[d.ti%C.length];return{x:c.x,y:.9,z:c.z}}return{x:FP3.pos.x,y:1.2,z:FP3.pos.z}}
+function d2Kill(d,by){if(d.dead)return;d.dead=true;d.px.dead=true;DRN.kills++;try{FX3.explode(d.p.clone(),{r:2.2,kind:'small',lite:true})}catch(e){}try{d.g.removeFromParent()}catch(e){}try{GUN.hits=[]}catch(e){}D2.uiT=0;
+  if(by==='me'){try{SFX.mech('hit')}catch(e){}}const dm=Math.hypot(FP3.pos.x-d.p.x,FP3.pos.z-d.p.z);if(d.p.y<8&&dm<5.5)d2Hurt(9,d.p)}
+function d2Boom(d,why){if(d.dead)return;d.dead=true;d.px.dead=true;const p=d.p.clone();p.y=Math.max(.4,p.y);try{d.g.removeFromParent()}catch(e){}try{FX3.explode(p,{r:why==='jam'?3.2:4.4,kind:'small'})}catch(e){}try{SND.boom(true,.7)}catch(e){}try{sv3Shake(.3)}catch(e){}try{GUN.hits=[]}catch(e){}D2.uiT=0;
+  if(why==='jam')DRN.kills++;const R=why==='jam'?4.5:6.8;const dm=Math.hypot(FP3.pos.x-p.x,FP3.pos.z-p.z);if(dm<R+.8)d2Hurt((why==='jam'?22:50)*(1-dm/(R+.8))+4,p);
+  for(const c of D2.civ){if(c.down)continue;if(Math.hypot(c.x-p.x,c.z-p.z)<R*.85){c.down=1;DRN.cas++;try{humanDie(c.h,null)}catch(e){}if(DRN.cas===3)try{outNote('<b>🛸 주민 피해 3명</b><div>"주민이 다쳤어요 — 더 빨리 떨어뜨려야 해요!"</div>',2600)}catch(e){}}}}
+function d2Hurt(n,from){if(!D2.on)return;n=Math.max(1,Math.round(n));D2.hp=Math.max(0,D2.hp-n);D2.dmg+=n;D2.uiT=0;try{vib([80,30,50]);sv3Shake(.25);isHitFx(from)}catch(e){}if(D2.hp<=0)d2End('down')}
+function d2Jam(){if(!D2.on||DRN.jam<=0)return;DRN.jam--;const n=D2.list.filter(d=>!d.dead&&!d.jam&&Math.hypot(d.p.x-FP3.pos.x,d.p.z-FP3.pos.z)<95);n.forEach(d=>{d.jam=1;d.v.multiplyScalar(.5)});D2.uiT=0;
+  try{outNote(n.length?`<b>📡 재머 — 드론 ${n.length}대 신호 끊김</b><div>떨어진다 — 떨어지는 자리에서 떨어진다.</div>`:'<b>📡 재머</b><div>95m 안에 드론이 없다.</div>',2000);vib([20,20,20,20,60])}catch(e){}try{const sp=PK.sprite(glowTex(),'#8fd6ff',2,OUT.scene,{add:1});sp.position.set(FP3.pos.x,1.4,FP3.pos.z);FX3.add(sp,.6,(u,it)=>{it.el.scale.setScalar(2+u*60);it.el.material.opacity=.6*(1-u)})}catch(e){}}
+function d2UI(){let el=document.getElementById('d2Hud');if(!D2.on){if(el)el.remove();return}if(!SV3.el)return;if(!el){el=document.createElement('div');el.id='d2Hud';el.className='is-hud';SV3.el.appendChild(el);el.innerHTML='<b>🛸 자폭 드론 떼</b><span id="d2C"></span><i class="is-hp"><i id="d2Hp"></i></i><button data-g3="d2jam" id="d2Jam">📡 재머</button>'}
+  try{const b=document.getElementById('oBar');if(b&&b.offsetHeight){const t=Math.round(b.offsetTop+b.offsetHeight+6)+'px';if(el.style.top!==t)el.style.top=t}}catch(e){}
+  const n=D2.list.filter(d=>!d.dead).length+D2.q.length;const c=document.getElementById('d2C');const t=`드론 ${n} · ${D2.wave+1}/3파 · 주민 피해 ${DRN.cas}`;if(c&&c.textContent!==t)c.textContent=t;const hp=document.getElementById('d2Hp');if(hp){hp.style.width=Math.max(0,Math.round(D2.hp))+'%';hp.style.background=D2.hp<30?'#e0503a':D2.hp<60?'#e6a23a':'#2ccf7c'}
+  const j=document.getElementById('d2Jam');if(j){const tt=`📡 재머 ${DRN.jam}`;if(j.textContent!==tt)j.textContent=tt;j.disabled=DRN.jam<=0}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=d2jam]');if(!b)return;e.preventDefault();e.stopPropagation();try{d2Jam()}catch(x){d2Err(x)}},true);
+document.addEventListener('keydown',e=>{if(D2.on&&e.code==='KeyJ'&&!e.repeat){e.preventDefault();e.stopImmediatePropagation();d2Jam()}},true);
+function d2Start(){const E=EVO.E||EVD.cur;const p=FP3.pos;let T0=E&&E.site?{x:E.site.x,z:E.site.z}:{x:p.x,z:p.z};if(Math.hypot(T0.x-p.x,T0.z-p.z)>55){const fx=-Math.sin(FP3.yaw),fz=-Math.cos(FP3.yaw);T0={x:p.x+fx*14,z:p.z+fz*14}}
+  Object.assign(D2,{on:true,list:[],civ:[],wave:-1,waveT:3,q:[],qT:0,dmg:0,t:0,T:T0,allyT:1.5,E,uiT:0,end:0});try{D2.hp0=clamp(M('me').hp,30,100)}catch(e){D2.hp0=100}D2.hp=D2.hp0;DRN.cas=0;DRN.kills=0;DRN.jam=2;
+  /* 지켜야 할 주민 6명 */for(let i=0;i<6;i++){const a=i/6*6.283;let x=T0.x+Math.cos(a)*(2+i%2*1.6),z=T0.z+Math.sin(a)*(2+i%2*1.6);try{if(!owcFree(x,z,.35)){const q=owcNearFree(x,z,4);if(!q)continue;x=q.x;z=q.z}}catch(e){}let h=null;try{h=civHuman(30+i*5,i%3?'crouch':'nervous',i===4?'eldF':'civ')}catch(e){h=null}if(!h)continue;h.root.position.set(x,0,z);h.root.rotation.y=Math.random()*6.28;OUT.scene.add(h.root);const c={h,x,z,down:0,kind:'d2civ',nm:'주민',tagL:''};D2.civ.push(c);OUT.npcs.push(c)}
+  try{drnSound(true,.6)}catch(e){}try{isScare(T0.x,T0.z,46)}catch(e){}d2UI();try{vib([70,40,70])}catch(e){}
+  try{outNote(`<b>🛸 자폭 드론 떼 — 화면은 그대로</b><div>북쪽 하늘 · 3파 12대. 사람들이 모인 곳을 노린다 — 조준해서 한 발이면 떨어진다. 위쪽 띠 <b>📡 재머</b>(2번 · PC J) = 95m 안 드론 추락. 주민 피해 2명까지면 막은 것이다.</div>`,6400)}catch(e){}return true}
+function d2Step(dt){if(!D2.on||D2.end)return;D2.t+=dt;
+  /* 무리: 3·4·5대 — 앞 무리를 처리하거나 34초가 지나면 다음 */D2.waveT-=dt;const alive=D2.list.filter(d=>!d.dead).length;
+  if(D2.q.length){D2.qT-=dt;if(D2.qT<=0){D2.qT=.9;D2.q.shift();d2Spawn()}}
+  else if(D2.wave<2&&D2.waveT<=0&&(alive===0||D2.waveT<-30)){D2.wave++;const n=[3,4,5][D2.wave];for(let i=0;i<n;i++)D2.q.push(1);D2.waveT=5;try{outNote(`<b>🛸 ${D2.wave+1}/3파 — 드론 ${n}대</b><div>${['북쪽 하늘!','또 온다 — 넷!','마지막 무리, 다섯! 재머 아껴 둔 거 써요!'][D2.wave]}</div>`,2400)}catch(e){}D2.uiT=0}
+  else if(D2.wave>=2&&!alive&&!D2.q.length){d2End(DRN.cas<=2?'win':'lose');return}
+  for(const d of D2.list){if(d.dead)continue;d.ph+=dt;const p=d.p;
+    if(d.jam>0){d.v.y-=9.8*dt;d.v.x*=1-dt*.6;d.v.z*=1-dt*.6;p.addScaledVector(d.v,dt);d.g.rotation.x+=dt*7;d.g.rotation.z+=dt*5;if(p.y<=.35){d2Boom(d,'jam');continue}d.g.position.copy(p);continue}
+    const t=d2Tgt(d);const dx=t.x-p.x,dz=t.z-p.z,dh=Math.hypot(dx,dz)||1;if(!d.dive&&dh<42)d.dive=true;
+    if(!d.dive){const ty=d.alt+Math.sin(d.ph*1.3)*1.5;d.v.set(dx/dh*d.sp+Math.cos(d.ph*1.7)*1.6,(ty-p.y)*1.2,dz/dh*d.sp+Math.sin(d.ph*1.9)*1.6)}else{const dy=t.y-p.y;const L=Math.hypot(dx,dy,dz)||1;const s=d.sp*1.3;d.v.set(dx/L*s,dy/L*s,dz/L*s)}
+    p.addScaledVector(d.v,dt);d.g.position.copy(p);d.g.rotation.y=Math.atan2(d.v.x,d.v.z);d.g.rotation.x=d.dive?.5:.15;try{d.led.material.opacity=(d.ph%.5)<.25?1:.25}catch(e){}
+    if(Math.hypot(t.x-p.x,t.y-p.y,t.z-p.z)<1.6||p.y<.4)d2Boom(d,'hit')}
+  for(const c of D2.civ)try{c.h.update(dt)}catch(e){}
+  /* 아군 대공 사격(국군 — 가끔 한 대) */D2.allyT-=dt;if(D2.allyT<=0){D2.allyT=1.3+Math.random()*.8;const L=D2.list.filter(d=>!d.dead&&!d.jam&&Math.hypot(d.p.x-D2.T.x,d.p.z-D2.T.z)<120);if(L.length){const d=L[Math.floor(Math.random()*L.length)];const from=new T.Vector3(D2.T.x+6,1.5,D2.T.z+4);try{owcTracer(from,d.p.clone().add(new T.Vector3((Math.random()-.5)*1.5,(Math.random()-.5),(Math.random()-.5)*1.5)),0);owcShotSnd('rifle',from)}catch(e){}if(Math.random()<.18)d2Kill(d,'al')}}
+  /* 소리 */try{if(DRN.snd){let nd=1e9;for(const d of D2.list)if(!d.dead)nd=Math.min(nd,d.p.distanceTo(SV3.cam.position));const k=nd<1e8?clamp(1.15-nd/180,.08,1):0;DRN.snd.g.gain.setTargetAtTime(k*.075,DRN.snd.c.currentTime,.15)}}catch(e){}
+  /* 벗어남: 현장에서 150m */if(Math.hypot(FP3.pos.x-D2.T.x,FP3.pos.z-D2.T.z)>150){d2End('escape');return}
+  D2.uiT-=dt;if(D2.uiT<=0){D2.uiT=.25;d2UI()}}
+function d2End(why){if(!D2.on||D2.end)return;D2.end=1;const win=why==='win',quit=why==='escape';const loss=Math.round(D2.dmg*.4);FX=[];if(loss>0){const small=loss<12&&typeof WND!=='undefined';if(small)WND.self=true;try{hurt('me',loss)}catch(e){}finally{if(small)WND.self=false}}try{const me=M('me');me.hp=Math.max(me.hp,why==='down'?25:6)}catch(e){}
+  for(const d of D2.list){if(!d.dead){d.dead=true;try{d.g.removeFromParent()}catch(e){}}}D2.list=[];try{drnSound(false)}catch(e){}try{if(DRN.snd)drnClear(true)}catch(e){}
+  const C=EVR.drone||{};const s={kills:DRN.kills,dmg:D2.dmg,shots:IS.shots|0,hits:IS.hits|0};let txt='';try{txt=C.apply?C.apply(win,quit,s):''}catch(e){d2Err(e)}const title=C.title?C.title(win,quit,s):(win?'드론 떼를 막았다':'물러섰다');
+  try{const E=EVD.cur;if(E&&E.owc){E.owc=0;evEnd({ok:win,short:C.short?C.short(win,{win,quit,k:'drone',s}):(win?'드론 저지':'저지 실패'),quiet:1})}}catch(e){d2Err(e)}
+  const fx=FX.slice();try{OUT.fx.push(...fx);outStat()}catch(e){}D2.on=false;d2UI();try{outNote(`<b>🛸 ${title}</b><div>${txt} 받은 피해 ${D2.dmg}.</div>${typeof fxChips==='function'?fxChips(fx):''}`,6000)}catch(e){}
+  const civ=D2.civ;D2.civ=[];setTimeout(()=>{for(const c of civ){try{c.h.root.removeFromParent()}catch(e){}}try{OUT.npcs=(OUT.npcs||[]).filter(a=>!civ.includes(a))}catch(e){}},why==='down'?100:12000);
+  try{if(typeof plogOn==='function'&&plogOn()){const P=plogLoad().play;const b=P.bt.is_drone||(P.bt.is_drone={w:0,l:0,q:0});if(win)b.w++;else if(quit)b.q++;else b.l++;PLOG.dirty=1;plogSave()}}catch(e){}
+  if(why==='down')setTimeout(()=>{try{if(OUT.on)outReturn('fast')}catch(e){d2Err(e)}},2400);else{try{if(checkOver())outReturn('dead')}catch(e){}}try{save()}catch(e){}}
+function d2Abort(){if(!D2.on)return;D2.on=false;D2.end=1;for(const d of D2.list){try{d.g.removeFromParent()}catch(e){}}D2.list=[];for(const c of D2.civ){try{c.h.root.removeFromParent()}catch(e){}}try{OUT.npcs=(OUT.npcs||[]).filter(a=>!D2.civ.includes(a))}catch(e){}D2.civ=[];try{drnSound(false)}catch(e){}d2UI()}
+/* 내 총: 드론은 한 발 */
+(function(){const b=window.gunHitList;if(typeof b!=='function')return;window.gunHitList=function(force){const r=b.apply(this,arguments);try{if(D2.on&&GUN.hits&&GUN.hitMap){for(const d of D2.list){if(d.dead)continue;if(!GUN.hitMap.has(d.hm)){GUN.hits.push(d.hm);GUN.hitMap.set(d.hm,{a:d.ag,h:d.px,kind:'d2drone',part:'body'})}}}}catch(e){d2Err(e)}return r}})();
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){if(t&&t.kind==='d2drone'){try{if(t.a&&t.a.d2)d2Kill(t.a.d2,'me')}catch(e){d2Err(e)}return}return b.apply(this,arguments)}})();
+(function(){const b=window.roeOf;if(typeof b!=='function')return;window.roeOf=function(t){if(t&&t.kind==='d2drone')return{law:true,cat:'en',n:'자폭 드론'};if(t&&t.kind==='host')return{law:false,cat:'prot',n:'인질'};return b.apply(this,arguments)}})();
+/* 시작·흐름 */
+(function(){const b=window.owcStart;if(typeof b!=='function')return;window.owcStart=function(kind){try{if(kind==='drone'&&typeof is2Use==='function'&&!D2.on&&isOn()&&isAvail()&&!IS.on&&!(typeof GUN!=='undefined'&&GUN.ow)&&!(navigator.webdriver&&!window.__is2Test)){return d2Start()}}catch(e){d2Err(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(D2.on&&!OUT.enc&&!OUT.busy)d2Step(dt);d2VanStep(dt)}catch(e){d2Err(e)}return r}})();
+(function(){const b=window.isAvail;if(typeof b!=='function')return;window.isAvail=function(){if(D2.on)return false;return b.apply(this,arguments)}})();
+(function(){const b=window.evBlock;if(typeof b==='function')window.evBlock=function(){return b.apply(this,arguments)||D2.on}})();
+(function(){const b=window.outReturn;if(typeof b==='function')window.outReturn=function(why){try{if(D2.on){if(why==='dead'||why==='fast')D2.dmg=D2.dmg;d2End(why==='dead'||why==='fast'?'down':'escape');d2Abort()}}catch(e){d2Err(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.tjPopulate;if(typeof b==='function')window.tjPopulate=function(){try{d2Abort()}catch(e){}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🛸 진지 교전 → 제자리 2차(v13.8)','남은 다섯도 걷던 화면 그대로 싸운다. <b>자폭 드론 떼</b>: 북쪽 하늘에서 3·4·5대 — 모여 있는 주민을 노린다. 조준해서 한 발이면 떨어진다. 위쪽 띠 📡 재머(2번 · PC J) = 95m 안 드론 추락. 주민 피해 2명까지면 막은 것. <b>옥상 저격수 제압</b>: 지붕에서 번쩍이면 숙인다. <b>구호 트럭 탈환</b>: 승합차 옆 인질(운전사)은 쏘지 않는다 — 95초 안에 못 끝내면 승합차가 달아난다. <b>적 점령지</b>: 망루 위 경계병(높은 곳) · 문 · 순찰 → 본대·증원은 점령지 안에서. 발각되면 적이 먼저 자리를 잡는다. <b>집회 공작조</b>: 군중 속 권총 든 사람만 — 손을 들면 경찰이 연행한다(생포).']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
