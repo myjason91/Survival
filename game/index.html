@@ -13823,7 +13823,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.8';
+const APP_VER='13.9';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -20456,14 +20456,14 @@ function dwSegD(ax,az,bx,bz,px,pz){const vx=bx-ax,vz=bz-az;const L2=vx*vx+vz*vz|
 function dwEnC(R){const L=(OWC.en||[]).filter(a=>dwAlive(a)&&!a.prot&&Math.hypot(a.h.root.position.x-FP3.pos.x,a.h.root.position.z-FP3.pos.z)<(R||150));if(!L.length)return null;let x=0,z=0;L.forEach(a=>{x+=a.h.root.position.x;z+=a.h.root.position.z});return{x:x/L.length,z:z/L.length,n:L.length}}
 /* ---------- 시작·끝 ---------- */
 (function(){const b=window.owcStart;window.owcStart=function(kind){const r=b.apply(this,arguments);try{if(r&&OWC.on){OWC.B=null;DW.recon=null;DW.smoke=[];DW.jamT=0;DW.jam=null;dwMarksClear();OWC.dwDone=0;OWC.drIss=OWC.dr||0;OWC.drOwn=0;
-    if(typeof dfS==='function'&&dfS().on&&kind!=='spy'&&kind!=='rlop'){const own=Math.min(6,dfCount('fpv'));OWC.drOwn=own;OWC.dr=(OWC.dr||0)+own;const tot=own+dfCount('bomb')+dfCount('recon')+dfCount('smoke')+dfCount('jam');if(tot>0)owcLater(17,()=>owcSay('예비군 소대장 박정수',`공방 드론도 챙겼죠? 아이템 줄에서 골라 쓰세요 — ${dwStockTxt()}`,0));try{owcUI()}catch(e){}}owcBtn()}}catch(e){console.error(e)}return r}})();
+    if(typeof dfS==='function'&&(dfS().on||dfS().kit)&&kind!=='spy'&&kind!=='rlop'){const own=Math.min(6,dfCount('fpv'));OWC.drOwn=own;OWC.dr=(OWC.dr||0)+own;const tot=own+dfCount('bomb')+dfCount('recon')+dfCount('smoke')+dfCount('jam');if(tot>0)owcLater(17,()=>owcSay('예비군 소대장 박정수',`공방 드론도 챙겼죠? 아이템 줄에서 골라 쓰세요 — ${dwStockTxt()}`,0));try{owcUI()}catch(e){}}owcBtn()}}catch(e){console.error(e)}return r}})();
 function dwStockTxt(){return ['fpv','bomb','recon','smoke','jam'].map(t=>{const n=t==='fpv'?(OWC.drOwn||0):dfCount(t);return n?DF_T[t].ico+n:''}).filter(Boolean).join(' ')}
 function dwSettle(){if(!OWC||OWC.dwDone)return;OWC.dwDone=1;try{const used=(OWC.stt&&OWC.stt.drn)||0;const own=Math.max(0,Math.min(OWC.drOwn||0,used-(OWC.drIss||0)));for(let i=0;i<own;i++)dfTake('fpv',true);if(own)toast(`공방 FPV ${own}대를 썼다`,1800)}catch(e){console.error(e)}}
 function dwClean(){try{if(OWC.B)dwBombEnd(true)}catch(e){}if(DW.recon&&DW.recon.q&&DW.recon.q.parent)DW.recon.q.parent.remove(DW.recon.q);DW.recon=null;if(DW.jam&&DW.jam.q&&DW.jam.q.parent)DW.jam.q.parent.remove(DW.jam.q);DW.jam=null;DW.jamT=0;DW.smoke.forEach(s=>{if(s.q&&s.q.parent)s.q.parent.remove(s.q)});DW.smoke=[];dwMarksClear()}
 (function(){const b=window.owcResult;window.owcResult=function(){dwSettle();return b.apply(this,arguments)}})();
 ['owcClose','owcCleanup'].forEach(n=>{const b=window[n];if(typeof b!=='function')return;window[n]=function(){try{dwSettle();dwClean()}catch(e){}return b.apply(this,arguments)}});
 /* ---------- 아이템 줄 버튼 ---------- */
-(function(){const b=window.owcUI;window.owcUI=function(){if(OWC.B)dwBombEnd(true);b.apply(this,arguments);try{const it=document.querySelector('#owcUI .owc-items');if(it&&typeof dfS==='function'&&dfS().on){for(const t of ['bomb','recon','smoke','jam']){let bt=$('#owcDw-'+t);const n=dfCount(t);if(!n){if(bt)bt.remove();continue}if(!bt){bt=document.createElement('button');bt.className='owc-it dw-b';bt.id='owcDw-'+t;bt.dataset.g3='owcdw';bt.dataset.v=t;bt.innerHTML=`<b class="dw-ico">${DF_T[t].ico}</b><i class="num">${n}</i><span>${DF_T[t].s}</span>`;it.appendChild(bt)}}}}catch(e){console.error(e)}owcBtn()}})();
+(function(){const b=window.owcUI;window.owcUI=function(){if(OWC.B)dwBombEnd(true);b.apply(this,arguments);try{const it=document.querySelector('#owcUI .owc-items');if(it&&typeof dfS==='function'&&(dfS().on||dfS().kit)){for(const t of ['bomb','recon','smoke','jam']){let bt=$('#owcDw-'+t);const n=dfCount(t);if(!n){if(bt)bt.remove();continue}if(!bt){bt=document.createElement('button');bt.className='owc-it dw-b';bt.id='owcDw-'+t;bt.dataset.g3='owcdw';bt.dataset.v=t;bt.innerHTML=`<b class="dw-ico">${DF_T[t].ico}</b><i class="num">${n}</i><span>${DF_T[t].s}</span>`;it.appendChild(bt)}}}}catch(e){console.error(e)}owcBtn()}})();
 (function(){const b=window.owcBtn;window.owcBtn=function(){b.apply(this,arguments);try{for(const t of ['bomb','recon','smoke','jam']){const bt=$('#owcDw-'+t);if(!bt)continue;const n=dfCount(t);const i=bt.querySelector('.num');if(i&&i.textContent!==String(n))i.textContent=n;const busy=!!(OWC.D||OWC.B)||(t==='recon'&&!!DW.recon)||(t==='jam'&&DW.jamT>0);bt.disabled=n<=0&&!(t==='bomb'&&OWC.B);bt.classList.toggle('on',(t==='bomb'&&!!OWC.B)||(t==='recon'&&!!DW.recon)||(t==='jam'&&DW.jamT>0)||(t==='smoke'&&DW.smoke.some(s=>s.t<s.dur)));bt.classList.toggle('busy',busy&&n>0);const act=bt.classList.contains('on');bt.hidden=n<=0&&!act}const d=$('#owcDr');if(d&&OWC.B)d.disabled=true}catch(e){}}})();
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-g3=owcdw],[data-g3=dwdrop],[data-g3=dwret]');if(!b||!OWC.on)return;e.preventDefault();e.stopPropagation();if(OWC.paused||OWC.done)return;const k=b.dataset.g3;
   if(k==='owcdw')dwUse(b.dataset.v);else if(k==='dwdrop')dwDrop();else if(k==='dwret')dwReturn()},true);
@@ -23541,6 +23541,99 @@ function d2Abort(){if(!D2.on)return;D2.on=false;D2.end=1;for(const d of D2.list)
 (function(){const b=window.outReturn;if(typeof b==='function')window.outReturn=function(why){try{if(D2.on){if(why==='dead'||why==='fast')D2.dmg=D2.dmg;d2End(why==='dead'||why==='fast'?'down':'escape');d2Abort()}}catch(e){d2Err(e)}return b.apply(this,arguments)}})();
 (function(){const b=window.tjPopulate;if(typeof b==='function')window.tjPopulate=function(){try{d2Abort()}catch(e){}return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🛸 진지 교전 → 제자리 2차(v13.8)','남은 다섯도 걷던 화면 그대로 싸운다. <b>자폭 드론 떼</b>: 북쪽 하늘에서 3·4·5대 — 모여 있는 주민을 노린다. 조준해서 한 발이면 떨어진다. 위쪽 띠 📡 재머(2번 · PC J) = 95m 안 드론 추락. 주민 피해 2명까지면 막은 것. <b>옥상 저격수 제압</b>: 지붕에서 번쩍이면 숙인다. <b>구호 트럭 탈환</b>: 승합차 옆 인질(운전사)은 쏘지 않는다 — 95초 안에 못 끝내면 승합차가 달아난다. <b>적 점령지</b>: 망루 위 경계병(높은 곳) · 문 · 순찰 → 본대·증원은 점령지 안에서. 발각되면 적이 먼저 자리를 잡는다. <b>집회 공작조</b>: 군중 속 권총 든 사람만 — 손을 들면 경찰이 연행한다(생포).']);
+
+/* ===================== 125 · v13.9 평시 💥 자폭 드론(1인칭) · 시작 장비 ===================== */
+/* 사용자 요청(2026-11-15): "평상시에도 드론 운용 가능하게 해 주세요. 그리고 드론 기본적으로 주인공은 50개 자폭드론과 10개의 폭탄투하드론,
+   ak소총1자루 및 2배율 조준경과 그에 맞는 총알 100발을 갖고 리스폰 해 주세요."
+   · 🛸 드론 고르기(105)에 💥 자폭 드론 — 1인칭 영상으로 날아가 부딪히면 터진다(반경 4.5m). 판정은 폭탄 드론과 같다:
+     적대만 쓰러지고, 주민이면 '주민 사격', 군인이면 연행. 아이·가족은 대상에서 빠진다(116 isKidOrFam). 내 발밑 6m 안이면 나도 다친다
+   · 조종: 왼쪽 막대 = 속도·선회 · 오른쪽 끌기 = 기수(위·아래·좌우) · [기폭](PC Space) · [복귀](PC Q — 터뜨리지 않은 기체는 재고로 돌아온다)
+     띄우고 1.5초 뒤 안전장치가 풀린다(그 전엔 부딪혀도 안 터진다). 배터리 45초 · 신호 260m — 신호가 끊기거나 배터리가 다 되면 안전장치가 다시 걸린 채 떨어진다(터지지 않고 기체만 잃는다)
+   · 제자리 교전(116·123·124) 중에도 띄울 수 있다 — 조종하는 동안 내 몸은 그 자리에 서 있다(맞을 수 있다). 적 자폭 드론에 부딪혀도 터진다
+   · 시작 장비: 새 게임을 시작할 때마다 💥 자폭 드론 50 · 💣 폭탄 투하 드론 10 · AK-47 소총 1정(2배율 조준경 장착, 탄창 장전) · 7.62mm 100발.
+     하던 저장 게임에도 한 번 넣는다(G.flags.kit139). 쓰러져 실려 돌아오는 것은 리스폰이 아니다 — 다시 주지 않는다. 교육용 모드에서는 넣지 않는다
+   · 시작 장비 드론은 공방을 차리지 않아도 쓴다(dfS().kit) — 공방 교전 아이템 줄(94)에도 잡힌다
+   · 게임 속 연출일 뿐 실제 장비의 사양·운용법이 아니다 */
+const DFK={spd0:12,spd1:30,batt:45,sigNear:180,sigLost:260,r:4.5,arm:1.5,n:0};
+function dfkErr(e){try{console.error(e)}catch(x){}}
+function dfkN(){try{return typeof dfCount==='function'?dfCount('fpv'):0}catch(e){return 0}}
+/* 폭탄 드론 재고: 공방을 차렸거나 시작 장비가 있으면 */
+window.dfrBombN=function(){try{if(typeof dfCount!=='function'||typeof dfS!=='function')return 0;const S=dfS();return S.on||S.kit?dfCount('bomb'):0}catch(e){return 0}};
+/* ---------- 시작 장비 ---------- */
+function kitOk(){try{return !!G&&!(navigator.webdriver&&!window.__kitTest)&&!(typeof eduOn==='function'&&eduOn())&&G.phase!=='end'}catch(e){return false}}
+function kitGrant(why){if(!kitOk())return false;G.flags=G.flags||{};if(G.flags.kit139)return false;G.flags.kit139=1;const r={fpv:50,bomb:10,ak:false,opt:false,ammo:100};
+  try{const S=dfS();S.kit=1;const tn=G.turn|0;for(let i=0;i<50;i++)S.inv.push({t:'fpv',g:'B',turn:tn,kit:1});for(let i=0;i<10;i++)S.inv.push({t:'bomb',g:'B',turn:tn,kit:1})}catch(e){dfkErr(e)}
+  try{const a=gunAdd('ak47',{force:true,ammo:100});r.ak=a===true?'new':a;G.inv=G.inv||{};const rec=(G.arms||[]).find(x=>x.id==='ak47');G.inv.opt_x2=(G.inv.opt_x2||0)+1;if(rec&&!(rec.opt&&typeof OPT!=='undefined'&&OPT[rec.opt]))r.opt=!!optAttach('ak47','x2',true)}catch(e){dfkErr(e)}
+  KIT.last=Object.assign({why},r);
+  try{toast(`🎒 ${why==='old'?'시작 장비 지급':'시작 장비'} — 💥 자폭 드론 50 · 💣 폭탄 드론 10 · AK-47(2배율 조준경) · 7.62mm 100발`,3600)}catch(e){}try{save()}catch(e){}return true}
+const KIT={last:null};
+(function(){const n=window.newGame;if(typeof n!=='function')return;window.newGame=function(){const r=n.apply(this,arguments);try{kitGrant('new')}catch(e){dfkErr(e)}return r}})();
+/* 하던 저장 게임: 처음 화면이 바뀔 때 한 번 */
+(function(){const b=window.setScreen;if(typeof b!=='function')return;window.setScreen=function(s){const r=b.apply(this,arguments);try{if(G&&s!=='title'&&s!=='end'&&G.flags&&!G.flags.kit139)kitGrant('old')}catch(e){dfkErr(e)}return r}})();
+/* ---------- 고르기에 💥 자폭 드론 ---------- */
+(function(){const b=window.dfrPick;if(typeof b!=='function')return;window.dfrPick=function(){const r=b.apply(this,arguments);try{const el=$('#dfrPick');if(el&&!el.querySelector('[data-v=fpv]')){const n=dfkN(),edu=dfrEdu();const bt=document.createElement('button');bt.dataset.g3='dfrgo';bt.dataset.v='fpv';if(!(n>0&&!edu))bt.disabled=true;
+    bt.innerHTML=`<i>💥</i><span>자폭 드론 (1인칭)<small>${edu?'교육용 모드에서는 쓸 수 없다':n>0?`보유 ${n}대 · 날아가 부딪히면 터진다 · 반경 ${DFK.r}m`:'드론 공방에서 만들면 쓸 수 있다'}</small></span>`;const bomb=el.querySelector('[data-v=bomb]');el.insertBefore(bt,bomb||el.querySelector('.x'));
+    const sm=bomb&&bomb.querySelector('small');if(sm)sm.textContent=sm.textContent.replace('공방 재고','보유')}}catch(e){dfkErr(e)}return r}})();
+(function(){const b=window.dfrStart;if(typeof b!=='function')return;window.dfrStart=function(type){if(type==='fpv')return dfkStart();return b.apply(this,arguments)}})();
+/* ---------- 띄우기 ---------- */
+function dfkStart(){try{dfrPickClose()}catch(e){}if(DFR.B||!dfrCan()||dfrEdu()||dfkN()<=0)return false;const it=dfTake('fpv',true);if(!it)return false;
+  let q=null;try{q=dfQuad('fpv');q.scale.setScalar(2);dfQuadShow(q,5);q.visible=false;OUT.scene.add(q)}catch(e){q=null}if(!q){try{dfS().inv.push(it)}catch(e){}return false}
+  const c=SV3.cam;const gk=it.g==='S'?1.15:1;const B={type:'fpv',it,pos:new T.Vector3(FP3.pos.x,1.5,FP3.pos.z),home:{x:FP3.pos.x,z:FP3.pos.z},yaw:FP3.yaw,pitch:-.04,roll:0,v:5,vy:0,t:0,batt:DFK.batt*gk,batt0:DFK.batt*gk,q,g:it.g,
+    drops:[],end:0,uiT:0,msgT:0,kills:0,fov0:c.fov,ord0:c.rotation.order,seen:new Map(),found:{en:0,brw:0,ml:0,cache:0},sc:OUT.scene,ring:null,dot:null,bombs:0,armed:false,boom:null,lost:false,res:'',hp0:null};
+  try{B.hp0=M('me').hp}catch(e){}
+  const ov=document.createElement('div');ov.id='dfrOv';ov.className='b-fpv-ov owd dwb dfr dfk';let nu='';try{nu=fpvNoiseUrl()}catch(e){}
+  ov.innerHTML=`<div class="fn"${nu?` style="background-image:url(${nu})"`:''}></div><div class="fs"></div>
+    <div class="osd tl"><b>💥 자폭 드론${B.g&&B.g!=='B'?' · '+B.g+'급':''}</b><span id="dfrBat">BAT 100%</span><span id="dfkSig">RSSI ▮▮▮▮</span><span id="dfkArm">안전장치</span></div>
+    <div class="osd tr"><span id="dfrAlt">ALT 1m</span><span id="dfkSpd">SPD 0km/h</span><span id="dfrDst">DST 0m</span></div>
+    <div class="ret"><i></i></div><div class="fpv-msg" id="dfrMsg" hidden></div><button class="fpv-x" data-g3="dfkfire">기폭</button><button class="fpv-q" data-g3="dfrret">복귀</button>
+    <div class="fpv-tip">왼쪽 막대: 속도·선회 · 오른쪽 끌기: 기수 · 부딪히면 터진다 · 주민·군인 근처 금지</div>`;
+  if(SV3.el){SV3.el.appendChild(ov);SV3.el.classList.add('dfr-on')}try{if(OUT.me){OUT.me.root.visible=true;OUT.me.setPose('check')}}catch(e){}try{fpvSound(true)}catch(e){}try{vib(20)}catch(e){}FP3.mv.x=FP3.mv.y=0;DFR.B=B;DFR.n++;DFK.n++;
+  try{outNote(`<b>💥 자폭 드론을 띄웠다</b><div>${DFK.arm}초 뒤 안전장치가 풀린다. 적대에게 부딪히거나 [기폭]. 주민·군인 근처는 피한다. 남은 ${dfkN()}대.</div>`,3000)}catch(e){}return true}
+/* ---------- 매 프레임 ---------- */
+const _dkD=new T.Vector3();
+function dfkCam(B){const c=SV3.cam;c.rotation.order='YXZ';c.position.copy(B.pos);c.rotation.set(B.pitch,B.yaw,B.roll);if(Math.abs(c.fov-92)>.05){c.fov=92;c.updateProjectionMatrix()}}
+const _dkC=new T.Vector3(),_dkS=new T.Vector3();
+/* 지나온 선분(P0→P)에서 가장 가까운 점 — 빠르게 날아도 사람을 건너뛰지 않는다 */function dfkNear(P0,P,c,r){_dkS.subVectors(P,P0);const L2=_dkS.lengthSq();let k=0;if(L2>1e-6)k=clamp(_dkC.subVectors(c,P0).dot(_dkS)/L2,0,1);_dkC.copy(P0).addScaledVector(_dkS,k);return _dkC.distanceTo(c)<r?_dkC.clone():null}
+function dfkHitAt(B,P0){const P=B.pos;P0=P0||P;const gh=dfrGroundH(P.x,P.z);if(P.y<gh+.35)return{p:new T.Vector3(P.x,Math.max(gh,0)+.3,P.z),what:gh>.5?'wall':'ground'};const c=new T.Vector3();
+  for(const a of OUT.npcs||[]){if(!a||!a.h||a.dead||a.h.dead||a.gone||!a.h.root.visible||!a.h.root.parent)continue;try{if(typeof isKidOrFam==='function'&&isKidOrFam({a,h:a.h,kind:a.kind}))continue}catch(e){}const q=a.h.root.position;c.set(q.x,q.y+1,q.z);const h=dfkNear(P0,P,c,1.4);if(h)return{p:h,what:'man',a}}
+  try{if(typeof D2!=='undefined'&&D2.on)for(const d of D2.list){if(d.dead||!d.p)continue;const h=dfkNear(P0,P,d.p,1.8);if(h)return{p:h,what:'drone'}}}catch(e){}return null}
+function dfkStep(dt,mv){const B=DFR.B;if(!B)return;if(B.sc!==OUT.scene||!OUT.on){dfrEnd(true);return}B.t+=dt;
+  if(B.boom!=null){B.boom+=dt;dfkCam(B);if(B.boom>.9)dfrEnd();return}
+  if(B.end){B.res=B.res||'back';dfrEnd();return}
+  if((typeof OWC!=='undefined'&&OWC.on)||OUT.enc||(typeof APT!=='undefined'&&APT.on)||OUT.drv||OUT.ending){B.res='auto';dfrEnd(true);return}
+  if(!B.lost)B.batt-=dt;const live=!B.lost&&B.batt>0;const th=clamp(mv.y,-1,1);if(live)B.yaw-=mv.x*1.5*dt;
+  const want=!live?B.v*.98:th>=0?DFK.spd0+(DFK.spd1-DFK.spd0)*th:Math.max(3,DFK.spd0*(1+th));B.v+=(want-B.v)*Math.min(1,dt*2.4);
+  const cp=Math.cos(B.pitch);_dkD.set(-Math.sin(B.yaw)*cp,Math.sin(B.pitch),-Math.cos(B.yaw)*cp);if(!live){B.vy-=9.8*dt;_dkD.multiplyScalar(B.v*.7);_dkD.y+=B.vy}else{_dkD.multiplyScalar(B.v);if(B.t<1.2)_dkD.y+=4.5}
+  const P0=B.pos.clone();B.pos.addScaledVector(_dkD,dt);if(B.pos.y>80)B.pos.y=80;
+  if(!B.armed&&live&&B.t>=DFK.arm){B.armed=true;dfrMsg('무장 — 부딪히면 터진다',1.2);try{SND.tone(1600,.08,'square',.03)}catch(e){}const a=$('#dfkArm');if(a){a.textContent='무장';a.style.color='#ff8a6a'}}
+  const hit=dfkHitAt(B,P0);if(hit){if(B.armed&&live){dfkBoom(hit.p);return}if(!live){dfkLost();return}/* 안전장치: 튕겨 오른다 */const gh=dfrGroundH(B.pos.x,B.pos.z);if(B.pos.y<gh+.35)B.pos.y=gh+.35}
+  const dist=Math.hypot(B.pos.x-FP3.pos.x,B.pos.z-FP3.pos.z);const sig=clamp(1-(dist-DFK.sigNear)/(DFK.sigLost-DFK.sigNear),0,1);
+  if(!B.lost&&dist>DFK.sigLost){B.lost=true;dfrMsg('신호 끊김 — 추락',1.4);try{SND.tone(220,.3,'square',.04)}catch(e){}}if(!B.lost&&B.batt<=0&&!B.bdone){B.bdone=1;dfrMsg('배터리 방전 — 추락',1.4)}
+  if(live&&B.batt<6){B.beep=(B.beep||0)-dt;if(B.beep<=0){B.beep=.5;try{SND.tone(1500,.05,'square',.03)}catch(e){}}}if(B.t>DFK.batt+20)dfkLost();
+  B.roll+=((-mv.x*.42)-B.roll)*Math.min(1,dt*4);dfkCam(B);try{if(FPV.snd)FPV.snd.o.frequency.setTargetAtTime(150+150*(B.v/DFK.spd1),FPV.snd.c.currentTime,.08)}catch(e){}
+  B.uiT-=dt;if(B.uiT<=0){B.uiT=.1;const set=(id,v)=>{const el=$(id);if(el&&el.textContent!==v)el.textContent=v};set('#dfrBat',`BAT ${Math.max(0,Math.round(B.batt/B.batt0*100))}%`);set('#dfrAlt',`ALT ${Math.max(0,Math.round(B.pos.y-Math.max(0,dfrGroundH(B.pos.x,B.pos.z))))}m`);set('#dfkSpd',`SPD ${Math.round(B.v*3.6)}km/h`);set('#dfrDst',`DST ${Math.round(dist)}m`);
+    const bars=B.lost?0:Math.ceil(sig*4);set('#dfkSig','RSSI '+'▮'.repeat(bars)+'▯'.repeat(4-bars));const n=document.querySelector('#dfrOv .fn');if(n)n.style.opacity=String(B.lost?.85:.07+(1-sig)*.7);const ov=$('#dfrOv');if(ov)ov.classList.toggle('low',B.batt<6||sig<.35)}}
+function dfkFire(){const B=DFR.B;if(!B||B.type!=='fpv'||B.boom!=null||B.end)return false;if(!B.armed){dfrMsg('안전장치 — 아직 안 터진다',1);return false}if(B.lost||B.batt<=0)return false;dfkBoom(B.pos.clone());return true}
+function dfkBoom(P){const B=DFR.B;if(!B||B.boom!=null)return;B.boom=0;B.res='boom';try{fpvSound(false)}catch(e){}let host=0;
+  try{gunHitList(true);const seen=new Set();GUN.hitMap.forEach(t=>{if(seen.has(t.h))return;seen.add(t.h);if(t.kind==='d2drone')return;const q=t.h.root.position;if(Math.hypot(q.x-P.x,q.y+1-P.y,q.z-P.z)<=DFK.r&&gunHostile(t))host++})}catch(e){dfkErr(e)}
+  let dr=0;try{if(typeof D2!=='undefined'&&D2.on)for(const d of D2.list){if(!d.dead&&d.p&&d.p.distanceTo(P)<=DFK.r){d2Kill(d,'me');dr++}}}catch(e){dfkErr(e)}
+  try{gunBoom(P,DFK.r,6,{n:'자폭 드론',dmg:7})}catch(e){dfkErr(e)}const dm=Math.hypot(FP3.pos.x-P.x,FP3.pos.z-P.z);if(dm<6){try{FX=[];hurt('me',Math.round(8+34*(1-dm/6)));OUT.fx.push(...FX);outStat();outNote('<b>내 가까이에서 터졌다!</b><div>자폭 드론 파편에 다쳤다 — 내 위치에서 멀리 몰고 간다.</div>',2600)}catch(e){}}
+  B.kills=host;B.dr=dr;B.pos.copy(P);B.pos.y+=.6;try{const S=dfS();S.fpvBoom=(S.fpvBoom|0)+1;S.fpvKill=(S.fpvKill|0)+host}catch(e){}
+  const n=document.querySelector('#dfrOv .fn');if(n)n.style.opacity='1';dfrMsg(host||dr?`💥 명중 · ${host?host+'명 무력화':''}${host&&dr?' · ':''}${dr?'드론 '+dr+'대':''}`:'💥 폭발 — 영상 끊김',1.2);try{vib([30,30,60])}catch(e){}}
+function dfkLost(){const B=DFR.B;if(!B||B.boom!=null)return;B.res='lost';B.boom=.3;try{fpvSound(false)}catch(e){}const n=document.querySelector('#dfrOv .fn');if(n)n.style.opacity='1';dfrMsg('추락 — 안전장치가 걸려 터지지 않았다',1.2)}
+(function(){const b=window.dfrStep;if(typeof b!=='function')return;window.dfrStep=function(dt,mv){const B=DFR.B;if(B&&B.type==='fpv'){try{dfkStep(dt,mv||{x:0,y:0})}catch(e){dfkErr(e);try{dfrEnd(true)}catch(x){}}return}return b.apply(this,arguments)}})();
+/* 끝: 105의 dfrEnd가 기체·화면을 정리하고, 결과 말·재고는 여기서 */
+(function(){const b=window.dfrEnd;if(typeof b!=='function')return;window.dfrEnd=function(quiet){const B=DFR.B;if(!B||B.type!=='fpv')return b.apply(this,arguments);const r=b.call(this,true);try{dfkAfter(B,quiet)}catch(e){dfkErr(e)}return r}})();
+function dfkAfter(B,quiet){const res=B.res||'auto';if(res!=='boom'&&res!=='lost'&&B.it){try{dfS().inv.push(B.it)}catch(e){}B.it=null}DFK.last={res,kills:B.kills|0,dr:B.dr|0};
+  if(!quiet&&OUT.on){try{if(res==='boom')outNote(`<b>💥 자폭 드론</b><div>${B.kills?`${B.kills}명 무력화.`:'무력화한 적대는 없다.'}${B.dr?` 적 드론 ${B.dr}대 격추.`:''} 남은 자폭 드론 ${dfkN()}대.</div>`,3600);else if(res==='lost')outNote(`<b>💥 자폭 드론 추락</b><div>터지지 않고 떨어졌다 — 기체를 잃었다. 남은 ${dfkN()}대.</div>`,3200);else outNote(`<b>💥 자폭 드론 회수</b><div>터뜨리지 않고 돌아왔다 — 재고로 돌아갔다(${dfkN()}대).</div>`,2800)}catch(e){}}try{save()}catch(e){}}
+/* 오른쪽 끌기: 기수 위아래도(105는 좌우만 넘긴다) */
+(function(){const mv=FP3.move;if(typeof mv!=='function')return;FP3.move=function(e){const B=DFR.B;if(!B||B.type!=='fpv')return mv.call(this,e);DFR.B=null;const y0=this.yaw,p0=this.pitch;let r;try{r=mv.call(this,e)}finally{DFR.B=B}const dy=this.yaw-y0,dp=this.pitch-p0;this.yaw=y0;this.pitch=p0;if(!B.end&&B.boom==null){B.yaw+=dy;B.pitch=clamp(B.pitch+dp,-1.35,.6)}return r}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=dfkfire]');if(!b)return;e.preventDefault();e.stopPropagation();dfkFire()},true);
+document.addEventListener('keydown',e=>{const B=DFR.B;if(!B||B.type!=='fpv'||e.repeat)return;if(e.code==='Space'){e.preventDefault();dfkFire()}else if(e.code==='ArrowUp'){B.pitch=clamp(B.pitch+.08,-1.35,.6)}else if(e.code==='ArrowDown'){B.pitch=clamp(B.pitch-.08,-1.35,.6)}});
+/* 적 자폭 드론(124)이 폭발 범위에 들면 — 폭발 판정이 사람처럼 다루지 않게 */
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t){if(t&&t.kind==='d2drone'){try{if(t.a&&t.a.d2)d2Kill(t.a.d2,'me')}catch(e){dfkErr(e)}return}return b.apply(this,arguments)}})();
+(function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t){if(t&&t.kind==='d2drone')return;return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['💥 자폭 드론 · 시작 장비(v13.9)','위쪽 띠 <b>🛸 드론</b> → <b>💥 자폭 드론</b>: 1인칭 영상으로 날아가 부딪히면 터진다(반경 4.5m). 왼쪽 막대 속도·선회 · 오른쪽 끌기 기수 · [기폭](PC Space) · [복귀](PC Q, 안 터진 기체는 재고로). 띄우고 1.5초 뒤 안전장치가 풀린다. 배터리 45초 · 신호 260m — 끊기면 터지지 않고 떨어진다. 적대만 쓰러지고 주민·군인에게 쓰면 폭탄 드론과 같은 벌. 제자리 교전 중에도 쓴다(조종하는 동안 내 몸은 그 자리에 서 있다). <b>시작 장비</b>: 새 게임마다 자폭 드론 50 · 폭탄 투하 드론 10 · AK-47(2배율 조준경) · 7.62mm 100발 — 하던 게임에도 한 번 넣었다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
