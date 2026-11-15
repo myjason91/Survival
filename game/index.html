@@ -1736,6 +1736,16 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .wpk-r:disabled{opacity:.4}
 .wpk-n{margin:6px 2px 0;font-size:10px;color:#8f8d86}
 .wpk-h b{white-space:nowrap}.wpk-h .btn{flex:0 0 auto;width:auto;min-height:32px;padding:4px 12px;font-size:12.5px}
+/* v14.0 탄약 표시 — 사격 버튼 옆 아래 · 숫자는 손가락을 통과(카메라 끌기 그대로) · 누르는 것은 칩뿐 */
+.owc-ammo.wpk-am{pointer-events:none;cursor:default}
+.owc-ammo .wpk-chip{pointer-events:auto;cursor:pointer}
+.owc-ammo.am-dock{display:grid;grid-template-columns:auto auto;align-items:baseline;justify-content:end;gap:0 2px;padding:3px 7px 4px;border-radius:10px;background:rgba(8,12,16,.4);transform-origin:100% 100%;pointer-events:none}
+.owc-ammo.am-dock b{font-size:22px}.owc-ammo.am-dock span{font-size:11.5px}
+.owc-ammo.am-dock small{font-size:9.5px;margin-top:1px;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;justify-self:end}
+.owc-ammo.am-dock .wpk-chip{font-size:10px;padding:5px 8px;margin-top:3px}
+.sv3.dfr-on .gun-auto{display:none}
+/* v14.0 드론 화면 글자(BAT·ALT…)가 미니맵과 겹치지 않게 — 미니맵 오른쪽으로 */
+.b-fpv-ov.dfr .osd.tl{left:max(140px,calc(env(safe-area-inset-left,0px) + 132px))}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13823,7 +13833,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.9';
+const APP_VER='14.0';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -22574,7 +22584,7 @@ const PLOG_K={out:'밖',owc:'교전',in:'실내',bat:'전투 장면'};
 function plogOn(){try{if(navigator.webdriver&&!window.__plogTest)return false;if(typeof BENCH!=='undefined'&&BENCH.on)return false;return store.get('sg.plog',true)!==false}catch(e){return false}}
 function plogBlank(){return{t:0,n:0,s33:0,n50:0,n100:0,calls:0,tris:0,cn:0,q:{low:0,mid:0,high:0},drs:0,k:0}}
 function plogLoad(){if(PLOG.cur)return PLOG.cur;let d=null;try{d=store.get('sg.plogData',null)}catch(e){}
-  /* 그리는 쪽이 바뀌지 않은 판끼리는 이어서 잰다 — 13.2부터 지금 판까지(13.2.1 고침 판 · 13.3 제자리 교전은 그리기 경로가 같다). 그 전 판이나 다른 큰 판의 기록은 새로 시작 */const vv=v=>String(v||'').split('.').map(n=>+n||0);if(d&&typeof d==='object'&&d.sc){const a=vv(d.v),c=vv(APP_VER);if(a[0]===c[0]&&a[0]===13&&a[1]>=2&&a[1]<=c[1])d.v=APP_VER}
+  /* 그리는 쪽이 바뀌지 않은 판끼리는 이어서 잰다 — 13.2부터 지금 판까지(13.2.1 고침 판 · 13.3 제자리 교전은 그리기 경로가 같다). 그 전 판이나 다른 큰 판의 기록은 새로 시작 */const vv=v=>String(v||'').split('.').map(n=>+n||0);if(d&&typeof d==='object'&&d.sc){const a=vv(d.v),c=vv(APP_VER);/* v14.0: 큰 판 번호가 14로 올라도(그리는 쪽은 같다) 13.2 이후 기록은 이어 간다 — 예전 규칙은 13.x 안에서만 이어서 14.0에서 기록이 지워질 뻔했다 */const ge=(x,y)=>x[0]!==y[0]?x[0]>y[0]:x[1]>=y[1];if(ge(a,[13,2])&&ge(c,a))d.v=APP_VER}
   if(!d||typeof d!=='object'||d.v!==APP_VER||!d.sc){const prev=d&&d.sc?{v:String(d.v||'').slice(0,8),line:plogLine(d,'out')}:null;d={v:APP_VER,since:new Date().toISOString().slice(0,10),sc:{},play:{bt:{},fc:{},lvMax:1,dayMax:1,games:0},prev}}
   if(!d.play)d.play={bt:{},fc:{},lvMax:1,dayMax:1,games:0};return PLOG.cur=d}
 function plogSave(force){if(!PLOG.cur||(!PLOG.dirty&&!force))return;PLOG.dirty=0;try{const P=PLOG.cur.play;try{const L=typeof TEAM!=='undefined'&&TEAM.list?TEAM.list:[];for(const m of L)if(m&&m.d&&(m.d.lv|0)>P.lvMax)P.lvMax=m.d.lv|0}catch(e){}try{const day=dayOf(G.turn|0);if(day>P.dayMax)P.dayMax=day}catch(e){}store.set('sg.plogData',PLOG.cur)}catch(e){}}
@@ -23634,6 +23644,71 @@ document.addEventListener('keydown',e=>{const B=DFR.B;if(!B||B.type!=='fpv'||e.r
 (function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t){if(t&&t.kind==='d2drone'){try{if(t.a&&t.a.d2)d2Kill(t.a.d2,'me')}catch(e){dfkErr(e)}return}return b.apply(this,arguments)}})();
 (function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t){if(t&&t.kind==='d2drone')return;return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined')HELP84.push(['💥 자폭 드론 · 시작 장비(v13.9)','위쪽 띠 <b>🛸 드론</b> → <b>💥 자폭 드론</b>: 1인칭 영상으로 날아가 부딪히면 터진다(반경 4.5m). 왼쪽 막대 속도·선회 · 오른쪽 끌기 기수 · [기폭](PC Space) · [복귀](PC Q, 안 터진 기체는 재고로). 띄우고 1.5초 뒤 안전장치가 풀린다. 배터리 45초 · 신호 260m — 끊기면 터지지 않고 떨어진다. 적대만 쓰러지고 주민·군인에게 쓰면 폭탄 드론과 같은 벌. 제자리 교전 중에도 쓴다(조종하는 동안 내 몸은 그 자리에 서 있다). <b>시작 장비</b>: 새 게임마다 자폭 드론 50 · 폭탄 투하 드론 10 · AK-47(2배율 조준경) · 7.62mm 100발 — 하던 게임에도 한 번 넣었다.']);
+
+/* ===================== 126 · v14.0 총 화면 손질 — 탄약 표시를 사격 버튼 옆 아래로 · 자동사격(제자리 교전) · 드론 조종 중 총 숨김 ===================== */
+/* 사용자 요청(2026-11-15 20:58, 캡처 두 장): "총알및총기종류 위치를 2번 동그라미 표기로 옮겨주세요. 손가락으로 화면 카메라 좌.우 이동 시 해당 동그라미 1번 부문이
+   컨텍되면서 화면움직임이 어렵습니다. 그리고 자동사격 기능이 꺼진 것 같은데 자동사격 기능 넣어주시구요..^^ 드론 기능 시 총이 보여지는게 부자연스럽습니다"
+   원인: ① v13.5(121)에서 '무기 바꾸기'를 넣으며 탄약 표시 전체를 누르는 자리로 만들고, 그 위에서 시작한 손가락을 가로챘다(카메라 끌기가 시작되지 않음)
+         ② 자동사격은 예전 진지 교전 화면(48 owcAim · 13 bAimScan)에만 있었다 — 11종을 걷던 화면(116·123·124)으로 옮기며 빠졌다
+         ③ 평시 드론(105·125)을 조종하는 동안에도 1인칭 총(65 GUN.vm)을 그렸다
+   · 탄약 표시: 숫자·총 이름은 손가락을 그대로 통과시킨다(카메라 끌기 그대로) — 누를 수 있는 것은 작은 '🔁 무기' 칩뿐.
+     자리는 사격 버튼 왼쪽 아래 빈칸(화면 맨 아래 줄): 사격 버튼 왼쪽 가장자리에서 왼쪽으로 훑어 다른 버튼과 겹치지 않는 첫 자리. 좁으면 86%·74%로 줄인다.
+     버튼 배치 편집(77)에서 탄약 표시를 직접 옮겨 저장하면 그 자리를 따른다(설정 '탄약 표시 자리'로 되돌림)
+   · 자동사격(설정 기본 켬): 조준점이 무장한 적(교전의 적 · 아파트 전투의 적)·적 자폭 드론 위에 0.18초 머물면 쏜다 — 연사 총은 연사 속도로, 단발 총은 0.3초마다.
+     주민·투항자·인질·아이·가족·팀원·군경·아군에게는 절대 쏘지 않는다. 불량배·약탈자·수배자·도주 간첩처럼 판단이 필요한 대상은 수동 사격만.
+     유탄·로켓·특수(조명탄·석궁·전기충격기)는 자동사격하지 않는다. 드론 조종·카드·지도·무기 고르기 중에는 멈춘다
+   · 드론 조종 중(정찰·폭탄 투하·자폭)에는 1인칭 손·총을 그리지 않는다 */
+const AD={n:0,err:0,last:null,on:new Set()};const AF={on:null,t:0,shots:0,last:null};
+function adErr(e){if(AD.err<5){AD.err++;try{console.error(e)}catch(x){}}}
+function adOn(){try{return store.get('sg.amDock',true)!==false}catch(e){return true}}
+function afOn(){try{if(navigator.webdriver&&!window.__afTest)return false;return store.get('sg.autof',true)!==false}catch(e){return true}}
+/* ---------- 탄약 표시 자리 ---------- */
+const AD_OBS='.owc-b,.owc-fb,.owc-items,.aw-btns,.aw-fire:not([hidden]),.gun-mel,.owc-sq';
+function adVis(e){if(!e||e.hidden)return false;const r=e.getBoundingClientRect();if(r.width<4||r.height<4)return false;try{const s=getComputedStyle(e);if(s.display==='none'||s.visibility==='hidden')return false}catch(x){}return true}
+function adR(r){return{l:r.left,r:r.right,t:r.top,b:r.bottom}}
+function adObs(am){const L=[];for(const s of ['#gunUI','#owcUI','#awUI']){const root=document.querySelector(s);if(!root)continue;root.querySelectorAll(AD_OBS).forEach(e=>{if(e===am||am.contains(e)||!adVis(e))return;L.push(adR(e.getBoundingClientRect()))})}
+  for(const id of ['isCap','dfrPick']){const e=document.getElementById(id);if(e&&adVis(e))L.push(adR(e.getBoundingClientRect()))}return L}
+function adHit(a,L,m){for(const b of L){if(a.l<b.r+m&&a.r>b.l-m&&a.t<b.b+m&&a.b>b.t-m)return b}return null}
+function adUndock(am){if(!am.classList.contains('am-dock'))return;am.classList.remove('am-dock');am.style.transform='';am.style.left=am.style.top=am.style.right=am.style.bottom='';delete am.dataset.adSet;try{const root=am.closest('#gunUI,#owcUI');if(root&&typeof hudeApply==='function')hudeApply(root)}catch(e){adErr(e)}}
+function adPlace(root){const am=root.querySelector('.owc-ammo'),fb=root.querySelector('.owc-fb');if(!am||!fb)return 0;if(!adOn()){adUndock(am);return 0}if(!adVis(fb))return 0;
+  am.classList.add('am-dock');const chip=am.querySelector('.wpk-chip');if(chip&&chip.textContent!=='🔁 무기')chip.textContent='🔁 무기';
+  const W=innerWidth,H=innerHeight;const F=fb.getBoundingClientRect();const L=adObs(am);const P=am.offsetParent||am.parentElement;if(!P)return 0;const PR=P.getBoundingClientRect();
+  const w0=am.offsetWidth,h0=am.offsetHeight;if(!(w0>8&&h0>8))return 0;const bot=Math.min(H-3,F.bottom+40);let best=null;
+  for(const sc of [1,.86,.74]){const w=w0*sc,h=h0*sc;const lo=Math.max(W*.26+w,F.left-340);for(let xr=F.left-5;xr>=lo;xr-=4){const a={l:xr-w,r:xr,t:bot-h,b:bot};if(!adHit(a,L,3)){best={a,sc};break}}if(best)break}
+  if(!best){/* 빈칸이 없으면 사격 버튼 바로 위(오른쪽 맞춤) */const sc=.86,w=w0*sc,h=h0*sc;const a={l:F.right-w,r:F.right,t:F.top-6-h,b:F.top-6};best={a,sc,up:1}}
+  const left=Math.round(best.a.r-w0-PR.left),top=Math.round(best.a.b-h0-PR.top);const tf=best.sc<1?`scale(${best.sc})`:'';
+  if(am.style.left!==left+'px'||am.style.top!==top+'px'||am.style.transform!==tf){am.style.left=left+'px';am.style.top=top+'px';am.style.right='auto';am.style.bottom='auto';am.style.transform=tf;AD.n++}
+  am.dataset.adSet=1;AD.last={l:Math.round(best.a.l),r:Math.round(best.a.r),t:Math.round(best.a.t),b:Math.round(best.a.b),sc:best.sc,up:!!best.up,fl:Math.round(F.left)};return 1}
+function adTick(){try{for(const s of ['#gunUI','#owcUI']){const root=document.querySelector(s);if(root)adPlace(root)}}catch(e){adErr(e)}}
+/* 이격 관리(120)가 버튼을 비켜 놓은 다음에 자리를 잡는다 */
+(function(){const b=window.hsTick;if(typeof b!=='function')return;window.hsTick=function(){const r=b.apply(this,arguments);adTick();return r}})();
+for(const fn of ['gunUI','owcUI','hudeLive','wpkChip']){(function(){const b=window[fn];if(typeof b!=='function')return;window[fn]=function(){const r=b.apply(this,arguments);try{adTick();setTimeout(adTick,140)}catch(e){adErr(e)}return r}})()}
+addEventListener('resize',()=>{setTimeout(adTick,120);setTimeout(adTick,450)});
+/* 버튼 배치 편집에서 탄약 표시를 직접 옮겨 저장하면 그 자리를 따른다 */
+(function(){const b=window.hudeSave;if(typeof b!=='function')return;window.hudeSave=function(){let mv=false;try{mv=!!(HUDE.moved&&HUDE.moved.has('ammo'))}catch(e){}const r=b.apply(this,arguments);if(mv&&adOn()){try{store.set('sg.amDock',false);toast('탄약 표시는 옮긴 자리에 둔다 — 설정 \'탄약 표시 자리\'에서 사격 버튼 옆으로 되돌린다',3200)}catch(e){}}return r}})();
+/* ---------- 자동사격 ---------- */
+function afOk(t){if(!t||!t.h||t.h.dead)return false;const a=t.a||{};if(a.dead||a.surr||a.isAl||a.host||a.gone||a.lying)return false;try{if(typeof isKidOrFam==='function'&&isKidOrFam(t))return false}catch(e){}
+  if(t.kind==='d2drone')return !(a.d2&&a.d2.dead);const en=a.side==='en'||t.kind==='en'||t.kind==='enemy'||t.kind==='small';if(!en)return false;
+  try{if(typeof roeOf==='function'){const R=roeOf(t);if(R&&R.law===false)return false}}catch(e){}return true}
+function afWeaponOk(W){return !!W&&!W.rocket&&!W.nade&&W.cat!=='lch'&&W.cat!=='spc'&&W.cat!=='mel'&&!W.melee}
+function afBusy(){try{return (typeof DFR!=='undefined'&&!!DFR.B)||OUT.enc||OUT.busy||OUT.mapOpen||OUT.drv||OUT.ride||(typeof WPK!=='undefined'&&WPK.open)||(typeof BAG!=='undefined'&&BAG.open)}catch(e){return true}}
+const _afD=new T.Vector3();
+function afStep(dt){const W=gunW();if(!afOn()||!W||!afWeaponOk(W)||!GUN.on||!GUN.fp||GUN.fire||afBusy()){AF.on=null;AF.t=0;return}
+  const cam=SV3.cam;cam.updateMatrixWorld(true);cam.getWorldDirection(_afD);const maxD=Math.min(300,W.range?W.range:W.cat==='sr'?300:W.cat==='sg'?40:W.cat==='pst'?70:220);const c=gunCast(cam.position.clone(),_afD.clone(),maxD);
+  const t=c&&c.tgt&&afOk(c.tgt)?c.tgt:null;const key=t?t.h:null;if(key!==AF.on){AF.on=key;AF.t=0}else if(key)AF.t+=dt;if(!key||AF.t<.18)return;
+  const rate=W.auto?W.rate:Math.max(W.rate,.3);if(GUN.mag>0&&GUN.reload<=0&&GUN.t-GUN.lastShot>=rate){if(gunShoot()){AF.shots++;AF.last={k:t.kind,n:(t.a&&t.a.nm)||''};afFlash()}}
+  else if(GUN.mag<=0&&GUN.reload<=0&&gunAmmoOf(W.am)>0&&GUN.t-GUN.lastShot>.3){try{gunReload()}catch(e){adErr(e)}}}
+function afFlash(){const u=document.getElementById('gunUI');if(!u)return;let h=document.getElementById('gunAuto');if(!h){h=document.createElement('div');h.id='gunAuto';h.className='owc-auto gun-auto';h.textContent='자동사격';h.hidden=true;u.appendChild(h)}h.hidden=false;clearTimeout(afFlash._t);afFlash._t=setTimeout(()=>{const x=document.getElementById('gunAuto');if(x)x.hidden=true},400)}
+(function(){const b=window.gunAim;if(typeof b!=='function')return;window.gunAim=function(dt){const r=b.apply(this,arguments);try{afStep(dt||0)}catch(e){adErr(e)}return r}})();
+/* ---------- 드론 조종 중 1인칭 총을 그리지 않는다 ---------- */
+function gvHide(){try{return !!(typeof DFR!=='undefined'&&DFR.B&&typeof GUN!=='undefined'&&GUN.vm&&GUN.vm.S)}catch(e){return false}}
+(function(){const b=window.sv3Loop;if(typeof b!=='function')return;window.sv3Loop=function(){const hide=gvHide();const S=hide?GUN.vm.S:null;const v0=S?S.visible:true;if(S)S.visible=false;try{return b.apply(this,arguments)}finally{if(S)S.visible=v0}}})();
+/* ---------- 설정 ---------- */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="autof"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){
+    const add=s4Seg('autof','자동사격','조준점이 무장한 적·적 드론 위에 머물면 쏜다 · 주민·투항자·인질·아이에게는 쏘지 않는다',[[1,'켬'],[0,'끔']],afOn()?1:0)+s4Seg('amdock','탄약 표시 자리','사격 버튼 옆 아래(숫자는 손가락을 통과 — 카메라 끌기 그대로) · 배치 편집대로',[[1,'사격 버튼 옆'],[0,'배치 편집대로']],adOn()?1:0);
+    h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){adErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||(b.dataset.k!=='autof'&&b.dataset.k!=='amdock'))return;try{const on=b.dataset.v==='1';if(b.dataset.k==='autof'){store.set('sg.autof',on);toast(on?'자동사격을 켰다 — 무장한 적·적 드론에만':'자동사격을 껐다',2200)}else{store.set('sg.amDock',on);adTick();toast(on?'탄약 표시를 사격 버튼 옆 아래로':'탄약 표시는 버튼 배치 편집대로',2200)}}catch(x){adErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎯 자동사격 · 탄약 표시(v14.0)','<b>자동사격</b>(설정, 기본 켬): 조준점이 무장한 적이나 적 드론 위에 잠깐 머물면 저절로 쏜다. 주민·투항자·인질·아이·가족·군경에게는 절대 쏘지 않고, 불량배·약탈자·수배자는 직접 쏴야 한다. 유탄·로켓은 자동사격하지 않는다. <b>탄약 표시</b>는 사격 버튼 왼쪽 아래 — 숫자 위를 문질러도 화면이 돌아간다. 총을 바꾸려면 작은 🔁 무기 칩(PC Z). 드론을 조종하는 동안에는 손·총이 보이지 않는다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
