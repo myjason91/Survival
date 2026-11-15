@@ -1746,6 +1746,11 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .sv3.dfr-on .gun-auto{display:none}
 /* v14.0 드론 화면 글자(BAT·ALT…)가 미니맵과 겹치지 않게 — 미니맵 오른쪽으로 */
 .b-fpv-ov.dfr .osd.tl{left:max(140px,calc(env(safe-area-inset-left,0px) + 132px))}
+/* v14.2 창밖으로 내밀기 */
+.wl-btn{position:absolute;left:50%;top:104px;transform:translateX(-50%);z-index:12;padding:7px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.42);background:rgba(16,22,30,.8);color:#f3f1ea;font:800 12.5px var(--sans,system-ui);pointer-events:auto;box-shadow:0 4px 14px -6px rgba(0,0,0,.8);touch-action:manipulation;white-space:nowrap}
+.wl-btn.on{background:#e8a33a;border-color:#ffd38a;color:#14171c}
+.sv3.dfr-on .wl-btn{display:none}
+@media (max-height:420px){.wl-btn{top:96px;padding:6px 12px;font-size:12px}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13833,7 +13838,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='14.1';
+const APP_VER='14.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -23823,6 +23828,59 @@ for(const fn of ['buildMap3','playerCover','spotCover','mkPlayerCar']){(function
 try{if(typeof RIDE_K!=='undefined'&&RIDE_K.moto){Object.assign(RIDE_K.moto,{vmax:22.2,acc:6.4,brk:11,s:'최고 약 80km/h · 실제로는 안전모 필수'})}}catch(e){vehErr(e)}
 try{if(typeof HELP84!=='undefined'){const h=HELP84.find(x=>x[0]==='자전거·킥보드·오토바이');if(h)h[1]=h[1].replace('오토바이 60km/h','오토바이 80km/h')}}catch(e){}
 if(typeof HELP84!=='undefined')HELP84.push(['🚗 차종 · 130km/h(v14.1)','밖에 세워 둔 차는 이제 8가지 — 스포츠 쿠페 · 중형 세단 · 대형 고급 세단 · 전기 세단 · SUV · 해치백 · 픽업트럭 · 승합차(가상의 독자 디자인, 로고 없음). 운전석에 다가가면 차종이 보인다. 모든 차 최고 130km/h — 쿠페·전기 세단은 빨리 붙고, 승합차·픽업은 굼뜨다. 빠를수록 핸들이 덜 꺾이고, 세게 부딪히면 그만큼 다친다. 오토바이 최고 80km/h.']);
+
+/* ===================== 128 · v14.2 창가 사격 — 유탄 0발이면 총으로 · 창밖으로 몸 내밀기(거실 포함 모든 바깥 창) ===================== */
+/* 사용자 요청(2026-11-15 22:47, 캡처): "유탄 말고 다른 총 사격도 가능하게 해 주시고 거실 창문에도 사격 가능하게 모션 구현바랍니다"
+   원인(캡처·재현): ① 아파트 전투(101)에서 '💣 유탄 · 켜짐'인 채 유탄이 0발이면 사격 버튼이 '유탄 발사'로 묶여 아무것도 안 나갔다(유탄 모드가 저절로 꺼지지 않음)
+                   ② 창가에서 아래(가까운 길)를 겨누면 창턱 아래 벽(높이 0.9m)에 막혔다 — 28층에서 아래로 0.8rad쯤부터. 거실 창(3m 폭)도 같다
+   · 유탄: 0발이 되면 저절로 총으로(안내 한 줄) · 0발일 때 유탄 모드를 켜려 하면 안내만 하고 총 유지 · 유탄 모드 중에는 💣 버튼이 '🔫 총으로'로 바뀐다 · 사격 버튼은 0발이면 바로 총
+   · 창밖으로 몸 내밀기: 바깥 창(앞 4 · 뒤 3 · 오른쪽 1 — 거실 큰 창 포함) 1.25m 안에 서면 위쪽 가운데 '🪟 창밖으로 내밀기'(PC L)
+     → 0.45초 동안 창이 옆으로 열리고 몸이 창틀 밖으로 0.32m 나간다(움직이는 시점) — 창턱 벽에 막히지 않고 바로 아래 길까지 겨눈다.
+     내민 동안에는 걷지 않고, 막대를 밀거나 숙이면(⤓·C) 다시 들어온다. 아파트 전투 중 앞쪽 창에서 내밀면 적에게 더 잘 보인다(맞을 확률 ↑)
+   · 아파트를 나가거나 창가 저격 자리(65)·드론으로 바꾸면 곧바로 원래 자리로 */
+const WLN={on:0,st:'',t:0,dur:.45,win:null,from:null,to:null,pane:null,p0:null,n:0,err:0,shown:false};
+const WL_WINS=[['f',20,80],['f',108,170],['f',200,300],['f',330,400],['b',110,170],['b',200,300],['b',330,400],['r',170,230]];
+function wlErr(e){if(WLN.err<5){WLN.err++;try{console.error(e)}catch(x){}}}
+function wlOk(){try{return typeof APT!=='undefined'&&APT.on&&typeof APTW!=='undefined'&&APTW.on&&!(typeof GUN!=='undefined'&&GUN.ow)&&!!OUT.apt&&!OUT.apt.lobby&&!OUT.enc&&!OUT.busy&&!OUT.mapOpen&&!(typeof DFR!=='undefined'&&DFR.B)&&!(typeof AW!=='undefined'&&AW.on&&AW.ph==='end')}catch(e){return false}}
+/* 창 하나: 벽면 좌표 · 바깥 방향 · 옆 범위(m) */
+function wlGeo(w){const [k,a,b]=w;if(k==='f')return{k,n:{x:0,z:1},c:hpZ(292),lo:hpX(a),hi:hpX(b),yaw:Math.PI,lat:'x'};if(k==='b')return{k,n:{x:0,z:-1},c:hpZ(8),lo:hpX(a),hi:hpX(b),yaw:0,lat:'x'};return{k,n:{x:1,z:0},c:hpX(412),lo:hpZ(a),hi:hpZ(b),yaw:-Math.PI/2,lat:'z'}}
+function wlNear(){if(!wlOk())return null;const P=FP3.pos;let best=null;for(const w of WL_WINS){const g=wlGeo(w);const nd=g.lat==='x'?(g.c-P.z)*g.n.z:(g.c-P.x)*g.n.x;const L=g.lat==='x'?P.x:P.z;if(nd<0||nd>1.25||L<g.lo-.15||L>g.hi+.15)continue;if(!best||nd<best.nd)best=Object.assign(g,{nd,L})}return best}
+function wlPane(to){/* 가장 가까운 창 묶음(16 buildHome3 — userData.city를 가진 무리)에서 유리판 */const sc=SV3.scene;if(!sc)return null;let best=null,bd=2.2;const v=new T.Vector3();sc.traverse(o=>{if(!o.userData||!o.userData.city)return;o.getWorldPosition(v);const d=Math.hypot(v.x-to.x,v.z-to.z);if(d<bd){bd=d;best=o}});if(!best)return null;
+  let glass=null;for(const c of best.children){const p=c.geometry&&c.geometry.parameters;if(c.isMesh&&p&&Math.abs((p.height||0)-1.2)<1e-3&&Math.abs((p.depth||0)-.02)<1e-3){glass=c;break}}return glass?{g:best,glass,x0:glass.position.x,s0:glass.scale.x,w:glass.geometry.parameters.width}:null}
+function wlPaneSet(k){const P=WLN.pane;if(!P)return;P.glass.scale.x=P.s0*(1-.5*k);P.glass.position.x=P.x0+P.w*.25*k}
+function wlStart(){if(WLN.on)return false;const g=wlNear();if(!g)return false;const P=FP3.pos;const L=clamp(g.L,g.lo+.28,g.hi-.28);const out=g.c+.32*(g.lat==='x'?g.n.z:g.n.x);
+  const to=g.lat==='x'?new T.Vector3(L,P.y,out):new T.Vector3(out,P.y,L);WLN.win=g;WLN.from=P.clone();WLN.to=to;WLN.on=1;WLN.st='out';WLN.t=0;WLN.n++;FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;
+  try{if(typeof AW!=='undefined'&&AW.on&&AW.cr){AW.cr=false;AW.uiT=0}}catch(e){}WLN.pane=wlPane(to);
+  /* 바깥을 보게(창과 많이 비껴 서 있으면 돌려 준다) */const dy=Math.atan2(Math.sin(FP3.yaw-g.yaw),Math.cos(FP3.yaw-g.yaw));if(Math.abs(dy)>1.1)FP3.yaw=g.yaw+Math.sign(dy)*1.1;
+  try{SND.tone(520,.08,'triangle',.03);setTimeout(()=>{try{SND.tone(340,.12,'triangle',.025)}catch(e){}},120)}catch(e){}try{vib(15)}catch(e){}
+  try{outNote(`<b>🪟 창밖으로 몸을 내밀었다</b><div>창턱에 막히지 않고 바로 아래 길까지 겨눈다${g.k==='f'&&typeof AW!=='undefined'&&AW.on?' · 적에게 더 잘 보인다':''} — 막대를 밀거나 숙이면 들어온다.</div>`,2800)}catch(e){}wlBtn();return true}
+function wlBack(quick){if(!WLN.on)return false;if(quick){WLN.on=0;WLN.st='';FP3.pos.copy(WLN.from);FP3.noWalk=false;wlPaneSet(0);WLN.pane=null;wlBtn();return true}if(WLN.st==='in')return false;WLN.st='in';WLN.t=0;WLN.back=FP3.pos.clone();/* 들어올 자리 = 내밀기 전에 서 있던 자리(걸어서 닿은 곳이라 가구·벽 안이 아니다) */return true}
+function wlEase(k){k=clamp(k,0,1);return k*k*(3-2*k)}
+function wlStep(dt){if(!WLN.on){wlBtnTick(dt);return}if(!wlOk()&&WLN.st!=='in'){wlBack(true);return}WLN.t+=dt;const k=wlEase(WLN.t/WLN.dur);
+  if(WLN.st==='out'){FP3.pos.lerpVectors(WLN.from,WLN.to,k);wlPaneSet(k);if(Math.hypot(FP3.mv.x,FP3.mv.y)>.35&&WLN.t>WLN.dur)wlBack(false);else if(typeof AW!=='undefined'&&AW.on&&AW.cr&&WLN.t>.2)wlBack(false)}
+  else if(WLN.st==='in'){FP3.pos.lerpVectors(WLN.back,WLN.from,k);wlPaneSet(1-k);if(WLN.t>=WLN.dur){WLN.on=0;WLN.st='';FP3.noWalk=false;WLN.pane=null;wlBtn()}}
+  wlBtnTick(dt)}
+/* ---------- 버튼 ---------- */
+function wlBtn(){const el0=document.getElementById('wlBtn');const near=WLN.on?true:!!wlNear();if(!near||!SV3.el){if(el0)el0.remove();WLN.shown=false;return}let el=el0;if(!el){el=document.createElement('button');el.id='wlBtn';el.className='wl-btn';el.dataset.g3='wl';SV3.el.appendChild(el)}const t=WLN.on&&WLN.st==='out'?'↩ 안으로':'🪟 창밖으로 내밀기';if(el.textContent!==t)el.textContent=t;el.classList.toggle('on',!!(WLN.on&&WLN.st==='out'));WLN.shown=true}
+function wlBtnTick(dt){WLN.bt=(WLN.bt||0)-dt;if(WLN.bt>0)return;WLN.bt=.2;try{wlBtn()}catch(e){wlErr(e)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=wl]');if(!b)return;e.preventDefault();e.stopPropagation();try{if(WLN.on&&WLN.st==='out')wlBack(false);else if(!WLN.on)wlStart()}catch(x){wlErr(x)}},true);
+['pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,e=>{const a=e.target.closest&&e.target.closest('#wlBtn');if(a)e.stopPropagation()},{capture:true,passive:true}));
+document.addEventListener('keydown',e=>{if(e.repeat||e.code!=='KeyL')return;const tg=e.target;if(tg&&/INPUT|TEXTAREA/.test(tg.tagName))return;try{if(WLN.on&&WLN.st==='out')wlBack(false);else if(!WLN.on&&wlNear())wlStart()}catch(x){wlErr(x)}});
+(function(){const b=window.tjAptStep;if(typeof b!=='function')return;window.tjAptStep=function(dt){const r=b.apply(this,arguments);try{wlStep(dt||0);wlGlFix()}catch(e){wlErr(e)}return r}})();
+/* 아파트 전투: 앞쪽 창에서 내밀면 더 잘 보인다 */
+(function(){const b=window.awExposed;if(typeof b!=='function')return;window.awExposed=function(){if(WLN.on&&WLN.st==='out'&&WLN.win&&WLN.t>WLN.dur*.5)return WLN.win.k==='f'?1.35:.3;return b.apply(this,arguments)}})();
+/* 나가기·창가 저격 자리·드론·카드: 곧바로 원래 자리로 */
+for(const fn of ['tjAptLeave','gunOwStart','dfrStart','outReturn']){(function(){const b=window[fn];if(typeof b!=='function')return;window[fn]=function(){try{if(WLN.on)wlBack(true)}catch(e){wlErr(e)}return b.apply(this,arguments)}})()}
+/* ---------- 유탄: 0발이면 총으로 ---------- */
+function wlGlStock(){try{return typeof awGlStock==='function'?awGlStock():0}catch(e){return 0}}
+function wlGlFix(){if(typeof AW==='undefined'||!AW.on||!AW.gl)return false;if(wlGlStock()>0)return false;AW.gl=false;AW.uiT=0;AW.rgT=0;try{outNote('<b>유탄이 없다 — 총으로 바꿨다</b><div>사격 버튼 = 총. 40mm 탄을 구하면 다시 💣.</div>',2400)}catch(e){}try{awUI()}catch(e){}return true}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=awgl]');if(!b)return;try{wlGlFix()}catch(x){wlErr(x)}},true);
+document.addEventListener('keydown',e=>{if(e.code==='KeyG')setTimeout(()=>{try{wlGlFix()}catch(x){}},0)});
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){try{wlGlFix()}catch(e){wlErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.wpkPick;if(typeof b!=='function')return;window.wpkPick=function(){const r=b.apply(this,arguments);try{wlGlFix()}catch(e){wlErr(e)}return r}})();
+/* 유탄 모드 중에는 💣 버튼 = '🔫 총으로' */
+(function(){const b=window.awUI;if(typeof b!=='function')return;window.awUI=function(){const r=b.apply(this,arguments);try{if(typeof AW!=='undefined'&&AW.on){const btn=document.getElementById('awGl');if(btn){const i=btn.querySelector('b'),s=btn.querySelector('span');const ic=AW.gl?'🔫':'💣',tx=AW.gl?'총으로':`유탄 ${wlGlStock()}`;if(i&&i.textContent!==ic)i.textContent=ic;if(s&&s.textContent!==tx)s.textContent=tx}const tip=document.getElementById('awTip');if(tip&&AW.gl&&!/총으로/.test(tip.textContent))tip.textContent=tip.textContent+' · 🔫 총으로 = 총 사격'}}catch(e){wlErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🪟 창가 사격(v14.2)','아파트 안에서 바깥 창(거실 큰 창 포함) 가까이 서면 위쪽 가운데 <b>🪟 창밖으로 내밀기</b>(PC L) — 창이 열리고 몸이 창틀 밖으로 나가 바로 아래 길까지 겨눈다. 막대를 밀거나 숙이면 들어온다. 아파트 전투에서 앞쪽 창으로 내밀면 적에게 더 잘 보인다. <b>유탄</b>: 0발이면 저절로 총으로 바뀌고, 유탄 모드 중에는 💣 버튼이 <b>🔫 총으로</b>가 된다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
