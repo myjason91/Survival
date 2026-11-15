@@ -1713,6 +1713,13 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .is-hit.on{animation:isHit .6s ease-out}
 @keyframes isHit{0%{opacity:1}100%{opacity:0}}
 .is-hit i{position:absolute;left:50%;top:50%;width:180px;height:180px;border-radius:50%;border:5px solid transparent;border-top-color:rgba(255,72,52,.92)}
+/* ===== v13.4 생포 버튼(116) · 교전 수칙(119) ===== */
+.is-cap{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:8;font:800 13px/1 var(--sans);color:#10141a;background:#ffd27a;border:0;border-radius:12px;padding:11px 16px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.roe-tag{position:absolute;left:50%;top:calc(50% + 52px);transform:translateX(-50%);font:800 10.5px/1.2 var(--sans);white-space:nowrap;text-shadow:0 1px 3px #000;pointer-events:none;padding:1px 6px;border-radius:6px;background:rgba(8,12,16,.45)}
+.roe-tag.ok{color:#9be7a5}.roe-tag.no{color:#ff9a8a}
+.roe-row b small{font-weight:600;color:var(--mut)}
+.roe-law{display:grid;gap:3px;margin:4px 0 8px;padding:8px 10px;border:1px solid var(--line2);border-radius:12px;background:var(--panel2);font-size:12px;line-height:1.45}
+.roe-law i{font-style:normal;color:#9be7a5}.roe-law i.x{color:#ff9a8a}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13800,7 +13807,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='13.3';
+const APP_VER='13.4';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -16979,6 +16986,30 @@ function makeGun2(type,att){att=att||{};const g=new T.Group();g.userData.type=ty
   }else if(type==='taser'){
     const yel=GM2.yel();B(.034,.04,.16,0,.03,.0,yel,{r:.006});B(.03,.09,.045,0,-.05,-.04,blk,{rx:-.3,r:.005});B(.03,.03,.03,0,.03,.09,blk,{r:.004});for(const x of [-.008,.008])C(.003,.02,x,.03,.11,steel);B(.006,.014,.01,0,-.02,.0,blk);
     MM(GG.cyl(.004,.004,.004,8),new T.MeshBasicMaterial({color:'#ff3030'}),0,.05,.1,{rx:Math.PI/2,recv:false,p:g});mz=[0,.03,.12];
+  }else if(type==='dbs'||type==='sgs'){/* v13.4 쌍열 엽총 · 단축 산탄총: 나란한 총열 둘 */
+    const w2=GM2.wood2();const L=type==='sgs'?.28:.6;B(.05,.06,.16,0,.045,-.02,steel,{r:.006});for(const x of [-.0125,.0125])C(.0115,L,x,.06,.06+L/2,blk);B(.012,.006,L*.92,0,.074,.06+L/2,blk);B(.05,.034,type==='sgs'?.14:.2,0,.034,type==='sgs'?.14:.2,w2,{r:.008});
+    B(.006,.03,.012,0,-.005,-.03,blk);MM(new T.TorusGeometry(.026,.004,6,12,Math.PI),steel,0,0,-.03,{p:g,rx:0,ry:Math.PI/2,recv:false});
+    if(type==='sgs')B(.034,.11,.05,0,-.03,-.13,w2,{rx:-.6,r:.008});else{B(.045,.08,.3,0,.0,-.26,w2,{rx:.13,r:.01});B(.05,.1,.02,0,-.02,-.41,rub,{r:.004})}
+    B(.006,.008,.008,0,.08,.04+L,GM2.brass());mz=[0,.06,.07+L];
+  }else if(type==='lev38'){/* 레버액션 카빈: 총열 아래 관형 탄창 + 레버 고리 */
+    const w2=GM2.wood2();B(.04,.062,.2,0,.042,-.02,steel,{r:.006});C(.0105,.5,0,.058,.33,blk);C(.0095,.42,0,.034,.3,blk);B(.042,.04,.2,0,.036,.18,w2,{r:.008});B(.045,.08,.3,0,.0,-.26,w2,{rx:.13,r:.01});B(.05,.1,.02,0,-.02,-.41,rub,{r:.004});
+    MM(new T.TorusGeometry(.03,.004,6,14),steel,0,-.035,-.07,{p:g,ry:Math.PI/2,recv:false});B(.006,.03,.012,0,-.003,-.02,blk);sights(.073,-.02,.55);mz=[0,.058,.58];
+  }else if(type==='huntr'){/* 수렵용 볼트액션: 나무 총몸 + 조준경 */
+    const st=GM2.wood2();B(.048,.07,.7,0,.0,-.08,st,{r:.01});B(.048,.095,.2,0,-.03,-.36,st,{r:.01});C(.018,.26,0,.045,.06,blk);C(.011,.5,0,.05,.44,blk);scope(.0,.022,.26,.1);C(.006,.06,.04,.05,-.03,steel,{rz:1.2,rx:0});MM(GG.sph(.011,8),steel,.07,.045,-.03,{p:g,recv:false});grip(-.14,st);mz=[0,.05,.69];
+  }else if(type==='br762'||type==='dmr762'){/* 7.62mm 전투소총 · 지정사수소총: 곧은 20발 탄창 */
+    const fw=type==='br762'?GM2.wood2():dk;B(.046,.065,.3,0,.04,.0,blk,{r:.006});B(.05,.05,.24,0,.035,.26,fw,{r:.008});C(.012,.34,0,.045,.52);C(.017,.06,0,.045,.7,blk);B(.012,.03,.012,0,.08,.6,blk);
+    const m1=mag(.11,.04,.04,dk,.03);grip(-.06,poly);stockFix(-.1,type==='br762'?GM2.wood2():poly,.08);if(type==='dmr762'){scope(.02,.026,.28,.115);bipod(.42,.02)}else sights(.075,-.04,.6);mz=[0,.045,.74];
+  }else if(type==='rpk'){/* RPK: 긴 총열 · 양각대 · 긴 휜 탄창의 AK */
+    const fur=mat('#7a4a22',{r:.75});B(.045,.06,.26,0,.04,.0,blk,{r:.006});B(.05,.05,.14,0,.035,.22,fur,{r:.006});C(.012,.44,0,.045,.51);C(.009,.2,0,.07,.25,blk);B(.012,.04,.012,0,.075,.62,blk);
+    const m1=mag(.13,.05,.34,mat('#8a5a2a',{r:.7}));B(.028,.1,.06,0,-.17,.11,blk,{rx:.75,r:.004});grip(-.05,fur);sights(.07,.05,.62);B(.05,.075,.3,0,.015,-.3,fur,{rx:.1,r:.006});bipod(.66,.03);mz=[0,.045,.74];
+  }else if(type==='k12'){
+    const b=makeGun('mg',{});g.add(b);/* 탄통 · 윗 레일 */B(.1,.09,.16,-.07,-.05,.04,dk,{r:.005});rail(.1,-.1,8);bipod(.62,.02);mz=[0,.05,.9];
+  }else if(type==='m1911'||type==='p9s'||type==='mpst'){/* .45 권총(강철 + 나무 손잡이) · 소음 권총(긴 소음기) · 기관권총(긴 탄창 + 앞손잡이) */
+    const fr=type==='m1911'?steel:poly;B(.03,.032,.19,0,.035,.02,fr,{r:.004});B(.028,.024,.13,0,.006,.0,fr,{r:.003});B(.03,.09,.044,0,-.05,-.04,type==='m1911'?GM2.wood2():poly,{rx:-.3,r:.005});B(.012,.02,.02,0,-.02,.0,blk);MM(new T.TorusGeometry(.022,.003,6,12,Math.PI),blk,0,-.012,.01,{p:g,rx:0,ry:Math.PI/2,recv:false});
+    B(.006,.01,.004,0,.056,-.06,blk);B(.004,.01,.004,0,.056,.1,blk);const m1=B(.022,type==='mpst'?.09:.02,.04,0,type==='mpst'?-.135:-.1,type==='mpst'?-.055:-.045,dk,{rx:-.3});m1.name='mag';
+    if(type==='p9s'){C(.017,.17,0,.037,.2,dk,{seg:12});mz=[0,.037,.29]}else{if(type==='mpst')B(.026,.05,.03,0,-.005,.085,poly,{r:.004});mz=[0,.035,.12]}
+  }else if(type==='smg45'){/* .45 기관단총: 네모난 몸 · 곧은 긴 탄창 · 접이식 개머리판 */
+    B(.05,.075,.3,0,.035,.02,poly,{r:.008});C(.013,.12,0,.05,.23);C(.019,.05,0,.05,.3,blk);const m1=B(.026,.2,.045,0,-.11,.09,dk,{r:.004});m1.name='mag';grip(-.07,poly);B(.026,.07,.03,0,-.02,.17,poly,{r:.004});rail(.075,-.08,7);sights(.078,-.1,.2);stockFold(-.12,dk);mz=[0,.05,.33];
   }else{const b=makeGun(type==='k2'?'k2':'k2c1',att);g.add(b);return g}
   const mzo=new T.Object3D();mzo.name='muzzle';mzo.position.set(mz[0],mz[1],mz[2]);g.add(mzo);return g}
 /* makeGun(종류)에 새 종류를 넘겨도 되게 — 기존 호출(전투·교전·인물)은 그대로 */
@@ -22629,7 +22660,7 @@ const _is=[new T.Vector3(),new T.Vector3(),new T.Vector3()];
 function isErr(e){if(IS.err<6){IS.err++;console.error(e)}}
 function isOn(){try{return store.get('sg.insitu',true)!==false}catch(e){return true}}
 function isAvail(){try{return typeof TJ!=='undefined'&&!!TJ.occ&&!!TJ.world&&typeof OUT!=='undefined'&&OUT.on&&!!OUT.scene&&RBX.ok&&!eduOn()&&store.get('sg.owc',true)!==false&&!(typeof OWC!=='undefined'&&OWC.on)&&!(typeof APT!=='undefined'&&APT.on)&&!(typeof SHOP!=='undefined'&&SHOP.on)&&!(typeof BR!=='undefined'&&BR.on)&&!OUT.ending}catch(e){return false}}
-function isLive(){return IS.en.filter(a=>!a.dead&&!a.h.dead&&!a.gone)}
+function isLive(){return IS.en.filter(a=>!a.dead&&!a.h.dead&&!a.gone&&!a.surr)}
 /* 적은 길(거리장)이 아는 것 — 건물·담 — 만 막힌 것으로 본다. 걷는 사람용 충돌(주차된 차·작은 시설물)까지 따지면 거리장이 가리키는 길목에서 끼인다(아파트 전투·같은 배경 교전의 적도 같은 규칙) */
 function isBlk(x,z){try{return !owcFree(x,z,.35)}catch(e){return false}}
 function isSnd(kind,p){IS.sndN++;if(IS.sndN>9)return;try{const c=SV3.cam.position;const dx=p.x-c.x,dz=p.z-c.z;const d=Math.hypot(dx,dz);const rx=Math.cos(FP3.yaw),rz=-Math.sin(FP3.yaw);SFX.shot(kind,{d,az:d>.5?clamp((dx*rx+dz*rz)/d,-1,1):0})}catch(e){}}
@@ -22640,9 +22671,18 @@ function isLook(type,seed){seed=seed||1;const c=CIV3[seed%CIV3.length];return Ob
 function isSeed(s){s=Math.abs(s|0)||1;try{const C=RBX_LOOK.civ;if(!C||C.length!==10)return s;const A=['m_8','m_12','m_20','f_8','f_15'].map(k=>C.indexOf(k)).filter(i=>i>=0);if(!A.length)return s;const idx=A[s%A.length];return((7*idx)%10)+10*(1+s%7)}catch(e){return s}}
 /* ---------- 나타날 자리: 내 둘레 고리에서, 길이 닿고(거리장), 되도록 내 눈에 안 보이는 곳 ---------- */
 function isSpot(a0,dmin,dmax,pref){const p=FP3.pos;let alt=null;for(const da of [0,.22,-.22,.5,-.5,.85,-.85,1.25,-1.25,1.8,-1.8]){const a=a0+da;for(let d=dmin+Math.random()*4;d<=dmax;d+=4.5){const x=p.x+Math.sin(a)*d,z=p.z+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,.7)&&owcFD(IS.F,x,z)<60000}catch(e){}if(!ok)continue;if(IS.en.some(e=>Math.hypot(e.h.root.position.x-x,e.h.root.position.z-z)<1.6))continue;const vis=owcLos(x,1.45,z,p.x,1.5,p.z);if(pref==='vis'?vis:pref==='hid'?!vis:true)return{x,z,vis};if(!alt)alt={x,z,vis}}}return alt}
-function isMk(type,x,z,seed,o,hold){o=o||IS.o||{};const E=Object.assign({},IS_E[type]||IS_E.gun,(o.stat&&o.stat[type])||{});let h=null;try{const sp=(o.look||isLook)(type,seed);if(sp&&!sp.camo&&!sp.police)sp.seed=isSeed(sp.seed||seed);h=makeHuman(sp)}catch(e){isErr(e);h=null}if(!h)return null;
+/* v13.4 든 총에 따라 싸우는 방식이 달라진다: 산탄총 = 6~11m까지 붙어 한두 발(가까우면 훨씬 아프다) · 기관단총·기관권총 = 5발씩 가볍게 · 권총 = 2발 · 저격총 = 멀리서 한 발 · 기관총 = 6발 */
+function isArmE(E,wp,type){const W=wp&&typeof ARMS!=='undefined'&&ARMS[wp];if(!W)return E;const c=W.cat;if(type==='mark'){E.snd='sniper';return E}
+  if(c==='sg'){E.want=[6,11];E.burst=2;E.gap=.34;E.dmg=Math.round(E.dmg*1.7);E.aim*=.85;E.sg=1;E.snd='sniper'}
+  else if(c==='smg'||(c==='pst'&&W.auto)){if(type!=='rush')E.want=[9,17];E.burst=5;E.gap=.085;E.dmg=Math.max(4,Math.round(E.dmg*.62));E.snd='smg'}
+  else if(c==='pst'){if(type!=='rush')E.want=[8,15];E.burst=2;E.gap=.26;E.dmg=Math.round(E.dmg*.78);E.acc*=.88;E.snd='pistol'}
+  else if(c==='sr'){E.want=[34,50];E.burst=1;E.gap=1;E.dmg=Math.round(E.dmg*1.65);E.aim*=1.6;E.acc=Math.max(E.acc,.82);E.snd='sniper'}
+  else if(c==='lmg'){E.burst=6;E.gap=.09;E.dmg=Math.round(E.dmg*.8);E.aim*=1.25;E.snd='mg'}
+  if(W.quiet)E.quiet=1;return E}
+function isMk(type,x,z,seed,o,hold){o=o||IS.o||{};const E=Object.assign({},IS_E[type]||IS_E.gun,(o.stat&&o.stat[type])||{});E.want=E.want.slice();let h=null,wp=null;try{const P=o.arms&&(o.arms[type]||o.arms.gun);if(P&&P.length){wp=P[(Math.abs(seed|0)*7+3)%P.length];if(typeof ARMS==='undefined'||!ARMS[wp])wp=null}}catch(e){}
+  try{const sp=(o.look||isLook)(type,seed);if(sp&&!sp.camo&&!sp.police)sp.seed=isSeed(sp.seed||seed);if(wp&&sp)sp.gun=wp;h=makeHuman(sp)}catch(e){isErr(e);h=null}if(!h)return null;if(wp)isArmE(E,wp,type);
   h.root.position.set(x,0,z);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose(hold?'idle':'run',true)}catch(e){}try{if(o.dress)o.dress(h,type,seed)}catch(e){isErr(e)}
-  const a={h,kind:'en',side:'en',is:1,type,E,hp:E.hp,nm:E.n,tagL:E.n,st:hold?'hold':'adv',t:0,goT:0,aimP:0,burst:0,shotT:0,flinch:0,los:false,losT:Math.random()*.2,want:E.want[0]+Math.random()*(E.want[1]-E.want[0]),tg:null,stk:0,seenT:0};
+  const a={h,kind:'en',side:'en',is:1,type,E,wp,isK:o.k||'',hp:E.hp,nm:E.n,tagL:E.n,st:hold?'hold':'adv',t:0,goT:0,aimP:0,burst:0,shotT:0,flinch:0,los:false,losT:Math.random()*.2,want:E.want[0]+Math.random()*(E.want[1]-E.want[0]),tg:null,stk:0,seenT:0};
   OUT.npcs.push(a);if(!hold)IS.en.push(a);try{GUN.hits=[]}catch(e){}return a}
 /* 싸움 전부터 서 있는 사람들(검문조 등): 장면에 세워 두기만 한다 — 싸움이 나면 isStart({agents})가 넘겨받는다 */
 function isHoldMk(type,x,z,seed,o){const a=isMk(type,x,z,seed,o,true);if(a)IS.pre.push(a);return a}
@@ -22650,8 +22690,9 @@ function isHoldDrop(L){for(const a of L||[]){try{a.h.root.removeFromParent();if(
 /* 길 위 사람들은 흩어진다(총성·폭발 예고) */
 function isScare(x,z,r){try{const flee=a=>{if(!a||!a.h||a.is||a.isAl||a.kind==='team'||a.kind==='fam'||a.kind==='rok')return;const q=a.h.root.position;if(Math.hypot(q.x-x,q.z-z)>r)return;if(a.flee!=null||a.kind==='ped'||a.kind==='walkp'){a.flee=6;if(a.mode==='stand'){a.mode='run';a.sp=3.2}}};(OUT.npcs||[]).forEach(flee);if(typeof PED!=='undefined')(PED.list||[]).forEach(flee)}catch(e){}}
 /* ---------- 시작 ---------- */
+function isSpotAt(c,r){for(let t=0;t<40;t++){const a=Math.random()*6.283,d=1.5+Math.random()*(r||9);const x=c.x+Math.sin(a)*d,z=c.z+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,.7)&&owcFD(IS.F,x,z)<60000}catch(e){}if(!ok)continue;if(IS.en.some(e=>Math.hypot(e.h.root.position.x-x,e.h.root.position.z-z)<1.4))continue;return{x,z}}return null}
 function isWave(i){const o=IS.o,W=(o.waves||[])[i];if(!W||!W.length)return 0;IS.wave=i;IS.waveT=0;let base=o.ang!=null?o.ang:Math.random()*6.283;if(i>0)base+=(Math.random()<.5?1:-1)*(1.5+Math.random()*1.3);let made=0;
-  W.forEach((type,k)=>{const ang=o.ring?base+((k*3+i)%8)*Math.PI/4:(o.split&&k%2?base+Math.PI*(.75+Math.random()*.4):base)+(k-(W.length-1)/2)*.17;const q=isSpot(ang,o.dmin||34,o.dmax||62,i===0&&o.vis?'vis':'hid');if(!q)return;const a=isMk(type,q.x,q.z,(o.seed||7)+IS.en.length*3+i*11+k);if(a){a.t=.4+k*.3+Math.random()*.7;made++}});
+  W.forEach((type,k)=>{const ang=o.ring?base+((k*3+i)%8)*Math.PI/4:(o.split&&k%2?base+Math.PI*(.75+Math.random()*.4):base)+(k-(W.length-1)/2)*.17;const q=(o.at&&i===0?isSpotAt(o.at,o.at.r):null)||isSpot(ang,o.dmin||34,o.dmax||62,i===0&&o.vis?'vis':'hid');if(!q)return;const a=isMk(type,q.x,q.z,(o.seed||7)+IS.en.length*3+i*11+k);if(a){a.t=.4+k*.3+Math.random()*.7;made++}});
   IS.n0+=made;return made}
 function isStart(o){if(IS.on||!isAvail())return false;o=o||{};const p=FP3.pos;try{if(typeof tjBigClose==='function')tjBigClose()}catch(e){}
   Object.assign(IS,{on:true,k:o.k||'amb',o,en:[],al:[],t:0,dmg:0,st:{kills:0,tk:0,fled:0,tmHit:0,dmg:0},fT:0,uiT:0,lostT:0,wave:0,waveT:0,tmT:1.1,grace:o.grace==null?2.4:o.grace,hide:null,res:null,pv:0,lp:null,tmHitT:2,alQ:[],flee:0,n0:0,sndN:0,sndT:0,contact:(o.agents&&o.agents.length)?1:0});
@@ -22676,9 +22717,9 @@ function isTargets(a){const P=a.h.root.position;const L=[];try{for(const m of (t
   for(const m of IS.al){if(m.dead||m.h.dead)continue;const q=m.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<62&&owcLos(P.x,1.45,P.z,q.x,1.2,q.z))L.push({m,d,al:1})}return L}
 function isPickTg(a){const onMe=IS.en.filter(b=>b!==a&&!b.dead&&!b.gone&&(b.st==='aim'||b.st==='fire')&&b.tg==='me').length;const cap=(G&&G.diff==='hard')?3:2;const L=isTargets(a);if(a.los&&(onMe<cap||!L.length)&&(Math.random()<.64||!L.length))return'me';if(L.length)return L[Math.floor(Math.random()*L.length)];return a.los?'me':null}
 function isTgPos(a,out){const t=a.tg;if(t==='me'){const p=FP3.pos;return out.set(p.x,1.25+(FP3.jy||0),p.z)}if(t&&t.m&&t.m.h){const q=t.m.h.root.position;return out.set(q.x,1.15,q.z)}return null}
-function isShot(a){const h=a.h,P=h.root.position;const tp=isTgPos(a,_is[1]);if(!tp)return;const mz=owcMuz(h,_is[0]).clone();try{owcNpcFlash(mz)}catch(e){}isSnd(a.type==='mark'?'sniper':'rifle',mz);a.seenT=2.5;
+function isShot(a){const h=a.h,P=h.root.position;const tp=isTgPos(a,_is[1]);if(!tp)return;const mz=owcMuz(h,_is[0]).clone();try{owcNpcFlash(mz)}catch(e){}if(a.E.quiet){try{SND.tone(240,.05,'square',.07)}catch(e){}}else isSnd(a.E.snd||(a.type==='mark'?'sniper':'rifle'),mz);a.seenT=2.5;
   const d=Math.hypot(tp.x-P.x,tp.z-P.z);const los=owcLos(mz.x,mz.y,mz.z,tp.x,tp.y,tp.z);const dk=owcDiff();const miss=()=>tp.clone().add(_is[2].set((Math.random()-.5)*2.4,(Math.random()-.35)*1.5,(Math.random()-.5)*2.4));
-  if(a.tg==='me'){const mv=FP3.air?.6:IS.pv>4.4?.55:IS.pv>1.1?.72:1;const pr=a.E.acc*.27*clamp(1.15-d/70,.22,1)*dk*(a.flinch>0?.5:1)*mv*(IS.grace>0?.35:1)*(OUT.drv?.6:1)*((OUT.tod==='night')?.8:1);const hit=los&&Math.random()<pr;
+  if(a.tg==='me'){const mv=FP3.air?.6:IS.pv>4.4?.55:IS.pv>1.1?.72:1;const pr=a.E.acc*.27*clamp(1.15-d/70,.22,1)*(a.E.sg?(d<12?1.3:d<20?.55:.2):1)*dk*(a.flinch>0?.5:1)*mv*(IS.grace>0?.35:1)*(OUT.drv?.6:1)*((OUT.tod==='night')?.8:1);const hit=los&&Math.random()<pr;
     try{owcTracer(mz,hit?tp.clone():miss(),1)}catch(e){}if(hit)isHurt(a.E.dmg*(.85+Math.random()*.4)*(G&&G.diff==='train'?.72:G&&G.diff==='hard'?1.15:1),P);else{if(los&&Math.random()<.5)try{bSnap()}catch(e){}if(Math.random()<.5)try{owcImpact(miss().setY(.1),'#c9c2b2')}catch(e){}}return}
   const T0=a.tg;const end=miss();try{owcTracer(mz,end,1)}catch(e){}if(!los)return;
   if(T0.team){if(IS.tmHitT<=0&&Math.random()<.17*dk*clamp(1.2-d/60,.3,1)*(a.flinch>0?.5:1)){IS.tmHitT=5;IS.st.tmHit++;try{tmHurt(T0.m,13+Math.random()*13,'교전 중 총에 맞았다.')}catch(e){isErr(e)}}}
@@ -22686,7 +22727,20 @@ function isShot(a){const h=a.h,P=h.root.position;const tp=isTgPos(a,_is[1]);if(!
 function isFleeGo(a,dt){const P=a.h.root.position,p=FP3.pos;let dx=P.x-p.x,dz=P.z-p.z;const d=Math.hypot(dx,dz)||1;dx/=d;dz/=d;a.fa=a.fa||0;const c=Math.cos(a.fa),s=Math.sin(a.fa);const vx=dx*c-dz*s,vz=dx*s+dz*c;const L=isGo(a,P.x+vx*6,P.z+vz*6,dt,a.E.sp+.6);if(a.stk>.25){a.stk=0;a.fa+=(a.fs||(a.fs=Math.random()<.5?1:-1))*.7}else a.fa*=Math.exp(-dt*.6);
   a.goT=(a.goT||0)+dt;if(d>96||(a.goT>2.5&&d>46&&!a.los)||a.goT>26){isGone(a);return}}
 function isGone(a){a.gone=1;try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}OUT.npcs=(OUT.npcs||[]).filter(x=>x!==a);try{GUN.hits=[]}catch(e){}if(IS.on&&IS.en.includes(a)){IS.st.fled++;IS.uiT=0}}
+/* v13.4 투항: 혼자 남은 자는 절반쯤(검은 심지는 18%) 총을 버리고 손을 든다 — 그때부터는 싸우는 사람이 아니다. 다가가 묶어 넘기면 생포, 쏘면 전시에도 살인이다 */
+function isSurr(a){if(!a||a.surr||a.dead||a.h.dead)return;a.surr=1;try{const q=a.h.root.position;a.d0=Math.hypot(q.x-FP3.pos.x,q.z-FP3.pos.z)}catch(e){a.d0=0}a.st='surr';a.kind='surr';a.side='surr';a.nm=a.tagL=(a.E.n||'무장 괴한')+' · 투항';a.bt=0;try{a.h.setPose('up')}catch(e){}try{bubSay(a.h,['쏘지 마! 항복한다!','총 버렸어! 쏘지 마!','살려 줘… 항복!'][Math.floor(Math.random()*3)],3,'vic')}catch(e){}try{GUN.hits=[]}catch(e){}IS.st.surr=(IS.st.surr||0)+1;IS.uiT=0;
+  try{outNote(`<b>🏳 ${a.E.n||'무장 괴한'}이(가) 손을 들었다</b><div>다가가 <b>묶어서 넘기면</b> 생포다. 손 든 사람을 쏘는 것은 전시에도 살인이다.</div>`,4600)}catch(e){}}
+function isCapture(a){if(!a||!a.surr||a.cap||a.dead||a.h.dead)return false;a.cap=1;a.bt=0;a.nm=a.tagL='';try{a.h.setPose('crouch')}catch(e){}try{vib([30,40,30]);if(SND.ok)SND.ok()}catch(e){}let txt='';try{txt=typeof IS.onCapture==='function'?(IS.onCapture(a)||''):''}catch(e){isErr(e)}if(!txt)txt='<b>🔗 묶어서 넘겼다</b><div>뒤따라온 계엄군이 데려간다.</div>';try{outNote(txt,4600)}catch(e){}isCapUI();return true}
+function isCapNear(){const p=FP3.pos;let best=null,bd=2.8;for(const a of IS.after){if(!a.surr||a.cap||a.gone||a.dead||a.h.dead)continue;const q=a.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<bd){bd=d;best=a}}if(!best&&IS.on)for(const a of IS.en){if(!a.surr||a.cap||a.gone||a.dead||a.h.dead)continue;const q=a.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<bd){bd=d;best=a}}return best}
+function isCapUI(){let el=$('#isCap');const a=OUT.on&&!OUT.enc&&!OUT.busy?isCapNear():null;IS.capA=a;if(!a){if(el)el.remove();return}if(!SV3.el)return;if(!el){el=document.createElement('button');el.id='isCap';el.className='is-cap';el.dataset.g3='iscap';el.textContent='🔗 묶어서 넘긴다(생포)';SV3.el.appendChild(el)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=iscap]');if(!b)return;e.preventDefault();e.stopPropagation();try{if(IS.capA)isCapture(IS.capA)}catch(x){isErr(x)}},true);
+/* PC E키(61 상호작용)보다 먼저 — 손 든 사람 곁에서는 묶는 것이 우선이다 */document.addEventListener('keydown',e=>{if(e.code==='KeyE'&&!e.repeat&&IS.capA&&!OUT.enc&&OUT.on){e.preventDefault();e.stopImmediatePropagation();try{isCapture(IS.capA)}catch(x){isErr(x)}}},true);
+/* 손 든 사람을 쏘면: 주민 사격과 같은 죄(두 번이면 군 연행) — 따로 적는다 */
+(function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t,d,head){const a=t&&t.a;if(a&&a.surr&&!a.dead){try{humanDie(t.h,d?{x:Math.sign(d.x),z:0}:null)}catch(e){}a.dead=1;a.lying=1;a.nm=a.tagL='';try{GUN.hits=[]}catch(e){}GUN.civN=(GUN.civN||0)+1;G.flags.gunCrime=(G.flags.gunCrime||0)+1;FX=[];trust(-4);mor(-6);try{OUT.fx.push(...FX);outStat()}catch(e){}try{sv3Shake(.3);SND.bad&&SND.bad();vib([120,60,120])}catch(e){}
+      let txt='';try{txt=typeof IS.onSurrShot==='function'?(IS.onSurrShot(a)||''):''}catch(e){isErr(e)}try{logDecision({id:'gun-surr',title:'투항자를 쐈다',lesson:'무기를 버리고 손을 든 사람은 더 이상 전투원이 아니다. 투항자·포로·부상으로 싸울 수 없는 사람을 쏘는 것은 전시에도 살인이다.',src:'국제인도법(전투 능력을 잃은 자의 보호) · 형법',guide:'now',choices:[{t:'쐈다',ok:false},{t:'묶어서 넘겼다',ok:true}]},{t:'쐈다'},false)}catch(e){}
+      if(G.flags.gunCrime>=2){gunArrest('투항자 사격','손을 든 사람을 쐈다. 총성을 듣고 달려온 계엄군이 당신을 제압했다.');return}outNote(`<b>🏳 손 든 사람을 쐈다</b><div>무기를 버린 사람이었다 — 전시에도 살인이다. 이웃 신뢰 −4 · 사기 −6. ${txt}한 번 더 일어나면 군이 연행한다.</div>`,5600);return}return b.apply(this,arguments)}})();
 function isEnStep(a,dt){const h=a.h,P=h.root.position;if(a.gone)return;if(a.dead||h.dead){if(!a.cnt){a.cnt=1;a.nm=a.tagL='';a.deadAt=IS.t;if(a.tk)IS.st.tk++;else IS.st.kills++;IS.uiT=0;isMorale()}return}
+  if(a.surr){try{owcFace(h,FP3.pos.x,FP3.pos.z,dt,3)}catch(e){}return}
   const p=FP3.pos;const d=Math.hypot(p.x-P.x,p.z-P.z);a.flinch=Math.max(0,a.flinch-dt*2.2);a.t-=dt;a.seenT=Math.max(0,a.seenT-dt);a.losT-=dt;if(a.losT<=0){a.losT=.22+Math.random()*.08;a.los=d<IS_SEE&&owcLos(P.x,1.45,P.z,p.x,1.35,p.z)}
   if(a.st==='flee'){isFleeGo(a,dt);return}
   if(a.st==='adv'){a.goT+=dt;if(d<4.2||(a.los&&d<=a.want)||(a.los&&d<54&&a.t<=0&&a.goT>1.5)){a.st='kneel';a.t=.3+Math.random()*.5;isPose(h,'kneel');return}isAdv(a,dt);return}
@@ -22696,7 +22750,7 @@ function isEnStep(a,dt){const h=a.h,P=h.root.position;if(a.gone)return;if(a.dead
   if(a.st==='shift'){const L=isGo(a,a.sx,a.sz,dt,a.E.sp*.9);if(L<.4||a.t<=0||a.stk>.3){a.stk=0;a.st='kneel';a.t=.25+Math.random()*.4;isPose(h,'kneel')}return}
   if(a.st==='hold'){if(d<26)owcFace(h,p.x,p.z,dt,4);return}}
 /* 사기: 절반 넘게 쓰러지면(조장이 쓰러졌으면 더 일찍) 남은 자들이 달아난다 — 다음 무리가 남았으면 그들이 먼저 온다 */
-function isMorale(){if(!IS.on||IS.flee)return;const o=IS.o||{};if(IS.wave<(o.waves||[]).length-1)return;const tot=IS.n0||IS.en.length;const down=IS.en.filter(a=>a.dead||a.h.dead).length;const live=isLive();if(!live.length)return;const leadDown=IS.en.some(a=>a.type==='lead'&&(a.dead||a.h.dead));
+function isMorale(){if(!IS.on||IS.flee)return;const o=IS.o||{};if(IS.wave<(o.waves||[]).length-1)return;const tot=IS.n0||IS.en.length;const down=IS.en.filter(a=>a.dead||a.h.dead).length;const live=isLive();if(!live.length)return;if(live.length===1&&down>=1&&!o.noSurr&&live[0].st!=='hold'&&Math.random()<(o.fanatic?.18:.5)){isSurr(live[0]);return}const leadDown=IS.en.some(a=>a.type==='lead'&&(a.dead||a.h.dead));
   if(down/tot>=(leadDown?.45:.6)&&Math.random()<(o.fanatic?.35:.8)){IS.flee=1;for(const a of live){a.st='flee';a.goT=0;a.fa=(Math.random()-.5)*.8}try{outNote(`<b>${o.ico||'⚔'} 남은 ${live.length}명이 달아난다</b><div>등을 보인 자를 쏠지는 내 몫이다.</div>`,2800)}catch(e){}}}
 /* ---------- 나: 맞았다 ---------- */
 function isHitFx(from){const el=SV3.el;if(!el)return;let v=$('#isHit');if(!v){v=document.createElement('div');v.id='isHit';v.className='is-hit';v.innerHTML='<i></i>';el.appendChild(v)}let deg=0,has=0;if(from){const p=FP3.pos;const dx=from.x-p.x,dz=from.z-p.z;const y=FP3.yaw;const fx=-Math.sin(y),fz=-Math.cos(y);deg=Math.atan2(dx*(-fz)+dz*fx,dx*fx+dz*fz)*180/Math.PI;has=1}
@@ -22744,14 +22798,17 @@ function isStep(dt){IS.t+=dt;IS.grace=Math.max(0,IS.grace-dt);IS.tmHitT=Math.max
   /* 따돌림: 한 번이라도 마주친 뒤에만 센다(건물 뒤에서 달려오는 첫 몇 초를 '따돌렸다'로 치지 않게) — 60초가 지나도록 아무도 오지 못하면 그들이 나를 놓친 것(따돌림) */let near=1e9,seen=false;for(const a of live){const q=a.h.root.position;near=Math.min(near,Math.hypot(q.x-p.x,q.z-p.z));if(a.los)seen=true}if(seen||IS.dmg>0||IS.st.kills+IS.st.tk>0)IS.contact=1;if(IS.flee||!IS.contact)IS.lostT=0;else if(near>104)IS.lostT+=dt*3;else if(!seen&&near>40)IS.lostT+=dt;else IS.lostT=Math.max(0,IS.lostT-dt*2);if(IS.lostT>11){isEnd('escape');return}if(!IS.contact&&IS.t>60){isEnd('escape');return}
   IS.uiT-=dt;if(IS.uiT<=0){IS.uiT=.25;isUI()}}
 /* 끝난 뒤: 달아나는 자·남은 자는 물러가고, 쓰러진 자는 80초 뒤(또는 멀어지면) 치운다 */
-function isAfterStep(dt){if(!IS.after.length)return;const p=FP3.pos;IS.after=IS.after.filter(a=>{if(a.gone)return false;const P=a.h.root.position;const d=Math.hypot(P.x-p.x,P.z-p.z);if(a.dead||a.h.dead){a.bt=(a.bt||0)+dt;if(a.bt>80||d>130){isGone(a);return false}return true}a.losT-=dt;if(a.losT<=0){a.losT=.4;a.los=d<IS_SEE&&owcLos(P.x,1.45,P.z,p.x,1.35,p.z)}if(a.isAl){a.bt=(a.bt||0)+dt;if(a.bt>7){const en=IS.en;IS.en=[];try{a.E=a.E||{sp:3};isFleeGo(a,dt)}finally{IS.en=en}}return !a.gone}try{isFleeGo(a,dt)}catch(e){isGone(a)}return !a.gone})}
+function isAfterStep(dt){IS.capT=(IS.capT||0)-dt;if(IS.capT<=0){IS.capT=.2;if(IS.after.length||IS.on||$('#isCap'))try{isCapUI()}catch(e){}}if(!IS.after.length)return;const p=FP3.pos;IS.after=IS.after.filter(a=>{if(a.gone)return false;const P=a.h.root.position;const d=Math.hypot(P.x-p.x,P.z-p.z);if(a.dead||a.h.dead){a.bt=(a.bt||0)+dt;if(a.bt>80||d>130){isGone(a);return false}return true}a.losT-=dt;if(a.losT<=0){a.losT=.4;a.los=d<IS_SEE&&owcLos(P.x,1.45,P.z,p.x,1.35,p.z)}if(a.surr){a.bt=(a.bt||0)+dt;if(a.cap){if(a.bt>3||d>60){isGone(a);return false}return true}if(a.bt>60||d>Math.max(70,(a.d0||0)+25)){/* 놓아둔 투항자는 뒤따라온 계엄군이 데려간다(멀리서 쏘다 손을 들게 했으면 걸어올 시간을 준다 — 손 든 자리에서 25m 더 멀어지거나 60초) */isGone(a);return false}try{owcFace(a.h,p.x,p.z,dt,3)}catch(e){}return true}if(a.isAl){a.bt=(a.bt||0)+dt;if(a.bt>7){const en=IS.en;IS.en=[];try{a.E=a.E||{sp:3};isFleeGo(a,dt)}finally{IS.en=en}}return !a.gone}try{isFleeGo(a,dt)}catch(e){isGone(a)}return !a.gone})}
 function isTick(dt){if(!OUT.on)return;try{if(IS.on){if(OUT.enc||OUT.busy||OUT.mapOpen){/* 카드·지도가 떠 있으면 멈춘다 */}else isStep(dt);if(!(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)&&typeof gunFxStep==='function')gunFxStep(dt)}else if(IS.after.length&&!(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)&&typeof gunFxStep==='function'&&!(typeof OWC!=='undefined'&&OWC.on))gunFxStep(dt);isAfterStep(dt)}catch(e){isErr(e)}}
 (function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);if(!OUT.on||(typeof OWC!=='undefined'&&OWC.on))return r;isTick(dt);return r}})();
 /* ---------- 끝 ---------- */
-function isLoot(){try{const D=IS.en.filter(a=>(a.dead||a.h.dead)&&!a.gone);const key='is'+(G.turn|0)+'_'+Math.floor(IS.t*10)+'_'+(IS.st.kills+IS.st.tk);let n=0,gave=0;const names=[];for(const a of D){if(n>=4)break;const P=a.h.root.position;const k2=a.h.sp&&a.h.sp.gun==='k2';const ox=(n%2?.7:-.7),oz=.5;if(!gave&&!k2&&typeof gunHas==='function'&&!gunHas('ak74')&&ARMS.ak74){lootMk(OUT.scene,{id:key+':w'+n,key:'ak74',n:1,x:P.x+ox,z:P.z+oz});names.push(ARMS.ak74.n);gave=1}else{const am=k2?'ammo:556':'ammo:545';lootMk(OUT.scene,{id:key+':a'+n,key:am,n:18+Math.floor(Math.random()*14),x:P.x+ox,z:P.z+oz});if(!names.includes('탄'))names.push('탄')}n++}return names}catch(e){isErr(e);return[]}}
+function isLoot(){try{const D=IS.en.filter(a=>(a.dead||a.h.dead)&&!a.gone);const key='is'+(G.turn|0)+'_'+Math.floor(IS.t*10)+'_'+(IS.st.kills+IS.st.tk);let n=0,gave=0;const names=[],given=new Set();const rnd=k=>Math.floor(Math.random()*k);
+    for(const a of D){if(n>=4)break;const P=a.h.root.position;const ox=(n%2?.7:-.7),oz=.5;/* 든 총대로 남는다(v13.4) — 예전 모형 이름은 가까운 총으로 */const g0=a.h.sp&&a.h.sp.gun;const wp=a.wp&&ARMS[a.wp]?a.wp:g0==='k2'?'k2c1':g0==='k14'?'k14':'ak74';const W=ARMS[wp];if(!W){n++;continue}
+      if(gave<2&&typeof gunHas==='function'&&!gunHas(wp)&&!given.has(wp)){lootMk(OUT.scene,{id:key+':w'+n,key:wp,n:1,x:P.x+ox,z:P.z+oz});names.push(W.n);given.add(wp);gave++}
+      else if(W.am&&AMMO[W.am]){const c=W.cat==='sg'?6+rnd(6):W.cat==='sr'?5+rnd(6):W.cat==='pst'?10+rnd(10):18+rnd(14);lootMk(OUT.scene,{id:key+':a'+n,key:'ammo:'+W.am,n:c,x:P.x+ox,z:P.z+oz});if(!names.includes('탄'))names.push('탄')}n++}return names}catch(e){isErr(e);return[]}}
 function isCalm(){IS.hide=null;try{(typeof tmLive==='function'?tmLive():[]).forEach(m=>{m.isHold=0;m.isT=null;m.isAt=null})}catch(e){}try{if(typeof FAM!=='undefined')FAM.list.forEach(a=>{if(a.h.pose==='crouch'&&a.d.st!=='crit')try{a.h.setPose('idle')}catch(e){}})}catch(e){}}
 function isEnd(why,quiet){if(!IS.on)return;IS.on=false;const o=IS.o||{};const win=why==='win'||why==='fled';const st=IS.st;st.dmg=Math.round(IS.dmg);const loss=Math.round(IS.dmg*.4);FX=[];if(loss>0){/* 출혈(63)은 크게 다쳤을 때만(실제 체력 12 이상 = 버팀 30 이상) — 작은 교전마다 화면이 흐려지지 않게 */const small=loss<12&&typeof WND!=='undefined';if(small)WND.self=true;try{hurt('me',loss)}catch(e){}finally{if(small)WND.self=false}}try{const me=M('me');me.hp=Math.max(me.hp,why==='down'?25:6)/* 이기거나 따돌린 뒤의 정산으로 목숨을 잃지는 않는다 */}catch(e){}
-  for(const a of IS.en){if(a.gone)continue;if(!(a.dead||a.h.dead)){a.st='flee';a.goT=0;a.nm=a.tagL=''}IS.after.push(a)}for(const a of IS.al){if(!a.gone)IS.after.push(a)}
+  for(const a of IS.en){if(a.gone)continue;if(!(a.dead||a.h.dead)&&!a.surr){a.st='flee';a.goT=0;a.nm=a.tagL=''}IS.after.push(a)}for(const a of IS.al){if(!a.gone)IS.after.push(a)}
   let names=[];if(win)names=isLoot();const res={win,why,st,k:IS.k,loot:names};IS.res=res;let txt='';try{txt=o.onEnd?(o.onEnd(res)||''):''}catch(e){isErr(e)}
   if(!txt){const n=st.kills+st.tk;txt=why==='win'?`<b>${o.ico||'⚔'} ${o.nm||'무장 괴한'} — ${n}명 제압</b><div>${st.tk?`팀원이 ${st.tk}명을 맡았다. `:''}${st.fled?`${st.fled}명은 달아났다. `:''}받은 피해 ${st.dmg}.</div>`:why==='fled'?`<b>${o.ico||'⚔'} ${o.nm||'무장 괴한'}이(가) 물러갔다</b><div>받은 피해 ${st.dmg}.</div>`:why==='escape'?`<b>따돌렸다</b><div>${o.nm||'그들'}의 총소리가 멀어진다. 받은 피해 ${st.dmg}.</div>`:`<b>쓰러졌다 — 끌려 나왔다</b><div>팀원·주민이 엄폐물 뒤로 끌어내 대피소 의료실로 옮겼다.</div>`}
   if(win&&names.length){const add=` 쓰러진 자 옆에 ${names.join(' · ')} — 가까이 가서 줍는다.`;txt=/<\/div>\s*$/.test(txt)?txt.replace(/<\/div>\s*$/,add+'</div>'):txt+`<div>${add}</div>`}
@@ -22761,7 +22818,7 @@ function isEnd(why,quiet){if(!IS.on)return;IS.on=false;const o=IS.o||{};const wi
   isCalm();isUI();try{vib(win?[40,40,90]:[160,60,160])}catch(e){}try{if(win&&SND.ok)SND.ok()}catch(e){}
   if(why==='down'){setTimeout(()=>{try{if(OUT.on)outReturn('fast')}catch(e){isErr(e)}},2400)}else{try{if(checkOver())outReturn('dead')}catch(e){}}try{save()}catch(e){}}
 /* 장면이 바뀌거나 다시 채워질 때: 모두 치운다 */
-function isAbort(){const L=[...IS.en,...IS.al,...IS.after,...IS.pre];for(const a of L){try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}a.gone=1}if(L.length&&OUT.npcs)OUT.npcs=OUT.npcs.filter(x=>!L.includes(x));IS.on=false;IS.en=[];IS.al=[];IS.after=[];IS.pre=[];IS.alQ=[];IS.o=null;try{GUN.hits=[]}catch(e){}isCalm();isUI();const v=$('#isHit');if(v)v.remove()}
+function isAbort(){const L=[...IS.en,...IS.al,...IS.after,...IS.pre];for(const a of L){try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}a.gone=1}if(L.length&&OUT.npcs)OUT.npcs=OUT.npcs.filter(x=>!L.includes(x));IS.on=false;IS.en=[];IS.al=[];IS.after=[];IS.pre=[];IS.alQ=[];IS.o=null;try{GUN.hits=[]}catch(e){}isCalm();isUI();const v=$('#isHit');if(v)v.remove();const c=$('#isCap');if(c)c.remove();IS.capA=null}
 /* ---------- 연결 ---------- */
 (function(){const b=window.evBlock;if(typeof b==='function')window.evBlock=function(){return b.apply(this,arguments)||IS.on||IS.pre.length>0}})();
 (function(){const b=window.outReturn;if(typeof b==='function')window.outReturn=function(why){try{if(IS.on)isEnd(why==='dead'||why==='fast'?'down':'escape',true);isAbort()}catch(e){isErr(e)}return b.apply(this,arguments)}})();
@@ -22803,8 +22860,9 @@ function usHood(h,mask){try{if(!h||!h.rbx||!h.b||!h.b.head||h._usH||typeof KPA_H
     if(mask){const c=new T.Mesh(US.g.buff||(US.g.buff=new T.CylinderGeometry(.1,.094,.1,14,1,true)),usMat('#1e1f23'));c.scale.set(.87,1,1.06);c.position.set(0,-.088,.012);c.castShadow=false;g.add(c)}
     h.b.head.add(g);h._usH=g}catch(e){usErr(e)}}
 /* ---------- 무리 정의 ---------- */
-function usDefAsh(){return{k:'usurp',ico:'🏴',nm:US_G.ash.n,more:'완장단이 더 온다',stat:{gun:{n:'완장단원'},lead:{n:'완장단 조장'},rush:{n:'완장단 돌격조'}},dress:(h,type)=>{usBand(h,US_G.ash.col);if(type==='lead')usHood(h,0)},say:'완장단이에요! 엄폐!'}}
-function usDefFuse(){return{k:'terror',ico:'💣',nm:US_G.fuse.n,more:'복면이 더 나온다',fanatic:1,stat:{gun:{n:'심지 조직원',acc:.62},lead:{n:'심지 행동대장'},mark:{n:'심지 명사수'},rush:{n:'심지 조직원'}},dress:(h)=>usHood(h,1),say:'복면이에요! 건물 뒤로!'}}
+function usArms(k){try{return typeof ARMS2_POOL!=='undefined'?ARMS2_POOL[k]:null}catch(e){return null}}
+function usDefAsh(){return{k:'usurp',ico:'🏴',nm:US_G.ash.n,arms:usArms('ash'),more:'완장단이 더 온다',stat:{gun:{n:'완장단원'},lead:{n:'완장단 조장'},rush:{n:'완장단 돌격조'}},dress:(h,type)=>{usBand(h,US_G.ash.col);if(type==='lead')usHood(h,0)},say:'완장단이에요! 엄폐!'}}
+function usDefFuse(){return{k:'terror',ico:'💣',nm:US_G.fuse.n,arms:usArms('fuse'),more:'복면이 더 나온다',fanatic:1,stat:{gun:{n:'심지 조직원',acc:.62},lead:{n:'심지 행동대장'},mark:{n:'심지 명사수'},rush:{n:'심지 조직원'}},dress:(h)=>usHood(h,1),say:'복면이에요! 건물 뒤로!'}}
 function usSize(S){return clamp(3+((G.turn|0)>=6?1:0)+Math.min(2,S.grudge|0),3,6)}
 function usList(n,lead,rush){const L=[];for(let i=0;i<n;i++)L.push(i===n-1&&lead?'lead':(rush&&i===1?'rush':'gun'));return L}
 /* 끝난 뒤의 값: 세·원한·물자 */
@@ -22854,7 +22912,7 @@ function usHit(){const S=usS();let vic=null;try{const L=tmLive().filter(m=>m.d.s
 /* ---------- ⑤ 🗡 변절조: 동맹·거래 상대가 등을 돌린다 ---------- */
 function usTurncoat(force){try{if(typeof fcOn!=='function'||typeof fcS!=='function')return null;if(!force&&(!fcOn()||!fcLawless()))return null;const S=fcS();const L=[];for(const d of FC_DEF){const f=S.f[d.id];let w=0;if(f.al)w=.25+(f.s<45?.5:0)+(f.p>60?.3:0)+((S.rep.traitor|0)>0?.6:0)+Math.min(.6,(S.heat|0)*.08)+Math.min(.3,(S.rep.cun|0)*.05);else if(f.s>=15&&f.s<45&&(S.heat|0)>=3)w=.2+(S.heat|0)*.05;if(force&&!w)w=.01;if(w>0)L.push({d,f,w})}if(!L.length)return null;let t=L.reduce((a,q)=>a+q.w,0)*Math.random();for(const q of L){t-=q.w;if(t<=0)return q}return L[L.length-1]}catch(e){usErr(e);return null}}
 function usBetrayW(){const q=usTurncoat(false);if(!q)return 0;try{const S=fcS();let w=0;for(const d of FC_DEF){const f=S.f[d.id];if(f.al)w+=.25+(f.s<45?.5:0)+(f.p>60?.3:0)+((S.rep.traitor|0)>0?.6:0)+Math.min(.6,(S.heat|0)*.08)+Math.min(.3,(S.rep.cun|0)*.05);else if(f.s>=15&&f.s<45&&(S.heat|0)>=3)w+=.2+(S.heat|0)*.05}return Math.min(2.4,w)}catch(e){return 0}}
-function usBetray(force){const q=usTurncoat(force);if(!q)return false;const S=usS();const F=fcS();const d=q.d,f=q.f;const was=!!f.al;const o=Object.assign(usDefAsh(),{k:'betray',ico:'🗡',nm:`${d.n} 변절조`,more:'완장단이 뒤를 받친다',waves:[['turn','turn','lead'],['gun','gun']],split:1,dmin:26,dmax:44,grace:1.5,
+function usBetray(force){const q=usTurncoat(force);if(!q)return false;const S=usS();const F=fcS();const d=q.d,f=q.f;const was=!!f.al;const o=Object.assign(usDefAsh(),{k:'betray',ico:'🗡',arms:usArms('turn'),nm:`${d.n} 변절조`,more:'완장단이 뒤를 받친다',waves:[['turn','turn','lead'],['gun','gun']],split:1,dmin:26,dmax:44,grace:1.5,
     stat:{turn:{n:`${d.n} 변절자`},lead:{n:'완장단 조장'},gun:{n:'완장단원'},rush:{n:'완장단 돌격조'}},dress:(h,type)=>{usBand(h,type==='turn'?d.col:US_G.ash.col);if(type==='lead')usHood(h,0)},say:`${d.n} 사람들이에요! 왜 우리를…!`,
     intro:`<b>🗡 ${d.ico} ${d.n} 사람들이 등을 돌렸다</b><div>${was?'동맹이던':'거래하던'} 자들이 ${US_G.ash.n}과 함께 길목을 막았다 — 우리 동선을 넘긴 것이다.</div>`,
     onEnd:r=>{const n=r.st.kills+r.st.tk;if(r.win){f.p=clamp(f.p-8,0,100);S.pow=clamp(S.pow-5,5,95);S.won++;try{fcLog(F,`${d.n} 변절조를 물리쳤다.`)}catch(e){}return`<b>🗡 변절조를 물리쳤다 — ${n}명 제압</b><div>${d.n}은(는) "일부의 일탈"이라며 발을 뺀다(${was?'동맹 파기 · ':''}호감 −30 · 세 −8). 누가 길을 알려 줬는지는 끝내 말하지 않는다. 받은 피해 ${r.st.dmg}.</div>`}
@@ -22873,11 +22931,11 @@ function usStep(dt){if(!OUT.on)return;const C=US.cur;if(C){try{if(C.k==='toll')u
 /* ---------- 기존 길거리 교전 2종을 제자리 방식으로(설정 '길거리 교전' = 제자리일 때) ---------- */
 /* 🏛 세력 추격조(112): 카드에서 '싸운다'를 고르면 모래주머니 진지 대신 그 자리에서 */
 (function(){const b=window.fcFightStart;if(typeof b!=='function')return;window.fcFightStart=function(){try{if(isOn()&&typeof FC!=='undefined'&&FC.fight&&isAvail()&&!IS.on){const Q=FC.fight;const S=fcS();const d=fcDef(Q.id);const n=Q.n|0;const al=[];if(S.f.iron&&S.f.iron.al&&Q.id!=='iron')al.push({n:'철문회 사수',r:'동맹',seed:4,delay:3,say:'<b>🏭 철문회 사수 둘이 달려온다</b><div>동맹의 총이다 — 쏘지 않게 조심한다.</div>'},{n:'철문회 사수',r:'동맹',seed:8,delay:3.6});else al.push({n:'지나던 예비군',r:'도움',seed:7,delay:6});
-      const ok=isStart({k:'feud',ico:d.ico,nm:`${d.n} 추격조`,more:'뒤따라온 무리',waves:[n>3?['gun','gun','gun','lead']:['gun','gun','lead'],n>=5?['gun','gun','lead']:['gun','gun']],vis:1,dmin:24,dmax:42,ang:usAhead(),grace:1.6,stat:{gun:{n:'추격조원'},lead:{n:'추격조장'}},look:(t,i)=>owcLook(t==='lead'?'fled':'fgun',i),dress:h=>usBand(h,d.col),allies:al,say:'골목을 막았어요! 엄폐!',
+      const ok=isStart({k:'feud',ico:d.ico,arms:usArms('feud'),nm:`${d.n} 추격조`,more:'뒤따라온 무리',waves:[n>3?['gun','gun','gun','lead']:['gun','gun','lead'],n>=5?['gun','gun','lead']:['gun','gun']],vis:1,dmin:24,dmax:42,ang:usAhead(),grace:1.6,stat:{gun:{n:'추격조원'},lead:{n:'추격조장'}},look:(t,i)=>owcLook(t==='lead'?'fled':'fgun',i),dress:h=>usBand(h,d.col),allies:al,say:'골목을 막았어요! 엄폐!',
         intro:`<b>${d.ico} ${d.n} 추격조 — 총을 든다</b><div>골목 어귀에서 온다. 건물 모퉁이를 끼고 한 명씩.</div>`,onEnd:r=>{FC.fightId=d.id;const t=EVR.feud.apply(r.win,r.why==='escape',{kills:r.st.kills+r.st.tk,shots:0,hits:0,dmg:r.st.dmg});return`<b>${d.ico} ${EVR.feud.title(r.win,r.why==='escape')}</b><div>${t}</div>`}});
       if(ok){FC.fight=null;FC.fightId=d.id;return true}}}catch(e){usErr(e)}return b.apply(this,arguments)}})();
 /* 🕵 무장 간첩 매복(100): 사방에서 나온다 — 계엄군 순찰조 둘이 10초쯤 뒤 합류 */
-(function(){const K=typeof EVK!=='undefined'&&EVK.spyamb;if(!K||typeof K.engage!=='function')return;const b=K.engage;K.engage=function(E){try{if(isOn()&&isAvail()&&!IS.on){const C=EVR.spyamb;const ok=isStart({k:'spyamb',ico:'🕵',nm:'무장 간첩 매복',more:'골목마다 또 나온다',waves:[['gun','gun','gun'],['gun','lead','gun'],['gun','gun']],ring:1,dmin:30,dmax:52,grace:2.6,stat:{gun:{n:'무장 간첩',acc:.62,dmg:12},lead:{n:'간첩 조장',acc:.7,dmg:14}},look:(t,i)=>owcLook(t==='lead'?'spyL':'spyg',i+3),
+(function(){const K=typeof EVK!=='undefined'&&EVK.spyamb;if(!K||typeof K.engage!=='function')return;const b=K.engage;K.engage=function(E){try{if(isOn()&&isAvail()&&!IS.on){const C=EVR.spyamb;const ok=isStart({k:'spyamb',ico:'🕵',arms:usArms('spy'),nm:'무장 간첩 매복',more:'골목마다 또 나온다',waves:[['gun','gun','gun'],['gun','lead','gun'],['gun','gun']],ring:1,dmin:30,dmax:52,grace:2.6,stat:{gun:{n:'무장 간첩',acc:.62,dmg:12},lead:{n:'간첩 조장',acc:.7,dmg:14}},look:(t,i)=>owcLook(t==='lead'?'spyL':'spyg',i+3),
         allies:[{n:'곽태성',r:'계엄군 하사',rok:1,ml:1,id:'ml1',delay:10,acc:.36,say:'<b>🪖 계엄군 순찰조가 합류한다</b><div>총성을 듣고 달려왔다 — 군인을 쏘지 않게 조심한다.</div>'},{n:'변지호',r:'계엄군 일병',rok:1,ml:1,id:'ml2',delay:10.8,acc:.3}],say:'사방이에요! 등 맞대요!',
         onEnd:r=>{const q=r.why==='escape';const t=C.apply(r.win,q);try{if(EVD.cur===E)evEnd({ok:r.win,short:C.short(r.win),quiet:1})}catch(e){usErr(e)}return`<b>🕵 ${C.title(r.win,q)}</b><div>${t} 받은 피해 ${r.st.dmg}.</div>`}});
       if(ok){E.is=1;if(EVD.beacon&&EVD.beacon.parent)EVD.beacon.parent.remove(EVD.beacon);EVD.beacon=null;return true}}}catch(e){usErr(e)}return b.apply(this,arguments)}})();
@@ -22886,6 +22944,148 @@ function usStep(dt){if(!OUT.on)return;const C=US.cur;if(C){try{if(C.k==='toll')u
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b)return;const k=b.dataset.k,v=b.dataset.v;try{if(k==='insitu'){store.set('sg.insitu',v==='1');toast(v==='1'?'길거리 교전: 걷던 화면 그대로 싸운다(제자리)':'길거리 교전: 예전처럼 엄폐물이 깔린 전용 화면(진지)',2800)}else if(k==='usurp'){store.set('sg.usurp',v==='1');toast(v==='1'?'남한 내 적대 세력이 나온다(가상 조직)':'남한 내 적대 세력을 껐다',2600)}}catch(x){}},true);
 (function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{if(store.get('sg.usurp',true)!==false&&!(typeof eduOn==='function'&&eduOn())){const S=usS();h+=row('🏴',`${US_G.ash.n} · ${US_G.fuse.n}`,`완장단 세 ${S.pow} · 통행세 ${S.toll}회 · 원한 ${S.grudge} · 격퇴 ${S.won}회`,S.grudge>=2?'⚠ 순찰조 증원':'','')}}catch(e){usErr(e)}return h}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🏴 남한 내 적대 세력(v13.3)','북한군만이 아니다. 혼란을 틈타 힘을 쥐려는 무장 집단 셋이 길에서 나를 노린다 — <b>모두 이 게임이 지어낸 가상의 조직이며 실제 정당·단체·지역·사건과 무관하다.</b> 🏴 <b>잿빛 완장단</b>: 길을 막고 통행세를 요구한다. 내면 세가 커져 다음 요구가 늘고, 거부하면 그 자리에서 싸운다. 쫓아내면 세가 꺾이지만 원한이 쌓여 순찰조가 더 많이 온다. 💣 <b>검은 심지</b>: 길가의 차가 삐— 소리를 내면 2.8초 뒤 터진다(바로 떨어진다). 폭발 뒤 복면 조직원이 덮치거나, 팀원을 먼저 쏘고 시작한다. 🗡 <b>변절조</b>: 세력 정치의 동맹·거래 상대 일부가 등을 돌려 완장단과 함께 온다 — 내 평판(배신자·교활)과 주목이 높고 동맹의 호감이 식을수록 잘 일어난다. 모두 제자리 교전(⚔)으로 벌어진다. 상황판(🚨)에 완장단의 세·원한이 보인다. 설정에서 끌 수 있고, 교육용 모드에서는 나오지 않는다.']);
+
+/* ===================== 118 · v13.4 총기 13종 추가(총기 25 → 38종 · 조명탄 권총·석궁·전기충격기 제외) · 세력별 무장 ===================== */
+/* 사용자 요청(2026-11-15 13:53): "총기 종류도 더욱 다양화 해 주시고"
+   화기 명칭은 제식명·일반명만(상표 없음), 수치는 게임용 단순화 — 64와 같은 원칙. 모양은 64 makeGun2에 가지를 더했다(코드로 그린다 · 용량 +2KB).
+   종류마다 맡은 일이 다르게:
+   · 가까이 한 방: 쌍열 엽총(두 발뿐 — 연달아) · 단축 산탄총(배낭 한 칸)        · 조용히: 9mm 소음 권총(쏴도 주변이 흩어지지 않는다)
+   · 순식간에 비우기: .45 기관단총(분당 1,000발) · 기관권총                      · 한 발이 무거운 것: 7.62mm 전투소총 · .45 권총
+   · 멀리: 수렵용 소총(볼트 4배율 · 총포사에서 싸게) · 7.62mm 지정사수소총(반자동 6배율)
+   · 제압: RPK 경기관총(배낭 두 칸) · K12 기관총(7.62mm 100발)                    · 그 밖: K2 소총(예비군 무기고) · 레버액션 카빈(.38 탄 공용)
+   얻는 곳: 총포사(엽총·카빈·수렵용 소총·.45 권총) · 군용 상자(K2·전투소총·지정사수소총·K12) · 적대 세력 노획(세력마다 드는 총이 다르다 — 116·117) · 전공 보급(119)
+   새 탄: .45 탄(총포사 · 길거리 · 노획) */
+Object.assign(ARMS,{
+  k2:{n:'K2 소총',cat:'ar',mag:30,am:'556',rate:.105,dmg:1,sp:1.9,spA:.5,bl:.42,bmax:3.4,reload:2.4,zoom:0,slot:2,auto:1,snd:'rifle',src:'chk',d:'예비군 무기고의 구형 K2. 가늠자만 있다'},
+  br762:{n:'7.62mm 전투소총',cat:'ar',mag:20,am:'762',rate:.14,dmg:1.55,sp:2.0,spA:.4,bl:.75,bmax:4.8,reload:2.7,zoom:0,slot:2,auto:1,snd:'rifle',src:'drop',d:'한 발이 무겁다 — 몸통 두 발이면 쓰러진다. 연사는 크게 튄다'},
+  lev38:{n:'레버액션 카빈',cat:'ar',mag:10,am:'38',rate:.55,dmg:1.15,sp:1.3,spA:.28,bl:.2,bmax:1.2,reload:3.4,zoom:0,slot:2,auto:0,snd:'pistol',src:'shop',d:'리볼버 탄을 쓰는 사냥용 카빈. 느리지만 정확하다'},
+  smg45:{n:'.45 기관단총',cat:'smg',mag:25,am:'45',rate:.058,dmg:.85,sp:2.6,spA:.75,bl:.5,bmax:4.6,reload:1.9,zoom:0,slot:1,auto:1,snd:'smg',src:'cap',d:'분당 1,000발. 가까이서 순식간에 비운다'},
+  dbs:{n:'쌍열 엽총',cat:'sg',mag:2,am:'12ga',rate:.28,dmg:.5,pel:9,sp:5.2,spA:3.8,bl:0,bmax:0,reload:2.9,zoom:0,slot:2,auto:0,snd:'shotgun',src:'shop',d:'두 발뿐 — 대신 연달아 쏜다. 8m 안에서 가장 세다'},
+  sgs:{n:'단축 산탄총',cat:'sg',mag:2,am:'12ga',rate:.3,dmg:.44,pel:9,sp:7.5,spA:6,bl:0,bmax:0,reload:2.6,zoom:0,slot:1,auto:0,snd:'shotgun',src:'cap',d:'총열을 자른 엽총. 배낭 한 칸 · 5m 밖은 흩어진다'},
+  huntr:{n:'수렵용 소총',cat:'sr',mag:5,am:'762',rate:1.15,dmg:2.3,sp:1.3,spA:.1,bl:0,bmax:0,reload:3.0,zoom:4,slot:2,auto:0,bolt:1,snd:'sniper',src:'shop',d:'멧돼지 잡던 볼트액션 4배율. 군용보다 약하지만 구하기 쉽다'},
+  dmr762:{n:'7.62mm 지정사수소총',cat:'sr',mag:10,am:'762',rate:.32,dmg:2.1,sp:1.1,spA:.1,bl:.25,bmax:1.2,reload:2.8,zoom:6,slot:2,auto:0,snd:'sniper',src:'drop',d:'반자동 6배율. 볼트를 당기지 않고 이어 쏜다'},
+  rpk:{n:'RPK 경기관총',cat:'lmg',mag:45,am:'545',rate:.095,dmg:1.05,sp:2.3,spA:.7,bl:.3,bmax:4,reload:3.4,zoom:0,slot:2,auto:1,snd:'mg',src:'cap',d:'긴 총열·양각대의 AK. 기관총치고 가볍다(배낭 두 칸)'},
+  k12:{n:'K12 기관총',cat:'lmg',mag:100,am:'762',rate:.085,dmg:1.35,sp:2.7,spA:.85,bl:.36,bmax:5.2,reload:5.2,zoom:0,slot:3,auto:1,snd:'mg',heavy:1,src:'chk',d:'국군 7.62mm 기관총. 세고 무겁다(달리기 느림)'},
+  m1911:{n:'.45 권총',cat:'pst',mag:7,am:'45',rate:.24,dmg:1.25,sp:2.2,spA:.8,bl:.7,bmax:3.6,reload:1.7,zoom:0,slot:1,auto:0,snd:'pistol',src:'shop',d:'7발. 권총 가운데 한 발이 가장 무겁다'},
+  p9s:{n:'9mm 소음 권총',cat:'pst',mag:15,am:'9mm',rate:.2,dmg:.72,sp:2.2,spA:.8,bl:.5,bmax:3.2,reload:1.6,zoom:0,slot:1,auto:0,snd:'supp',quiet:1,src:'cap',d:'소음기 — 쏴도 주변이 흩어지지 않는다'},
+  mpst:{n:'기관권총',cat:'pst',mag:18,am:'9mm',rate:.062,dmg:.62,sp:3.2,spA:1.3,bl:.8,bmax:6,reload:1.7,zoom:0,slot:1,auto:1,snd:'smg',src:'cap',d:'연사되는 권총. 세 발 넘기면 하늘을 쏜다'}});
+AMMO['45']={n:'.45 탄',box:50,w:.021};
+const ARMS2_NEW=['k2','br762','lev38','smg45','dbs','sgs','huntr','dmr762','rpk','k12','m1911','p9s','mpst'];
+/* 얻는 곳 */
+try{if(typeof GS_LIST!=='undefined'){for(const r of [['dbs',5,3],['lev38',6,3],['m1911',7,3],['huntr',9,4]])if(!GS_LIST.some(x=>x[0]===r[0]))GS_LIST.push(r);GS_LIST.sort((a,b)=>a[1]-b[1])}if(typeof GS_AMMO!=='undefined'&&!GS_AMMO.some(x=>x[0]==='45'))GS_AMMO.push(['45',28,1])}catch(e){console.error(e)}
+try{if(typeof LOOT_CRATE_W!=='undefined')for(const k of ['k2','br762','dmr762','k12'])if(!LOOT_CRATE_W.includes(k))LOOT_CRATE_W.push(k);if(typeof LOOT_STREET!=='undefined'&&!LOOT_STREET.some(x=>x[0]==='ammo:45'))LOOT_STREET.push(['ammo:45',14,2])}catch(e){console.error(e)}
+/* 팀원이 드는 총의 순서(99): 새 종류도 같은 분류를 쓰므로 그대로 따른다 */
+/* 세력별 무장(116 isMk가 a.wp로 고른다): 종류 → 후보 */
+const ARMS2_POOL={
+  ash:{gun:['dbs','ak47','lev38','sgs','k2'],lead:['br762','k2','ak47'],rush:['sgs','dbs','smg45'],mark:['huntr']},
+  fuse:{gun:['smg45','mpst','uzi','ak74','p9s'],lead:['ak74','smg45'],rush:['mpst','uzi'],mark:['svd','huntr','dmr762']},
+  turn:{gun:['ak47','lev38'],turn:['k2','m1911','lev38','sgp'],lead:['br762','k2'],rush:['sgs','dbs']},
+  feud:{gun:['ak47','sgs','dbs','lev38'],lead:['ak47','br762']},
+  spy:{gun:['ak74','mpst','p9s'],lead:['ak74','rpk']},
+  desert:{gun:['k2','k1a','k2c1'],lead:['k12','k2c1'],rush:['k1a'],mark:['k14']},
+  rob:{gun:['sgs','rev','m1911','dbs'],lead:['smg45','m1911'],rush:['sgs','mpst']}};
+if(typeof HELP84!=='undefined')HELP84.push(['🔫 총기 13종 추가(v13.4)','총기가 25종에서 38종으로 늘었다(조명탄 권총·석궁·전기충격기 제외). <b>가까이 한 방</b>: 쌍열 엽총(두 발뿐이지만 연달아) · 단축 산탄총(배낭 한 칸). <b>조용히</b>: 9mm 소음 권총 — 쏴도 주변이 흩어지지 않는다. <b>순식간에 비우기</b>: .45 기관단총 · 기관권총. <b>한 발이 무거운 것</b>: 7.62mm 전투소총 · .45 권총. <b>멀리</b>: 수렵용 소총(볼트 4배율) · 7.62mm 지정사수소총(반자동 6배율). <b>제압</b>: RPK 경기관총(배낭 두 칸) · K12 기관총. 그 밖에 K2 소총 · 레버액션 카빈(.38 탄 공용). 총포사에서 엽총·카빈·수렵용 소총·.45 권총을 팔고, 군용 상자에서 K2·전투소총·지정사수소총·K12가 나온다. 적대 세력은 세력마다 다른 총을 들고(완장단 = 엽총·AK·카빈, 검은 심지 = 기관단총·소음 권총·저격총) 쓰러뜨리면 그 총을 줍는다. 전공 보급(⚖)으로도 받는다.']);
+
+/* ===================== 119 · v13.4 전시 교전 수칙 — 적법 사살 · 임시 무장 대원 · 전공 보급 · 사살 허가 대상 · 투항 처리 ===================== */
+/* 사용자 요청(2026-11-15 13:53): "전시상황에서 합법적으로 살인하는 것도 구현해 주세요. 게임이니깐요"
+   해석(사용자에게 알림): 전시에 '적법한 사살'이 무엇인지를 게임 규칙으로 만든다 — 가상의 계엄 포고령이 적법 대상을 정하고, 그 안에서 쏘면 죄가 아니라 전공이다.
+   · 적법(포고령 · 가상): ① 적 전투원 ② 무장 간첩·공작원 ③ 무장 반란·테러 조직원(무기를 든 동안 — 달아나는 중이어도) ④ 수배자 ⑤ 폭력·약탈 현행범 ⑥ 사살 허가 명부에 오른 자
+   · 위법(전시에도 살인): 비무장 주민 · 손을 든 투항자 · 군·경·아군. 막지는 않는다(무법 모드 원칙) — 임명 취소 · 전공 몰수 · 두 번이면 군 연행(65)이 따른다
+   · 아이와 가족은 애초에 맞지 않는다(116 판정 제외) — 대상이 아니다
+   · 조준점 아래 표시: '⚖ 적법 · 누구' / '⛔ 위법 · 누구' — 쏘기 전에 안다
+   · 임시 무장 대원(무전으로 임명 — 상황판 🚨 → ⚖ 교전 수칙): 임명된 뒤의 적법 사살은 전공으로 쌓인다(적 전투원·조직원 3 · 간첩 4 · 수배자 5 · 현행범 2 · 명부 대상 7 · 생포 8, 조장 +2)
+     대피소로 돌아가면 정산: 전공 1점 = 탄 5발(들고 있는 총의 탄 · 150발까지) · 10점마다 현금 봉투 1 · 누적 15/40/80/140점에 K2 소총 · 7.62mm 전투소총 · 지정사수소총 · K12 기관총 보급
+     주민·투항자를 쏘면 임명이 취소되고 미정산 전공을 잃는다(2턴 뒤 다시 신청)
+   · 사살 허가 명부: 외출마다 1~2곳(무장 탈영병 무리 · 무장 강도단 · 완장단 간부 · 검은 심지 폭파범 — 모두 가상 인물). 미니맵 ⚖ 마름모. 110m 안에 들면 모습이 보이고, 30m 안에 들거나 먼저 쏘면 그 자리에서 교전(116)
+     두목을 쓰러뜨리면 현상금 봉투 3 · 손 든 두목을 묶어 넘기면 6
+   · 투항(116): 혼자 남은 자는 절반쯤 손을 든다 → 다가가 '묶어서 넘긴다' = 생포(전공 8 · 봉투 1) / 쏘면 위법
+   교육용 모드에서는 꺼진다. 끄기: sg.roe=false(표시·전공·명부만 꺼지고 총 판정은 그대로). 모든 포고령·인물·조직은 가상 */
+const ROE={err:0,cast:null,tg:[],key:'',open:false,msg:'',gainT:0,tT:0};
+const ROE_CAT={en:{n:'적 전투원',pt:3},ins:{n:'무장 조직원',pt:3},spy:{n:'무장 간첩',pt:4},want:{n:'수배자',pt:5},crim:{n:'폭력·약탈 현행범',pt:2},tgt:{n:'사살 허가 대상',pt:7},cap:{n:'생포',pt:8}};
+const ROE_TIER=[[15,'k2'],[40,'br762'],[80,'dmr762'],[140,'k12']];
+const ROE_TG={
+  desert:{ico:'🪖',n:'무장 탈영병 무리',boss:'탈영 하사',why:'무기고를 털어 달아난 뒤 피난민의 짐을 빼앗아 왔다',arms:'desert',w:[['gun','gun','lead'],['gun','rush']],say:'탈영병들이에요! 총 들었어요!'},
+  rob:{ico:'🔪',n:'무장 강도단',boss:'두목',why:'빈집과 피난 행렬을 털며 주민 둘을 쏘았다',arms:'rob',w:[['gun','rush','lead'],['gun']],say:'강도들이에요! 총 있어요!'},
+  ashL:{ico:'🏴',n:'잿빛 완장단 간부',boss:'완장단 간부',why:'통행세를 거부한 주민을 쏘게 했다',arms:'ash',w:[['gun','gun','lead'],['gun','rush']],ash:1,say:'완장단 간부예요!'},
+  fuseL:{ico:'💣',n:'검은 심지 폭파범',boss:'폭파범',why:'길가 차량 폭발을 지휘했다',arms:'fuse',w:[['gun','mark','lead'],['gun']],fuse:1,say:'복면이에요! 저놈이 폭파범!'}};
+function roeErr(e){if(ROE.err<6){ROE.err++;console.error(e)}}
+function roeOn(){try{return store.get('sg.roe',true)!==false&&!(typeof eduOn==='function'&&eduOn())}catch(e){return true}}
+function roeS(){const F=G.flags;if(!F.roe||typeof F.roe!=='object'||F.roe.v!==1)F.roe={v:1,dep:0,pts:0,un:0,tier:0,viol:0,ban:-9,rec:{en:0,ins:0,spy:0,want:0,crim:0,tgt:0,cap:0},bounty:0};return F.roe}
+/* ---------- 누가 적법한 표적인가 ---------- */
+function roeOf(t){if(!t)return null;const a=t.a||{},k=t.kind;if(a.surr)return{law:false,cat:'surr',n:'투항자 — 묶어서 넘긴다'};
+  if(k==='team')return{law:false,cat:'prot',n:'팀원'};if(k==='fam')return{law:false,cat:'prot',n:'가족'};if(k==='follow')return{law:false,cat:'prot',n:'동행'};if(k==='rok'||k==='gsrok'||k==='gspol'||(a&&a.kind==='rok'))return{law:false,cat:'prot',n:'군·경'};if(a.isAl||k==='ally')return{law:false,cat:'prot',n:'아군'};
+  let h=null;try{h=gunHostile(t)}catch(e){}
+  if(h==='wanted')return{law:true,cat:'want',n:'수배자'};if(h==='spy')return{law:true,cat:'spy',n:'도주 간첩'};if(h==='thug')return{law:true,cat:'crim',n:'폭력배'};if(h==='loot')return{law:true,cat:'crim',n:'약탈 현행범'};
+  if(h){if(a.roeT)return{law:true,cat:'tgt',n:'사살 허가 대상'};if(a.is)return{law:true,cat:a.isK==='spyamb'?'spy':'ins',n:(a.E&&a.E.n)||'무장 조직원'};return{law:true,cat:'en',n:'적 전투원'}}
+  return{law:false,cat:'civ',n:'비무장 주민'}}
+/* 조준점 아래 표시 */
+(function(){const b=window.gunCast;if(typeof b==='function')window.gunCast=function(){const r=b.apply(this,arguments);ROE.cast=r;return r}})();
+(function(){const b=window.gunAim;if(typeof b!=='function')return;window.gunAim=function(dt){ROE.cast=null;const r=b.apply(this,arguments);try{let el=document.getElementById('roeTag');if(!roeOn()){if(el)el.remove();return r}const c=ROE.cast;const R=c&&c.tgt?roeOf(c.tgt):null;if(!R){if(el&&!el.hidden)el.hidden=true;return r}if(!el){const u=document.getElementById('gunUI');if(!u)return r;el=document.createElement('div');el.id='roeTag';el.className='roe-tag';u.appendChild(el)}
+    const t=R.law?`⚖ 적법 · ${R.n}`:`⛔ 위법 · ${R.n}`;if(el.textContent!==t){el.textContent=t;el.classList.toggle('ok',!!R.law);el.classList.toggle('no',!R.law)}if(el.hidden)el.hidden=false}catch(e){roeErr(e)}return r}})();
+/* ---------- 전공 ---------- */
+function roeGainUI(txt){const el0=SV3.el;if(!el0)return;let el=document.getElementById('roeGain');if(!el){el=document.createElement('div');el.id='roeGain';el.className='roe-gain';el0.appendChild(el)}el.textContent=txt;el.classList.remove('on');void el.offsetWidth;el.classList.add('on')}
+function roeCredit(cat,a){if(!roeOn())return 0;const S=roeS();const C=ROE_CAT[cat];if(!C)return 0;S.rec[cat]=(S.rec[cat]|0)+1;if(!S.dep)return 0;const pt=C.pt+(a&&a.type==='lead'&&cat!=='cap'?2:0);S.pts+=pt;S.un=(S.un|0)+pt;try{G.flags.merit=(G.flags.merit||0)+pt}catch(e){}try{roeGainUI(`⚖ 전공 +${pt} · 미정산 ${S.un}`)}catch(e){}return pt}
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t,host,d,head){let R=null;try{R=roeOf(t)}catch(e){}const was=!!(t&&t.a&&t.a.dead);const r=b.apply(this,arguments);try{if(R&&R.law&&!was&&t&&t.a&&t.a.dead)roeCredit(R.cat,t.a)}catch(e){roeErr(e)}return r}})();
+(function(){const b=window.owcKill;if(typeof b!=='function')return;window.owcKill=function(a,by){const was=a&&a.st;const r=b.apply(this,arguments);try{if(by==='me'&&a&&was!=='down'&&a.st==='down'&&!a.prot&&a.side==='en')roeCredit(/^spy/.test(a.type||'')?'spy':/^(raid|op)/.test(a.type||'')?'ins':'en',{type:/^(elite|fled)$|L$/.test(a.type||'')?'lead':a.type})}catch(e){roeErr(e)}return r}})();
+/* 위법: 임명 취소 */
+function roeRevoke(why){const S=roeS();if(!S.dep)return'';S.dep=0;S.viol=(S.viol|0)+1;const lost=S.un|0;S.pts=Math.max(0,S.pts-lost);S.un=0;S.ban=(G.turn|0)+2;return`임시 무장 대원 임명이 취소됐다(${why}${lost?` · 미정산 전공 ${lost} 몰수`:''}). `}
+(function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t,d,head){const surr=!!(t&&t.a&&t.a.surr);const r=b.apply(this,arguments);try{if(!surr&&roeOn()){const m=roeRevoke('주민 사살');if(m)setTimeout(()=>{try{if(OUT.on&&!OUT.enc)outNote(`<b>⚖ ${m}</b><div>2턴 뒤 다시 신청할 수 있다.</div>`,4200)}catch(e){}},5200)}}catch(e){roeErr(e)}return r}})();
+IS.onSurrShot=function(a){try{if(!roeOn())return'';return roeRevoke('투항자 사살')}catch(e){roeErr(e);return''}};
+IS.onCapture=function(a){try{if(!roeOn())return'';const S=roeS();const pt=roeCredit('cap',a);let cash=1,extra='';if(a&&a.roeT){const T0=ROE.tg.find(q=>q.boss===a);cash=6;if(T0){T0.done=1;roeDone(T0);extra=` ${T0.def.n}의 ${T0.def.boss} ${T0.nm} — 명부에서 지운다.`}S.rec.tgt=(S.rec.tgt|0)+1}G.inv.cash=(G.inv.cash||0)+cash;S.bounty=(S.bounty|0)+cash;return`<b>🔗 생포 — 계엄군에 넘겼다</b><div>현상금 봉투 ${cash}${pt?` · 전공 +${pt}`:S.dep?'':' (임시 무장 대원이면 전공도 쌓인다)'}.${extra}</div>`}catch(e){roeErr(e);return''}};
+/* 임명 */
+function roeDepAsk(){const S=roeS();if(S.dep)return'이미 임시 무장 대원이다.';if((G.turn|0)<S.ban)return`임명이 취소된 지 얼마 안 됐다 — ${S.ban-(G.turn|0)}턴 뒤 다시 신청할 수 있다.`;if((G.flags.gunCrime|0)>0&&S.viol>=2)return'"주민을 쏜 기록이 두 번이오." 상황실이 신청을 받지 않는다.';let armed=false;try{armed=isArmed()}catch(e){}if(!armed)return'총이 있어야 한다 — 무장한 사람만 임명한다.';
+  S.dep=1;try{SND.ok&&SND.ok()}catch(e){}return'📻 "계엄군 상황실이다. 임시 무장 대원으로 올린다 — 포고령이 정한 대상만 쏜다. 전공은 복귀하면 정산한다."'}
+/* 정산: 대피소로 돌아갈 때 */
+function roeSettle(){const S=roeS();if(!S.dep||!(S.un>0))return'';const un=S.un|0;S.un=0;const out=[];let am='556';try{const id=(GUN.eq&&ARMS[GUN.eq]&&ARMS[GUN.eq].am)?GUN.eq:((gunArms().find(a=>ARMS[a.id]&&ARMS[a.id].am&&ARMS[a.id].cat!=='spc')||{}).id);if(id&&ARMS[id]&&AMMO[ARMS[id].am])am=ARMS[id].am}catch(e){}
+  const k=am==='12ga'||am==='762'||am==='50'||am==='40mm'?2.5:5;const n=Math.min(150,Math.round(un*k));if(n>0){gunAmmoAdd(am,n);out.push(`${AMMO[am]?AMMO[am].n:'탄'} ${n}발`)}const cash=Math.floor(un/10);if(cash>0){G.inv.cash=(G.inv.cash||0)+cash;out.push(`현금 봉투 ${cash}`)}
+  while(S.tier<ROE_TIER.length&&S.pts>=ROE_TIER[S.tier][0]){const id=ROE_TIER[S.tier][1];S.tier++;const W=ARMS[id];if(!W)continue;let got=false;try{got=!gunHas(id)&&gunAdd(id,{force:true,ammo:W.mag*2})===true}catch(e){}if(got)out.push(`보급 — ${W.n}`);else{try{gunAmmoAdd(W.am,W.mag*2)}catch(e){}out.push(`${W.n}용 탄 ${W.mag*2}발`)}}
+  return`⚖ 전공 ${un}점 정산 — ${out.join(' · ')||'기록만'} (누적 ${S.pts}점)`}
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(why){let msg='';try{if(roeOn()&&why!=='dead')msg=roeSettle();roeTgClear()}catch(e){roeErr(e)}const r=b.apply(this,arguments);if(msg)try{setTimeout(()=>{try{toast(msg,6000)}catch(e){}},900)}catch(e){}return r}})();
+/* ---------- 사살 허가 명부 ---------- */
+function roeTgClear(){try{for(const T0 of ROE.tg)if(T0.ag&&T0.ag.length&&typeof isHoldDrop==='function')isHoldDrop(T0.ag.filter(a=>IS.pre.includes(a)))}catch(e){}ROE.tg=[];ROE.key=''}
+function roeDone(T0){try{const done=G.outDone||(G.outDone={});done['roe:'+T0.id]=1}catch(e){}}
+function roeTgMake(){if(!roeOn()||!OUT.on||!OUT.scene||typeof pedSegs!=='function'||(G.turn|0)<2)return;const key=(G.turn|0)+':'+(G.seed||0);if(ROE.key===key&&ROE.tg.length)return;ROE.key=key;ROE.tg=[];let S=[];try{S=pedSegs()}catch(e){}if(!S.length)return;const P=FP3.pos;const r=rng3(((G.seed||1)*313+(G.turn||1)*71+5)>>>0);const done=G.outDone||(G.outDone={});
+  const kinds=Object.keys(ROE_TG);const n=(G.turn|0)>=5?2:1;for(let i=0;i<n;i++){const id='t'+(G.turn|0)+'_'+i;if(done['roe:'+id])continue;let pt=null;for(let t=0;t<160&&!pt;t++){const g=S[Math.floor(r()*S.length)];const u=r();const x=g.ax+g.tx*g.L*u,z=g.az+g.tz*g.L*u;const d=Math.hypot(x-P.x,z-P.z);let ok=false;try{ok=d>150&&d<430&&owcFree(x,z,2.2)&&!ROE.tg.some(q=>Math.hypot(q.x-x,q.z-z)<120)&&!(OUT.npcs||[]).some(a=>a.kind==='rok'&&a.h&&Math.hypot(a.h.root.position.x-x,a.h.root.position.z-z)<90)}catch(e){}if(ok)pt={x,z}}if(!pt)continue;
+    const k=kinds[Math.floor(r()*kinds.length)];let nm='미상';try{nm=npcName('roe'+id,'m')}catch(e){}ROE.tg.push({id,k,def:ROE_TG[k],x:pt.x,z:pt.z,nm,st:'far',ag:null,boss:null,done:0,cool:0})}}
+function roeTgDef(T0){const D=T0.def;let base={};try{base=D.ash?usDefAsh():D.fuse?usDefFuse():{}}catch(e){}const arms=(typeof ARMS2_POOL!=='undefined'&&ARMS2_POOL[D.arms])||base.arms||null;
+  return Object.assign({},base,{k:'tgt',ico:'⚖',nm:D.n,arms,more:'숨어 있던 자들이 나온다',noSurr:0,stat:Object.assign({},base.stat||{},{gun:{n:D.n.replace(/ 무리$| 간부$| 폭파범$/,'')+' 조직원'},rush:{n:D.n.replace(/ 무리$| 간부$| 폭파범$/,'')+' 조직원'},mark:{n:'망보는 사수'},lead:{n:`${D.boss} ${T0.nm}`,hp:4}}),say:D.say})}
+function roeTgShow(T0){if(T0.ag||typeof isHoldMk!=='function')return;const o=roeTgDef(T0);const L=T0.def.w[0];const ag=[];const p=FP3.pos;L.forEach((type,i)=>{let q=null;for(let t=0;t<24&&!q;t++){const a=Math.random()*6.283,d=i?1.6+Math.random()*4.5:0;const x=T0.x+Math.sin(a)*d,z=T0.z+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,.6)}catch(e){}if(ok&&!ag.some(b=>Math.hypot(b.h.root.position.x-x,b.h.root.position.z-z)<1.3))q={x,z}}if(!q)return;const a=isHoldMk(type,q.x,q.z,61+i*9+(G.turn|0)*5,o);if(!a)return;a.h.root.rotation.y=Math.atan2(p.x-q.x,p.z-q.z)+(Math.random()-.5)*1.6;try{a.h.setPose(i%2?'low':'idle',true)}catch(e){}if(type==='lead'){a.roeT=1;T0.boss=a;a.tagL=`⚖ 사살 허가 · ${T0.def.boss} ${T0.nm}`}ag.push(a)});
+  if(ag.length<2||!T0.boss){try{isHoldDrop(ag)}catch(e){}T0.ag=null;T0.boss=null;T0.cool=20;return}T0.ag=ag;T0.o=o;T0.st='near'}
+function roeTgFight(T0,first){const S=roeS();const o=Object.assign({},T0.o,{agents:T0.ag.filter(a=>!a.gone),waves:[[],T0.def.w[1]||[]],grace:first?2.6:1.2,dmin:24,dmax:44,
+    intro:`<b>⚖ ${T0.def.ico} ${T0.def.n} — 사살 허가 대상</b><div>${T0.def.boss} ${T0.nm}: ${T0.def.why}. ${first?'먼저 덮쳤다 —':'들켰다 —'} 그 자리에서 교전.</div>`,
+    onEnd:r=>{const b=T0.boss;const n=r.st.kills+r.st.tk;T0.ag=null;if(b&&(b.dead||b.h.dead)){T0.done=1;roeDone(T0);G.inv.cash=(G.inv.cash||0)+3;S.bounty=(S.bounty|0)+3;S.rec.tgt=(S.rec.tgt|0)+1;try{trust(2)}catch(e){}return`<b>⚖ ${T0.def.boss} ${T0.nm} 사살 — 명부에서 지운다</b><div>${n}명 제압${r.st.fled?` · ${r.st.fled}명 도주`:''}. 현상금 봉투 3. 받은 피해 ${r.st.dmg}.</div>`}
+      if(b&&b.surr&&!b.gone){return`<b>🏳 ${T0.def.boss} ${T0.nm}이(가) 손을 들었다</b><div>${n}명 제압. 다가가 <b>묶어서 넘기면</b> 현상금이 두 배(봉투 6)다 — 쏘면 위법이다.</div>`}
+      T0.st='far';T0.cool=40;T0.boss=null;if(r.win)return`<b>⚖ ${T0.def.n} — ${T0.def.boss} ${T0.nm}은(는) 달아났다</b><div>${n}명 제압. 명부에는 남는다 — 다시 나타난다.</div>`;if(r.why==='escape')return`<b>⚖ ${T0.def.n}을(를) 따돌렸다</b><div>명부에는 남는다.</div>`;return`<b>쓰러졌다 — 끌려 나왔다</b><div>${T0.def.n}은(는) 자리를 옮겼다.</div>`}});
+  if(!isStart(o)){try{isHoldDrop(T0.ag)}catch(e){}T0.ag=null;T0.boss=null;T0.st='far';T0.cool=30}else T0.st='fight'}
+function roeTgStep(dt){ROE.tT-=dt;if(ROE.tT>0)return;ROE.tT=.25;if(!roeOn()||!OUT.on)return;if(!ROE.tg.length)return;const p=FP3.pos;const busy=IS.on||(typeof US!=='undefined'&&US.cur)||OUT.drv||OUT.ride||(typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on)||(typeof OWC!=='undefined'&&OWC.on);
+  for(const T0 of ROE.tg){if(T0.done)continue;if(T0.cool>0){T0.cool-=.25;continue}const d=Math.hypot(T0.x-p.x,T0.z-p.z);
+    if(T0.st==='far'){if(d<110&&!busy&&!IS.pre.length&&!(typeof EVD!=='undefined'&&EVD.cur)&&!OUT.siren)roeTgShow(T0);continue}
+    if(T0.st==='near'){const ag=T0.ag||[];const live=ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);const hit=ag.some(a=>a.dead||a.h.dead||a.flinch>0);if(IS.on){continue}if(!live.length){T0.ag=null;T0.st='far';T0.cool=30;continue}
+      if(hit){roeTgFight(T0,true);continue}if(d>170){try{isHoldDrop(ag)}catch(e){}T0.ag=null;T0.boss=null;T0.st='far';continue}let los=false;try{const q=live[0].h.root.position;los=owcLos(q.x,1.45,q.z,p.x,1.4,p.z)}catch(e){}if((d<30&&los)||d<12){if(!OUT.enc&&!OUT.busy&&!OUT.mapOpen&&!OUT.drv)roeTgFight(T0,false)}continue}
+    if(T0.st==='fight'&&!IS.on&&!T0.done){/* 끝 처리는 onEnd가 했다 */if(T0.boss&&T0.boss.surr&&!T0.boss.gone)continue;if(T0.st==='fight'){T0.st='far';T0.cool=40}}}}
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);if(!OUT.on||(typeof OWC!=='undefined'&&OWC.on))return r;try{roeTgStep(dt)}catch(e){roeErr(e)}return r}})();
+(function(){const b=window.startOutside;if(typeof b!=='function')return;window.startOutside=function(o){const r=b.apply(this,arguments);try{setTimeout(()=>{try{if(OUT.on&&typeof tjUse==='function'&&tjUse()&&!(navigator.webdriver&&!window.__roeTest))roeTgMake()}catch(e){roeErr(e)}},3200)}catch(e){}return r}})();
+(function(){const b=window.tjPopulate;if(typeof b==='function')window.tjPopulate=function(){ROE.tg=[];ROE.key='';return b.apply(this,arguments)}})();
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{if(OUT.on&&roeOn())for(const T0 of ROE.tg){if(T0.done)continue;const [sx,sy]=toS(T0.x,T0.z);const s=5*scale;x.fillStyle='#ffb224';x.strokeStyle='#0a0c10';x.lineWidth=1.5*scale;x.beginPath();x.moveTo(sx,sy-s);x.lineTo(sx+s,sy);x.lineTo(sx,sy+s);x.lineTo(sx-s,sy);x.closePath();x.fill();x.stroke();x.fillStyle='#0a0c10';x.font=`800 ${Math.round(6.5*scale)}px system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('⚖',sx,sy+.5*scale)}}catch(e){}return r}})();
+/* ---------- 화면: ⚖ 교전 수칙 ---------- */
+function roeDir(dx,dz){const a=(Math.atan2(dx,-dz)*180/Math.PI+360)%360;return['북','북동','동','남동','남','남서','서','북서'][Math.round(a/45)%8]}
+function roePanel(open){const el=SV3.el;if(!el)return;let p=document.getElementById('roePanel');if(!open){if(p)p.remove();ROE.open=false;return}ROE.open=true;if(!p){p=document.createElement('div');p.id='roePanel';p.className='mis-panel fc-panel';el.appendChild(p)}const S=roeS();const P=FP3.pos;const nt=ROE_TIER[S.tier];const R=S.rec;
+  const T=ROE.tg.filter(q=>!q.done);const tg=T.length?T.map((q,i)=>{const d=Math.round(Math.hypot(q.x-P.x,q.z-P.z));return`<div class="fc-row roe-row"><div class="fc-h"><span class="fc-ico">${q.def.ico}</span><div><b>${q.def.n} <small>${q.def.boss} ${q.nm}</small></b><small class="fc-say">${q.def.why}</small></div><span class="fc-st" style="color:#ffb224;border-color:#ffb224">${roeDir(q.x-P.x,q.z-P.z)} ${d}m</span></div><div class="fc-a"><button class="btn sm" data-g3="roea" data-a="nav" data-i="${ROE.tg.indexOf(q)}">길 안내</button><small>사살 봉투 3 · 생포 봉투 6</small></div></div>`}).join(''):'<p class="mis-note">지금 명부에 오른 자가 없다 — 다음 외출에 새로 내려온다.</p>';
+  p.innerHTML=`<div class="mis-head"><b>⚖ 전시 교전 수칙</b><button class="btn sm" data-g3="roeclose">닫기</button></div>
+    <p class="mis-note fc-top">${S.dep?`<b>임시 무장 대원</b> — 전공 누적 <b>${S.pts}</b> · 미정산 <b>${S.un|0}</b>(대피소로 돌아가면 탄·봉투로 정산)${nt?` · 다음 보급 ${ARMS[nt[1]]?ARMS[nt[1]].n:''}까지 ${Math.max(0,nt[0]-S.pts)}점`:' · 보급 4단계 모두 받음'}`:`<b>민간인 신분</b> — 적법한 대상을 쏴도 죄는 아니지만 전공·보급은 없다. <button class="btn sm pri" data-g3="roea" data-a="dep">임시 무장 대원 임명 요청(무전)</button>`}</p>
+    ${ROE.msg?`<p class="mis-note fc-msg">${ROE.msg}</p>`:''}
+    <div class="roe-law"><b>계엄 포고령(가상) — 쏴도 되는 사람</b><span><i>⚖</i> 적 전투원 · 무장 간첩·공작원 · 무장 반란·테러 조직원(무기를 든 동안 — 달아나는 중이어도) · 수배자 · 폭력·약탈 현행범 · 사살 허가 명부에 오른 자</span><span><i class="x">⛔</i> 전시에도 살인: 비무장 주민 · <b>손을 든 투항자</b> · 군·경·아군 — 임명 취소 · 전공 몰수 · 두 번이면 군 연행</span><span>조준점 아래 <i>⚖ 적법</i> / <i class="x">⛔ 위법</i> 표시를 보고 쏜다. 손 든 자는 다가가 <b>묶어서 넘긴다</b>(생포 = 전공 8 · 봉투 1).</span></div>
+    <div class="mis-head"><b>사살 허가 명부</b><small>미니맵 ⚖ 마름모 · 110m 안에 들면 모습이 보인다</small></div>${tg}
+    <p class="mis-note">기록 — 적 전투원 ${R.en|0} · 조직원 ${R.ins|0} · 간첩 ${R.spy|0} · 수배자 ${R.want|0} · 현행범 ${R.crim|0} · 명부 대상 ${R.tgt|0} · 생포 ${R.cap|0} · 현상금 봉투 ${S.bounty|0}${S.viol?` · 위법 ${S.viol}`:''}</p>
+    <p class="mis-note">포고령·명부의 인물·조직은 모두 가상이다. 실제 법령·단체·사건과 관계없다.</p>`}
+document.addEventListener('click',e=>{const x=e.target.closest('[data-g3=roeclose]');if(x){e.preventDefault();e.stopPropagation();roePanel(false);return}const o=e.target.closest('[data-g3=roeopen]');if(o){e.preventDefault();e.stopPropagation();try{evBoard(false)}catch(e){}ROE.msg='';try{if(OUT.on&&!ROE.tg.length&&!(navigator.webdriver&&!window.__roeTest))roeTgMake()}catch(e){}roePanel(true);return}
+  const b=e.target.closest('[data-g3=roea]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();try{const a=b.dataset.a;if(a==='dep')ROE.msg=roeDepAsk();else if(a==='nav'){const T0=ROE.tg[+b.dataset.i];if(T0){TJ.goal={bx:T0.x,bz:T0.z};ROE.msg=`${T0.def.n} 쪽으로 길 안내를 켰다 — 미니맵의 초록 점.`}}roePanel(true)}catch(x){roeErr(x)}},true);
+(function(){const b=window.ebBoardRows;window.ebBoardRows=function(row){let h='';try{h=typeof b==='function'?b.apply(this,arguments):''}catch(e){console.error(e)}try{if(roeOn()){const S=roeS();const n=ROE.tg.filter(q=>!q.done).length;h+=row('⚖','전시 교전 수칙',`${S.dep?'임시 무장 대원':'민간인 신분'} · 전공 ${S.pts}${S.un?`(미정산 ${S.un})`:''} · 사살 허가 명부 ${n}곳`,S.dep?'':'임명 전','<button class="btn sm" data-g3="roeopen">열기</button>')}}catch(e){roeErr(e)}return h}})();
+(function(){const b=window.outReturn;if(typeof b==='function')window.outReturn=function(){try{roePanel(false)}catch(e){}return b.apply(this,arguments)}})();
+/* 설정: 전시 교전 수칙 표시(조준점 표시·전공·명부) 켜기/끄기 — 끄면 총 판정은 그대로(65) */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="roe"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('roe','전시 교전 수칙','조준점 아래 적법/위법 표시 · 임시 무장 대원 전공 · 사살 허가 명부(가상 포고령)',[[1,'켬'],[0,'끔']],store.get('sg.roe',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='roe')return;try{store.set('sg.roe',b.dataset.v==='1');if(b.dataset.v!=='1'){roeTgClear();const t=document.getElementById('roeTag');if(t)t.remove()}toast(b.dataset.v==='1'?'전시 교전 수칙: 조준점 표시·전공·사살 허가 명부를 켰다':'전시 교전 수칙 표시를 껐다(총 판정은 그대로)',2600)}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['⚖ 전시 교전 수칙 — 적법 사살(v13.4)','전시에 누구를 쏴도 되는가를 가상의 계엄 포고령이 정한다. <b>적법</b>: 적 전투원 · 무장 간첩 · 무장 반란·테러 조직원(무기를 든 동안) · 수배자 · 폭력·약탈 현행범 · 사살 허가 명부에 오른 자. <b>위법(전시에도 살인)</b>: 비무장 주민 · 손을 든 투항자 · 군·경·아군 — 막지는 않지만 임명 취소·전공 몰수·군 연행이 따른다. 아이와 가족은 애초에 맞지 않는다. 총을 겨누면 조준점 아래에 <b>⚖ 적법 / ⛔ 위법</b>이 뜬다. 상황판(🚨) → ⚖ 교전 수칙에서 <b>임시 무장 대원</b>으로 임명받으면 적법 사살이 전공으로 쌓이고, 대피소로 돌아갈 때 탄·현금 봉투로 정산된다(누적 15/40/80/140점에 총기 보급). <b>사살 허가 명부</b>: 외출마다 1~2곳(무장 탈영병·강도단·완장단 간부·검은 심지 폭파범, 모두 가상) — 미니맵 ⚖ 마름모, 찾아가면 그 자리에서 교전. 두목 사살 = 봉투 3, <b>손 든 두목을 묶어 넘기면 6</b>. 혼자 남은 적은 손을 들기도 한다 — 다가가 \'묶어서 넘긴다\'.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
