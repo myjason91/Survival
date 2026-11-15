@@ -13843,7 +13843,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='14.3';
+const APP_VER='14.4';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -23981,6 +23981,78 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=sw]');i
 ['pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,e=>{const a=e.target.closest&&e.target.closest('#swBtn');if(a)e.stopPropagation()},{capture:true,passive:true}));
 document.addEventListener('keydown',e=>{if(e.repeat||e.code!=='KeyB')return;const tg=e.target;if(tg&&/INPUT|TEXTAREA/.test(tg.tagName))return;try{if(SW.on){if(SW.ph!=='won')swEnd('retreat')}else if(swCan())swStart()}catch(x){swErr(x)}});
 if(typeof HELP84!=='undefined')HELP84.push(['🪜 계단 전투(v14.3)','아파트 전투에서 \'돌입조가 올라온다\'가 뜨면 위쪽 가운데 <b>🪜 계단에서 맞선다</b>(PC B) — 현관 밖 비상계단으로 나가 아래층에서 올라오는 돌입조와 싸운다. 막대를 보는 쪽으로 밀면 계단을 오르내리고, ⤓ 숙이면 난간벽 뒤로 숨는다. 위에서 아래로 쏘는 쪽이 유리하다. 다 막으면 현관 돌파 없이 승리 — <b>🚪 집으로 물러나기</b>를 누르면 남은 적이 현관을 부수고 들어온다(실내 근접전).']);
+
+/* ===================== 130 · v14.4 복면 범죄자 · 길거리 범죄 현장 — 전시 포고령(가상) 기준 합법 사살 대상 ===================== */
+/* 사용자 요청(2026-11-15 23:05): "복면쓴 케릭터들도 구현해 주시고 길거리에 사살가능한 범죄.불량배들도 배치해서 합법 살인 가능하게 해 주세여"
+   · 복면: 니트 복면(눈·입 구멍) 네 가지 색 · 두건(코·입 가림)+모자 — 범죄 무리에만 씌운다(가족·주민·팀원·군경에는 없다)
+   · 범죄 현장: 밖을 다니면 70~120m 앞(보는 쪽 우선)에 복면 무리 2~4명이 범행 중으로 나타난다(동시에 2곳까지, 70~150초마다)
+     - 🎭 복면 강도단: 주민 한 명을 손 들게 세워 놓고 턴다("가진 거 다 내놔!") · 🎒 복면 약탈단: 털어 온 자루를 옮긴다
+     - 미니맵에 붉은 마름모 · 조준점 아래 '⚖ 적법 · 무장 강도(복면)'(전시 교전 수칙 119 — 가상의 포고령). 피해 주민은 '⛔ 위법 · 피해 주민'(쏘면 주민 사격)
+   · 먼저 쏘면(또는 22m 안에서 들키면) 걷던 화면 그대로 교전(116): 권총·기관단총·산탄총으로 반격, 맞고 버티면 일부는 손을 든다(쏘면 위법 — E로 묶어서 넘김), 일부는 달아난다
+   · 끝나면: 현금 봉투(두목을 잡으면 +1) · 권총탄 · 피해 주민이 무사하면 이웃 신뢰 +1 · 전공(119 사살·생포 기록)
+   · 자동사격(126)은 범죄 무리에 쏘지 않는다(수동 판단) · 싸움 전 대기 중인 무리에도 쏘지 않는다
+   · 설정 '길거리 범죄'(기본 켬) · 교육용 모드·교전 끔이면 나오지 않는다. 범죄자는 행동으로만 정한다 — 실존 집단·국적·지역과 무관한 가상의 인물이다 */
+const CR={list:[],nextT:25,tT:0,err:0,seq:0,n:0,kills:0,mk:0};
+function crErr(e){if(CR.err<6){CR.err++;try{console.error(e)}catch(x){}}}
+function crOn(){try{return store.get('sg.crime',true)!==false&&!(typeof eduOn==='function'&&eduOn())&&store.get('sg.owc',true)!==false&&typeof tjUse==='function'&&tjUse()&&!(navigator.webdriver&&!window.__crTest)}catch(e){return false}}
+const CR_KIND={mug:{ico:'🎭',n:'복면 강도단',why:'주민을 손 들게 세워 놓고 털고 있다',say:['가진 거 다 내놔!','움직이면 쏜다!','빨리빨리 — 지갑!'],vsay:['살려 주세요…','다 드릴게요, 제발…']},
+  loot:{ico:'🎒',n:'복면 약탈단',why:'빈 상가에서 털어 온 자루를 옮기고 있다',say:['빨리 실어!','망 잘 봐!','이것도 챙겨!'],vsay:null}};
+const CR_MASK=[{k:'bala',c:'#17181b'},{k:'bala',c:'#2c3324'},{k:'band',c:'#7a1f1f'},{k:'bala',c:'#1d2433'},{k:'band',c:'#202226'},{k:'bala',c:'#46484c'}];
+/* ---------- 복면 ---------- */
+function crMask(h,i){const hd=h&&h.b&&h.b.head;if(!hd||h.crMask)return null;const M=CR_MASK[Math.abs(i|0)%CR_MASK.length];const g=new T.Group();g.name='crMask';const m=mat(M.c,{r:.96});const skin=mat((h.sp&&h.sp.skin)||'#c99b78',{r:.8});const dk=mat('#141414',{r:.6});
+  /* 머리 뼈 좌표: x = 위, y = 얼굴 앞, z = 옆(12g 안경 자리와 같다) */
+  if(M.k==='bala'){const s=MM(GG.sph(.118,12),m,.1,.012,0,{p:g,cast:false});s.scale.set(1.12,1.0,.95);MM(GG.box(.032,.012,.086),skin,.05,.126,0,{p:g,cast:false});for(const z of [-1,1])MM(GG.box(.012,.006,.014),dk,.05,.133,z*.022,{p:g,cast:false});MM(GG.box(.014,.01,.032),dk,-.012,.124,0,{p:g,cast:false});
+    /* 니트 결(머리 위 줄) */MM(GG.box(.006,.02,.17),mat(M.c,{r:1,e:'#000000'}),.215,.0,0,{p:g,cast:false})}
+  else{const b=MM(GG.sph(.1,10),m,.012,.078,0,{p:g,cast:false});b.scale.set(.78,.72,1.1);MM(GG.box(.05,.03,.05),m,-.07,.09,0,{p:g,cast:false,rz:.6});const cap=mat('#1e2024',{r:.85});const c=MM(GG.cyl(.112,.118,.075,12),cap,.18,.0,0,{p:g,cast:false,rz:-Math.PI/2});MM(GG.box(.012,.09,.15),cap,.15,.1,0,{p:g,cast:false})}
+  hd.add(g);h.crMask=g;return g}
+/* ---------- 현장 만들기 ---------- */
+function crBusy(){try{return (typeof IS!=='undefined'&&(IS.on||IS.pre.length>8))||OUT.drv||OUT.ride||OUT.enc||OUT.busy||OUT.mapOpen||(typeof APT!=='undefined'&&APT.on)||(typeof OWC!=='undefined'&&OWC.on)||(typeof US!=='undefined'&&US.cur)||(typeof SHOP!=='undefined'&&SHOP.on)||OUT.siren||(typeof EVD!=='undefined'&&EVD.cur)}catch(e){return true}}
+function crSpot(){let S=[];try{S=pedSegs()}catch(e){}if(!S.length)return null;const P=FP3.pos;const fx=-Math.sin(FP3.yaw),fz=-Math.cos(FP3.yaw);
+  for(let pass=0;pass<2;pass++)for(let t=0;t<140;t++){const g=S[Math.floor(Math.random()*S.length)];const u=Math.random();const x=g.ax+g.tx*g.L*u,z=g.az+g.tz*g.L*u;const dx=x-P.x,dz=z-P.z,d=Math.hypot(dx,dz);if(d<70||d>120)continue;if(pass===0&&(dx*fx+dz*fz)/d<.25)continue;
+    let ok=false;try{ok=owcFree(x,z,2.4)&&!CR.list.some(q=>Math.hypot(q.x-x,q.z-z)<100)&&!(OUT.npcs||[]).some(a=>(a.kind==='rok'||a.is)&&a.h&&Math.hypot(a.h.root.position.x-x,a.h.root.position.z-z)<70)&&!(typeof ROE!=='undefined'&&ROE.tg.some(q=>Math.hypot(q.x-x,q.z-z)<80))}catch(e){}if(ok)return{x,z}}return null}
+function crOpt(K){return{k:'crime',ico:K.ico,nm:K.n,arms:{gun:['m1911','p9s','smg45','dbs'],lead:['sgs','smg45','m1911'],rush:['m1911','p9s']},look:(t,seed)=>owcLook('spyg',seed),dress:(h,t,seed)=>crMask(h,seed),
+  stat:{gun:{n:'복면 강도'},rush:{n:'복면 강도'},lead:{n:'복면 강도 두목',hp:3}},noSurr:0,surrHit:.35,say:K.say[1]}}
+function crSpawn(force){const pt=force||crSpot();if(!pt)return null;const kind=Math.random()<.62?'mug':'loot';const K=CR_KIND[kind];const o=crOpt(K);const n=2+Math.floor(Math.random()*3);const types=['lead','gun','gun','rush'].slice(0,n);const sc={id:++CR.seq,kind,K,x:pt.x,z:pt.z,ag:[],vic:null,props:[],st:'near',t:0,sayT:1.5+Math.random()*2,o};
+  types.forEach((type,i)=>{let q=null;for(let t=0;t<24&&!q;t++){const a=Math.random()*6.283,d=1.3+Math.random()*2.2;const x=pt.x+Math.sin(a)*d,z=pt.z+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,.55)}catch(e){}if(ok&&!sc.ag.some(b=>Math.hypot(b.h.root.position.x-x,b.h.root.position.z-z)<1.2))q={x,z}}if(!q)return;
+    const a=isHoldMk(type,q.x,q.z,701+CR.seq*13+i*7,o);if(!a)return;a.crime=1;a.crSc=sc;a.tagL=type==='lead'?'⚖ 무장 강도 두목(복면)':'⚖ 무장 강도(복면)';a.h.root.rotation.y=Math.atan2(pt.x-q.x,pt.z-q.z);try{a.h.setPose(kind==='mug'&&i<2?'aim':i%2?'low':'idle',true)}catch(e){}sc.ag.push(a)});
+  if(sc.ag.length<2){try{isHoldDrop(sc.ag)}catch(e){}return null}
+  if(kind==='mug'){let h=null;try{h=makeHuman(owcLook('civ',740+CR.seq))}catch(e){h=null}if(h){h.root.position.set(pt.x,0,pt.z);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose('up',true)}catch(e){}const P=FP3.pos;h.root.rotation.y=Math.atan2(P.x-pt.x,P.z-pt.z);const v={h,kind:'civ',victim:1,nm:'피해 주민',tagL:'피해 주민 — 쏘지 마라',crSc:sc};OUT.npcs.push(v);sc.vic=v}}
+  else{const sm=mat('#5d5440',{r:.95});for(let i=0;i<3;i++){const a=Math.random()*6.283,d=.5+Math.random()*.8;const s=MM(GG.box(.5,.42,.36,.08),sm,pt.x+Math.sin(a)*d,.21,pt.z+Math.cos(a)*d,{p:OUT.scene});s.rotation.y=Math.random()*3;sc.props.push(s)}}
+  try{GUN.hits=[]}catch(e){}CR.list.push(sc);CR.n++;return sc}
+function crDrop(sc){try{isHoldDrop(sc.ag.filter(a=>typeof IS!=='undefined'&&IS.pre.includes(a)))}catch(e){crErr(e)}for(const a of sc.ag){if(a.gone)continue;try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}a.gone=1}
+  const v=sc.vic;if(v){try{v.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(v.h)}catch(e){}v.gone=1}for(const s of sc.props)try{s.removeFromParent()}catch(e){}OUT.npcs=(OUT.npcs||[]).filter(x=>!sc.ag.includes(x)&&x!==v);CR.list=CR.list.filter(x=>x!==sc);try{GUN.hits=[]}catch(e){}}
+/* ---------- 교전 ---------- */
+function crFight(sc,first){const live=sc.ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);if(!live.length){crDrop(sc);return false}const K=sc.K;
+  const o=Object.assign({},sc.o,{agents:live,waves:[[]],grace:first?2.2:1.0,dmin:20,dmax:40,intro:`<b>⚖ ${K.ico} ${K.n} — 무장 강도(복면)</b><div>${K.why}. ${first?'먼저 덮쳤다':'들켰다'} — 그 자리에서 교전. 피해 주민은 쏘지 않는다.</div>`,onEnd:r=>crAfter(sc,r)});
+  if(!isStart(o)){crDrop(sc);return false}sc.st='fight';try{if(sc.vic)bubSay(sc.vic.h,'엎드릴게요!',1.8,'bad')}catch(e){}return true}
+function crAfter(sc,r){sc.st='done';sc.doneT=0;const v=sc.vic;const vOk=!!(v&&!v.dead&&!(v.h&&v.h.dead));const boss=sc.ag.find(a=>a.type==='lead');const bossDown=!!(boss&&(boss.dead||boss.h.dead));const n=r.st.kills+r.st.tk;CR.kills+=r.st.kills||0;
+  if(r.win){let cash=1+(bossDown?1:0);G.inv=G.inv||{};G.inv.cash=(G.inv.cash||0)+cash;try{gunAmmoAdd(Math.random()<.5?'9mm':'45',12)}catch(e){}if(vOk){try{trust(1)}catch(e){}try{v.h.setPose('idle');bubSay(v.h,'살았다… 고맙습니다!',2.6,'ok')}catch(e){}}
+    try{const S=typeof roeS==='function'?roeS():null;if(S&&S.rec)S.rec.crime=(S.rec.crime|0)+1}catch(e){}
+    return`<b>⚖ ${sc.K.ico} ${sc.K.n} 제압</b><div>${n}명${r.st.fled?` · ${r.st.fled}명 도주`:''}${r.st.surr?` · ${r.st.surr}명 손 듦`:''}. 현금 봉투 ${cash} · 권총탄 12발${vOk?' · 피해 주민 무사(이웃 신뢰 +1)':''}. 받은 피해 ${r.st.dmg}.</div>`}
+  if(r.why==='escape')return`<b>${sc.K.n}을(를) 따돌렸다</b><div>${vOk?'피해 주민은 그 자리에 남았다.':''}</div>`;return`<b>쓰러졌다 — 끌려 나왔다</b><div>${sc.K.n}은(는) 자리를 옮겼다.</div>`}
+/* ---------- 매 프레임 ---------- */
+function crStep(dt){if(!OUT.on||!OUT.scene)return;if(!crOn()){if(CR.list.length)for(const sc of CR.list.slice())if(sc.st!=='fight')crDrop(sc);return}
+  CR.nextT-=dt;if(CR.nextT<=0){CR.nextT=70+Math.random()*80;if(CR.list.filter(s=>s.st!=='done').length<2&&!crBusy()&&(G.turn|0)>=1){let sc=null;try{sc=crSpawn()}catch(e){crErr(e)}if(!sc)CR.nextT=8}}
+  CR.tT-=dt;const tick=CR.tT<=0;if(tick)CR.tT=.25;const P=FP3.pos;
+  for(const sc of CR.list.slice()){const d=Math.hypot(sc.x-P.x,sc.z-P.z);sc.t+=dt;
+    if(sc.st==='near'){const live=sc.ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);
+      /* 말 */sc.sayT-=dt;if(sc.sayT<=0&&d<70){sc.sayT=3+Math.random()*2.5;try{const a=live[Math.floor(Math.random()*live.length)];if(a)bubSay(a.h,sc.K.say[Math.floor(Math.random()*sc.K.say.length)],2,'bad');if(sc.vic&&sc.K.vsay&&Math.random()<.5)setTimeout(()=>{try{if(sc.st==='near')bubSay(sc.vic.h,sc.K.vsay[Math.floor(Math.random()*sc.K.vsay.length)],2)}catch(e){}},900)}catch(e){}}
+      if(!tick)continue;if(typeof IS!=='undefined'&&IS.on)continue;if(!live.length){crDrop(sc);continue}
+      const hit=sc.ag.some(a=>a.dead||a.h.dead||a.flinch>0);if(hit){crFight(sc,true);continue}
+      if(d>190){crDrop(sc);continue}let los=false;try{const q=live[0].h.root.position;los=owcLos(q.x,1.45,q.z,P.x,1.4,P.z)}catch(e){}if(((d<22&&los)||d<11)&&!OUT.enc&&!OUT.busy&&!OUT.mapOpen&&!OUT.drv)crFight(sc,false);continue}
+    if(sc.st==='done'){sc.doneT=(sc.doneT||0)+dt;if(sc.doneT>25&&d>60)crDrop(sc)}}}
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(OUT.on&&!(typeof OWC!=='undefined'&&OWC.on))crStep(dt||0)}catch(e){crErr(e)}return r}})();
+(function(){const b=window.tjPopulate;if(typeof b==='function')window.tjPopulate=function(){CR.list=[];CR.nextT=25;return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;if(typeof b==='function')window.outReturn=function(){try{for(const sc of CR.list.slice())crDrop(sc);CR.list=[]}catch(e){crErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 판정 · 표시 ---------- */
+(function(){const b=window.roeOf;if(typeof b!=='function')return;window.roeOf=function(t){const a=t&&t.a;if(a&&a.victim)return{law:false,cat:'prot',n:'피해 주민'};if(a&&a.crime&&!a.surr&&!a.dead)return{law:true,cat:'crim',n:'무장 강도(복면)'};return b.apply(this,arguments)}})();
+/* 자동사격(126): 범죄 무리 · 싸움 전 대기 무리에는 쏘지 않는다 */
+(function(){const b=window.afOk;if(typeof b!=='function')return;window.afOk=function(t){const a=t&&t.a;if(a&&a.crime)return false;if(a&&a.is&&!(typeof IS!=='undefined'&&IS.on&&!IS.pre.includes(a)))return false;return b.apply(this,arguments)}})();
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{if(OUT.on)for(const sc of CR.list){if(sc.st==='done')continue;const [sx,sy]=toS(sc.x,sc.z);const s=5*scale;x.save();x.translate(sx,sy);x.rotate(Math.PI/4);x.fillStyle='#e0402e';x.strokeStyle='#0a0c10';x.lineWidth=1.4*scale;x.fillRect(-s,-s,2*s,2*s);x.strokeRect(-s,-s,2*s,2*s);x.restore();x.fillStyle='#fff';x.font=`900 ${Math.round(8*scale)}px system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('!',sx,sy+.5*scale)}}catch(e){}return r}})();
+/* 설정 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="crime"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('crime','길거리 범죄','복면 강도·약탈 무리가 범행 중으로 나타난다 — 전시 포고령(가상) 기준 사살·생포 대상',[[1,'켬'],[0,'끔']],store.get('sg.crime',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){crErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='crime')return;try{store.set('sg.crime',b.dataset.v==='1');toast(b.dataset.v==='1'?'길거리 범죄 현장이 나온다':'길거리 범죄 현장을 끈다',2000)}catch(x){crErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎭 복면 범죄자(v14.4)','밖을 다니면 앞쪽 70~120m에 <b>복면 무리</b>가 범행 중으로 나타난다(미니맵 붉은 마름모 !) — 🎭 강도단(주민을 세워 놓고 턴다) · 🎒 약탈단(자루를 옮긴다). 조준점 아래 <b>⚖ 적법 · 무장 강도(복면)</b> — 전시 포고령(가상)으로 사살할 수 있다. 피해 주민은 <b>⛔ 위법</b>. 먼저 쏘거나 22m 안에서 들키면 그 자리에서 교전 — 손 든 자는 쏘지 말고 E로 묶어서 넘긴다. 끝나면 현금 봉투·권총탄, 주민이 무사하면 이웃 신뢰 +1. 자동사격은 이들에게 쏘지 않는다(직접 판단). 설정 \'길거리 범죄\'로 끈다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
