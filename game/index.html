@@ -1768,6 +1768,19 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 @keyframes olBlink{to{opacity:.22}}
 .sv3.cine-on .ol-hud,.sv3.br-on .ol-hud{visibility:hidden}
 @media (max-height:420px){.ol-hud b{font-size:19px}}
+/* v15.1 임무 틀 2.0 · 무법자 1막 */
+.oj-hud{border-color:rgba(255,204,51,.6)}.oj-hud b{color:#ffd86a}.oj-hud span{font-weight:700;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.oj-call{position:absolute;left:50%;top:122px;transform:translateX(-50%);z-index:9;display:flex;flex-direction:column;gap:2px;width:min(440px,calc(100% - 300px));min-width:240px;padding:8px 12px;border-radius:12px;background:rgba(12,14,18,.9);border:1px solid rgba(255,204,51,.55);color:#f1f1ea;font:600 13px/1.35 var(--sans,system-ui);box-shadow:0 6px 18px rgba(0,0,0,.5);pointer-events:auto;animation:ojIn .25s ease-out}
+.oj-call b{font-size:12px;color:#ffd86a}
+@keyframes ojIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+.oj-end{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:21;width:min(380px,calc(100% - 24px));padding:14px 16px;border-radius:16px;background:rgba(8,11,15,.95);border:1.5px solid rgba(255,204,51,.7);color:#f1f1ea;text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.6);pointer-events:auto}
+.oj-end.no{border-color:rgba(255,110,90,.75)}
+.oj-end small{display:block;font:800 12px var(--sans,system-ui);letter-spacing:.06em;color:#ffd86a}.oj-end.no small{color:#ff9a86}
+.oj-end b{display:block;font-size:18px;margin:4px 0 8px}.oj-end p{font-size:13px;color:#cfd6dc;margin:6px 0}
+.oj-end dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;text-align:left;font-size:13px;margin:8px auto;max-width:290px}.oj-end dt{color:#9aa3ad}.oj-end dd{margin:0;font-weight:800}
+.oj-btns{display:flex;gap:8px;justify-content:center;margin-top:10px}.oj-btns .btn{width:auto;flex:none;padding:8px 14px}
+.oj-sec{margin-top:6px;border-top:2px solid rgba(255,204,51,.35);padding-top:6px}.oj-head{display:flex;justify-content:space-between;align-items:baseline;padding:2px 6px}.oj-head b{color:#ffd86a;font-size:14px}.oj-head small{font-size:11.5px;color:#9aa3ad}
+.sv3.cine-on .oj-call,.sv3.br-on .oj-call{visibility:hidden}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13855,7 +13868,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='15.0';
+const APP_VER='15.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -24230,6 +24243,125 @@ function olHitGuard(t,pt,d,W){const a=t.a||{};const h=t.h;if(a.dead||(h&&h.dead)
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="outlaw"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('outlaw','주인공 성향','무법자: 무슨 짓이든 막지 않지만 수배(★)·치안대 추격으로 돌아온다 · 해결사: 주민·군경을 쏘면 바로 연행(예전 방식)',[[1,'🏴 무법자'],[0,'⚖ 해결사']],store.get('sg.outlaw',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){olErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='outlaw')return;try{store.set('sg.outlaw',b.dataset.v==='1');if(b.dataset.v!=='1'&&OL.star)olReset();toast(b.dataset.v==='1'?'🏴 무법자 — 막지 않는다. 대신 수배가 따라온다':'⚖ 해결사 — 주민·군경을 쏘면 바로 연행된다',2400)}catch(x){olErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🚨 무법자 · 수배 ★(v15.0)','설정 <b>주인공 성향</b> — 🏴 무법자(기본)는 주민·군인을 쏘거나 사람을 쳐도 막지 않는다. 대신 <b>수배 ★1~5</b>가 오른다(오른쪽 위). 본 사람이 없으면 늦게 신고된다. ★1 치안대 2인 순찰조 · ★2 무장 4명 · ★3 감시 드론 · ★4 체포조 6명과 도로 검문선 · ★5 저격조·드론 떼. 미니맵의 원이 수색 범위, 파란 점이 치안대. <b>시야를 끊으면 ★가 깜빡이며 수색 시간이 준다</b> — 범위 밖 ×2, 집·상가 안 ×3, 들키지 않고 차를 바꾸면 −40%. 끝나면 해제. 치안대가 붙은 채 멈춰 있으면 <b>체포</b>(총·탄 압수 · 현금 절반), 쓰러지면 의료실. 치안대·드론은 <b>⛔ 위법</b> — 쏘면 ★가 오르고 자동사격은 쏘지 않는다. 계엄 치안대는 가상의 조직이다. ⚖ 해결사를 고르면 예전처럼 바로 연행된다.']);
+
+/* ===================== 132 · v15.1 임무 틀 2.0 + 무법자 1막(도 사장의 일감 3) ===================== */
+/* 사용자 결정(2026-11-16 06:45 "무법자") — v15.0 수배(131) 위에 GTA형 이야기 임무를 얹는다
+   · 임무 틀 2.0: 임무 = 단계 목록(데이터). 단계 종류 — 가기(go) · 맞서기(fight) · 줍기(pick) · 타기(drive) · 수배(heat) · 따돌리기(lose) · 넘기기(deliver)
+     전화 연출(위쪽 가운데 '📞 도 사장' 말 줄) · 표식(노란 기둥 + 미니맵 노란 별) · 위쪽 임무 띠(지금 할 일 · 거리 · 포기)
+     실패(시간 초과 · 놈들이 달아남 · 차가 망가짐) → '체크포인트부터 다시 / 그만' · 체포·쓰러짐은 그 외출에서 실패로 끝(미션 패널에서 다시)
+     완료 화면(걸린 시간 · 쓰러뜨린 수 · 최고 수배 ★ · 보상) · 기록은 이 기기에만(sg.oj)
+   · 무법자 1막 — 의뢰인 '도 사장'(가상의 고물상 주인 · 해결사) · 경쟁 일당 '검은 장갑'(복면 · 행동으로만 정한 가상의 무리)
+     ① 💼 첫 일감 — 물건 회수: 검은 장갑 차를 지키는 넷 → 가방 → 총격전 신고 ★ → 따돌리고 고물상으로
+     ② 🚐 운반 — 연료 밀수 승합차: 표시된 차에 열쇠 → 타는 순간 도난 신고 ★★ → 떨치고 차고로(꼬리 달고 오면 문이 안 열린다 · 차를 버리면 안 된다)
+     ③ 🏚 빚 받기 — 검은 장갑 창고: 문 앞 둘 + 안쪽 증원 → 돈 상자 → ★★★ → 따돌리고 고물상으로 = 1막 끝
+   · 무법자 성향에서만 열린다(해결사면 잠김) · 수배 중에는 새 일감을 받지 않는다 · 교육용 모드 없음 · 모든 인물·무리는 가상 */
+const OJ={cur:null,uiT:0,err:0,callQ:[],callT:0,callEl:null,last:null,seq:0};
+const OJ_BOSS='도 사장';
+function ojErr(e){if(OJ.err<6){OJ.err++;try{console.error(e)}catch(x){}}}
+function ojOn(){try{return typeof olOn==='function'&&olOn()}catch(e){return false}}
+function ojRec(){const r=store.get('sg.oj',null);const o=r&&typeof r==='object'?r:{};return{done:o.done&&typeof o.done==='object'?o.done:{},best:o.best&&typeof o.best==='object'?o.best:{},fail:o.fail&&typeof o.fail==='object'?o.fail:{},act1:+o.act1||0}}
+function ojSave(f){const R=ojRec();f(R);store.set('sg.oj',R);return R}
+const ojFmt=s=>{s=Math.max(0,Math.round(s));const m=Math.floor(s/60),r=s-m*60;return`${m}:${r<10?'0':''}${r}`};
+/* ---------- 자리 · 표식 ---------- */
+function ojSpot(dmin,dmax,o){o=o||{};let S=[];try{S=pedSegs()}catch(e){}const P=o.from||FP3.pos;for(let pass=0;pass<2;pass++)for(let t=0;t<500;t++){const g=S[Math.floor(Math.random()*S.length)];if(!g)break;const u=Math.random();const x=g.ax+g.tx*g.L*u,z=g.az+g.tz*g.L*u;const d=Math.hypot(x-P.x,z-P.z);if(d<dmin*(pass?.7:1)||d>dmax*(pass?1.3:1))continue;let ok=false;try{ok=owcFree(x,z,o.r||2.4)}catch(e){}if(!ok)continue;if((o.away||[]).some(q=>q&&Math.hypot(x-q.x,z-q.z)<(o.awayD||110)))continue;return{x,z}}return null}
+function ojMark(p){const C=OJ.cur;if(C&&C.mk){try{C.mk.removeFromParent()}catch(e){}C.mk=null}if(!C||!p||!OUT.scene)return;try{C.mk=misPillar(OUT.scene,p.x,p.z,'#ffcc33',14)}catch(e){ojErr(e)}C.tgt=p}
+function ojProp(C,m){if(m){C.props.push(m)}return m}
+function ojCleanup(C){if(!C)return;for(const m of C.props)try{m.removeFromParent()}catch(e){}C.props=[];const L=C.ag.filter(a=>typeof IS!=='undefined'&&IS.pre.includes(a));try{if(L.length)isHoldDrop(L)}catch(e){}for(const a of C.ag){if(a.gone)continue;if(typeof IS!=='undefined'&&IS.on&&IS.en.includes(a))continue;try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}a.gone=1}OUT.npcs=(OUT.npcs||[]).filter(x=>!C.ag.includes(x)||!x.gone);C.ag=[];try{GUN.hits=[]}catch(e){}if(C.mk){try{C.mk.removeFromParent()}catch(e){}C.mk=null}}
+/* ---------- 전화 ---------- */
+function ojCall(lines,then){OJ.callQ.push(...lines.map(l=>({who:l[0],t:l[1]})));if(then)OJ.callQ.push({fn:then});if(!OJ.callEl)ojCallNext(true)}
+function ojCallNext(ring){const el0=SV3.el;let q=OJ.callQ.shift();while(q&&q.fn){try{q.fn()}catch(e){ojErr(e)}q=OJ.callQ.shift()}let el=document.getElementById('ojCall');if(!q){if(el)el.remove();OJ.callEl=null;return}
+  if(!el&&el0){el=document.createElement('div');el.id='ojCall';el.className='oj-call';el0.appendChild(el);el.addEventListener('click',()=>{OJ.callT=0})}OJ.callEl=el;if(el)el.innerHTML=`<b>📞 ${q.who}</b><span>${q.t}</span>`;OJ.callT=Math.max(2.4,Math.min(5,1.2+q.t.length*.055));OJ.callN=(OJ.callN|0)+1;
+  if(ring)try{SND.tone(1320,.09,'sine',.05);SND.tone(1320,.09,'sine',.05,.16)}catch(e){}}
+function ojCallStep(dt){if(!OJ.callEl&&!OJ.callQ.length)return;if(OJ.callEl&&!OJ.callEl.isConnected&&SV3.el){SV3.el.appendChild(OJ.callEl)}OJ.callT-=dt;if(OJ.callT<=0)ojCallNext(false)}
+function ojCallSkip(){OJ.callT=0;let g=0;while((OJ.callEl||OJ.callQ.length)&&g++<40)ojCallNext(false)}
+/* ---------- 단계 만들기(데이터) ---------- */
+const OJS={
+  go:(key,r,txt,enter)=>({k:'go',txt,enter(C){const p=C.p[key];ojMark(p);if(enter)enter(C)},step(C){const p=C.p[key];if(!p)return'fail:자리를 찾지 못했다';return Math.hypot(p.x-FP3.pos.x,p.z-FP3.pos.z)<r?'next':null},dist:C=>C.p[key]}),
+  fight:(txt,mk)=>({k:'fight',txt,enter(C){C.fr=null;C.fOn=0;C.fT=0},step(C,dt){if(C.fr){const r=C.fr;C.fr=null;if(r.win)return'next';if(r.why==='escape')return'fail:놈들이 물건을 들고 달아났다';if(r.why==='down')return'hard:쓰러졌다';return null}
+    if(C.fOn)return null;C.fT+=dt;const live=C.ag.filter(a=>!a.gone&&!a.dead&&!a.h.dead);if(!live.length&&C.fT>.5)return'next';const P=FP3.pos;let near=false,hit=false;for(const a of live){const q=a.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(a.flinch>0)hit=true;if(d<12)near=true;else if(d<30){try{if(owcLos(q.x,1.45,q.z,P.x,1.4,P.z))near=true}catch(e){}}}
+    if((near||hit||C.ag.some(a=>a.dead||a.h.dead))&&!(typeof IS!=='undefined'&&IS.on)){const o=mk(C,live);let ok=false;try{ok=isStart(o)}catch(e){ojErr(e)}if(ok){C.fOn=1;for(const a of IS.en)if(!C.ag.includes(a)){a.crime=1;a.oj=1;C.ag.push(a)}}}return null},dist:C=>C.tgt}),
+  pick:(key,txt,msg)=>({k:'pick',txt,enter(C){const p=C.p[key];ojMark(p);const sm=mat('#5d4630',{r:.9});const g=new T.Group();g.position.set(p.x,0,p.z);OUT.scene.add(g);MM(GG.box(.55,.34,.3,.06),sm,0,.17,0,{p:g});MM(GG.box(.2,.05,.04),mat('#222'),0,.37,0,{p:g,cast:false});C.item=ojProp(C,g)},
+    step(C,dt){const p=C.p[key];if(C.item)C.item.rotation.y+=dt*.8;if(Math.hypot(p.x-FP3.pos.x,p.z-FP3.pos.z)<2.4&&!OUT.drv){try{C.item.removeFromParent()}catch(e){}C.item=null;try{SND.ok&&SND.ok();vib(30)}catch(e){}try{outNote(`<b>${msg}</b>`,2200)}catch(e){}return'next'}return null},dist:C=>C.p[key]}),
+  heat:(n,why)=>({k:'heat',txt:why,enter(C){ojMark(null)},step(C){try{if(OL.star<n){const need=Math.max(.5,(OL_T[n]||0)-OL.pts+.01);olAdd(need,why,{})}}catch(e){ojErr(e)}C.heated=n;return'next'}}),
+  lose:(txt,fail)=>({k:'lose',txt,enter(C){ojMark(null)},step(C){if(fail){const f=fail(C);if(f)return'fail:'+f}return OL.star===0?'next':null}}),
+  drive:(txt)=>({k:'drive',txt,enter(C){ojMark(C.p.van)},step(C){const D=OUT.drv;if(C.dc&&G.outDone&&G.outDone['dead:drv:'+C.dc.i])return'fail:승합차가 망가졌다';if(D&&D.dc===C.dc){ojMark(null);return'next'}if(C.dc)C.p.van={x:C.dc.car.position.x,z:C.dc.car.position.z};return null},dist:C=>C.p.van}),
+  deliver:(key,r,txt,o)=>({k:'deliver',txt,o:o||{},enter(C){ojMark(C.p[key]);C.dWarn=0},step(C,dt){const p=C.p[key];const O=this.o;if(O.car&&C.dc&&G.outDone&&G.outDone['dead:drv:'+C.dc.i])return'fail:승합차가 망가졌다';const d=Math.hypot(p.x-FP3.pos.x,p.z-FP3.pos.z);C.dWarn=Math.max(0,C.dWarn-dt);
+    if(d<r){if(OL.star>0){if(C.dWarn<=0){C.dWarn=6;try{outNote('<b>🚨 꼬리가 붙었다</b><div>"치안대 달고 오지 마!" — 먼저 따돌리고 다시 온다.</div>',2600)}catch(e){}}return null}if(O.car&&!(OUT.drv&&OUT.drv.dc===C.dc)){if(C.dWarn<=0){C.dWarn=6;try{outNote('<b>🚐 승합차를 몰고 와야 한다</b><div>"물건이 차에 있잖아!"</div>',2600)}catch(e){}}return null}return'next'}return null},dist:C=>C.p[key]})};
+/* ---------- 검은 장갑(복면 · 가상) ---------- */
+function ojCrewOpt(C,extra){return Object.assign({k:'crime',ico:'🧤',nm:'검은 장갑',arms:{gun:['m1911','smg45','p9s','dbs'],lead:['sgs','smg45'],rush:['m1911','p9s']},look:(t,seed)=>owcLook('spyg',seed),dress:(h,t,seed)=>{try{crMask(h,seed)}catch(e){}},
+  stat:{gun:{n:'검은 장갑'},rush:{n:'검은 장갑'},lead:{n:'검은 장갑 두목',hp:3.2}},noSurr:1,surrHit:0,say:'검은 장갑이에요! 엎드려요!',onEnd:r=>{C.fr=r;C.kills+=(r.st.kills||0)+(r.st.tk||0);return r.win?`<b>🧤 검은 장갑 ${(r.st.kills||0)+(r.st.tk||0)}명 제압</b><div>받은 피해 ${r.st.dmg}.</div>`:''}},extra||{})}
+function ojCrew(C,types,c,rad,seed){const o=ojCrewOpt(C);for(let i=0;i<types.length;i++){let q=null;for(let t=0;t<30&&!q;t++){const a=Math.random()*6.283,d=1.5+Math.random()*(rad||4);const x=c.x+Math.sin(a)*d,z=c.z+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,.55)}catch(e){}if(ok&&!C.ag.some(b=>Math.hypot(b.h.root.position.x-x,b.h.root.position.z-z)<1.2))q={x,z}}if(!q)continue;
+  let a=null;try{a=isHoldMk(types[i],q.x,q.z,(seed||1500)+OJ.seq*17+i*7,o)}catch(e){ojErr(e)}if(!a)continue;a.crime=1;a.oj=1;a.tagL=types[i]==='lead'?'⚖ 검은 장갑 두목(복면)':'⚖ 검은 장갑(복면)';a.h.root.rotation.y=Math.random()*6.283;try{a.h.setPose(i%2?'low':'idle',true)}catch(e){}C.ag.push(a)}return C.ag.length}
+function ojCar(C,p,type,col){let g=null;try{g=vehMake(type||'sedan',col||'#202226',OUT.scene,false);g.position.set(p.x,0,p.z);g.rotation.y=Math.random()*6.283;ojProp(C,g)}catch(e){ojErr(e)}return g}
+/* ---------- 1막 ---------- */
+const OJ_ACT1=[
+ {id:'a1m1',ico:'💼',n:'첫 일감 — 물건 회수',d:'검은 장갑이 가져간 도 사장의 가방을 되찾아 고물상으로',reward:{cash:3},
+  call:[[OJ_BOSS,'자네가 요즘 겁 없이 다닌다는 그 사람인가? 일감 하나 주지.'],[OJ_BOSS,'검은 장갑 놈들이 내 가방을 털어 갔어. 놈들 차 옆에 있다.'],[OJ_BOSS,'가방만 찾아와. 놈들은… 알아서 하고.']],
+  setup(C){const P=FP3.pos;C.p.rival=ojSpot(170,260);if(!C.p.rival)return false;C.p.yard=ojSpot(200,330,{away:[C.p.rival],awayD:120});if(!C.p.yard)return false;const a=Math.random()*6.283;C.p.bag={x:C.p.rival.x+Math.sin(a)*1.6,z:C.p.rival.z+Math.cos(a)*1.6};return true},
+  stages:[Object.assign(OJS.go('rival',32,'검은 장갑 차 쪽으로',C=>{if(!C.ag.length){ojCar(C,C.p.rival,'sedan','#1b1c1f');ojCrew(C,['lead','gun','gun','rush'],C.p.rival,4.5,1500)}}),{ck:1}),
+    OJS.fight('검은 장갑을 정리한다',(C,live)=>Object.assign(ojCrewOpt(C),{agents:live,waves:[[]],grace:1.4,dmin:20,dmax:40,intro:'<b>🧤 검은 장갑 — 그 자리에서 교전</b><div>가방은 차 옆에 있다. 손 든 자는 쏘지 않는다.</div>'})),
+    OJS.pick('bag','가방을 챙긴다','💼 가방을 챙겼다'),
+    OJS.heat(1,'총격전 신고 — 치안대 출동'),
+    Object.assign(OJS.lose('수배를 떨친다 — 그다음 고물상으로'),{ck:1,say:'좋아, 가방 들었지? 꼬리부터 떼고 와.'}),
+    OJS.deliver('yard',6,'도 사장 고물상에 가방을 넘긴다')],
+  done:[[OJ_BOSS,'하하, 일 깔끔하군. 다음에도 부르지.']]},
+ {id:'a1m2',ico:'🚐',n:'운반 — 연료 밀수 승합차',d:'표시된 차를 몰고 수배를 떨친 뒤 차고로(차를 버리면 실패)',reward:{cash:4},
+  call:[[OJ_BOSS,'연료를 실은 차가 있다. 주인은… 신경 쓰지 마.'],[OJ_BOSS,'열쇠는 앞바퀴 위에 있어. 타자마자 신고가 들어갈 거다.'],[OJ_BOSS,'차고 문은 꼬리 달고 오면 안 열린다. 명심해.']],
+  setup(C){const P=FP3.pos;const done=G.outDone||(G.outDone={});const L=(OUT.dcars||[]).filter(d=>!done['dead:drv:'+d.i]&&!(OUT.drv&&OUT.drv.dc===d)).map(d=>({d,r:Math.hypot(d.car.position.x-P.x,d.car.position.z-P.z)})).filter(q=>q.r>60);if(!L.length)return false;L.sort((a,b)=>Math.abs(a.r-180)-Math.abs(b.r-180));C.dc=L[0].d;done['key:drv:'+C.dc.i]=1;C.p.van={x:C.dc.car.position.x,z:C.dc.car.position.z};C.p.garage=ojSpot(220,340,{from:C.p.van,away:[P],awayD:90});return !!C.p.garage},
+  stages:[Object.assign(OJS.go('van',7,'표시된 차로 — 열쇠는 앞바퀴 위'),{ck:1}),OJS.drive('운전석에 탄다'),OJS.heat(2,'밀수 차량 도난 신고'),
+    Object.assign(OJS.lose('★★를 떨친다 — 차는 버리지 않는다',C=>G.outDone&&G.outDone['dead:drv:'+C.dc.i]?'승합차가 망가졌다':null),{say:'신고 들어갔다! 따돌려!'}),
+    OJS.deliver('garage',9,'차고에 승합차를 넣는다',{car:1})],
+  done:[[OJ_BOSS,'연료 무사히 들어왔다. 자넨 운전도 하는군.']]},
+ {id:'a1m3',ico:'🏚',n:'빚 받기 — 검은 장갑 창고',d:'창고를 덮쳐 돈 상자를 가져온다 — 1막 마지막',reward:{cash:6,gun:'smg45'},
+  call:[[OJ_BOSS,'검은 장갑이 내 돈을 깔고 앉았다. 창고에 있어.'],[OJ_BOSS,'문 앞에 둘, 안에서 더 나올 거다. 돈 상자만 가져와.'],[OJ_BOSS,'이번엔 시끄러울 거다. 치안대가 크게 붙을 테니 각오해.']],
+  setup(C){C.p.wh=ojSpot(200,320,{r:3});if(!C.p.wh)return false;C.p.yard=ojSpot(220,340,{away:[C.p.wh],awayD:130});if(!C.p.yard)return false;C.p.box={x:C.p.wh.x+1.2,z:C.p.wh.z-1.2};return true},
+  stages:[Object.assign(OJS.go('wh',38,'검은 장갑 창고로',C=>{if(!C.ag.length){const sm=mat('#6b5a3e',{r:.95});for(let i=0;i<5;i++){const a=i*1.26,d=3.2+Math.random();const m=MM(GG.box(1,1,1,.05),sm,C.p.wh.x+Math.sin(a)*d,.5,C.p.wh.z+Math.cos(a)*d,{p:OUT.scene});m.rotation.y=Math.random();ojProp(C,m)}ojCrew(C,['gun','gun'],C.p.wh,3,1600)}}),{ck:1}),
+    OJS.fight('창고를 덮친다 — 안에서 더 나온다',(C,live)=>Object.assign(ojCrewOpt(C),{agents:live,waves:[[],['lead','gun','gun','rush']],at:{x:C.p.wh.x,z:C.p.wh.z,r:9},atAll:1,grace:1.4,dmin:20,dmax:40,more:'창고 안에서 더 나온다',intro:'<b>🧤 검은 장갑 창고 — 교전</b><div>문 앞 둘을 정리하면 안에서 더 나온다.</div>'})),
+    OJS.pick('box','돈 상자를 챙긴다','💰 돈 상자를 챙겼다'),
+    OJS.heat(3,'창고 총격전 신고 — 대규모 출동'),
+    Object.assign(OJS.lose('★★★를 떨친다 — 드론을 조심'),{ck:1,say:'됐다! 치안대가 크게 붙었다 — 하늘도 봐!'}),
+    OJS.deliver('yard',6,'도 사장 고물상에 돈 상자를 넘긴다')],
+  done:[[OJ_BOSS,'자네 덕에 빚은 다 받았다.'],[OJ_BOSS,'이 동네에서 자네 이름이 돌기 시작했어. 다음 막에서 보자.']]}];
+/* ---------- 진행 ---------- */
+function ojAvail(def){const R=ojRec();const i=OJ_ACT1.indexOf(def);if(i>0&&!R.done[OJ_ACT1[i-1].id])return'앞 임무를 끝내면 열린다';if(!ojOn())return'주인공 성향이 무법자일 때 열린다';if(OJ.cur)return'진행 중인 임무가 있다';if(typeof MIS!=='undefined'&&MIS.cur)return'다른 미션을 하는 중이다';if(typeof OL!=='undefined'&&OL.star>0)return'수배 중에는 일감을 받지 않는다 — 먼저 따돌린다';if(OUT.drv&&def.id==='a1m2')return'차에서 내린 뒤 받는다';return''}
+function ojStart(id){const def=OJ_ACT1.find(d=>d.id===id);if(!def||!OUT.on)return false;const why=ojAvail(def);if(why){try{toast(why,2200)}catch(e){}return false}OJ.seq++;
+  const C={def,i:-1,ck:0,t:0,stT:0,p:{},ag:[],props:[],kills:0,max:0,busts0:(OL.busts|0),wasted0:(OL.wasted|0),dc:null,mk:null,tgt:null};let ok=false;try{ok=def.setup(C)}catch(e){ojErr(e)}if(!ok){try{toast('지금 이 근처에서는 일감을 줄 수 없다 — 조금 옮겨서 다시',2400)}catch(e){}return false}
+  OJ.cur=C;try{ojCall(def.call,null)}catch(e){ojErr(e)}ojStage(0);try{if(typeof misPanel==='function')misPanel(false)}catch(e){}OJ.uiT=0;return true}
+function ojStage(i){const C=OJ.cur;if(!C)return;const st=C.def.stages[i];C.i=i;C.st=st;C.stT=0;if(!st){ojComplete();return}if(st.ck)C.ck=i;try{if(st.enter)st.enter(C)}catch(e){ojErr(e)}if(st.say)ojCall([[OJ_BOSS,st.say]]);OJ.uiT=0}
+function ojStep(dt){ojCallStep(dt);const C=OJ.cur;if(!C)return;if(!OUT.on){ojAbort();return}C.t+=dt;C.stT+=dt;try{C.max=Math.max(C.max,OL.star|0)}catch(e){}
+  if((OL.busts|0)>C.busts0){ojFail('치안대에 체포됐다',true);return}if((OL.wasted|0)>C.wasted0){ojFail('쓰러졌다',true);return}
+  const st=C.st;if(!st)return;if(OUT.enc&&st.k!=='lose')return;let r=null;try{r=st.step(C,dt)}catch(e){ojErr(e)}if(r==='next'){ojStage(C.i+1);return}if(typeof r==='string'&&r.indexOf('fail:')===0){ojFail(r.slice(5));return}if(typeof r==='string'&&r.indexOf('hard:')===0){ojFail(r.slice(5),true);return}
+  OJ.uiT-=dt;if(OJ.uiT<=0){OJ.uiT=.25;ojHud()}}
+function ojHud(){const C=OJ.cur;const el0=SV3.el;let h=document.getElementById('ojHud');if(!C||!el0){if(h)h.remove();return}if(!h||h.parentNode!==el0){if(h)h.remove();h=document.createElement('div');h.id='ojHud';h.className='mis-hud oj-hud';el0.appendChild(h)}const st=C.st||{};let dd='';const p=st.dist?st.dist(C):null;if(p)dd=`${Math.round(Math.hypot(p.x-FP3.pos.x,p.z-FP3.pos.z))}m`;
+  const html=`<b>${C.def.ico} ${C.def.n}</b><span>${C.i+1}/${C.def.stages.length} · ${st.txt||''}</span>${dd?`<i>${dd}</i>`:''}<button data-g3="ojquit">포기</button>`;if(h._h!==html){h._h=html;h.innerHTML=html}}
+function ojReward(def){const W=def.reward||{};const out=[];if(W.cash){G.inv=G.inv||{};G.inv.cash=(G.inv.cash||0)+W.cash;out.push(`현금 봉투 ${W.cash}`)}if(W.gun){try{if(!gunHas(W.gun)){gunAdd(W.gun,{force:true,ammo:60});out.push(ARMS[W.gun].n)}else{gunAmmoAdd(ARMS[W.gun].am,60);out.push(`${ARMS[W.gun].n} 탄 60`)}}catch(e){ojErr(e)}}return out}
+function ojComplete(){const C=OJ.cur;if(!C)return;const def=C.def;const got=ojReward(def);let first=false,best=false;const R=ojSave(R=>{first=!R.done[def.id];R.done[def.id]=(R.done[def.id]|0)+1;if(!R.best[def.id]||C.t<R.best[def.id]){best=!!R.best[def.id];R.best[def.id]=Math.round(C.t)}if(def.id==='a1m3')R.act1=1});
+  ojCleanup(C);OJ.cur=null;ojHud();OJ.last={id:def.id,ok:1};try{SND.ok&&SND.ok();vib([40,40,90])}catch(e){}try{FX=[];trust(def.id==='a1m3'?-2:-1);OUT.fx.push(...FX);outStat()}catch(e){}
+  const actEnd=def.id==='a1m3'&&first;ojCall(def.done||[]);ojEndUI({ok:1,def,t:C.t,kills:C.kills,max:C.max,got,best,actEnd})}
+function ojFail(why,hard){const C=OJ.cur;if(!C)return;C.why=why;ojSave(R=>{R.fail[C.def.id]=(R.fail[C.def.id]|0)+1});OJ.last={id:C.def.id,ok:0,why};try{SND.bad&&SND.bad()}catch(e){}
+  if(hard){ojCleanup(C);OJ.cur=null;ojHud();OJ.callQ=[];try{const el=document.getElementById('ojCall');if(el)el.remove();OJ.callEl=null}catch(e){}return}
+  C.failed=1;ojEndUI({ok:0,def:C.def,why,t:C.t,kills:C.kills,max:C.max,ck:C.ck})}
+function ojRetry(){const C=OJ.cur;if(!C)return;try{if(typeof IS!=='undefined'&&IS.on&&IS.o&&IS.o.k==='crime')isEnd('escape',true)}catch(e){}const keep=C.ck;const def=C.def;ojCleanup(C);C.failed=0;C.ag=[];C.props=[];
+  if(keep===0){let ok=false;try{ok=def.setup(C)}catch(e){ojErr(e)}if(!ok){ojQuit();return}}C.busts0=OL.busts|0;C.wasted0=OL.wasted|0;ojStage(keep);try{outNote(`<b>🔁 체크포인트부터 다시</b><div>${C.st?C.st.txt:''}</div>`,2200)}catch(e){}}
+function ojQuit(){const C=OJ.cur;if(!C)return;try{if(typeof IS!=='undefined'&&IS.on&&IS.o&&IS.o.k==='crime'&&C.ag.some(a=>IS.en.includes(a)))isEnd('escape',true)}catch(e){}ojCleanup(C);OJ.cur=null;ojHud();OJ.callQ=[];try{const el=document.getElementById('ojCall');if(el)el.remove();OJ.callEl=null}catch(e){}}
+function ojAbort(){if(!OJ.cur)return;OJ.last={id:OJ.cur.def.id,ok:0,why:'외출이 끝나 중단됐다'};OJ.cur.props.forEach(m=>{try{m.removeFromParent()}catch(e){}});OJ.cur=null;OJ.callQ=[];OJ.callEl=null}
+function ojEndUI(R){const el0=SV3.el;if(!el0)return;let el=document.getElementById('ojEnd');if(el)el.remove();el=document.createElement('div');el.id='ojEnd';el.className='oj-end '+(R.ok?'ok':'no');
+  const stat=`<dl><dt>걸린 시간</dt><dd>${ojFmt(R.t)}${R.best?' · 새 최고':''}</dd><dt>쓰러뜨린 수</dt><dd>${R.kills|0}</dd><dt>최고 수배</dt><dd>${R.max?'★'.repeat(R.max):'없음'}</dd>${R.ok?`<dt>보상</dt><dd>${(R.got||[]).join(' · ')||'—'}</dd>`:''}</dl>`;
+  el.innerHTML=R.ok?`<small>${R.actEnd?'🏴 무법자 1막 완료':'임무 완료'}</small><b>${R.def.ico} ${R.def.n}</b>${stat}${R.actEnd?'<p>도 사장의 일감 셋을 모두 끝냈다. 2막은 다음 판에서 이어진다.</p>':''}<div class="oj-btns"><button class="btn pri" data-g3="ojok">확인</button></div>`
+    :`<small>임무 실패</small><b>${R.def.ico} ${R.def.n}</b><p>${R.why}</p>${stat}<div class="oj-btns"><button class="btn pri" data-g3="ojretry">체크포인트부터 다시</button><button class="btn" data-g3="ojquit">그만</button></div>`;el0.appendChild(el)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=ojgo],[data-g3=ojquit],[data-g3=ojok],[data-g3=ojretry]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;const end=document.getElementById('ojEnd');
+  try{if(k==='ojgo'){ojStart(b.dataset.v);return}if(end)end.remove();if(k==='ojquit'){if(OJ.cur){ojQuit();outNote('<b>임무를 그만뒀다</b><div>미션 패널에서 다시 받을 수 있다.</div>',2000)}return}if(k==='ojretry'){ojRetry();return}}catch(x){ojErr(x)}},true);
+/* ---------- 미션 패널에 1막 ---------- */
+(function(){const b=window.misPanel;if(typeof b!=='function')return;window.misPanel=function(open){const r=b.apply(this,arguments);try{const p=document.getElementById('misPanel');if(open&&p&&!p.querySelector('.oj-sec')){const R=ojRec();const rows=OJ_ACT1.map((d,i)=>{const act=OJ.cur&&OJ.cur.def===d;const why=act?'':ojAvail(d);const n=R.done[d.id]|0;const st=n?`완료 ${n}회 · 최고 ${ojFmt(R.best[d.id]||0)}`:(OJ.last&&OJ.last.id===d.id&&!OJ.last.ok?`지난 시도: ${OJ.last.why}`:'아직 안 함');
+      const btn=act?'<button class="btn sm" data-g3="ojquit">포기</button>':why?`<button class="btn sm" disabled title="${why}">🔒</button>`:`<button class="btn sm pri" data-g3="ojgo" data-v="${d.id}">시작</button>`;return`<div class="mis-row oj-row"><span class="mis-ico">${d.ico}</span><div><b>${i+1}. ${d.n}</b><small>${d.d}</small><em>${st}${why&&!act?` · ${why}`:''}</em></div>${btn}</div>`}).join('');
+    const sec=document.createElement('div');sec.className='oj-sec';sec.innerHTML=`<div class="oj-head"><b>🏴 무법자 1막 — 도 사장의 일감</b><small>${R.act1?'1막 완료 ✓':'가상의 해결사 · 가상의 무리'}</small></div>${rows}`;const note=p.querySelector('.mis-note');if(note)p.insertBefore(sec,note);else p.appendChild(sec)}}catch(e){ojErr(e)}return r}})();
+/* ---------- 연결 ---------- */
+for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[nm];if(typeof b!=='function')return;window[nm]=function(dt){const r=b.apply(this,arguments);try{if(OUT.on&&!(typeof OWC!=='undefined'&&OWC.on)&&(nm!=='outStep'||!olIn()))ojStep(dt||0)}catch(e){ojErr(e)}return r}})(nm);
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{if(OJ.cur){OJ.last={id:OJ.cur.def.id,ok:0,why:'외출이 끝나 중단됐다'};ojCleanup(OJ.cur);OJ.cur=null}OJ.callQ=[];OJ.callEl=null;const e=document.getElementById('ojEnd');if(e)e.remove()}catch(e){ojErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.tjPopulate;if(typeof b==='function')window.tjPopulate=function(){OJ.cur=null;OJ.callQ=[];OJ.callEl=null;return b.apply(this,arguments)}})();
+/* 임무 중에는 길거리 범죄 현장(130)이 끼어들지 않는다 */(function(){const b=window.crBusy;if(typeof b==='function')window.crBusy=function(){if(OJ.cur)return true;return b.apply(this,arguments)}})();
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{const C=OJ.cur;const p=C&&C.tgt&&C.mk?C.tgt:null;if(OUT.on&&p){const [sx,sy]=toS(p.x,p.z);const s=6*scale;x.save();x.translate(sx,sy);x.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?s*.45:s;x.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}x.closePath();x.fillStyle='#ffcc33';x.fill();x.lineWidth=1.3*scale;x.strokeStyle='#0a0c10';x.stroke();x.restore()}}catch(e){ojErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🏴 무법자 1막 · 임무(v15.1)','위쪽 <b>🎯 미션</b> → <b>무법자 1막 — 도 사장의 일감</b>(무법자 성향일 때). 받으면 📞 전화가 오고, 노란 기둥·미니맵 노란 별이 갈 곳을 가리킨다. 위쪽 띠 = 지금 할 일 · 거리. ① 💼 물건 회수 ② 🚐 연료 밀수 승합차 ③ 🏚 검은 장갑 창고 — 차례로 열린다. 일을 마치면 치안대 신고가 들어온다(★) — 따돌린 뒤에 넘긴다. 실패하면 체크포인트부터 다시. 체포·쓰러짐이면 그 외출의 임무는 끝. 수배 중에는 새 일감을 받지 않는다. 도 사장·검은 장갑은 가상의 인물·무리다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
