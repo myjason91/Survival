@@ -1781,6 +1781,8 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .oj-btns{display:flex;gap:8px;justify-content:center;margin-top:10px}.oj-btns .btn{width:auto;flex:none;padding:8px 14px}
 .oj-sec{margin-top:6px;border-top:2px solid rgba(255,204,51,.35);padding-top:6px}.oj-head{display:flex;justify-content:space-between;align-items:baseline;padding:2px 6px}.oj-head b{color:#ffd86a;font-size:14px}.oj-head small{font-size:11.5px;color:#9aa3ad}
 .sv3.cine-on .oj-call,.sv3.br-on .oj-call{visibility:hidden}
+/* v16.0 몰입 연출: 저체력 붉은 가장자리 */
+.imm-hurt{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,rgba(120,0,0,0) 48%,rgba(150,8,8,.55) 78%,rgba(90,0,0,.92) 100%);opacity:0;transition:opacity .12s linear}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13868,7 +13870,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='15.2';
+const APP_VER='16.0';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -24380,6 +24382,80 @@ function spfPush(sp){try{if(!sp||sp.yaw==null||typeof TJ==='undefined'||!TJ.occ|
   return Object.assign({},sp,{x:r.x,z:r.z,spfMoved:r.moved,x0:sp.x,z0:sp.z})}catch(e){return sp}}
 (function(){const b=window.tpDist;if(typeof b!=='function')return;window.tpDist=function(key,yaw,dist,r,dt){let d=b.apply(this,arguments);try{const B=OUT.back;if(key==='out'&&OUT.on&&B&&B.bx!=null){const px=FP3.pos.x,pz=FP3.pos.z,sx=Math.sin(yaw),sz=Math.cos(yaw);let k=0,d0=d;
   while(k++<10&&d>1.1&&Math.hypot(px+sx*d-B.bx,pz+sz*d-B.bz)<1.4)d*=.84;if(d<d0)TPC[key]=d}}catch(e){}return d}})();
+
+/* ===================== 134 · v16.0 감각 몰입 — 바깥 소리 풍경 · 총성 메아리 · 폭발 이명 · 저체력 · 숨소리·달리기 흔들림 · 탄착 ===================== */
+/* 사용자 요청(2026-11-21 11:00): "게임을 더욱 몰입하고 실감.흥미있게 update바랍니다" → 고른 축(12:21): 감각 몰입 · 살아있는 도시 · 날씨·시간 흐름 · 이야기 — 그 첫 판
+   이미 있던 것(그대로 둠): 총 반동·총구 섬광 빛·탄피(106)·예광탄·탄착 먼지(49)·적탄 스침 '딱'(116 bSnap)·교전 피격 방향·심장(116)·재장전 소리
+   실측으로 찾은 빈 곳과 처방(밖 자유 이동 = UI.screen 'outside'):
+   ① 밖에는 환경음이 없었다(10 senseAfterRender가 'outside'면 AMB.stop) → 소리 풍경 한 벌: 바람(돌풍) · 낮 도시 웅성·새 / 밤 풀벌레 ·
+      먼 포성(12~30초 · 메아리 한 번) · 먼 총성 점사(20~50초 · 사방) · 먼 사이렌(드물게). 집·상가 안이면 먹먹하게(저역 650Hz · 소리 절반)
+   ② 총성이 빈 들판과 아파트 골목에서 똑같이 들렸다 → 가까운 벽(점유 격자 12방향 · 70m 안)까지 왕복 거리만큼 늦게 오는 메아리 1~2겹(그 벽 쪽에서)
+   ③ 가까운 폭발(14m 안)에 귀가 멀쩡했다 → 이명(13b SFX.ring: 삐— 2.6초 · 전체 소리 먹먹) + 흰 섬광. 먼 배경 폭발(kind far)은 제외
+   ④ 교전 밖 저체력이 화면에 안 보였다 → 체력 40 아래: 심장 박동(낮을수록 빠르게) + 붉은 가장자리 맥동 · 22 아래 화면 채도 낮춤
+   ⑤ 오래 달리면 숨이 찬다 → 전력 질주 5초 넘으면 숨소리(멈춘 뒤 4초) · 달리는 동안 3인칭 카메라가 살짝 흔들린다(조준 중·탈것 제외)
+   ⑥ 탄착이 소리 없이 먼지만 났다 → 45m 안: 땅 '퍽' · 벽 '딱'(가끔 도탄 '피융') + 작은 파편
+   · 설정 '몰입 연출'(기본 켬)로 한꺼번에 끄기. 자동 점검은 __immTest일 때만(다른 점검은 예전 그대로) */
+const IMM={amb:null,clock:0,last:null,spd:0,spT:0,brT:0,brN:0,brOn:false,hbT:0,hbN:0,hurt:0,sat:false,echoN:0,ringN:0,ringT:-9,impT:-9,impN:0,wall:null,wallT:-9,cnt:{boom:0,gun:0,siren:0,bird:0,bug:0,gust:0},err:0,sway:0};
+function immErr(e){if(IMM.err<6){IMM.err++;try{console.error(e)}catch(x){}}}
+function immOn(){try{return store.get('sg.imm',true)!==false&&!(navigator.webdriver&&!window.__immTest)}catch(e){return false}}
+function immOut(){return typeof OUT!=='undefined'&&OUT.on&&typeof UI!=='undefined'&&UI.screen==='outside'}
+function immIn(){return (typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on)}
+/* ---------- ① 소리 풍경 ---------- */
+function immAmbStart(){if(IMM.amb||!SND.on)return;const c=SND.ac();if(!c)return;let bus=null;try{bus=SFX.bus()}catch(e){}if(!bus)return;
+  const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=16000;lp.Q.value=.5;lp.connect(bus);const g=c.createGain();g.gain.value=0;g.connect(lp);g.gain.setTargetAtTime(1,c.currentTime,1.2);const nodes=[];
+  const loop=(ft,fq,q,v)=>{const s=c.createBufferSource();s.buffer=SND.noise();s.loop=true;const f=c.createBiquadFilter();f.type=ft;f.frequency.value=fq;f.Q.value=q;const gg=c.createGain();gg.gain.value=v;s.connect(f);f.connect(gg);gg.connect(g);s.start(0,Math.random()*1.5);nodes.push(s);return{f,g:gg}};
+  IMM.amb={c,g,lp,nodes,wind:loop('bandpass',420,.6,.014),hum:loop('lowpass',170,.7,.008),tBoom:5+Math.random()*7,tGun:12+Math.random()*14,tSiren:70+Math.random()*60,tBird:2+Math.random()*3,tBug:1,tGust:4+Math.random()*6,lpT:16000,gT:1,tod:null}}
+function immAmbStop(){const A=IMM.amb;if(!A)return;IMM.amb=null;try{const t=A.c.currentTime;A.g.gain.setTargetAtTime(0,t,.25);setTimeout(()=>{A.nodes.forEach(n=>{try{n.stop()}catch(e){}});try{A.lp.disconnect()}catch(e){}},900)}catch(e){immErr(e)}}
+function immPan(c,az,into){const p=c.createStereoPanner?c.createStereoPanner():null;if(p){p.pan.value=Math.max(-1,Math.min(1,az||0));p.connect(into);return p}return into}
+function immNoiseHit(o){const A=IMM.amb;if(!A)return;const c=A.c,t=c.currentTime+(o.when||0);const s=c.createBufferSource();s.buffer=SND.noise();const f=c.createBiquadFilter();f.type=o.ft||'lowpass';f.frequency.value=o.f||160;f.Q.value=o.q||.7;const gg=c.createGain();gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(o.v||.2,t+(o.a||.03));gg.gain.exponentialRampToValueAtTime(.0001,t+(o.d||2));s.connect(f);f.connect(gg);gg.connect(immPan(c,o.az,A.g));s.start(t,Math.random()*1.2);s.stop(t+(o.d||2)+.1)}
+function immBoom(){const az=Math.random()*2-1,v=.14+Math.random()*.14;immNoiseHit({f:140+Math.random()*60,v,a:.04,d:2.4,az});immNoiseHit({f:110,v:v*.35,a:.08,d:2.2,az:-az*.5,when:.7+Math.random()*.6});try{SND.tone(38+Math.random()*8,1.3,'sine',v*.5)}catch(e){}IMM.cnt.boom++}
+function immGun(){const n=3+Math.floor(Math.random()*6),d=330+Math.random()*450,az=Math.random()*2-1,mg=Math.random()<.35,gap=mg?.09:.13+Math.random()*.08;for(let i=0;i<n;i++)setTimeout(()=>{try{if(IMM.amb)SFX.shot(mg?'mg':'rifle',{d:d+Math.random()*8,az,echo:1,amb:1})}catch(e){}},i*gap*1000);IMM.cnt.gun++}
+function immSiren(){const A=IMM.amb;const c=A.c,t=c.currentTime;const o=c.createOscillator();o.type='sawtooth';const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=780;const gg=c.createGain();gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(.012,t+1.2);gg.gain.setValueAtTime(.012,t+7);gg.gain.exponentialRampToValueAtTime(.0001,t+9);o.frequency.setValueAtTime(380,t);o.frequency.linearRampToValueAtTime(900,t+4.5);o.frequency.linearRampToValueAtTime(420,t+9);o.connect(f);f.connect(gg);gg.connect(immPan(c,Math.random()*1.6-.8,A.g));o.start(t);o.stop(t+9.1);IMM.cnt.siren++}
+function immChirp(hi,n,gap,v,az){const A=IMM.amb;const c=A.c;for(let i=0;i<n;i++){const t=c.currentTime+i*gap;const o=c.createOscillator();o.type='sine';const f0=hi*(.85+Math.random()*.3);o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f0*(Math.random()<.5?1.35:.75),t+.07);const gg=c.createGain();gg.gain.setValueAtTime(.0001,t);gg.gain.exponentialRampToValueAtTime(v,t+.01);gg.gain.exponentialRampToValueAtTime(.0001,t+.09);o.connect(gg);gg.connect(immPan(c,az,A.g));o.start(t);o.stop(t+.1)}}
+function immAmbStep(dt){const A=IMM.amb;if(!A)return;const c=A.c,t=c.currentTime;const night=OUT.tod==='night'||OUT.tod==='dawn';
+  /* 실내: 먹먹하게 */const inn=immIn();const lpT=inn?650:16000,gT=inn?.5:1;if(A.lpT!==lpT||A.gT!==gT){A.lpT=lpT;A.gT=gT;A.lp.frequency.setTargetAtTime(lpT,t,.25);A.g.gain.setTargetAtTime(gT,t,.3)}
+  if(A.tod!==OUT.tod){A.tod=OUT.tod;A.hum.g.gain.setTargetAtTime(night?.003:.008,t,1)}
+  A.tGust-=dt;if(A.tGust<=0){A.tGust=6+Math.random()*9;const w=A.wind;w.g.gain.cancelScheduledValues(t);w.g.gain.setTargetAtTime(.04+Math.random()*.02,t,.6);w.g.gain.setTargetAtTime(.014,t+1.8,1.2);w.f.frequency.setTargetAtTime(560+Math.random()*200,t,.6);w.f.frequency.setTargetAtTime(420,t+1.8,1.2);IMM.cnt.gust++}
+  A.tBoom-=dt;if(A.tBoom<=0){A.tBoom=12+Math.random()*18;immBoom()}
+  A.tGun-=dt;if(A.tGun<=0){A.tGun=20+Math.random()*30;immGun()}
+  A.tSiren-=dt;if(A.tSiren<=0){A.tSiren=90+Math.random()*80;immSiren()}
+  if(!night){A.tBird-=dt;if(A.tBird<=0){A.tBird=4+Math.random()*7;immChirp(2900,3+Math.floor(Math.random()*4),.13,.01*(inn?.5:1),Math.random()*1.6-.8);IMM.cnt.bird++}}
+  else{A.tBug-=dt;if(A.tBug<=0){A.tBug=.7+Math.random()*.8;immChirp(4300,4,.06,.006,Math.random()*1.6-.8);IMM.cnt.bug++}}}
+/* ---------- ② 총성 메아리 ---------- */
+function immWall(){if(IMM.clock-IMM.wallT<.4&&IMM.wall!==undefined)return IMM.wall;IMM.wallT=IMM.clock;let best=null,second=null;try{const O=TJ.occ;if(!O){IMM.wall=null;return null}const P=FP3.pos,n=O.n;const ry=FP3.yaw,rx=Math.cos(ry),rz=-Math.sin(ry);
+  for(let k=0;k<12;k++){const a=k/12*Math.PI*2;const dx=Math.sin(a),dz=Math.cos(a);for(let d=3;d<=70;d+=1.5){const i=Math.floor(P.x+dx*d-O.x0),j=Math.floor(P.z+dz*d-O.z0);if(i<0||j<0||i>=n||j>=n)break;if(O.b[j*n+i]){const r={d,az:dx*rx+dz*rz,k};if(!best||d<best.d){second=best;best=r}else if(!second||d<second.d)second=r;break}}}}catch(e){immErr(e)}
+  IMM.wall=best?{d:best.d,az:best.az,d2:second&&Math.abs(second.k-best.k)>1?second.d:null,az2:second?second.az:0}:null;return IMM.wall}
+(function(){if(typeof SFX==='undefined'||typeof SFX.shot!=='function')return;const b=SFX.shot;SFX.shot=function(kind,o){const r=b.apply(this,arguments);try{o=o||{};if(!o.echo&&immOn()&&immOut()&&!immIn()){const d0=o.mine?0:(o.d||20);if(d0<160){const W=immWall();if(W&&W.d<70){b.call(this,kind,{d:d0+2*W.d+10,az:W.az*.8,echo:1});IMM.echoN++;if(W.d2&&W.d2<90)b.call(this,kind,{d:d0+2*W.d2+24,az:W.az2*.8,echo:1})}}}}catch(e){immErr(e)}return r}})();
+/* ---------- ③ 폭발 이명 ---------- */
+(function(){if(typeof FX3==='undefined'||typeof FX3.explode!=='function')return;const b=FX3.explode;FX3.explode=function(p,o){const r=b.apply(this,arguments);try{if(immOn()&&OUT.on&&p&&!(o&&o.kind==='far')){const d=Math.hypot(p.x-FP3.pos.x,p.z-FP3.pos.z);if(d<14&&IMM.clock-IMM.ringT>2.5){IMM.ringT=IMM.clock;IMM.ringN++;try{SFX.ring()}catch(e){}try{if(typeof sv3Flash==='function')sv3Flash(Math.max(.15,.55-d*.03))}catch(e){}}}}catch(e){immErr(e)}return r}})();
+/* ---------- ④ 저체력 · ⑤ 숨 · 흔들림 ---------- */
+function immHp(){try{if(typeof IS!=='undefined'&&IS.on)return IS.hp;if(typeof AW!=='undefined'&&AW.on&&AW.hp!=null)return AW.hp;const m=M('me');return m?m.hp:100}catch(e){return 100}}
+function immHurtUI(h,pulse){const el0=SV3.el;let el=document.getElementById('immHurt');if(h>=40||!el0){if(el)el.remove();if(IMM.sat){IMM.sat=false;try{SV3.el.querySelector('canvas').style.filter=''}catch(e){}}IMM.hurt=0;return}
+  if(!el||el.parentNode!==el0){if(el)el.remove();el=document.createElement('div');el.id='immHurt';el.className='imm-hurt';el0.appendChild(el)}const k=(40-h)/40;const op=Math.min(.9,k*.95)*(.72+.28*pulse);el.style.opacity=op.toFixed(3);IMM.hurt=op;
+  const sat=h<22;if(sat!==IMM.sat){IMM.sat=sat;try{const cv=SV3.el.querySelector('canvas');if(cv)cv.style.filter=sat?'saturate(.42) contrast(1.06)':''}catch(e){}}}
+function immBreath(){if(!SND.on)return;const c=SND.ac();if(!c)return;let bus=null;try{bus=SFX.bus()}catch(e){}if(!bus)return;const t=c.currentTime;for(const [w,f,v,dur] of [[0,650,.028,.38],[.42,520,.034,.5]]){const s=c.createBufferSource();s.buffer=SND.noise();const fl=c.createBiquadFilter();fl.type='bandpass';fl.frequency.value=f;fl.Q.value=.9;const g=c.createGain();g.gain.setValueAtTime(.0001,t+w);g.gain.exponentialRampToValueAtTime(v,t+w+dur*.4);g.gain.exponentialRampToValueAtTime(.0001,t+w+dur);s.connect(fl);fl.connect(g);g.connect(bus);s.start(t+w,Math.random());s.stop(t+w+dur+.05)}IMM.brN++}
+function immTick(dt){if(!dt||dt>.5)return;IMM.clock+=dt;const on=immOn();
+  if(!on||!immOut()){if(IMM.amb)immAmbStop();immHurtUI(100,0);IMM.brOn=false;return}
+  if(!IMM.amb&&SND.on)immAmbStart();if(IMM.amb&&!SND.on)immAmbStop();try{immAmbStep(dt)}catch(e){immErr(e)}
+  /* 저체력 */const h=immHp();if(h<40){IMM.hbT-=dt;IMM.hbI=.42+Math.max(0,h)/40*.62;if(IMM.hbT<=0){IMM.hbT=IMM.hbI;IMM.hbN++;try{SND.heart()}catch(e){}}const ph=1-Math.max(0,IMM.hbT)/IMM.hbI;immHurtUI(h,Math.max(0,1-ph*2))}else immHurtUI(100,0);
+  /* 속도 → 숨 */const P=FP3.pos;if(IMM.last){const v=Math.hypot(P.x-IMM.last.x,P.z-IMM.last.z)/dt;IMM.spd+=(Math.min(20,v)-IMM.spd)*Math.min(1,dt*6)}IMM.last={x:P.x,z:P.z};
+  const run=IMM.spd>4.2&&!OUT.drv&&!OUT.ride&&!immIn();if(run)IMM.spT+=dt;else IMM.spT=Math.max(0,IMM.spT-dt*.8);if(IMM.spT>5)IMM.brOn=true;if(IMM.brOn&&!run){IMM.brOff=(IMM.brOff||0)+dt;if(IMM.brOff>4){IMM.brOn=false;IMM.brOff=0}}else if(run)IMM.brOff=0;
+  if(IMM.brOn){IMM.brT-=dt;if(IMM.brT<=0){IMM.brT=run?.85:1.15;immBreath()}}
+  IMM.run=run}
+/* 카메라: 달리는 동안(3인칭 걷기) 살짝 위아래·좌우로 */
+function immSway(){IMM.sway=0;if(!IMM.run||!immOn()||!immOut()||immIn())return;try{if(typeof GUN!=='undefined'&&GUN.on&&GUN.ads)return;if(typeof FPD!=='undefined'&&FPD.mode==='fp'&&(OUT.drv||OUT.ride))return;const cam=SV3.cam;const k=Math.min(1,(IMM.spd-4.2)/2.5);const y=(Math.abs(Math.sin(IMM.clock*7.6))-.5)*.06*k;cam.position.y+=y;cam.rotateZ(Math.sin(IMM.clock*3.8)*.009*k);IMM.sway=y}catch(e){immErr(e)}}
+/* ---------- ⑥ 탄착 ---------- */
+(function(){const b=window.owcImpact;if(typeof b!=='function')return;window.owcImpact=function(p,col,n){const r=b.apply(this,arguments);try{if(immOn()&&OUT.on&&p){const d=Math.hypot(p.x-FP3.pos.x,p.z-FP3.pos.z);
+  /* 파편: 어두운 작은 조각 3개가 빠르게 튄다 */try{for(let i=0;i<3;i++){const sp=PK.sprite(puffTex(),n?'#6d675c':'#5d5448',.06+Math.random()*.05,OUT.scene,{op:.95,fog:1});sp.position.copy(p);const v=new T.Vector3((Math.random()-.5)*3.2,1.2+Math.random()*2.2,(Math.random()-.5)*3.2);if(n)v.addScaledVector(n,-2.4);OWC.fxL.push({el:sp,t:0,life:.35,v,s0:sp.scale.x,op:.95})}}catch(e){}
+  if(d<45&&IMM.clock-IMM.impT>.06&&SND.on){IMM.impT=IMM.clock;IMM.impN++;const v=(1-d/45);const wall=!!n;const c=SND.ac();if(c){let bus=null;try{bus=SFX.bus()}catch(e){}if(bus){const t=c.currentTime+d/340;const s=c.createBufferSource();s.buffer=SND.noise();const f=c.createBiquadFilter();f.type=wall?'bandpass':'lowpass';f.frequency.value=wall?2600:320;f.Q.value=wall?1.4:.8;const g=c.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime((wall?.07:.09)*v,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+(wall?.07:.12));s.connect(f);f.connect(g);g.connect(bus);s.start(t,Math.random());s.stop(t+.15);
+    if(wall&&Math.random()<.3){const o=c.createOscillator();o.type='sine';o.frequency.setValueAtTime(2600+Math.random()*800,t+.01);o.frequency.exponentialRampToValueAtTime(700,t+.3);const g2=c.createGain();g2.gain.setValueAtTime(.0001,t+.01);g2.gain.exponentialRampToValueAtTime(.025*v,t+.03);g2.gain.exponentialRampToValueAtTime(.0001,t+.32);o.connect(g2);g2.connect(bus);o.start(t+.01);o.stop(t+.34);IMM.ricN=(IMM.ricN|0)+1}}}}}}catch(e){immErr(e)}return r}})();
+/* ---------- 연결 ---------- */
+for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[nm];if(typeof b!=='function')return;window[nm]=function(dt){const r=b.apply(this,arguments);try{immTick(dt||0);if(nm==='outStep')immSway()}catch(e){immErr(e)}return r}})(nm);
+(function(){const b=window.senseAfterRender;if(typeof b!=='function')return;window.senseAfterRender=function(){const r=b.apply(this,arguments);try{if(!immOut()&&IMM.amb)immAmbStop();if(!immOut())immHurtUI(100,0)}catch(e){immErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{immAmbStop();IMM.brOn=false;IMM.spT=0}catch(e){}const r=b.apply(this,arguments);try{immHurtUI(100,0)}catch(e){}return r}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="imm"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('imm','몰입 연출','밖 소리 풍경(바람·먼 포성·총성·새·풀벌레) · 총성 메아리 · 폭발 이명 · 저체력 심장·붉은 화면 · 달리기 숨·흔들림 · 탄착음',[[1,'켬'],[0,'끔']],store.get('sg.imm',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){immErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='imm')return;try{store.set('sg.imm',b.dataset.v==='1');if(b.dataset.v!=='1'){immAmbStop();immHurtUI(100,0)}toast(b.dataset.v==='1'?'🎧 몰입 연출 켬':'몰입 연출 끔',1800)}catch(x){immErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎧 몰입 연출(v16.0)','밖에 나가면 바람·먼 포성·먼 총성·사이렌, 낮엔 새와 도시 웅성, 밤엔 풀벌레가 들린다(집·상가 안은 먹먹하게). 골목에서 쏘면 벽에 부딪힌 <b>메아리</b>가 늦게 돌아온다. 14m 안 폭발이면 <b>이명</b>(삐— 소리·먹먹함). 체력 40 아래면 심장 소리와 붉은 가장자리, 22 아래면 화면 색이 빠진다. 오래 달리면 숨이 차고 화면이 흔들린다. 설정 <b>몰입 연출</b>로 끌 수 있다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
