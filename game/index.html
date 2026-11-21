@@ -1874,6 +1874,28 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .insp-cap{position:absolute;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:10px;align-items:center;padding:7px 16px;border-radius:999px;background:rgba(8,12,16,.82);border:1px solid rgba(255,216,74,.55);color:#eef4f8;font:600 13px var(--sans);white-space:nowrap}
 .insp-cap b{color:#ffd84a;font-weight:800}
 .insp-skip{position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));pointer-events:auto;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(8,12,16,.7);color:#fff;font:700 12px var(--sans)}
+/* v17.0 CQB 작전 계획 */
+.cqp{margin:10px 0 4px;display:grid;gap:8px}
+.cqp-h{font:800 12px var(--sans);color:var(--amber,#e8b43a);letter-spacing:.02em}
+.cqp-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.cqp-b,.cqp-ow{display:grid;gap:2px;text-align:left;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit;cursor:pointer}
+.cqp-b b,.cqp-ow{font-weight:800;font-size:13px}.cqp-b small,.cqp-ow small{font-size:11px;opacity:.78;font-weight:500}
+.cqp-b.on,.cqp-ow.on{border-color:#e8b43a;background:rgba(232,180,58,.14)}
+.cqp-b:disabled,.cqp-ow:disabled{opacity:.55;cursor:default}
+.cqp-flash{position:absolute;inset:0;z-index:40;pointer-events:none;background:#fff;opacity:0}
+.cqp-flash.go{animation:cqpFl 1.1s ease-out forwards}
+@keyframes cqpFl{0%{opacity:1}35%{opacity:.85}100%{opacity:0}}
+.cqp-slow canvas{filter:saturate(.55) contrast(1.12)}
+.cqp-slow::after{content:'⏱ 집중';position:absolute;left:50%;top:calc(52px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:9;pointer-events:none;padding:4px 12px;border-radius:999px;background:rgba(10,14,20,.78);border:1px solid rgba(140,200,255,.6);color:#cfe6ff;font:800 12px var(--sans)}
+/* v17.0 옥상 저격 */
+.snp-clue{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.snp-clue span{padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);font:700 12.5px var(--sans)}
+.snp-ui{position:absolute;inset:0;pointer-events:none;z-index:8}
+.snp-top{position:absolute;left:50%;top:calc(52px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;gap:12px;align-items:center;padding:6px 14px;border-radius:999px;background:rgba(8,10,14,.84);border:1px solid rgba(255,90,60,.6);color:#f2f4f6;font:600 12.5px var(--sans);white-space:nowrap}
+.snp-top b{color:#ff9a7a}.snp-top .num{font-weight:800;color:#fff}
+.snp-c{position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:calc(96px + env(safe-area-inset-top,0px));display:grid;gap:4px}
+.snp-c i{font-style:normal;padding:3px 9px;border-radius:8px;background:rgba(8,10,14,.72);color:#e9eef2;font:700 11.5px var(--sans);border-left:3px solid #ff7a5a}
+.snp-x{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);pointer-events:auto;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(10,14,20,.82);color:#fff;font:800 12.5px var(--sans)}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13964,7 +13986,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.9';
+const APP_VER='17.0';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -25699,6 +25721,159 @@ function lkScan(){if(!lkOn()||!OUT.on)return;for(const a of OUT.npcs||[]){const 
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="looks"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('looks','인물 다양화','주민 전시 차림(흙먼지·붕대) · 적대 세력은 복면·방독면·야간투시경·흉터',[[1,'켬'],[0,'끔']],store.get('sg.looks',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){lkErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='looks')return;try{store.set('sg.looks',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🎭 인물 다양화(v16.9)','거리 사람들 일부가 흙먼지 묻은 옷·머리 붕대·안경 같은 전시 차림을 한다(모습 19종·옷 색·모자·마스크·가방은 v10.6부터). 적대 세력은 차림으로 알아본다 — 조직폭력배: 검은 옷·짙은 선글라스·흉터·금목걸이 / 약탈자: 두건·얼굴 가리개 / 수배자: 회색 옷·두건·흉터 / 수상한 사람: 눌러쓴 검은 모자·선글라스 / 적군: 복면·방독면·녹색으로 빛나는 야간투시경. 국적·민족이 아니라 차림과 행동으로만 구분한다. 설정 \'인물 다양화\'.']);
+
+/* ===================== 149 · v17.0 CQB 작전 계획 — 정면 돌파 · 은밀 침투 · 섬광탄 돌입 · 헬기 옥상 강습 + 저격 지원 · 집중(슬로) · 층 평가 ===================== */
+/* 사용자 요청(2026-11-21 21:51): "CQB플레이를 재밌게 구성바랍니다 … 다양한 전략과 함께"
+   122 아파트 탈환(층별 실내 근접전) 카드에 '작전 계획'을 고른다(처음 들어갈 때 · 다시 들어갈 때는 그대로):
+   ⚡ 정면 돌파 — 문을 차고 들어간다: 들어서는 2.4초 동안 '집중'(적이 0.35배 느리다) · 대신 적이 곧바로 움직인다
+   🤫 은밀 침투 — 적이 오래 자리를 지키고(+12초) 나를 봐도 겨누는 데 0.9초 더 걸린다 · 소음 무기가 없으면 9mm 소음 권총 + 탄 45를 한 번 받는다
+   💥 섬광탄 돌입 — 층마다 섬광탄(한 탈환에 3개): 현관에서 보이거나 7m 안의 적은 4초, 나머지는 1.5초 눈을 감싸 쥐고 주저앉는다 + 1.2초 집중 · 다 쓰면 정면 돌파
+   🚁 헬기 옥상 강습 — 현관을 건너뛰고(경계병 무시) 곧바로 꼭대기 지휘소에서 싸운다: 지휘소가 무너지면 아래층 점령군이 투항한다(한 층만 싸우지만 헬기 소리에 적이 바로 깨어 있다)
+   🎯 저격 지원(켜기/끄기 — 사격 담당 팀원이 있을 때): 건너편 옥상의 팀원이 층마다 두 번까지, 10~16초 간격으로 창가의 적 한 명을 쓰러뜨린다
+   · 층을 비우면 팀원이 "클리어!" · 탈환을 끝내면 평가(S/A/B/C — 걸린 시간 · 받은 피해 · 팀원 피해) · S면 탄 보너스
+   · 122(sg.aptraid) 규칙 그대로 · 자동 점검(webdriver)은 122의 __rdTest를 따른다 */
+const CQP={err:0,last:null,slowOn:false,n:{flash:0,ow:0,stun:0,slow:0,sup:0}};
+function cqpErr(e){if(CQP.err<6){CQP.err++;try{console.error(e)}catch(x){}}}
+const CQP_PLAN={storm:{ico:'⚡',n:'정면 돌파',s:'문을 차고 들어간다 · 들어서는 순간 집중(적 느려짐) · 적이 바로 움직인다'},stealth:{ico:'🤫',n:'은밀 침투',s:'적이 오래 자리를 지키고 늦게 겨눈다 · 소음 권총 지급'},flash:{ico:'💥',n:'섬광탄 돌입',s:'층마다 섬광탄 — 적이 몇 초 눈을 감싸 쥔다(3개)'},top:{ico:'🚁',n:'헬기 옥상 강습',s:'꼭대기 지휘소만 친다 — 무너지면 아래층이 투항'}};
+function cqpS(){const S=rdS();if(!S.plan)S.plan='storm';if(S.flash==null)S.flash=3;if(S.tt==null){S.tt=0;S.dd=0;S.tk=0}return S}
+function cqpSniper(){try{return (typeof tmLive==='function'?tmLive():[]).find(m=>m.d&&m.d.role==='사격'&&(m.d.st==='ok'||m.d.st==='hurt'))||null}catch(e){return null}}
+/* ---------- 카드: 작전 계획 고르기 ---------- */
+function cqpBlock(S){const sn=cqpSniper();const fresh=!S.next;const keys=fresh?Object.keys(CQP_PLAN):[S.plan];
+  return `<div class="cqp"><div class="cqp-h">작전 계획${fresh?'':' — 진행 중'}</div><div class="cqp-g">${keys.map(k=>{const P=CQP_PLAN[k];return `<button type="button" class="cqp-b${S.plan===k?' on':''}" data-cqp="${k}" ${fresh?'':'disabled'}><b>${P.ico} ${P.n}</b><small>${P.s}${k==='flash'?` · 남은 ${S.flash}`:''}</small></button>`}).join('')}</div>
+    <button type="button" class="cqp-ow${S.ow?' on':''}" data-cqp="ow" ${sn?'':'disabled'}>🎯 저격 지원 ${S.ow&&sn?'켬':'끔'} <small>${sn?`${sn.d.nm} — 건너편 옥상에서 층마다 2명까지`:'사격 담당 팀원이 없다'}</small></button></div>`}
+(function(){const b=window.rdCard;if(typeof b!=='function')return;window.rdCard=function(c){const r=b.apply(this,arguments);try{const S=cqpS();const el=$('#oEnc');const ch=el&&el.querySelector('.choices');if(ch&&!el.querySelector('.cqp')){ch.insertAdjacentHTML('beforebegin',cqpBlock(S));
+      const go=el.querySelector('[data-g3=rdgo][data-v=in]');if(go&&S.plan==='top'&&!S.next){go.disabled=false;const t=go.querySelector('.ct b');if(t)t.textContent=`헬기로 옥상 — ${S.top}층 지휘소부터`;const sm=go.querySelector('.ct small');if(sm)sm.textContent='현관 경계병은 건너뛴다 · 지휘소가 무너지면 아래층 투항'}}}catch(e){cqpErr(e)}return r}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cqp]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.disabled)return;try{const S=cqpS();const k=b.dataset.cqp;if(k==='ow')S.ow=!S.ow;else if(CQP_PLAN[k])S.plan=k;const c=APT.ask;rdCard(c)}catch(x){cqpErr(x)}},true);
+/* 헬기 강습: 꼭대기부터 */
+(function(){const b=window.rdEnter;if(typeof b!=='function')return;window.rdEnter=function(){try{const S=cqpS();if(S.plan==='top'&&!S.next&&!S.topIns){S.topIns=1;S.next=S.fls.length-1;S.guard=1;try{SND.tone(55,1.2,'sawtooth',.05)}catch(e){}}}catch(e){cqpErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 층 시작: 계획대로 ---------- */
+function cqpFlashFx(){try{let el=document.getElementById('cqpFlash');if(!el){el=document.createElement('div');el.id='cqpFlash';el.className='cqp-flash';(SV3.el||document.body).appendChild(el)}el.classList.remove('go');void el.offsetWidth;el.classList.add('go');SND.boom(false,.55);SND.tone(3200,.9,'sine',.04);vib([60,30,60])}catch(e){}}
+function cqpSlow(sec){AW.slowT=Math.max(AW.slowT||0,sec);CQP.n.slow++;try{SV3.el&&SV3.el.classList.add('cqp-slow')}catch(e){}}
+(function(){const b=window.rdFloorStart;if(typeof b!=='function')return;window.rdFloorStart=function(){const r=b.apply(this,arguments);try{if(!AW.on||!AW.raid)return r;const S=cqpS();let plan=S.plan;if(plan==='flash'&&S.flash<=0)plan='storm';AW.plan=plan;AW.owT=8+Math.random()*6;AW.owN=0;AW.t0=AW.t;
+      const ex=hpX(60),ez=hpZ(126);const L=AW.cq.filter(a=>!a.dead);let msg='';
+      if(plan==='storm'){L.forEach(a=>{a.holdT=Math.min(a.holdT||9,1.2)});cqpSlow(2.4);try{SND.tone(70,.18,'square',.2);sv3Shake(.4)}catch(e){}msg='⚡ 정면 돌파 — 문을 차고 들어간다 · 집중!'}
+      else if(plan==='stealth'){L.forEach(a=>{a.holdT=(a.holdT||6)+12;a.stealth=1});if(!S.sup){const W=(GUN.eq&&ARMS[GUN.eq])||null;if(!(W&&W.quiet)&&!gunArms().some(x=>ARMS[x.id]&&ARMS[x.id].quiet)){try{gunAdd('p9s',{force:true,ammo:45});S.sup=1;CQP.n.sup++;msg='🤫 은밀 침투 — 9mm 소음 권총을 받았다(🎒) · 적은 아직 모른다'}catch(e){}}}if(!msg)msg='🤫 은밀 침투 — 적은 아직 모른다. 모서리에서 한 명씩'}
+      else if(plan==='flash'){S.flash--;CQP.n.flash++;cqpFlashFx();let n4=0;L.forEach(a=>{const P=a.h.root.position;const near=Math.hypot(P.x-ex,P.z-ez)<7||awLosIn(ex+.6,1.5,ez,P.x,1.4,P.z);a.stunT=near?4:1.5;if(near)n4++;CQP.n.stun++;try{a.h.setPose('crouch')}catch(e){}});cqpSlow(1.2);msg=`💥 섬광탄 — ${n4}명이 눈을 감싸 쥐었다(남은 ${S.flash}개)`}
+      else if(plan==='top'){L.forEach(a=>{a.holdT=Math.min(a.holdT||9,2)});msg='🚁 헬기 옥상 강습 — 로프로 내려와 지휘소 문 앞. 헬기 소리에 적이 깨어 있다'}
+      if(S.ow&&cqpSniper())msg+=' · 🎯 저격 지원 대기';AW.cqpMsg=msg;CQP.st0={plan,slow:+(AW.slowT||0).toFixed(1),stun:AW.cq.filter(a=>a.stunT>0).length,stun4:AW.cq.filter(a=>a.stunT>=4).length,cls:!!(SV3.el&&SV3.el.classList.contains('cqp-slow')),hold:AW.cq.map(a=>+(a.holdT||0).toFixed(1)),flash:S.flash};try{outNote(`<b>${msg.split(' — ')[0]}</b><div>${msg.split(' — ').slice(1).join(' — ')||''}</div>`,3400)}catch(e){}}catch(e){cqpErr(e)}return r}})();
+/* ---------- 적: 섬광에 주저앉음 · 은밀하면 늦게 겨눔 · 집중이면 느리게 ---------- */
+(function(){const b=window.awCqStep;if(typeof b!=='function')return;window.awCqStep=function(a,dt){try{if(a&&!a.dead&&!a.h.dead){if(a.stunT>0){a.stunT-=dt;a.aimP=0;if(a.st==='aim'||a.st==='fire')a.st='hunt';try{a.h.update(dt);if(a.h.pose!=='crouch')a.h.setPose('crouch')}catch(e){}if(a.stunT<=0)try{a.h.setPose('aim')}catch(e){}return}
+      if(a.stealth&&a.st==='aim'&&!a.stD){a.stD=1;a.aimP=-.7}if(AW.slowT>0)dt*=.35}}catch(e){cqpErr(e)}return b.call(this,a,dt)}})();
+/* ---------- 매 프레임: 집중 시간 · 저격 지원 ---------- */
+(function(){const b=window.awStep;if(typeof b!=='function')return;window.awStep=function(dt,ow){const r=b.apply(this,arguments);try{if(AW.on&&AW.raid){if(AW.slowT>0){AW.slowT-=dt;if(AW.slowT<=0)try{SV3.el&&SV3.el.classList.remove('cqp-slow')}catch(e){}}
+      const S=rdS();if(S.ow&&AW.ph==='cqb'&&(AW.owN|0)<2&&cqpSniper()){AW.owT-=dt;if(AW.owT<=0){AW.owT=10+Math.random()*6;const p=FP3.pos;const L=AW.cq.filter(a=>!a.dead&&!a.h.dead&&Math.hypot(a.h.root.position.x-p.x,a.h.root.position.z-p.z)>2.5);const a=L.sort((x,y)=>(x.st==='hold'?0:1)-(y.st==='hold'?0:1))[0];
+          if(a){AW.owN=(AW.owN|0)+1;CQP.n.ow++;try{SFX.shot('sniper',{d:180});owcImpact&&owcImpact(a.h.root.position.clone().setY(1.5),'#c9c2b2',null)}catch(e){}a.hp=0;a.owKill=1;try{gunKill({a,h:a.h,kind:'en',part:'head'},'en',{x:1,z:0},true)}catch(e){a.dead=1;try{humanDie(a.h,null)}catch(x){}}const sn=cqpSniper();try{outNote(`<b>🎯 저격 지원</b><div>${sn?sn.d.nm+' 씨가 ':''}건너편 옥상에서 창가의 적 1명을 쓰러뜨렸다(${AW.owN}/2).</div>`,2600)}catch(e){}}}}}}catch(e){cqpErr(e)}return r}})();
+/* ---------- 층 끝: 클리어 · 기록 ---------- */
+(function(){const b=window.rdFloorEnd0;if(typeof b!=='function')return;window.rdFloorEnd0=function(why){try{if(AW.on&&AW.raid){const S=cqpS();S.tt+=Math.max(0,AW.t-(AW.t0||0));S.dd+=(AW.stat&&AW.stat.dmg)||0;S.tk+=(AW.stat&&AW.stat.tk)||0;try{SV3.el&&SV3.el.classList.remove('cqp-slow')}catch(e){}AW.slowT=0;
+      if(why==='win'){try{const t=(typeof APTT!=='undefined'?APTT.team:[]).find(x=>x.m&&(x.m.d.st==='ok'||x.m.d.st==='hurt'));if(t)bubSay(t.h,cqpPick(['클리어!','이 층 클리어!','방 확인 — 클리어!']),2,'');SND.tone(660,.08,'square',.04);SND.tone(880,.12,'square',.04,.1)}catch(e){}}}}catch(e){cqpErr(e)}return b.apply(this,arguments)}})();
+function cqpPick(L){return L[Math.floor(Math.random()*L.length)]}
+function cqpGrade(S){const min=S.tt/60;const sc=100-S.dd*.45-Math.max(0,min-2*S.fls.length*.6)*4-S.tk*.3+(S.plan==='top'?6:0);return sc>=85?'S':sc>=70?'A':sc>=52?'B':'C'}
+(function(){const b=window.rdDone;if(typeof b!=='function')return;window.rdDone=function(kills,tk){const S=cqpS();const r=b.apply(this,arguments);try{const g=cqpGrade(S);S.grade=g;const P=CQP_PLAN[S.plan]||CQP_PLAN.storm;const m=Math.floor(S.tt/60),s=Math.round(S.tt%60);let bonus='';if(g==='S'){try{gunAmmoAdd('556',60);FX=[];trust(1);OUT.fx.push(...FX);outStat();bonus=' · 보너스: 5.56mm 60 · 이웃 신뢰 +1'}catch(e){}}
+      const sur=S.plan==='top'&&S.topIns?` 지휘소가 무너지자 아래 ${Math.max(0,S.fls.length-1)}개 층의 점령군이 무기를 내려놓았다.`:'';CQP.last={grade:g,plan:S.plan,tt:Math.round(S.tt),dd:Math.round(S.dd)};
+      setTimeout(()=>{try{outNote(`<b>🏅 탈환 평가 ${g}</b><div>작전 ${P.ico} ${P.n} · 걸린 시간 ${m}분 ${s}초 · 받은 피해 ${Math.round(S.dd)} · 팀원 피해 ${Math.round(S.tk)}.${sur}${bonus}</div>`,6000)}catch(e){}},400);S.tt=0;S.dd=0;S.tk=0;S.topIns=0;S.flash=3;S.sup=0}catch(e){cqpErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🧭 CQB 작전 계획(v17.0)','점령된 아파트 탈환 카드에서 작전을 고른다. ⚡ 정면 돌파: 들어서는 순간 집중(적이 느려진다) · 적이 바로 움직인다. 🤫 은밀 침투: 적이 오래 자리를 지키고 늦게 겨눈다(소음 권총 지급). 💥 섬광탄 돌입: 층마다 섬광탄 — 현관에서 보이는 적은 4초 동안 눈을 감싸 쥔다(한 탈환에 3개). 🚁 헬기 옥상 강습: 꼭대기 지휘소만 치고, 무너지면 아래층이 투항한다. 🎯 저격 지원(사격 담당 팀원): 층마다 두 번, 창가의 적을 건너편 옥상에서 쓰러뜨린다. 층을 비우면 팀원이 "클리어!", 끝나면 S/A/B/C 평가(S는 탄 보너스).']);
+
+/* ===================== 150 · v17.0 옥상 저격 임무 — 인상착의로 표적을 찾아 한 발 ===================== */
+/* 사용자 요청(2026-11-21 21:51): "다양한 전략과 함께 옥상에 가서 저격총으로 주요 인물 수색하여 암살하는 미션도 넣어주세요"
+   원칙(21:51 보고): 표적은 가상의 무장 조직 지휘관(코드명 '까마귀' — 실존 인물·정치인 아님, 행동으로 정의). 인상착의로 신원을 확인하지 않고 쏘면 주민 사격과 같은 결과
+   · 첩보(3턴부터, 밖에 나갈 때 40%): "무장 조직 지휘관이 ○쪽 광장에 나타난다" → 광장 건너편 고층 동 현관에 '🎯 옥상 저격 위치'
+   · 브리핑 카드: 인상착의 단서 3가지(모자 · 겉옷 · 표식/소지품) + 경호원 2명 + 검은 SUV · 작전 선택: 🎯 바로 저격 / 🔭 관측 먼저(바람·거리 측정, 대기 +30초)
+   · 옥상: 그 동 높이(층×2.9m)의 옥상 가장자리에 엎드린다(걷기 없음) — 8배율 저격소총(없으면 M24 + 8배율 지급) · 화면을 끌어 살핀다 · 조준경으로 광장의 사람 20여 명을 하나하나 본다
+     비슷한 차림의 사람이 4명 섞여 있다(단서 1~2개만 맞음) · 위쪽 띠: 남은 시간 · 거리 · 바람(→ m/s) — 바람에 탄이 흐른다(관측 먼저면 띠가 정확히 알려 준다)
+   · 맞히면: 표적 쓰러짐 → 경호원이 옥상 쪽으로 총을 쏘고 사람들이 흩어진다 → '⤓ 옥상에서 내려간다' — 보상: 현금 봉투 3 · 7.62mm 40 · 이웃 신뢰 +2 · 다음 턴 라디오
+     경호원을 먼저 쏘면 표적이 SUV로 달려간다(차까지 몇 초) · 표적이 아닌 사람을 쏘면 주민 사격(65) + 임무 실패 · 시간이 다 되면 SUV를 타고 떠난다
+   · 교육용 모드 · 교전 끔이면 나오지 않는다 · 자동 점검(webdriver)은 __snpTest일 때만 */
+const SNP={err:0,on:false,M:null,t:0,dur:150,ppl:[],tgt:null,guards:[],car:null,wind:0,ph:'',res:null,cnt:{win:0,fail:0,wrong:0,shots:0},meVis:true,gun:null,tick:0};const _snv=[0,1,2,3,4].map(()=>new T.Vector3());
+function snpErr(e){if(SNP.err<6){SNP.err++;try{console.error(e)}catch(x){}}}
+function snpOn(){try{return store.get('sg.snipe',true)!==false&&store.get('sg.owc',true)!==false&&!(typeof eduOn==='function'&&eduOn())&&!(navigator.webdriver&&!window.__snpTest)}catch(e){return false}}
+function snpS(){const F=G.flags;if(!F.snp||F.snp.v!==1)F.snp={v:1,st:'none',door:-1,px:0,pz:0,since:-1,won:0,cool:0};return F.snp}
+const SNP_CLUE={hat:[['beret','#8a1c1c','붉은 베레모'],['beret','#16161a','검은 베레모'],['fedora','#5a5a5e','회색 중절모']],coat:[['#6a6a6e','회색 코트'],['#1c1c1e','검은 가죽 재킷'],['#3d4a30','짙은 녹색 야전 상의']],mark:[['band','왼팔 흰 완장'],['case','서류 가방'],['shades','짙은 선글라스']]};
+/* ---------- 첩보: 광장과 옥상 고르기 ---------- */
+function snpPick(){let best=null;try{const doors=tjAptDoors();const ex=typeof LIFE!=='undefined'&&LIFE.exit?{x:LIFE.exit[0],z:LIFE.exit[1]}:{x:FP3.pos.x,z:FP3.pos.z};
+    doors.forEach((d,i)=>{if(d.own||(d.fl||0)<12)return;const dist=Math.hypot(d.x-ex.x,d.z-ex.z);if(dist<120||dist>700)return;const ry=(d.fl||12)*2.9+1.5;
+      for(const off of [0,-.35,.35])for(const r of [150,135,170,190]){const a=Math.atan2(d.nx,d.nz)+off;const px=d.x+Math.sin(a)*r,pz=d.z+Math.cos(a)*r;if(!owcFree(px,pz,9))continue;const rx=d.x-d.nx*2.2,rz=d.z-d.nz*2.2;if(typeof owcLos==='function'&&!owcLos(rx,ry,rz,px,1.4,pz))continue;
+        const sc=Math.abs(r-150)+Math.abs(off)*40+Math.random()*10;if(!best||sc<best.sc)best={i,d,px,pz,r,sc}}})}catch(e){snpErr(e)}return best}
+function snpMake(force){const S=snpS();if(!force){if(S.st!=='none'&&S.st!=='done'&&S.st!=='fail')return false;if((G.turn|0)<3||(G.turn|0)<(S.cool|0))return false;if(Math.random()>.4)return false}
+  const b=snpPick();if(!b)return false;Object.assign(S,{st:'intel',door:b.i,px:b.px,pz:b.pz,since:G.turn|0,clue:[Math.floor(Math.random()*3),Math.floor(Math.random()*3),Math.floor(Math.random()*3)],wind:+(((Math.random()<.5?-1:1)*(1+Math.random()*3.5)).toFixed(1))});snpSpot();
+  try{const p=FP3.pos;const d=Math.round(Math.hypot(b.d.x-p.x,b.d.z-p.z));outNote(`<b>📻 첩보 — 무장 조직 지휘관 '까마귀'</b><div>오늘 ${typeof rdDir==='function'?rdDir(b.px-p.x,b.pz-p.z):''}쪽 광장에 경호원을 데리고 나타난다. 광장 건너편 ${b.d.fl}층 동 현관(${d}m)에서 옥상으로 — 🎯 옥상 저격 위치.</div>`,7000)}catch(e){}return true}
+function snpDoor(){const S=snpS();try{return tjAptDoors()[S.door]||null}catch(e){return null}}
+function snpSpot(){const S=snpS();const d=snpDoor();if(!d||!OUT.spots)return;OUT.spots=OUT.spots.filter(s=>s.k!=='snp');OUT.spots.push({id:'snp',k:'snp',x:d.x+d.nx*.6,z:d.z+d.nz*.6,r:2.6,g:'🎯',n:'옥상 저격 위치',s:`${d.fl}층 옥상 — 광장의 '까마귀'`,h:0});OUT.sig=''}
+/* ---------- 브리핑 ---------- */
+function snpClues(S){return[SNP_CLUE.hat[S.clue[0]][2],SNP_CLUE.coat[S.clue[1]][1],SNP_CLUE.mark[S.clue[2]][1]]}
+function snpCard(){const S=snpS();const d=snpDoor();const el=$('#oEnc');if(!el||!d)return;OUT.enc={id:'snp-card',cat:'옥상 저격',title:'까마귀',noLog:1};FP3.lock=true;FP3.mv.x=FP3.mv.y=0;const C=snpClues(S);
+  el.hidden=false;el.innerHTML=`<div class="sheet"><div class="lead"><div class="badge red">${ic('pin')}</div><div><div class="eyebrow">옥상 저격 · ${d.fl}층 · 광장까지 약 ${Math.round(Math.hypot(S.px-d.x,S.pz-d.z))}m</div><h2>표적 '까마귀' — 무장 조직 지휘관</h2></div></div>
+    <p>주민 배급소를 털고 사람을 끌고 간 무장 조직의 지휘관(가상)이다. 광장에서 사람을 만나고 2분 반 뒤 검은 SUV를 타고 떠난다. 광장에는 보통 사람도 20명쯤 있다 — <b>인상착의 세 가지가 모두 맞는 사람만</b> 쏜다. 비슷한 차림이 섞여 있다.</p>
+    <div class="snp-clue"><span>🧢 ${C[0]}</span><span>🧥 ${C[1]}</span><span>🔖 ${C[2]}</span><span>👥 소총 든 경호원 2명</span></div>
+    <div class="choices"><button class="choice" data-g3="snpgo" data-v="now"><span class="k">A</span><span class="ct"><b>옥상으로 — 바로 저격</b><small>남은 시간 2분 30초 · 바람은 짐작</small></span></button>
+    <button class="choice" data-g3="snpgo" data-v="obs"><span class="k">B</span><span class="ct"><b>관측 먼저 — 바람·거리를 잰다</b><small>위쪽 띠가 바람을 정확히 알려 준다 · 대신 30초를 쓴다</small></span></button>
+    <button class="choice" data-g3="snpgo" data-v="no"><span class="k">✕</span><span class="ct"><b>지금은 하지 않는다</b><small>이번 외출 동안 기회는 남는다</small></span></button></div></div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=snpgo]');if(!b)return;e.preventDefault();e.stopPropagation();const el=$('#oEnc');if(el){el.hidden=true;el.innerHTML=''}OUT.enc=null;FP3.lock=false;if(b.dataset.v!=='no')try{snpStart(b.dataset.v==='obs')}catch(x){snpErr(x)}},true);
+(function(){const od=window.outDo;if(typeof od!=='function')return;window.outDo=function(c){if(c&&c.k==='snp'&&!OUT.busy&&!OUT.enc){try{snpCard()}catch(e){snpErr(e)}return}return od.apply(this,arguments)}})();
+/* ---------- 사람들 ---------- */
+function snpA(h){try{return typeof folkAnc==='function'?folkAnc(h):null}catch(e){return null}}
+function snpWear(h,hat,coat,mark){const A=snpA(h);if(!A)return;try{if(typeof folkStrip==='function')folkStrip(h)}catch(e){}try{if(coat)lkTint(h,coat)}catch(e){}const G0=folkGeo();
+  if(hat){const [k,col]=hat;const mt=mat(col,{r:.9});if(k==='beret'){lkPut(h,A.iH,G0.dome,mt,A.cx+.012,A.top-.06,A.cz-.006,A.rx*1.18,.05,A.rz*1.12,0,0,-.18)}else{lkPut(h,A.iH,G0.dome,mt,A.cx,A.top-.06,A.cz,A.rx*1.05,.11,A.rz*1.05);lkPut(h,A.iH,GG.cyl(1,1,1,18),mt,A.cx,A.top-.075,A.cz,A.rx*1.75,.01,A.rz*1.75)}}
+  if(mark==='band')try{cwBand(h,mat('#f4f4f0',{r:.6}))}catch(e){}if(mark==='shades')try{lkShades(h,A)}catch(e){}if(mark==='case')h.snpCase=1}
+function snpCaseMesh(){const g=new T.Group();MM(GG.box(.4,.3,.09,.012),mat('#3a2a1e',{r:.5}),0,-.16,.0,{p:g,cast:false});MM(GG.box(.12,.03,.03),mat('#1a1a1a'),0,.0,0,{p:g,cast:false});return g}
+function snpMk(seed,x,z,kind,o){let h=null;try{h=civHuman(seed,'walk','civ')}catch(e){}if(!h)return null;h.root.position.set(x,0,z);OUT.scene.add(h.root);const a=Object.assign({h,kind,nm:'광장의 사람',mode:'stand',snp:1,wx:x,wz:z,wt:Math.random()*3},o||{});OUT.npcs.push(a);SNP.ppl.push(a);
+  if(h.snpCase){}return a}
+function snpPopulate(){const S=snpS();const P={x:S.px,z:S.pz};const sd=typeof cwSeeds==='function'?cwSeeds(820+(S.since|0)*13,30,false):[...Array(30)].map((_,i)=>820+i);let si=0;const pos=()=>{for(let k=0;k<30;k++){const a=Math.random()*6.283,r=Math.random()*12;const x=P.x+Math.sin(a)*r,z=P.z+Math.cos(a)*r;if(owcFree(x,z,.5))return{x,z}}return{x:P.x,z:P.z}};
+  const HAT=SNP_CLUE.hat,COAT=SNP_CLUE.coat,MARK=SNP_CLUE.mark;const ci=S.clue;const other=(L,i)=>{const o=[0,1,2].filter(j=>j!==i);return o[Math.floor(Math.random()*o.length)]};
+  /* 표적 + 경호원 2 */const q=pos();const T0=snpMk(sd[si++],q.x,q.z,'en',{side:'en',nm:"표적 '까마귀'",tgt:1,hp:1});if(T0){snpWear(T0.h,HAT[ci[0]],COAT[ci[1]][0],MARK[ci[2]][0]);SNP.tgt=T0}
+  for(let i=0;i<2;i++){const g=snpMk(sd[si++],q.x+(i?1.2:-1.2),q.z-.8,'en',{side:'en',nm:'경호원',guard:1,hp:2});if(g){snpWear(g.h,null,'#2a2a2c',null);try{const gun=makeGun('k2',{});gun.traverse(m=>{if(m.isMesh)m.castShadow=false});g.h.root.add(gun);g.gun=gun}catch(e){}SNP.guards.push(g)}}
+  /* 비슷한 사람 4(단서 1~2개) */for(let i=0;i<4;i++){const m=[0,1,2].map(()=>Math.random()<.5);if(m.every(x=>x))m[i%3]=false;if(!m.some(x=>x))m[i%3]=true;const p=pos();const a=snpMk(sd[si++],p.x,p.z,'civ',{decoy:1});if(a)snpWear(a.h,HAT[m[0]?ci[0]:other(HAT,ci[0])],COAT[m[1]?ci[1]:other(COAT,ci[1])][0],MARK[m[2]?ci[2]:other(MARK,ci[2])][0])}
+  /* 보통 사람 16 */for(let i=0;i<16;i++){const p=pos();snpMk(sd[si++]||900+i,p.x,p.z,'civ',{})}
+  /* 검은 SUV */try{const car=PK.car('#141416',OUT.scene,false);const a=Math.atan2(S.px-snpDoor().x,S.pz-snpDoor().z);car.position.set(S.px+Math.sin(a+1.4)*15,0,S.pz+Math.cos(a+1.4)*15);car.rotation.y=a;SNP.car=car}catch(e){snpErr(e)}
+  SNP.ppl.forEach(a=>{if(a.h.snpCase){a.case=snpCaseMesh();a.h.root.add(a.case)}});try{GUN.hits=[]}catch(e){}}
+/* ---------- 시작 · 옥상 ---------- */
+function snpGun(){const has=gunArms().find(x=>{const W=ARMS[x.id];return W&&W.cat==='sr'});let id=has&&has.id;if(!id){gunAdd('m24',{force:true,ammo:15});id='m24';SNP.gave=1}gunAmmoAdd(ARMS[id].am,Math.max(0,15-gunAmmoOf(ARMS[id].am)));G.inv=G.inv||{};const rec=gunArms().find(x=>x.id===id);if(rec&&rec.opt!=='x8'){G.inv.opt_x8=(G.inv.opt_x8||0)+1;try{optAttach(id,'x8',true)}catch(e){}}return id}
+function snpStart(obs){const S=snpS();const d=snpDoor();if(!d||SNP.on)return false;Object.assign(SNP,{on:true,t:0,dur:obs?120:150,ppl:[],tgt:null,guards:[],ph:'watch',res:null,obs:!!obs,shots:0,fleeT:0,exT:0});S.st='on';
+  SNP.roof={x:d.x-d.nx*2.2,y:(d.fl||12)*2.9+1.5,z:d.z-d.nz*2.2};SNP.p0={x:FP3.pos.x,z:FP3.pos.z};SNP.wind=S.wind;SNP.windShown=obs?S.wind:Math.round(S.wind*(.5+Math.random()));snpPopulate();
+  FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;SNP.meVis=OUT.me?OUT.me.root.visible:true;try{OUT.me.root.visible=false;(OUT.follow||[]).forEach(f=>{f.h.root.visible=false})}catch(e){}
+  FP3.yaw=Math.atan2(SNP.roof.x-S.px,SNP.roof.z-S.pz);FP3.pitch=-Math.atan2(SNP.roof.y-1.3,Math.hypot(S.px-SNP.roof.x,S.pz-SNP.roof.z));SNP.gun=snpGun();try{gunEquip(SNP.gun,true);GUN.sheathed=false}catch(e){}
+  try{outNote(`<b>🎯 옥상 — ${d.fl}층</b><div>광장까지 ${Math.round(Math.hypot(S.px-SNP.roof.x,S.pz-SNP.roof.z))}m. 조준경으로 한 사람씩 — 단서 세 가지가 모두 맞는 사람만.${SNP.gave?' 옥상에 M24 저격소총(8배율)이 놓여 있었다.':''}</div>`,4600)}catch(e){}snpUI(true);return true}
+function snpEnd(why){if(!SNP.on)return;SNP.on=false;const S=snpS();FP3.noWalk=false;try{if(SNP.p0)FP3.pos.set(SNP.p0.x,0,SNP.p0.z);OUT.me.root.visible=SNP.meVis;(OUT.follow||[]).forEach(f=>{f.h.root.visible=true})}catch(e){}
+  const keep=SNP.ppl.filter(a=>a.dead);const drop=SNP.ppl.filter(a=>!a.dead);drop.forEach(a=>{try{a.h.root.removeFromParent()}catch(e){}});OUT.npcs=OUT.npcs.filter(a=>!drop.includes(a));try{if(SNP.car&&why!=='win')SNP.car.removeFromParent()}catch(e){}SNP.ppl=keep;try{GUN.hits=[]}catch(e){}
+  const el=document.getElementById('snpUI');if(el)el.remove();OUT.spots=(OUT.spots||[]).filter(s=>s.k!=='snp');OUT.sig='';SNP.res=why;
+  if(why==='win'){S.st='done';S.won=(S.won|0)+1;S.cool=(G.turn|0)+3;SNP.cnt.win++}else if(why==='abort'){S.st='intel';snpSpot()}else{S.st='fail';S.cool=(G.turn|0)+2;SNP.cnt.fail++}}
+/* ---------- 매 프레임 ---------- */
+function snpStep(dt){if(!SNP.on)return;if(!OUT.on){snpEnd('abort');return}SNP.t+=dt;const S=snpS();const P={x:S.px,z:S.pz};const tg=SNP.tgt;
+  /* 카메라: 옥상 */const cam=SV3.cam;cam.position.set(SNP.roof.x,SNP.roof.y,SNP.roof.z);cam.updateMatrixWorld(true);
+  /* 사람들: 광장 안에서 천천히 */for(const a of SNP.ppl){if(!a.h||a.dead||a.h.dead)continue;const p=a.h.root.position;if(a.flee){const dx=p.x-P.x,dz=p.z-P.z,L=Math.hypot(dx,dz)||1;const nx=p.x+dx/L*3.6*dt,nz=p.z+dz/L*3.6*dt;if(owcFree(nx,nz,.3)){p.x=nx;p.z=nz}a.h.root.rotation.y=Math.atan2(dx,dz);if(a.h.pose!=='run')try{a.h.setPose('run')}catch(e){}continue}
+    if(a.toCar&&SNP.car){const c=SNP.car.position;const dx=c.x-p.x,dz=c.z-p.z,L=Math.hypot(dx,dz);if(L<1.6){a.inCar=1;a.h.root.visible=false;continue}const sp=(a.run?2:1.4)*dt;p.x+=dx/L*sp;p.z+=dz/L*sp;a.h.root.rotation.y=Math.atan2(dx,dz);const ps=a.run?'run':'walk';if(a.h.pose!==ps)try{a.h.setPose(ps)}catch(e){}continue}
+    if(a.guard&&tg&&!tg.dead){const q=tg.h.root.position;const gx=q.x+(a===SNP.guards[0]?-1.1:1.1),gz=q.z-.9;const dx=gx-p.x,dz=gz-p.z,L=Math.hypot(dx,dz);if(L>.25){p.x+=dx/L*Math.min(L,1.6*dt);p.z+=dz/L*Math.min(L,1.6*dt);if(a.h.pose!=='walk')try{a.h.setPose('walk')}catch(e){}}else if(a.h.pose!=='idle')try{a.h.setPose('idle')}catch(e){}continue}
+    a.wt-=dt;if(a.wt<=0){a.wt=3+Math.random()*6;const r=Math.random()*11,an=Math.random()*6.283;a.wx=P.x+Math.sin(an)*r;a.wz=P.z+Math.cos(an)*r;if(Math.random()<.35){a.wx=p.x;a.wz=p.z}}const dx=a.wx-p.x,dz=a.wz-p.z,L=Math.hypot(dx,dz);if(L>.3&&owcFree(p.x+dx/L*.3,p.z+dz/L*.3,.3)){p.x+=dx/L*1.1*dt;p.z+=dz/L*1.1*dt;a.h.root.rotation.y=Math.atan2(dx,dz);if(a.h.pose!=='walk')try{a.h.setPose('walk')}catch(e){}}else if(a.h.pose!=='idle'&&a.h.pose!=='talk')try{a.h.setPose(Math.random()<.5?'talk':'idle')}catch(e){}}
+  /* 서류 가방: 오른손 */for(const a of SNP.ppl){if(a.case&&!a.dead&&typeof cwHandPlace==='function')try{cwHandPlace(a.h,a.case,'R')}catch(e){}}
+  for(const g of SNP.guards){if(g.gun&&!g.dead)try{cwHandPlace(g.h,g.gun,g.fire?'aim':'R',g.fire?{x:SNP.roof.x,y:SNP.roof.y,z:SNP.roof.z}:null)}catch(e){}}
+  if(SNP.ph==='watch'){if(tg&&tg.dead){snpWin();return}if(tg&&!tg.toCar&&(SNP.t>=SNP.dur||SNP.guards.some(g=>g.dead))){tg.toCar=1;tg.run=SNP.guards.some(g=>g.dead);SNP.guards.forEach(g=>{if(!g.dead){g.toCar=1;g.run=tg.run}});if(tg.run){try{outNote('<b>경호원이 쓰러졌다 — 표적이 SUV로 달린다</b><div>차에 닿기 전에.</div>',2600)}catch(e){}}else{try{outNote('<b>표적이 SUV 쪽으로 걸어간다</b><div>차에 타면 끝이다.</div>',2600)}catch(e){}}}
+    if(tg&&tg.inCar){snpFail('gone');return}}
+  else if(SNP.ph==='exfil'){SNP.exT-=dt;SNP.fireT=(SNP.fireT||0)-dt;if(SNP.fireT<=0){SNP.fireT=.5+Math.random()*.6;const g=SNP.guards.find(x=>!x.dead);if(g){g.fire=1;try{const from=g.h.root.position.clone().setY(1.4);const to=new T.Vector3(SNP.roof.x+(Math.random()-.5)*4,SNP.roof.y-1+(Math.random()-.5)*2,SNP.roof.z+(Math.random()-.5)*4);owcTracer(from,to,1);SFX.shot('rifle',{d:150});if(Math.random()<.3)sv3Shake(.15)}catch(e){}}}}
+  snpUI()}
+function snpWin(){const S=snpS();SNP.ph='exfil';SNP.exT=30;SNP.ppl.forEach(a=>{if(!a.guard&&!a.tgt&&!a.dead)a.flee=1});try{FX=[];trust(2);mor(1);G.inv.cash=(G.inv.cash||0)+3;gunAmmoAdd('762',40);OUT.fx.push(...FX);outStat();if(typeof styPlant==='function')styPlant('snpwin',1)}catch(e){}
+  try{outNote(`<b>✅ 표적 제거 확인 — '까마귀'</b><div>광장이 비명으로 뒤집혔다. 경호원이 옥상 쪽을 향해 쏜다 — 30초 안에 내려간다(⤓). 보상: 현금 봉투 3 · 7.62mm 40 · 이웃 신뢰 +2.</div>`,5200)}catch(e){}}
+function snpFail(why){SNP.ph='end';const m=why==='gone'?'표적이 경호원과 함께 검은 SUV에 올라 사라졌다.':why==='wrong'?'표적이 아니었다 — 총소리에 표적은 경호원과 함께 사라졌다.':'임무를 접었다.';try{outNote(`<b>❌ 옥상 저격 실패</b><div>${m}</div>`,4800)}catch(e){}if(why==='wrong')SNP.cnt.wrong++;setTimeout(()=>{try{snpEnd('fail')}catch(e){}},why==='wrong'?2500:1200)}
+function snpUI(force){let el=document.getElementById('snpUI');if(!SNP.on){if(el)el.remove();return}if(!SV3.el)return;SNP.uiT=(SNP.uiT||0)-1;if(!force&&el&&SNP.uiT>0)return;SNP.uiT=8;if(!el||el.parentNode!==SV3.el){if(el)el.remove();el=document.createElement('div');el.id='snpUI';el.className='snp-ui';SV3.el.appendChild(el)}
+  const S=snpS();const C=snpClues(S);let rng='';try{const v=_snv[0];SV3.cam.getWorldDirection(v);const b=gunCast(SV3.cam.position.clone(),v.clone(),400);rng=b&&b.d>0?Math.round(b.d)+'m':'—'}catch(e){rng='—'}
+  const tg=SNP.tgt;let left=SNP.ph==='exfil'?Math.max(0,SNP.exT):Math.max(0,SNP.dur-SNP.t);if(SNP.ph==='watch'&&tg&&tg.toCar&&SNP.car){const p=tg.h.root.position,c=SNP.car.position;left=Math.max(0,(Math.hypot(c.x-p.x,c.z-p.z)-1.6)/(tg.run?2:1.4))}const w=SNP.windShown;const wtxt=`${w>0?'→':'←'} ${Math.abs(w)}m/s${SNP.obs?'':' (짐작)'}`;
+  const html=`<div class="snp-top"><b>🎯 ${SNP.ph==='exfil'?'철수':'까마귀'}</b><span class="num">${Math.floor(left/60)}:${String(Math.floor(left%60)).padStart(2,'0')}</span><span>거리 ${rng}</span><span>바람 ${wtxt}</span></div>${SNP.ph==='watch'?`<div class="snp-c">${C.map(c=>`<i>${c}</i>`).join('')}<i>경호원 2</i></div>`:''}<button type="button" class="snp-x" data-snp="${SNP.ph==='exfil'?'down':'abort'}">${SNP.ph==='exfil'?'⤓ 옥상에서 내려간다':'✕ 그만두기'}</button>`;
+  if(el._h!==html){el._h=html;el.innerHTML=html}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-snp]');if(!b)return;e.preventDefault();e.stopPropagation();try{if(b.dataset.snp==='down')snpEnd('win');else{snpFail('abort')}}catch(x){snpErr(x)}},true);
+/* 바람: 옥상에서 쏠 때만 탄이 옆으로 흐른다(1m/s당 0.0011rad ≈ 150m에서 16cm) */
+(function(){const b=window.owcAimDir;if(typeof b!=='function')return;window.owcAimDir=function(sp){const d=b.apply(this,arguments);try{if(SNP.on&&SNP.shooting){const a=-(SNP.wind||0)*.0011;const c=Math.cos(a),s=Math.sin(a);const x=d.x*c+d.z*s,z=-d.x*s+d.z*c;d.x=x;d.z=z;d.y-=.0004;d.normalize()}}catch(e){}return d}})();
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){if(!SNP.on)return b.apply(this,arguments);SNP.shooting=1;try{const r=b.apply(this,arguments);if(r)SNP.shots++;return r}finally{SNP.shooting=0}}})();
+/* 옥상에서 쏠 때: 내가 선 건물 자체(높이 격자)에 막히지 않게 — 처음 8m(수평)는 건너뛴다 */
+(function(){const b=window.owcRayHG;if(typeof b!=='function')return;window.owcRayHG=function(o,d,maxD){try{if(SNP.on&&SNP.roof&&Math.abs(o.y-SNP.roof.y)<1.5&&Math.hypot(o.x-SNP.roof.x,o.z-SNP.roof.z)<1.5){const hz=Math.hypot(d.x,d.z);if(hz>1e-3){const t0=Math.min(14,8/hz);const o2=o.clone().addScaledVector(d,t0);const r=b.call(this,o2,d,maxD-t0);return r===Infinity?r:r+t0}}}catch(e){}return b.apply(this,arguments)}})();
+/* 표적/경호원/주민 맞힘 */
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t){const r=b.apply(this,arguments);try{const a=t&&t.a;if(SNP.on&&a&&a.snp){a.dead=1;if(a.tgt&&SNP.ph==='watch')snpWin()}}catch(e){snpErr(e)}return r}})();
+(function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t){const r=b.apply(this,arguments);try{const a=t&&t.a;if(SNP.on&&a&&a.snp&&SNP.ph==='watch')snpFail('wrong')}catch(e){snpErr(e)}return r}})();
+/* ---------- 연결 ---------- */
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{snpStep(dt||0)}catch(e){snpErr(e)}return r}})();
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){const r=b.apply(this,arguments);try{SNP.on=false;SNP.ppl=[];const S=snpS();if(snpOn()){if(S.st==='intel'&&S.since>=(G.turn|0)-1)snpSpot();else{if(S.st==='intel'||S.st==='on')S.st='none';snpMake(false)}}}catch(e){snpErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{if(SNP.on)snpEnd('abort')}catch(e){}return b.apply(this,arguments)}})();
+try{if(typeof STY_SEED!=='undefined')STY_SEED.snpwin={r:"무장 조직 지휘관으로 알려진 '까마귀'가 광장에서 저격당했다는 소식입니다. 조직원들이 흩어졌다고 합니다.",sc:'proud'}}catch(e){}
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="snipe"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('snipe','옥상 저격 임무','인상착의로 표적을 찾아 한 발(가상의 무장 조직 지휘관)',[[1,'켬'],[0,'끔']],store.get('sg.snipe',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){snpErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='snipe')return;try{store.set('sg.snipe',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎯 옥상 저격 임무(v17.0)','3턴부터 밖에 나가면 가끔 첩보가 온다 — 가상의 무장 조직 지휘관 \'까마귀\'가 광장에 나타난다. 광장 건너편 고층 동 현관의 \'🎯 옥상 저격 위치\'에서 브리핑(인상착의 세 가지 · 경호원 2 · 검은 SUV) → 옥상(8배율 저격소총, 없으면 지급). 조준경으로 광장 사람을 하나씩 보고 단서가 모두 맞는 사람만 쏜다 — 비슷한 차림이 4명 섞여 있다. 바람에 탄이 흐른다(관측 먼저면 정확한 바람). 맞히면 30초 안에 내려간다. 경호원을 먼저 쏘면 표적이 SUV로 달아나고, 표적이 아닌 사람을 쏘면 주민 사격과 같다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
