@@ -1869,6 +1869,11 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .pf-f{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:112px;width:90px;height:90px;border-radius:50%;display:grid;place-items:center;align-content:center;font-size:28px!important;background:radial-gradient(circle at 40% 35%,#ff7a3a,#9a2a16 72%);box-shadow:0 4px 16px rgba(0,0,0,.5)}
 .pf-f small{font:800 10.5px var(--sans);opacity:.9;margin-top:2px}
 .pf-r{position:absolute;right:calc(max(14px,env(safe-area-inset-right,0px)) + 100px);bottom:122px;width:52px;height:52px;border-radius:50%;background:rgba(10,16,22,.82);font-size:22px!important}
+/* v16.9 검문 장면 */
+.insp-ui{position:absolute;inset:0;z-index:30;pointer-events:none;box-shadow:inset 0 0 0 9999px rgba(0,0,0,0);background:linear-gradient(to bottom,rgba(0,0,0,.55) 0,rgba(0,0,0,0) 13%,rgba(0,0,0,0) 87%,rgba(0,0,0,.55) 100%)}
+.insp-cap{position:absolute;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:10px;align-items:center;padding:7px 16px;border-radius:999px;background:rgba(8,12,16,.82);border:1px solid rgba(255,216,74,.55);color:#eef4f8;font:600 13px var(--sans);white-space:nowrap}
+.insp-cap b{color:#ffd84a;font-weight:800}
+.insp-skip{position:absolute;right:max(14px,env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));pointer-events:auto;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(8,12,16,.7);color:#fff;font:700 12px var(--sans)}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13959,7 +13964,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.8';
+const APP_VER='16.9';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -25563,6 +25568,137 @@ document.addEventListener('keyup',e=>{if(e.code==='Space')CB.pf.hold=false},true
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="carboom"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('carboom','차량 폭발','차를 계속 쏘면 연기 → 불 → 폭발 · 연쇄',[[1,'켬'],[0,'끔']],store.get('sg.carboom',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){cbErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='carboom')return;try{store.set('sg.carboom',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['💥 차량 폭발 · 🔫 조수석 사격(v16.8)','<b>차량 폭발</b>: 차마다 내구도가 있다. 총알은 차에 막히고(차 뒤는 엄폐), 계속 맞으면 회색 연기 → 검은 연기·불 → 1.5~3초 뒤 폭발. 뒤쪽(연료통)을 맞히면 2.5배 빨리 달아오른다. 폭발은 6.5m 안 사람을 쓰러뜨리고(주민이면 주민 사격과 같은 책임) 옆 차를 달궈 연쇄 폭발을 부른다. 전차는 장갑이라 소총으로는 안 된다. <b>조수석 사격</b>: 팀원이 운전하는 차 조수석에서 \'🔫 창밖 사격\'(G) — 화면을 끌어 겨누고 사격 단추(스페이스)로 쏜다. 운전석 쪽으로 쏘면 운전하는 팀원이 맞는다.']);
+
+/* ===================== 147 · v16.9 검문 동작 — 손 들기 · 돌아서기 · 몸수색 · 신분증 · 가방 ===================== */
+/* 사용자 요청(2026-11-21 21:51): "수상한 사람 검문 시 검문하는 모션도 리얼하게 만들어 주세요."
+   55 간첩 검문 카드에서 '신분증과 찍은 사진을 보여 달라'를 고르면, 결과를 띄우기 전에 7초 동안 3인칭으로 검문 장면을 보여 준다(화면 아무 데나 누르면 건너뛴다):
+   ① 손 들어(0~0.9초): 상대가 두 손을 머리 옆으로 든다(팔 IK) · 팀원은 양옆에서 총을 겨눈다
+   ② 돌아서(0.9~1.7초): 상대가 등을 돌린다 · 나는 등 뒤 0.6m로 다가간다
+   ③ 몸수색(1.7~4.4초): 두 손으로 어깨 → 겨드랑이 → 허리 → 허벅지 → 종아리를 차례로 두드려 내려간다(내 팔 IK · 다리에서는 쪼그려 앉는다) · 옷 스치는 소리
+   ④ 신분증(4.4~5.6초): 상대가 돌아서 카드를 내민다 → 내 손으로 옮겨 와 눈높이에서 확인
+   ⑤ 가방(5.6~7초): 바닥에 내려놓은 가방 덮개를 열고 들여다본다 → 결과 카드
+   '다짜고짜 덮친다'는 1.3초: 달려들어 넘어뜨리고 무릎으로 누른다(피 없음).
+   카메라는 두 사람 둘레를 천천히 돈다 · 설정 '검문 장면'(기본 켬) · 자동 점검(webdriver)은 __inspTest일 때만 */
+const INSP={on:false,t:0,dur:7,a:null,i:-1,E:null,done:null,kind:'check',props:[],err:0,n:0,tackle:0,skip:0,last:null};const _iv=[0,1,2,3,4,5,6,7,8,9].map(()=>new T.Vector3());
+function inspErr(e){if(INSP.err<6){INSP.err++;try{console.error(e)}catch(x){}}}
+function inspOn(){try{return store.get('sg.inspect',true)!==false&&!(navigator.webdriver&&!window.__inspTest)}catch(e){return false}}
+function inspMat(c,o){return mat(c,o||{r:.7})}
+function inspCardTex(){if(INSP.tex)return INSP.tex;const c=document.createElement('canvas');c.width=256;c.height=160;const x=c.getContext('2d');x.fillStyle='#eef1f4';x.fillRect(0,0,256,160);x.fillStyle='#3d6fa8';x.fillRect(0,0,256,30);x.fillStyle='#fff';x.font='bold 18px sans-serif';x.fillText('신분 확인 카드',12,21);
+  x.fillStyle='#b9c2cc';x.fillRect(14,44,66,86);x.fillStyle='#7f8a96';x.beginPath();x.arc(47,74,16,0,6.28);x.fill();x.fillRect(27,96,40,30);x.fillStyle='#5a6470';for(let i=0;i<5;i++)x.fillRect(96,48+i*18,i%2?110:140,7);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return INSP.tex=t}
+function inspProps(a){const g=[];try{const card=new T.Mesh(GG.box(.086,.054,.004),[inspMat('#e6e9ec'),inspMat('#e6e9ec'),inspMat('#e6e9ec'),inspMat('#e6e9ec'),new T.MeshStandardMaterial({map:inspCardTex(),roughness:.5}),inspMat('#d0d4d8')]);card.visible=false;OUT.scene.add(card);g.push(card);INSP.card=card;
+    const bag=new T.Group();const B=inspMat('#2d3340',{r:.85});MM(GG.box(.36,.42,.18,.03),B,0,.21,0,{p:bag});const fl=new T.Group();fl.position.set(0,.42,-.09);bag.add(fl);MM(GG.box(.36,.02,.2),inspMat('#262b36',{r:.85}),0,0,.1,{p:fl});
+    MM(GG.box(.16,.06,.1),inspMat('#4a4f58'),-.06,.33,0,{p:bag,cast:false});MM(GG.box(.06,.1,.04),inspMat('#1d1f22'),.08,.34,.02,{p:bag,cast:false});const P=a.h.root.position,y=a.h.root.rotation.y;bag.position.set(P.x+Math.sin(y)*.55+Math.cos(y)*.35,0,P.z+Math.cos(y)*.55-Math.sin(y)*.35);bag.rotation.y=y;bag.visible=false;OUT.scene.add(bag);g.push(bag);INSP.bag=bag;INSP.flap=fl}catch(e){inspErr(e)}INSP.props=g}
+function inspClear(){INSP.props.forEach(o=>{try{o.removeFromParent()}catch(e){}});INSP.props=[];INSP.card=null;INSP.bag=null;INSP.flap=null;const el=document.getElementById('inspUI');if(el)el.remove()}
+/* 시작: 카드를 잠깐 숨기고 장면 → 끝나면 원래 선택 처리(결과 카드) */
+function inspStart(a,kind,fin){if(INSP.on||!a||!a.h||!OUT.me||!OUT.me.b||!OUT.me.b.shR)return false;const me=OUT.me;Object.assign(INSP,{on:true,t:0,a,kind,dur:kind==='tackle'?1.4:7,done:fin,sp:0,snd:0});INSP.n++;if(kind==='tackle')INSP.tackle++;
+  const P=a.h.root.position;INSP.p0={x:FP3.pos.x,z:FP3.pos.z};INSP.ay0=a.h.root.rotation.y;const dx=P.x-FP3.pos.x,dz=P.z-FP3.pos.z,L=Math.hypot(dx,dz)||1;INSP.ux=dx/L;INSP.uz=dz/L;
+  /* 내 몸(1인칭에선 숨겨 둔다)을 보이게 · 상대와 2m 거리에서 시작 */INSP.meVis=me.root.visible;me.root.visible=true;INSP.meP={x:P.x-INSP.ux*2,z:P.z-INSP.uz*2};me.root.position.set(INSP.meP.x,0,INSP.meP.z);me.root.rotation.y=Math.atan2(INSP.ux,INSP.uz);
+  a.h.root.rotation.y=Math.atan2(-INSP.ux,-INSP.uz);try{a.h.setPose('idle')}catch(e){}a.mode='stand';INSP.th0=Math.atan2(-INSP.uz,INSP.ux)+.9;inspProps(a);
+  const el=document.getElementById('oEnc');if(el)el.hidden=true;try{if(typeof gunHolster==='function'&&GUN.on)gunHolster(true)}catch(e){}
+  let ui=document.getElementById('inspUI');if(!ui&&SV3.el){ui=document.createElement('div');ui.id='inspUI';ui.className='insp-ui';ui.innerHTML=`<div class="insp-cap"><b>${kind==='tackle'?'제압':'검문'}</b><span id="inspStep">${kind==='tackle'?'달려들어 넘어뜨린다':'손 들어 — 천천히'}</span></div><button type="button" class="insp-skip" data-insp="skip">건너뛰기 ▶</button>`;SV3.el.appendChild(ui)}return true}
+function inspEnd(){if(!INSP.on)return;const me=OUT.me,a=INSP.a;INSP.on=false;try{if(me){me.root.visible=INSP.meVis;me.root.position.set(FP3.pos.x,FP3.jy||0,FP3.pos.z);me.root.rotation.set(0,me.root.rotation.y,0);me.setPose('idle')}}catch(e){}
+  try{if(a&&a.h){a.h.root.quaternion.identity();a.h.root.rotation.set(0,Math.atan2(FP3.pos.x-a.h.root.position.x,FP3.pos.z-a.h.root.position.z),0);a.h.root.position.y=0;a.h.setPose(INSP.kind==='tackle'?'crouch':'nervous')}}catch(e){}INSP.thud=0;
+  inspClear();INSP.last={kind:INSP.kind,t:+INSP.t.toFixed(1)};const f=INSP.done;INSP.done=null;const el=document.getElementById('oEnc');if(el)el.hidden=false;try{if(f)f()}catch(e){inspErr(e)}}
+const INSP_STEP=[[0,'손 들어 — 천천히'],[.9,'뒤로 돌아'],[1.7,'몸수색 — 어깨·허리·다리'],[4.4,'신분증 확인'],[5.6,'가방 확인']];
+/* 한 프레임: 그림 갱신 뒤(tjStep 가장 바깥) */
+function inspStep(dt){if(!INSP.on)return;const a=INSP.a,me=OUT.me;if(!a||!a.h||!me||!OUT.on){inspEnd();return}INSP.t+=dt;const t=INSP.t;if(t>=INSP.dur){inspEnd();return}
+  const P=a.h.root.position;const ux=INSP.ux,uz=INSP.uz;const rx=-uz,rz=ux;/* 나→상대 방향(u) · 오른쪽(r) */
+  if(INSP.kind==='tackle'){inspTackle(dt,t);return}
+  const s=document.getElementById('inspStep');if(s){let L='';for(const [k,v] of INSP_STEP)if(t>=k)L=v;if(s.textContent!==L)s.textContent=L}
+  /* 상대: ①손 들기 ②돌아서기 ④다시 돌아서 카드 ⑤가방 옆 */const faceMe=Math.atan2(-ux,-uz),away=Math.atan2(ux,uz);let ay=faceMe;if(t>=.9&&t<4.4){const u=Math.min(1,(t-.9)/.7);ay=faceMe+Math.PI*(u*u*(3-2*u))}else if(t>=4.4){const u=Math.min(1,(t-4.4)/.5);ay=away+Math.PI*(u*u*(3-2*u))}a.h.root.rotation.y=ay;
+  try{if(a.h.pose!=='idle')a.h.setPose('idle')}catch(e){}
+  /* 나: ② 등 뒤 0.6m로 · ③ 쪼그려 다리까지 · ④ 카드 받기 · ⑤ 가방 앞에 쪼그림 */let mx=INSP.meP.x,mz=INSP.meP.z,pose='idle';const back={x:P.x-ux*.62,z:P.z-uz*.62};
+  if(t>=.9&&t<1.7){const u=Math.min(1,(t-.9)/.8);mx=INSP.meP.x+(back.x-INSP.meP.x)*u;mz=INSP.meP.z+(back.z-INSP.meP.z)*u;pose='walk'}else if(t>=1.7&&t<4.4){mx=back.x;mz=back.z;pose=t>3.3?'crouch':'idle'}else if(t>=4.4&&t<5.6){const f={x:P.x-ux*.8,z:P.z-uz*.8};mx=f.x;mz=f.z}else if(t>=5.6&&INSP.bag){const b=INSP.bag.position;mx=b.x-ux*.55;mz=b.z-uz*.55;pose='crouch'}
+  me.root.position.set(mx,0,mz);me.root.rotation.y=t>=5.6&&INSP.bag?Math.atan2(INSP.bag.position.x-mx,INSP.bag.position.z-mz):Math.atan2(P.x-mx,P.z-mz);try{if(me.pose!==pose)me.setPose(pose)}catch(e){}me.root.updateMatrixWorld(true);a.h.root.updateMatrixWorld(true);
+  /* 상대 팔: 손을 머리 옆으로(④ 카드 내밀 때 오른손만 앞으로) */try{const B=a.h.b;if(B&&B.shL&&B.head&&typeof ikArm==='function'){const L=brLen(a.h);const hd=B.head.getWorldPosition(_iv[0]);const y=a.h.root.rotation.y;const fx=Math.sin(y),fz=Math.cos(y),lx=Math.cos(y),lz=-Math.sin(y);/* lx,lz = 몸 왼쪽 */
+      const up=t<.9?Math.min(1,t/.5):1;const hL=_iv[1].set(hd.x+lx*.24+fx*.04,hd.y+.06*up-.5*(1-up),hd.z+lz*.24+fz*.04),hR=_iv[2].set(hd.x-lx*.24+fx*.04,hd.y+.06*up-.5*(1-up),hd.z-lz*.24+fz*.04);
+      if(t>=4.4&&t<5.2){const u=Math.min(1,(t-4.4)/.4);hR.set(hd.x-lx*.12+fx*(.04+.34*u),hd.y-.32*u+.06*(1-u),hd.z-lz*.12+fz*(.04+.34*u))}else if(t>=5.2){hR.set(hd.x-lx*.2+fx*.1,hd.y-.55,hd.z-lz*.2+fz*.1)}
+      const sL=B.shL.getWorldPosition(_iv[3]),sR=B.shR.getWorldPosition(_iv[4]);ikArm(B.shL,B.elL,B.handL,hL,_iv[5].copy(sL).addScaledVector(_iv[6].set(lx,0,lz),.5).setY(sL.y-.3),L.L1L,L.L2L);ikArm(B.shR,B.elR,B.handR,hR,_iv[5].copy(sR).addScaledVector(_iv[6].set(-lx,0,-lz),.5).setY(sR.y-.3),L.L1R,L.L2R)}}catch(e){inspErr(e)}
+  /* 내 팔: ③ 몸수색 — 두 손이 상대 몸 양옆을 따라 내려간다(톡톡) */try{const B=me.b;if(B&&B.shL&&typeof ikArm==='function'){const L=brLen(me);const y=me.root.rotation.y;const fx=Math.sin(y),fz=Math.cos(y),lx=Math.cos(y),lz=-Math.sin(y);let tL=null,tR=null;
+      if(t>=1.7&&t<4.4){const u=(t-1.7)/2.7;const LV=[1.42,1.22,1.0,.78,.5];const k=Math.min(LV.length-1.001,u*(LV.length-1));const i0=Math.floor(k),fr=k-i0;const hy=LV[i0]+(LV[i0+1]-LV[i0])*fr;const pat=Math.abs(Math.sin(t*14))*.03;const w=.2-.05*Math.min(1,u*1.5);
+        tL=_iv[1].set(P.x+lx*(w+pat),hy,P.z+lz*(w+pat));tR=_iv[2].set(P.x-lx*(w+pat),hy,P.z-lz*(w+pat));if(Math.floor(t*7)!==INSP.snd){INSP.snd=Math.floor(t*7);try{SND.tone(260+Math.random()*120,.03,'triangle',.012)}catch(e){}}}
+      else if(t>=4.4&&t<5.6&&INSP.card){const hd=B.head.getWorldPosition(_iv[7]);const u=Math.max(0,Math.min(1,(t-4.9)/.35));tR=_iv[2].set(hd.x+fx*(.55-.2*u)-lx*.08,hd.y-.28+.18*u,hd.z+fz*(.55-.2*u)-lz*.08)}
+      else if(t>=5.6&&INSP.bag){const b=INSP.bag.position;tL=_iv[1].set(b.x+lx*.12,.4,b.z+lz*.12);tR=_iv[2].set(b.x-lx*.12+fx*.05,.36,b.z-lz*.12+fz*.05)}
+      const sL=B.shL.getWorldPosition(_iv[3]),sR=B.shR.getWorldPosition(_iv[4]);if(tL)ikArm(B.shL,B.elL,B.handL,tL,_iv[5].copy(sL).addScaledVector(_iv[6].set(lx,0,lz),.4).setY(sL.y-.5),L.L1L,L.L2L);if(tR)ikArm(B.shR,B.elR,B.handR,tR,_iv[5].copy(sR).addScaledVector(_iv[6].set(-lx,0,-lz),.4).setY(sR.y-.5),L.L1R,L.L2R)}}catch(e){inspErr(e)}
+  /* 신분증: 상대 오른손 → 내 오른손 */try{const c=INSP.card;if(c){c.visible=t>=4.6&&t<5.8;if(c.visible){const from=a.h.b.handR.getWorldPosition(_iv[8]);const to=me.b.handR.getWorldPosition(_iv[9]);const u=Math.max(0,Math.min(1,(t-4.95)/.3));c.position.copy(from).lerp(to,u);c.position.y+=.03;c.lookAt(u>.5?me.b.head.getWorldPosition(_iv[7]):to)}}}catch(e){}
+  /* 가방: 내려놓고 덮개를 연다 */try{const b=INSP.bag;if(b){b.visible=t>=5.4;if(INSP.flap){const u=Math.max(0,Math.min(1,(t-5.9)/.5));INSP.flap.rotation.x=-1.9*u}}}catch(e){}
+  /* 팀원: 양옆에서 겨눈다 */try{if(typeof tmLive==='function')tmLive().slice(0,2).forEach(m=>{if(m.h&&m.h.root.visible){m.h.root.rotation.y=Math.atan2(P.x-m.h.root.position.x,P.z-m.h.root.position.z);if(m.h.pose!=='aim')m.h.setPose('aim')}})}catch(e){}
+  inspCam(t,P)}
+function inspCam(t,P){const cam=SV3.cam;const th=INSP.th0+t*.22;const r=t>=5.6?2.6:3.3;const cy=t>=5.6?1.45:1.75;const look=t>=5.6&&INSP.bag?_iv[8].copy(INSP.bag.position).setY(.35):_iv[8].set(P.x-INSP.ux*.3,1.05,P.z-INSP.uz*.3);
+  cam.position.set(look.x+Math.cos(th)*r,cy,look.z+Math.sin(th)*r);try{if(typeof owcFree==='function'&&!owcFree(cam.position.x,cam.position.z,.2)){cam.position.set(look.x-INSP.ux*2.6+(-INSP.uz)*1.2,cy,look.z-INSP.uz*2.6+INSP.ux*1.2)}}catch(e){}cam.lookAt(look);cam.updateMatrixWorld(true)}
+function inspTackle(dt,t){const a=INSP.a,me=OUT.me,P=a.h.root.position;const ux=INSP.ux,uz=INSP.uz;const u=Math.min(1,t/.45);const tx=P.x-ux*.5,tz=P.z-uz*.5;me.root.position.set(INSP.meP.x+(tx-INSP.meP.x)*u,0,INSP.meP.z+(tz-INSP.meP.z)*u);me.root.rotation.y=Math.atan2(ux,uz);
+  try{const pose=t<.45?'run':'kneel';if(me.pose!==pose)me.setPose(pose)}catch(e){}if(t>=.4){const f=Math.min(1,(t-.4)/.35);const ang=f*f*1.45;_iv[0].set(uz,0,-ux);a.h.root.quaternion.setFromAxisAngle(_iv[0].normalize(),ang).multiply(new T.Quaternion().setFromAxisAngle(_iv[1].set(0,1,0),Math.atan2(-ux,-uz)));a.h.root.position.y=.05*f;if(!INSP.thud&&f>=1){INSP.thud=1;try{SND.tone(62,.2,'sine',.2);sv3Shake(.35);vib([90,40,60])}catch(e){}}}
+  inspCam(Math.max(0,t-.2)*.6,P)}
+/* 카드 선택 가로채기 */
+(function(){const b=window.outEncPick;if(typeof b!=='function')return;window.outEncPick=function(i){try{const E=OUT.enc;if(E&&E.id==='spy-check'&&!E.done&&!INSP.on&&inspOn()&&typeof SPY!=='undefined'&&SPY.cur){const c=E.choices[i];const a=SPY.cur;
+      if(c&&/신분증/.test(c.t)&&inspStart(a,'check',()=>{if(OUT.enc===E)b.call(window,i)}))return;if(c&&/덮친다/.test(c.t)&&inspStart(a,'tackle',()=>{if(OUT.enc===E)b.call(window,i)}))return}}catch(e){inspErr(e)}return b.apply(this,arguments)}})();
+document.addEventListener('pointerdown',e=>{if(!INSP.on)return;e.preventDefault();e.stopPropagation();INSP.skip++;INSP.t=INSP.dur},true);
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{inspStep(dt||0)}catch(e){inspErr(e);try{inspEnd()}catch(x){}}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{if(INSP.on){INSP.done=null;inspEnd()}}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="inspect"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('inspect','검문 장면','손 들기 · 몸수색 · 신분증 · 가방(7초, 누르면 건너뜀)',[[1,'켬'],[0,'끔']],store.get('sg.inspect',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){inspErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='inspect')return;try{store.set('sg.inspect',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['👮 검문 장면(v16.9)','수상한 사람을 검문하며 \'신분증과 찍은 사진을 보여 달라\'를 고르면 7초 동안 장면이 나온다 — 상대가 두 손을 들고 등을 돌리면 내가 뒤에서 어깨·허리·다리를 차례로 두드려 몸수색하고, 신분증을 받아 확인하고, 내려놓은 가방을 열어 본다. 팀원은 양옆에서 겨눈다. \'다짜고짜 덮친다\'는 달려들어 넘어뜨리는 장면. 화면을 누르면 건너뛴다. 설정 \'검문 장면\'.']);
+
+/* ===================== 148 · v16.9 인물 외형 — 주민 다양화 · 적대 세력은 무섭게 ===================== */
+/* 사용자 요청(2026-11-21 21:51): "케릭터들 생긴 것들도 다양화 해 주세요. 특히 적군.간첩.조직폭력배.범죄자 등은 무섭게 표현해 주시구요."
+   원칙: 국적·민족을 떠올리게 하는 외형은 쓰지 않는다 — 옷 색·장비·소품·차림으로만 · 피 묘사 없음 · 아이는 꾸미지 않는다
+   · 주민: 92(v10.6)가 이미 모습 19종 · 옷 색 6 · 모자 · 마스크 · 선글라스 · 가방 · 키·체격을 섞는다 → 여기서는 전시 차림(흙먼지 묻은 옷 색 · 머리 붕대 · 안경)만 더한다
+   · 조직폭력배(불량배): 검은 옷 · 짙은 선글라스 · 얼굴 흉터 · 금목걸이 · 짧은 털모자
+   · 약탈자: 어두운 옷 · 두건과 얼굴 가리개
+   · 범죄자(수배자): 회색 옷 · 두건 · 흉터 · 선글라스
+   · 간첩(수상한 사람 — 진짜든 아니든 같은 차림): 짙은 옷 · 눌러쓴 검은 모자 · 선글라스
+   · 적군(교전·제자리 교전의 적): 짙은 전투복 · 검은 복면 또는 방독면 · 녹색으로 빛나는 야간투시경(밤에 특히 섬뜩하다)
+   · 0.5초마다 새로 나온 사람만 한 번 꾸민다 · 설정 '인물 다양화'(기본 켬) · 자동 점검(webdriver)은 __lkTest일 때만 */
+const LK={err:0,t:0,n:{civ:0,thug:0,loot:0,wanted:0,spy:0,en:0},tint:new Map(),M:null};
+function lkErr(e){if(LK.err<6){LK.err++;try{console.error(e)}catch(x){}}}
+function lkOn(){try{return store.get('sg.looks',true)!==false&&!(navigator.webdriver&&!window.__lkTest)}catch(e){return false}}
+function lkMats(){if(LK.M)return LK.M;const S=(c,o)=>mat(c,Object.assign({r:.8},o||{}));LK.M={blk:S('#141416'),dk:S('#24262a'),cap:[S('#2a3a5c'),S('#7a2626'),S('#3d4a30'),S('#d8d4c8'),S('#1d1d1f')],bea:[S('#3a3a3c'),S('#5a2a36'),S('#2e4a5a'),S('#7a6a4a')],
+  frame:S('#1a1a1a',{r:.4}),lens:new T.MeshStandardMaterial({color:'#0b0d12',roughness:.12,metalness:.6}),clear:new T.MeshStandardMaterial({color:'#cfe6ff',roughness:.05,transparent:true,opacity:.25}),mask:S('#e9ebe8',{r:.95}),
+  scarf:[S('#8a2f2f'),S('#2f4f6a'),S('#4a4a4a'),S('#b88a3a')],pack:[S('#2d3340'),S('#5a3a2a'),S('#3a5a3a'),S('#6a6a72')],gold:S('#d4a83a',{r:.25,m:.9}),scar:S('#9a6a5e',{r:.6}),
+  nvg:S('#1e2024',{r:.5,m:.4}),glow:mat('#7dff8a',{e:'#3dff5a',ei:2.6}),gas:S('#2a2c2e',{r:.6}),gasL:new T.MeshStandardMaterial({color:'#3a4a3e',roughness:.1,metalness:.5}),red:S('#a82020')};return LK.M}
+/* 옷 색: 머리(피부)는 두고 몸 재질만 곱한다(재질은 색마다 한 번만 복제) */
+function lkTint(h,col){try{if(!h||!h.mesh||!h.mesh.material||!col)return;const arr=Array.isArray(h.mesh.material)?h.mesh.material:[h.mesh.material];const out=arr.map(m=>{if(!m||/head|hair|eye|teeth|lash/i.test(m.name||''))return m;const k=m.uuid+col;let c=LK.tint.get(k);if(!c){c=m.clone();c.color=c.color.clone().multiply(new T.Color(col));LK.tint.set(k,c)}return c});h.mesh.material=Array.isArray(h.mesh.material)?out:out[0]}catch(e){lkErr(e)}}
+/* 소품은 92(주민 모습)의 앵커(머리 꼭대기·얼굴 앞면·몸통)와 같은 방식으로 뼈 바인드 공간에 놓는다 — 아바타마다 머리 크기가 달라도 정확하다 */
+const _lkM=new T.Matrix4(),_lkQ=new T.Quaternion(),_lkE=new T.Euler(),_lkP=new T.Vector3(),_lkS=new T.Vector3();
+function lkPut(h,bi,geo,mt,px,py,pz,sx,sy,sz,rx,ry,rz){const sk=h.mesh.skeleton;const b=sk.bones[bi];if(!b)return null;const m=new T.Mesh(geo,mt);_lkE.set(rx||0,ry||0,rz||0);_lkQ.setFromEuler(_lkE);_lkM.compose(_lkP.set(px,py,pz),_lkQ,_lkS.set(sx,sy,sz));m.matrixAutoUpdate=false;m.matrix.multiplyMatrices(sk.boneInverses[bi],_lkM);m.castShadow=false;m.receiveShadow=false;m.userData.lk=1;b.add(m);h._lkN=(h._lkN|0)+1;return m}
+function lkA(h){try{return typeof folkAnc==='function'?folkAnc(h):null}catch(e){return null}}
+function lkFG(){return typeof folkGeo==='function'?folkGeo():null}
+const LKG={};function lkG(k,f){return LKG[k]||(LKG[k]=f())}
+/* ---------- 소품 ---------- */
+function lkShades(h,A){lkPut(h,A.iH,lkFG().box,lkMats().lens,A.cx,A.top-.133,A.fz-.01,A.rx*1.74,.032,.014)}
+function lkClear(h,A){const M=lkMats();for(const s of [-1,1])lkPut(h,A.iH,GG.tor(1,.12),M.frame,A.cx+s*A.rx*.42,A.top-.118,A.fz-.008,.021,.021,.021);lkPut(h,A.iH,lkFG().box,M.frame,A.cx,A.top-.112,A.fz-.006,.03,.005,.005)}
+function lkScar(h,A){lkPut(h,A.iH,lkFG().box,lkMats().scar,A.cx-A.rx*.5,A.top-.165,A.fz-.03,.006,.065,.01,0,0,.38)}
+function lkBand(h,A,col){lkPut(h,A.iH,lkFG().band,mat(col,{r:.95}),A.cx,A.top-.085,A.cz-.004,A.rx*1.1,.045,A.rz*1.1)}
+function lkBeanie(h,A,col){const G=lkFG(),mt=mat(col,{r:.97});const y=A.top-.09;lkPut(h,A.iH,G.dome,mt,A.cx,y,A.cz-.004,A.rx*1.13,.105,A.rz*1.12);lkPut(h,A.iH,G.band,mt,A.cx,y+.012,A.cz-.004,A.rx*1.16,.035,A.rz*1.15)}
+function lkCap(h,A,col){const G=lkFG(),mt=mat(col,{r:.85});const y=A.top-.075;lkPut(h,A.iH,G.dome,mt,A.cx,y,A.cz,A.rx*1.1,.088,A.rz*1.1);lkPut(h,A.iH,G.brim,mt,A.cx,y-.004,A.cz+.008,A.rx*1.1+.02,.012,A.rz*1.1+.075,.1)}
+function lkFaceMask(h,A,col){const zf=Math.max(A.fz,A.mz+.012);lkPut(h,A.iH,lkFG().mask,mat(col,{r:.97}),A.cx,A.top-.2,A.cz,A.rx+.008,.11,zf-A.cz+.006)}
+function lkNvg(h,A){const M=lkMats(),G=lkFG();lkPut(h,A.iH,G.box,M.nvg,A.cx,A.top-.062,A.fz+.008,.08,.03,.04);for(const s of [-1,1]){lkPut(h,A.iH,GG.cyl(1,1.1,1,10),M.nvg,A.cx+s*.031,A.top-.112,A.fz+.036,.019,.058,.019,Math.PI/2);lkPut(h,A.iH,GG.cyl(1,1,1,10),M.glow,A.cx+s*.031,A.top-.112,A.fz+.067,.016,.004,.016,Math.PI/2)}}
+function lkGas(h,A){const M=lkMats(),G=lkFG();lkPut(h,A.iH,G.box,M.gas,A.cx,A.top-.17,A.fz-.012,A.rx*1.55,.15,.07);for(const s of [-1,1])lkPut(h,A.iH,GG.cyl(1,1,1,12),M.gasL,A.cx+s*A.rx*.42,A.top-.118,A.fz+.026,.024,.012,.024,Math.PI/2);lkPut(h,A.iH,GG.cyl(1,1.15,1,12),M.gas,A.cx,A.top-.235,A.fz+.05,.032,.07,.032,1.1)}
+function lkChain(h,A){lkPut(h,A.iS2,GG.tor(1,.07),lkMats().gold,A.cx,A.ty1-.05,A.tz0+.135,.085,.085,.085,1.25)}
+/* ---------- 누구를 어떻게 ---------- */
+/* 주민: 92가 이미 옷 색 6 · 모자 · 마스크 · 선글라스 · 가방을 섞는다 → 여기서는 '전시 차림'만 더한다(흙먼지 묻은 옷 · 머리 붕대 · 안경 · 낡은 옷 색) */
+const LK_CIV=['#ffffff','#ffffff','#d8d0c4','#c9c2b6','#bfc6cc','#d6cbbf'];
+function lkKid(a,h){return !!(a&&(a.kid||a.mode==='kid'||a.k==='kid'||a.kind==='kid'))||(h&&h.kind==='kid')||/^(mc_|fc_)/.test((h&&h.key)||'')}
+function lkHasFolk(h,what){let n=0;h.root.traverse(x=>{if(x.userData&&x.userData.folk)n++});return n}
+function lkCiv(h,r,A){const t=LK_CIV[Math.floor(r()*LK_CIV.length)];if(t!=='#ffffff')lkTint(h,t);if(r()<.09)lkBand(h,A,'#f2f0ea');else if(r()<.1&&!lkHasFolk(h))lkClear(h,A)}
+function lkStrip(h){try{if(typeof folkStrip==='function')folkStrip(h)}catch(e){}}
+function lkThug(h,r,A){lkStrip(h);lkTint(h,'#38383a');if(r()<.8)lkShades(h,A);if(r()<.6)lkScar(h,A);if(r()<.4)lkBeanie(h,A,'#141416');if(r()<.6)lkChain(h,A)}
+function lkLoot(h,r,A){lkStrip(h);lkTint(h,'#5a5048');lkBeanie(h,A,'#1b1b1d');lkFaceMask(h,A,r()<.5?'#1b1b1e':'#6a2a26')}
+function lkWanted(h,r,A){lkStrip(h);lkTint(h,'#6a6a6c');lkBeanie(h,A,'#2a2a2c');lkScar(h,A);if(r()<.5)lkShades(h,A)}
+function lkSpy(h,r,A){lkStrip(h);lkTint(h,'#3a3f47');lkCap(h,A,'#111113');lkShades(h,A)}
+function lkEnemy(h,r,A){lkStrip(h);lkTint(h,'#55554c');const x=r();if(x<.45){lkBeanie(h,A,'#0e0e10');lkFaceMask(h,A,'#0e0e10');lkNvg(h,A)}else if(x<.8){lkGas(h,A);lkBeanie(h,A,'#20221e');if(r()<.5)lkNvg(h,A)}else{lkFaceMask(h,A,'#0e0e10');lkNvg(h,A);lkScar(h,A)}}
+function lkRnd(s){let x=(s*2654435761)%4294967296;return()=>{x=(x*1664525+1013904223)%4294967296;return x/4294967296}}
+function lkDo(h,type,a){if(!h||h._lk||!h.rbx||!h.b||!h.b.head)return false;if(lkKid(a,h)){h._lk='kid';return false}h._lk=type;const A=lkA(h);if(!A||!lkFG()){return false}const r=lkRnd(((h.seed|0)+1)*97+(LK.t*13|0)+type.length);
+  try{if(type==='civ')lkCiv(h,r,A);else if(type==='thug')lkThug(h,r,A);else if(type==='loot')lkLoot(h,r,A);else if(type==='wanted')lkWanted(h,r,A);else if(type==='spy')lkSpy(h,r,A);else if(type==='en')lkEnemy(h,r,A);LK.n[type]=(LK.n[type]|0)+1}catch(e){lkErr(e)}return true}
+function lkType(a){if(!a||!a.h)return null;if(a.cw)return a.cw==='fac'?'thug':a.cw==='pro'?'civ':null;/* 진압조·테러조는 145가 따로 꾸민다 */const k=a.kind;if(typeof SPY!=='undefined'&&SPY.cur===a)return 'spy';if(k==='thug')return 'thug';if(k==='loot')return 'loot';if(k==='wanted')return 'wanted';if(k==='en'||k==='small'||a.side==='en')return 'en';
+  if(k==='civ'||k==='ped'||k==='walkp'||k==='walk'||k==='brw'||k==='crowd'||k==='inj'||k==='lost'||k==='vic')return 'civ';return null}
+function lkScan(){if(!lkOn()||!OUT.on)return;for(const a of OUT.npcs||[]){const t=lkType(a);if(t)lkDo(a.h,t,a)}try{if(typeof PED!=='undefined')for(const a of PED.list||[]){const t=lkType(a);if(t)lkDo(a.h,t,a)}}catch(e){}
+  try{if(typeof SPY!=='undefined'&&SPY.cur&&SPY.cur.h&&SPY.cur.h._lk==='civ'){/* 이미 주민으로 꾸민 사람이 수상한 사람이 됐다 */const h=SPY.cur.h;const A=lkA(h);if(A){h.root.traverse(x=>{});const L=[];h.root.traverse(x=>{if(x.userData&&x.userData.lk&&x.isMesh)L.push(x)});L.forEach(x=>x.parent&&x.parent.remove(x));lkSpy(h,()=>.5,A)}h._lk='spy';LK.n.spy++}}catch(e){lkErr(e)}
+  try{if(typeof OWC!=='undefined'&&OWC.on)for(const a of OWC.en||[])if(a&&a.h&&!a.prot)lkDo(a.h,'en',a)}catch(e){}try{if(typeof IS!=='undefined'&&IS.on)for(const a of IS.en||[])if(a&&a.h)lkDo(a.h,'en',a)}catch(e){}}
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{LK.t+=dt||0;if(LK.t-(LK.last||0)>=.5){LK.last=LK.t;lkScan()}}catch(e){lkErr(e)}return r}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="looks"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('looks','인물 다양화','주민 전시 차림(흙먼지·붕대) · 적대 세력은 복면·방독면·야간투시경·흉터',[[1,'켬'],[0,'끔']],store.get('sg.looks',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){lkErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='looks')return;try{store.set('sg.looks',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎭 인물 다양화(v16.9)','거리 사람들 일부가 흙먼지 묻은 옷·머리 붕대·안경 같은 전시 차림을 한다(모습 19종·옷 색·모자·마스크·가방은 v10.6부터). 적대 세력은 차림으로 알아본다 — 조직폭력배: 검은 옷·짙은 선글라스·흉터·금목걸이 / 약탈자: 두건·얼굴 가리개 / 수배자: 회색 옷·두건·흉터 / 수상한 사람: 눌러쓴 검은 모자·선글라스 / 적군: 복면·방독면·녹색으로 빛나는 야간투시경. 국적·민족이 아니라 차림과 행동으로만 구분한다. 설정 \'인물 다양화\'.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
