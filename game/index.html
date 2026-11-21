@@ -1785,6 +1785,20 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .imm-hurt{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,rgba(120,0,0,0) 48%,rgba(150,8,8,.55) 78%,rgba(90,0,0,.92) 100%);opacity:0;transition:opacity .12s linear}
 /* v16.2 날씨 배지(위쪽 띠) */
 .fr-bar>.wx-badge{border-color:rgba(150,190,230,.55);color:#d3e6f8}
+/* v16.3 이야기: 가족 이야기 · 문 앞 */
+.sty-scene{position:fixed;inset:0;z-index:88;display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,rgba(4,6,9,.86),rgba(4,6,9,.4) 58%,rgba(4,6,9,.08));animation:styIn .35s ease}
+.sty-card{width:min(100%,520px);background:var(--panel);border:1px solid var(--line2);border-radius:16px;padding:14px 14px 12px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.sty-who{display:flex;align-items:center;gap:8px;font:800 12.5px system-ui,sans-serif;color:var(--amber);letter-spacing:.02em}
+.sty-who i{font-style:normal;font-size:20px;line-height:1}
+.sty-line{margin:9px 0 12px;font-size:15.5px;line-height:1.55;color:var(--fg)}
+.sty-ch{display:grid;gap:8px}
+.sty-ch button{text-align:left;font:700 14px system-ui,sans-serif;padding:11px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);color:var(--fg);cursor:pointer}
+.sty-ch button:hover{border-color:var(--amber-dim)}
+.sty-ch button small{display:block;font-weight:500;color:var(--mut);font-size:12px;margin-top:3px}
+.sty-ch .sty-ok{text-align:center;background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+.sty-res{font-size:14.5px;line-height:1.55;color:var(--body);margin:6px 0 8px}
+.sty-card .fx-list{margin:0 0 10px}
+@keyframes styIn{from{opacity:0}to{opacity:1}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -6908,7 +6922,7 @@ function doAction(id){
     const L={conv:'"미사일 공격이 이어지고 있습니다. 경보 해제 때까지 대피소에 머무르십시오."',
       nuke:G.turn<4?'"낙진 지역 주민은 최소 24시간 실내에 머무르십시오. 외출을 삼가십시오."':'"정부 이동 안내를 기다리십시오. 마스크와 우의를 준비하십시오."',
       chem:G.flags.chemAlert?'"고층 실내에서 창문과 환풍구를 밀폐하십시오. 오염 의심수는 마시지 마십시오."':'"공격 원인을 확인 중입니다. 지하 대피를 유지하십시오."'};
-    t='KBS 재난방송: '+L[G.scen]}
+    t='재난방송: '+L[G.scen]}
   else if(id==='phone'){res('power',-8);G.infoTurns=1;if(G.scen!=='chem'||G.flags.chemAlert)reveal();t='재난문자 3건을 확인했다. 정부 안내를 한 번 더 읽어 두었다.'}
   else if(id==='treat'){const n=needsCare();if(!n){t='돌볼 부상자가 없다.'}else{t=treat(n.m,n.c)}}
   else if(id==='wash'){if(G.flags.tap){G.fam.forEach(m=>clrC(m,'contam'));heal('all',3);t='비누와 흐르는 물로 15분 이상 씻었다. 오염된 옷은 비닐에 묶었다.'}
@@ -7191,7 +7205,7 @@ E({id:'emp',art:'phone',tone:'blue',cat:'통신 두절',title:'휴대폰이 먹�
   hint:'전자기펄스(EMP)로 휴대폰·전자기기가 먹통일 수 있다. 건전지 라디오가 유일한 정보망이다.',
   pre:()=>{G.flags.emp=1},
   choices:()=>[
-    {t:'건전지 라디오를 켠다',need:()=>has('radio'),na:'라디오 없음',ok:true,go:()=>{G.infoTurns+=2;mor(5);return '잡음 사이로 KBS 재난방송이 들린다. "실내에 머무르십시오. 최소 24시간."'}},
+    {t:'건전지 라디오를 켠다',need:()=>has('radio'),na:'라디오 없음',ok:true,go:()=>{G.infoTurns+=2;mor(5);return '잡음 사이로 재난방송이 들린다. "실내에 머무르십시오. 최소 24시간."'}},
     ...(has('radio')?[]:[{t:'라디오가 있는 이웃 곁에서 방송을 함께 듣는다',ok:true,go:()=>{G.infoTurns+=1;trust(1);return '옆 가족의 라디오에서 흘러나오는 방송을 함께 들었다. 라디오 한 대가 수십 명의 정보망이었다.'}}]),
     {t:'휴대폰을 껐다 켜기를 반복한다',ok:false,go:()=>{res('power',-10);return '배터리만 줄었다. 신호는 돌아오지 않았다.'}},
     {t:'와이파이를 찾아 대피소를 돌아다닌다',ok:false,go:()=>{mor(-3);return '통신 장비 자체가 멈춘 상태였다. 아무것도 잡히지 않았다.'}}
@@ -7219,7 +7233,7 @@ E({id:'reunite',art:'car',tone:'amber',cat:'가족',title:'어머니를 모시�
     {t:'지금 차로 출발한다',ok:false,go:()=>{pol(25);hurt('all',8);return '차량은 방호가 안 된다. 낙진 속 막힌 도로에서 2시간을 보내고 되돌아왔다.'}}
   ],lesson:'핵 공격 후 가족이 흩어져 있어도 각자 실내 대기가 더 안전하다. 재회는 정부 이동 지시 이후로 미룬다.',src:'행정안전부 핵공격 국민행동요령'});
 E({id:'evac',art:'group',tone:'blue',cat:'이동 지시',title:'정부 이동 지시',
-  text:()=>(has('radio')||G.infoTurns>0)?'KBS 재난방송: "○○동 주민은 오전 9시까지 정부 버스로 남부 집결지로 이동하십시오."':'사람들이 웅성거린다. "정부 버스가 온대. 9시까지 집결지로 오래."',
+  text:()=>(has('radio')||G.infoTurns>0)?'재난방송: "○○동 주민은 오전 9시까지 정부 버스로 남부 집결지로 이동하십시오."':'사람들이 웅성거린다. "정부 버스가 온대. 9시까지 집결지로 오래."',
   hint:'이동 지시가 나오면 비닐·우의로 피부 노출을 최소화하고 지정 경로로 이동한다.',
   choices:[
     {t:'우의·비닐과 마스크로 피부를 가리고 지정 경로로 이동한다',ok:true,go:()=>{G.loc='gym';pol(has('vinyl')?2:6);const n=G.fam.length;res('water',2*n);res('meds',2);mor(8);return '버스는 제시간에 왔다. 체육관 집결지에는 물과 의료진이 있었다.'}},
@@ -7698,7 +7712,7 @@ function render(){
 /* 장면별 음성 방송 (게임 속 가상 방송) */
 const BCAST={
   chemalert:{l:'민방위 음성방송 · 게임 속 가상 방송',t:'화생방경보. 화생방경보. ○○ 일대에 화학작용제 살포가 확인되었습니다. 방독면이나 마스크를 착용하고 대피하십시오.',say:'화생방경보. 화생방경보. 이 지역에 화학작용제 살포가 확인되었습니다. 방독면이나 마스크를 착용하고 대피하십시오.'},
-  evac:{l:'KBS 재난방송 · 게임 속 가상 방송',t:'○○동 주민은 오전 9시까지 정부 버스로 남부 집결지로 이동하십시오.',say:'이 지역 주민은 오전 아홉 시까지 정부 버스로 남부 집결지로 이동하십시오.',need:()=>has('radio')||G.infoTurns>0},
+  evac:{l:'재난 라디오 · 게임 속 가상 방송',t:'○○동 주민은 오전 9시까지 정부 버스로 남부 집결지로 이동하십시오.',say:'이 지역 주민은 오전 아홉 시까지 정부 버스로 남부 집결지로 이동하십시오.',need:()=>has('radio')||G.infoTurns>0},
   relief:{l:'관리사무소 안내방송 · 게임 속 가상 방송',t:'구호품을 나눠 드립니다. 세대별로 신분증을 확인하니 준비해 주십시오.'},
   final_conv:{l:'민방위 음성방송 · 게임 속 가상 방송',t:'경보를 해제합니다. 경보를 해제합니다.'},
   final_chem:{l:'민방위 음성방송 · 게임 속 가상 방송',t:'경보를 해제합니다. 제독 작업이 진행 중이니 안내에 따라 주십시오.'}
@@ -7889,7 +7903,7 @@ function vEnd(){
     <div class="h ${l.ok===true?'ok':l.ok===false?'no':'na'}">${ic(l.ok===true?'check':l.ok===false?'x':'dot')}${l.ok===true?'수칙대로':l.ok===false?'놓친 수칙':'선택'} · ${l.title}</div>
     <b>${l.choice}</b>${l.best?`<p>정답: ${l.best}</p>`:''}<p>${l.lesson}</p>${l.src?`<span class="src">출처 · ${l.src}</span>`:''}</div>`).join('')}</div>
   <a class="btn ghost" href="${HB}#${(scoredLog.find(l=>l.ok===false)||{}).guide||'now'}" target="_blank" rel="noopener">${ic('book')} 생존 수첩에서 실제 수칙 보기</a>
-  <p class="foot">게임 속 수치(체력·피폭 지수 등)는 학습용 단순화이며 실제 의학·방사선 수치가 아니다. 실제 상황에서는 재난문자·KBS 재난방송·119 안내를 따른다.</p>`;
+  <p class="foot">게임 속 수치(체력·피폭 지수 등)는 학습용 단순화이며 실제 의학·방사선 수치가 아니다. 실제 상황에서는 재난문자·재난방송·119 안내를 따른다.</p>`;
 }
 
 /* ---------- 흐름 ---------- */
@@ -7984,7 +7998,7 @@ document.addEventListener('click',e=>{
   if(a==='follow'){const nx=G.cur.next;G.cur={ev:nx,hs:hintSource()};consumeHint(G.cur.hs);G.fired[nx]=1;G.step='event';save();render();return}
   if(a==='to-action'){G.step='action';save();render();return}
   if(a==='act'){const id=b.dataset.v;const at=doAction(id);const afx=FX.slice();
-    if(id==='radio'){const q=(at.match(/"([^"]+)"/)||[])[1];if(q)later(()=>broadcast('KBS 재난방송 · 게임 속 가상 방송',q),400)}
+    if(id==='radio'){const q=(at.match(/"([^"]+)"/)||[])[1];if(q)later(()=>broadcast('재난 라디오 · 게임 속 가상 방송',q),400)}
     if(checkOver()){toEnd();return}
     endTurn();G.cur={act:id,at,afx};G.step='actres';if(G.over){save();render();later(toEnd,1600);return}save();render();return}
   if(a==='next-turn'){if(G.over){toEnd();return}G.turn++;beginTurn();save();render();window.scrollTo(0,0);return}
@@ -12395,7 +12409,7 @@ function freeDo(c){if(!c||FREE.busy||LIFE.cho)return;const H=freeHours();const c
   FX=[];let t='';const me=LIFE.me;const face=(h,x,z)=>{if(h)lifeFace(h,x,z)};
   const famF=m=>LIFE.fam.find(f=>f.m===m);const listenAll=()=>LIFE.fam.forEach(f=>{if(f.h.lying||f.pose==='sleep'||f.h.sleeping)return;lifeFace(f.h,FP3.pos.x,FP3.pos.z);f.h.setPose('listen')});
   if(c.k==='sleep'){t=doAction('rest');lifeAct('rest')}
-  else if(['radio','phone','purify','wash','care'].includes(c.k)){t=doAction(c.k);if(c.k==='radio'){const q=(t.match(/"([^"]+)"/)||[])[1];if(q)later(()=>broadcast('KBS 재난방송 · 게임 속 가상 방송',q),400)}
+  else if(['radio','phone','purify','wash','care'].includes(c.k)){t=doAction(c.k);if(c.k==='radio'){const q=(t.match(/"([^"]+)"/)||[])[1];if(q)later(()=>broadcast('재난 라디오 · 게임 속 가상 방송',q),400)}
     if(c.k==='radio'||c.k==='phone'){if(me)me.setPose(c.k);listenAll()}else if(c.k==='care'){const f=famF(c.m);if(f&&!f.h.lying){face(me,f.h.root.position.x,f.h.root.position.z);if(me)me.setPose(f.m.k==='kid'?'crouch':'talk');lifeFace(f.h,FP3.pos.x,FP3.pos.z);f.h.setPose(f.m.k==='kid'?'cheer':'listen')}}else if(me)me.setPose('crouch')}
   else if(c.k==='treat'){t=treat(c.m,c.c==='none'?null:c.c);fuSet(c.m.id==='me'?'treat_me':'treat_'+c.m.id);const f=famF(c.m);if(f&&!f.h.lying){face(me,f.h.root.position.x,f.h.root.position.z);lifeFace(f.h,FP3.pos.x,FP3.pos.z);f.h.setPose(f.m.k==='kid'?'nervous':'sitNervous')}if(me)me.setPose('crouch')}
   else if(c.k==='medic'){const n=needsCare();if(n){if(n.c){if(n.c==='fracture'){clrC(n.m,'fracture');addC(n.m,'injury')}else clrC(n.m,n.c)}heal(n.m,12);t=`의료진이 ${josa(n.m.n,'을를')} 살폈다 — ${TREAT[n.c||'none'].n}. 약은 대피소 비축분을 썼다.`}else{mor(2);t='의료진이 가족 상태를 확인했다. 지금은 큰 이상이 없다고 한다.'}
@@ -13872,7 +13886,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.2';
+const APP_VER='16.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -24634,6 +24648,168 @@ for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="wx"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('wx','날씨','비·폭풍(번개)·안개·눈·흐림 — 시야와 적이 나를 알아보는 거리가 바뀐다(끄면 늘 맑음)',[[1,'켬'],[0,'끔']],store.get('sg.wx',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){wxErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='wx')return;try{store.set('sg.wx',b.dataset.v==='1');toast(b.dataset.v==='1'?'🌦 날씨 켬 — 다음 외출부터':'날씨 끔 — 늘 맑음',2000)}catch(x){wxErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🌦 날씨 · 시간 흐름(v16.2)','외출마다 날씨가 정해지고 몇 분마다 바뀐다: 맑음 · 흐림 · <b>비</b>(빗줄기·빗소리·젖은 땅) · <b>폭풍</b>(번개 뒤 천둥) · <b>안개</b>(30m 밖이 안 보인다) · <b>눈</b>. 궂은 날씨엔 적이 나를 알아보는 거리와 명중이 줄고, 수배 감시 드론도 덜 본다 — 달아나기 좋은 날. 행동 시간을 쓰면 그만큼 시계가 가서 <b>낮이 저녁으로</b>, 새벽이 낮으로 바뀐다. 설정 <b>날씨</b>로 끌 수 있다(늘 맑음).']);
+
+/* ===================== 137 · v16.3 이야기 — 탕정 생활 라디오(가상) · 가족 이야기 · 밖에서 한 일이 돌아온다 ===================== */
+/* 사용자 요청(2026-11-21 11:00): "게임을 더욱 몰입하고 실감.흥미있게 update바랍니다" — 네 갈래(감각 · 도시 · 날씨 · 이야기) 중 넷째
+   · 📻 탕정 생활 라디오(게임 속 가상 방송): 대피소에서 턴이 바뀔 때마다 한 꼭지 — 경보 몇 시간째 · 전황(시나리오별) · 생활 안전 수칙 · 오늘 날씨 예보
+     예보한 날씨가 그 턴의 외출에 온다(가끔 빗나간다). 내가 밖에서 한 일이 다음 방송에 나온다:
+     주민을 쏘면 '목격자를 찾는다' · 사람을 도우면 '이름 모를 이웃' · 다친 사람을 데려오면 · 복면 강도단 제압 · 공작원 검거 · 수배(별 2개 이상) · 창고 털이(무법자 의뢰)
+   · 🏠 가족 이야기: 가족 이름(내 가족 설정 — 이 기기에만 있다)으로 말을 건다. 고른 답에 따라 사기가 오르내리고, 어떤 답은 몇 턴 뒤 다시 돌아온다
+     (숨긴 일이 라디오로 들킨다 · '구해 오겠다'는 약속 · 몸을 낮추면 수배 점수 절반)
+   · 🚪 문 앞: 도와준 사람이 보따리를 두고 간다 — 받거나, 이웃과 나누거나
+   · 가족은 죽지 않는다 · 등장하는 단체·인물은 모두 가상 · 실제 방송사·기관 이름을 쓰지 않는다 · 교육용 모드에서도 라디오·가족 이야기는 나온다(범죄 관련 결과는 애초에 생기지 않는다)
+   · 설정 '이야기'(기본 켬) */
+const STY={err:0,pend:null,open:false,cur:null,snap:null,olMax:0,oj:null,last:null,lastR:'',rAt:0,wait:0,fcP:.85,genP:.7,
+  cnt:{radio:0,scene:0,seed:0,gift:0,fc:0,fcUse:0,pick:0,promise:0}};
+const STY_L='탕정 생활 라디오 · 게임 속 가상 방송';
+function styErr(e){if(STY.err<6){STY.err++;try{console.error(e)}catch(x){}}}
+function styOn(){try{return store.get('sg.story',true)!==false&&!(navigator.webdriver&&!window.__styTest)}catch(e){return false}}
+function stySt(){if(!G.flags.story||typeof G.flags.story!=='object')G.flags.story={seeds:[],seen:{},lastT:-1,lastS:-9,radio:[],rUsed:[],promise:null,outT:-1,log:[]};return G.flags.story}
+/* 받침에 맞는 조사: styJ('누리','이','가') → '누리가' */
+function styJ(w,a,b){const s=String(w==null?'':w);const c=s.charCodeAt(s.length-1)-0xAC00;if(!(c>=0&&c<=11171))return s+a+'('+b+')';return s+(c%28?a:b)}
+function styNm(m){return m?esc(m.n||''):''}
+function styFam(){const F=(G.fam||[]).filter(m=>m&&m.id!=='me');const sp=F.find(m=>m.id==='sp')||null,eld=F.find(m=>m.id==='eld')||null;
+  const kid=F.find(m=>m.k==='kid'&&!(m.a>=1&&m.a<4))||null;return{sp,eld,kid,adult:sp||eld,any:F.length>0}}
+function styHour(){try{return +String(clockAt(G.turn)).split(':')[0]}catch(e){return 12}}
+function styNight(){const h=styHour();return h>=21||h<4}
+function styDawn(){const h=styHour();return h>=4&&h<9}
+
+/* ---------- 📻 라디오 ---------- */
+const STY_R={
+  conv:[['c1','밤사이 전선에는 큰 변화가 없습니다. 포성이 들려도 창가에 서지 마십시오.'],
+    ['c2','확인되지 않은 동원 문자에 속지 마십시오. 공식 안내는 재난문자로만 나갑니다.'],
+    ['c3','남쪽으로 가는 큰길은 피난 차량으로 꽉 막혀 있습니다. 걸어서 움직이는 편이 빠를 수 있습니다.'],
+    ['c4','하늘에서 낮게 나는 비행기 소리가 들리면 건물 안쪽 벽 가까이로 몸을 옮기십시오.']],
+  nuke:[['n1','낙진 경보가 이어지고 있습니다. 낙진의 방사선은 시간이 지날수록 빠르게 약해집니다 — 첫 이틀은 되도록 지하에 머무르십시오.'],
+    ['n2','밖에 다녀온 뒤에는 겉옷을 벗어 비닐에 넣고, 비누로 머리와 몸을 씻으십시오.'],
+    ['n3','뚜껑을 닫아 둔 병물과 캔 음식은 안심하고 드셔도 됩니다. 겉을 닦고 여십시오.']],
+  chem:[['h1','화학 경보 지역에서는 바람이 부는 방향을 가로질러 피하고, 높은 층으로 올라가십시오. 가스는 낮은 곳에 고입니다.'],
+    ['h2','창문 틈은 젖은 수건과 테이프로 막으십시오. 경보가 풀릴 때까지 환기 장치를 끄십시오.'],
+    ['h3','눈이 따갑거나 숨이 차면 물로 오래 씻고, 오염된 옷은 가위로 잘라 벗으십시오.']],
+  all:[['a1','정전이 길어지면 냉장고 문을 자주 열지 마십시오. 닫아 두면 냉장실은 4시간쯤, 가득 찬 냉동실은 이틀쯤 차갑습니다.'],
+    ['a2','실내에서 숯불이나 가스 버너를 피우지 마십시오. 일산화탄소는 냄새도 색도 없습니다.'],
+    ['a3','구조를 부를 땐 세 번씩 — 호루라기 세 번, 손전등 세 번, 벽 두드리기 세 번.'],
+    ['a4','아이에게 보호자 전화번호와 다시 만날 장소를 외우게 하십시오.'],
+    ['a5','탕정 신도시 28층 단지 몇 곳이 지하 주차장을 임시 대피소로 열었습니다. 자리가 빠르게 차고 있습니다.'],
+    ['a6','근처 약국 몇 곳이 문을 열었다는 제보가 있지만 확인되지 않았습니다. 소문만 믿고 움직이지 마십시오.'],
+    ['a7','정전 때 엘리베이터는 멈출 수 있습니다. 계단을 쓰십시오.'],
+    ['a8','혼자 사는 이웃 어르신의 문을 한 번씩 두드려 봐 주십시오.'],
+    ['a9','휴대전화는 꼭 필요할 때만 켜십시오. 배터리가 곧 생명줄입니다.']]};
+const STY_FC={clear:'맑고 멀리까지 보입니다 — 밖에선 적도 나를 멀리서 봅니다.',cloud:'구름이 낮게 깔리겠습니다.',rain:'비가 오겠습니다 — 멀리서는 서로 알아보기 어렵습니다.',
+  storm:'천둥 번개를 동반한 폭풍이 예상됩니다 — 밖에선 몸을 낮추십시오.',fog:'짙은 안개 — 30미터 앞도 잘 안 보이겠습니다.',snow:'눈이 내리겠습니다 — 길이 미끄럽습니다.'};
+/* 밖에서 한 일 → 다음 턴(들) 방송·장면 */
+const STY_SEED={
+  civ:{r:'탕정 거리에서 비무장 주민이 총에 맞았다는 제보입니다. 치안대가 목격자를 찾고 있습니다.',sc:'civ'},
+  ran:{r:'피난 행렬 근처에서 사람을 치고 달아난 차량을 찾고 있습니다.'},
+  help:{r:'위험에 처한 주민을 이름 모를 이웃이 구했다는 소식입니다.',sc:'proud'},
+  guest:{r:'다친 주민이 누군가의 부축을 받아 대피소에 닿았습니다.'},
+  crime:{r:'주민을 털던 복면 강도단이 제압됐다는 소식입니다.',sc:'scared'},
+  spy:{r:'무장 공작원이 붙잡혔습니다. 수상한 사람에겐 다가가지 말고 신고하십시오.'},
+  want:{r:'치안대 알림 — 총을 가진 수배자를 찾고 있습니다. 보시면 신고하십시오.',sc:'lowkey'},
+  oj:{r:'물류창고에서 연료 드럼이 사라졌습니다. 치안대는 \'검은 장갑\'을 의심합니다.',sc:'night'},
+  door:{sc:'door'},med:{sc:'med'},lie:{sc:'lie'}};
+function styHead(){const h=G.turn*6;return `${h?`경보 ${h}시간째`:'경보 직후'}, ${clockAt(G.turn)} — 탕정 생활 라디오입니다.`}
+function styGen(S){const P=[...(STY_R[G.scen]||[]),...STY_R.all];let L=P.filter(x=>!S.rUsed.includes(x[0]));if(!L.length){S.rUsed=[];L=P}const x=L[Math.floor(Math.random()*L.length)];S.rUsed.push(x[0]);if(S.rUsed.length>9)S.rUsed.shift();return x[1]}
+function styForecast(){try{if(typeof WX==='undefined'||typeof wxOn!=='function'||!wxOn()||!STY.pick0)return'';const k=STY.pick0();WX.fc={turn:G.turn,k};STY.cnt.fc++;return `오늘 날씨: ${STY_FC[k]||''}`}catch(e){styErr(e);return''}}
+
+/* ---------- 🏠 가족 이야기 · 🚪 문 앞 ---------- */
+const STY_SC={
+  civ(F){const m=F.adult;if(!m)return null;return{m,line:'밖에서 총소리가 났다는 얘기 들었어… 당신 괜찮아? 무슨 일 있었던 거야?',ch:[
+    {t:'사실대로 털어놓는다',s:'무겁지만 숨기지 않는다',go:()=>{mor(-2);return `${styJ(styNm(m),'이','가')} 한참 말이 없다가 손을 잡았다. "다시는… 그러지 마."`}},
+    {t:'"아무 일 없었어"라고 한다',s:'지금은 편하다',go:()=>{mor(1);styPlant('lie',2,G.turn);return `${styJ(styNm(m),'은','는')} 고개를 끄덕였지만, 눈은 라디오 쪽을 보고 있었다.`}},
+    {t:'대답하지 않는다',go:()=>{mor(-1);return '대피소에 무거운 침묵이 내려앉았다.'}}]}},
+  lie(F){const m=F.adult;if(!m)return null;const k=F.kid;return{m,line:`${k?styJ(styNm(k),'이','가')+' 라디오를 들었어. ':''}그날… 정말 아무 일 없었던 거 맞아?`,ch:[
+    {t:'이제라도 털어놓는다',go:()=>{mor(-1);return `"늦었지만 말해 줘서 고마워." ${styJ(styNm(m),'이','가')} 낮게 말했다.`}},
+    {t:'끝까지 숨긴다',s:'거짓말이 하나 더 쌓인다',go:()=>{mor(-4);return `${styJ(styNm(m),'이','가')} 말없이 등을 돌렸다. 한동안 서로 눈을 피했다.`}}]}},
+  proud(F){const k=F.kid;if(!k)return null;return{m:k,line:'라디오에서 그랬어 — 이름 모를 이웃이 사람을 구했대. 그거 혹시… 우리 얘기야?',ch:[
+    {t:'"응. 너도 언젠가 그럴 수 있어"',go:()=>{mor(2);return `${styJ(styNm(k),'이','가')} 눈을 반짝이며 고개를 끄덕였다.`}},
+    {t:'"위험한 일이었어. 넌 꼭 어른부터 불러"',s:'칭찬보다 안전 약속',go:()=>{mor(1);return '아이와 약속했다 — 위험한 곳에서는 혼자 다가가지 않고, 먼저 어른을 부른다.'}}]}},
+  scared(F){const k=F.kid;if(!k)return null;return{m:k,line:'아까 밖에서 총소리 났지? 나쁜 사람들이… 우리 집에도 와?',ch:[
+    {t:'꼭 안아 주며 문을 두 번 잠갔다고 말한다',go:()=>{mor(2);return `${styJ(styNm(k),'이','가')} 품에서 조금씩 숨을 고른다.`}},
+    {t:'"어른들이 지키고 있어"라고 차분히 설명한다',go:()=>{mor(1);return '무서운 걸 무섭다고 말해도 괜찮다고 일러 주었다.'}},
+    {t:'"몰라도 돼"라고 넘긴다',go:()=>{mor(-1);return `${styJ(styNm(k),'은','는')} 이불을 머리끝까지 뒤집어썼다.`}}]}},
+  lowkey(F){const m=F.eld||F.sp;if(!m)return null;return{m,line:'치안대가 집집마다 문을 두드린대. 당분간은 밖에서 조용히 다녀.',ch:[
+    {t:'"알겠어요. 한동안 몸을 낮출게요"',s:'수배 점수 절반 · 사기 +1',go:()=>{const p=G.flags.olPts|0;if(p>0)G.flags.olPts=Math.floor(p/2);mor(1);return '겉옷을 바꿔 입기로 했다. 치안대의 관심이 조금 식을 것이다.'}},
+    {t:'"괜찮아요, 조심할게요"',go:()=>{mor(-1);return `${styJ(styNm(m),'이','가')} 한숨을 쉬었다.`}}]}},
+  night(F){const m=F.sp||F.eld;if(!m)return null;return{m,line:'요즘 밤마다 어디 가? 그 사람들이랑 엮이지 마. 우린 그냥… 살아남기만 하면 돼.',ch:[
+    {t:'"이번이 마지막이야"',go:()=>{mor(1);return `${styJ(styNm(m),'이','가')} 믿고 싶다는 얼굴로 고개를 끄덕였다.`}},
+    {t:'"식구 먹여 살리려면 어쩔 수 없어"',go:()=>{mor(-2);return '말이 끊겼다. 둘 다 그 말이 반쯤만 사실이라는 걸 알았다.'}}]}},
+  door(){return{m:null,ico:'🚪',who:'문 앞',line:'현관 앞에 비닐봉지 하나가 놓여 있다. 삐뚤빼뚤한 쪽지 — "도와주셔서 고맙습니다." 안에 생수와 통조림이 들었다.',ch:[
+    {t:'고맙게 받는다',s:'물 · 식량',go:()=>{res('water',1);res('food',1);STY.cnt.gift++;return '봉지를 들여놓았다. 오늘 저녁은 조금 넉넉하다.'}},
+    {t:'아래층 이웃과 나눈다',s:'이웃 신뢰',go:()=>{trust(2);mor(1);STY.cnt.gift++;return '반을 덜어 아래층 문고리에 걸어 두었다. 이런 소문은 빠르다.'}}]}},
+  med(){return{m:null,ico:'🚪',who:'문 앞',line:'지난번 부축해 데려다준 사람의 가족이 찾아왔다. "덕분에 살았어요." 진통제와 붕대를 내민다.',ch:[
+    {t:'고맙게 받는다',s:'의약품',go:()=>{res('meds',1);STY.cnt.gift++;return '구급 상자가 조금 두꺼워졌다.'}},
+    {t:'"그쪽도 필요할 거예요" 돌려보낸다',s:'이웃 신뢰',go:()=>{trust(1);mor(1);STY.cnt.gift++;return '몇 번이고 고개를 숙이고 돌아갔다.'}}]}},
+  /* 일반 — 한 판에 한 번씩 */
+  meet(F){const m=F.adult;if(!m)return null;return{m,line:'만약에… 우리가 흩어지면 어디서 다시 만나?',ch:[
+    {t:'다시 만날 곳을 두 군데 정하고 모두 외운다',s:'가까운 곳 하나 · 동네 밖 하나',go:()=>{mor(2);G.flags.meetPt=1;return '가까운 곳 하나, 동네 밖 하나. 흩어졌을 때 다시 만날 곳을 정해 두는 것 — 실제 재난 대비에서도 첫 번째 약속이다.'}},
+    {t:'"그럴 일 없어"',go:()=>`${styJ(styNm(m),'이','가')} 더 묻지 않았다.`}]}},
+  sleep(F){const k=F.kid;if(!k||!styNight())return null;return{m:k,line:'밖에서 쾅쾅 소리 나서 못 자겠어…',ch:[
+    {t:'이야기를 지어서 들려준다',go:()=>{mor(3);return `이야기가 끝나기도 전에 ${styJ(styNm(k),'이','가')} 잠들었다.`}},
+    {t:'귀를 막아 주고 곁에 누워 있는다',go:()=>{mor(2);return '숨소리가 천천히 고르게 바뀌었다.'}},
+    {t:'"괜찮아, 얼른 자" 하고 돌아눕는다',go:()=>{mor(-1);return '한참 동안 뒤척이는 소리가 들렸다.'}}]}},
+  elder(F){const m=F.eld;if(!m)return null;return{m,line:'옛날 어른들한테 들은 난리 얘기가 생각나. 그때도 결국 사람들이 서로 도와서 버텼대.',ch:[
+    {t:'끝까지 귀담아듣는다',go:()=>{mor(2);return '이야기 끝에 모두 조금 웃었다.'}},
+    {t:'"지금 그런 얘기 할 때 아니에요"',go:()=>{mor(-2);return `${styJ(styNm(m),'이','가')} 입을 다물었다.`}}]}},
+  ration(F){const m=F.adult;const R=G.res||{};if(!m||!(R.food<=2||R.water<=2))return null;const what=R.water<=R.food?'물이':'먹을 게';return{m,line:`${what} 얼마 안 남았어. 아이 몫은 따로 떼어 두자.`,ch:[
+    {t:'어른 몫을 줄인다',go:()=>{mor(1);return '어른들 몫을 덜어 따로 담아 두었다.'}},
+    {t:'"오늘 밖에 나가서 구해 올게"',s:'약속 — 이번 턴에 밖에 다녀와야 한다',go:()=>{mor(1);stySt().promise=G.turn;STY.cnt.promise++;return `${styJ(styNm(m),'이','가')} "꼭 무사히 돌아와"라고 했다.`}},
+    {t:'똑같이 나눈다',go:()=>'모두 같은 양을 받았다. 불평은 없었다.'}]}},
+  dawn(F){const m=F.adult||F.kid;if(!m||!styDawn())return null;return{m,line:'해가 떴네. 우리… 오늘도 버텼다.',ch:[
+    {t:'하이파이브한다',go:()=>{mor(2);return '손바닥 소리가 대피소에 작게 울렸다.'}},
+    {t:'"아직 멀었어"',go:()=>'다들 고개를 끄덕였다. 하루가 또 시작된다.'}]}}};
+const STY_GEN=['meet','sleep','elder','ration','dawn'];
+function styPlant(k,d,t){const S=stySt();t=t==null?G.turn:t;if(S.seeds.some(s=>s.k===k&&s.at===t+d))return;S.seeds.push({k,at:t+d});STY.cnt.seed++}
+
+/* ---------- 턴이 바뀔 때 ---------- */
+function styTurn(){if(!styOn()||!G||G.phase!=='shelter')return;const S=stySt();if(S.lastT===G.turn)return;S.lastT=G.turn;
+  /* 약속: 구해 오겠다고 한 턴에 밖에 다녀왔나 */
+  if(S.promise!=null&&S.promise<G.turn){const kept=S.outT>=S.promise;S.promise=null;FX=[];mor(kept?1:-2);const fx=FX.slice();STY.promised=kept;
+    setTimeout(()=>{try{if(UI.screen!=='title')toast(`${kept?'🏠 구해 오겠다던 약속을 지켰다 — 가족이 안도했다':'🏠 구해 오겠다던 약속을 지키지 못했다'}${fxChips(fx)}`,3400)}catch(e){}},300)}
+  const due=S.seeds.filter(s=>s.at<=G.turn);S.seeds=S.seeds.filter(s=>s.at>G.turn);
+  const lines=[],scs=[];for(const s of due){const D=s.k[0]==='~'?{sc:s.k.slice(1)}:STY_SEED[s.k];if(!D)continue;if(D.r&&lines.length<2)lines.push(D.r);if(D.sc)scs.push(D.sc)}
+  /* 장면: 결과가 먼저, 없으면 가끔 일반 이야기 */
+  let scene=null;const F=styFam();for(const id of scs){const f=STY_SC[id];if(!f)continue;if(!scene){if(f(F))scene=id}else if(f(F))styPlant('~'+id,1,G.turn)}
+  if(!scene&&G.turn>=1&&G.turn-S.lastS>=3&&Math.random()<STY.genP){const ids=STY_GEN.filter(id=>!S.seen[id]&&STY_SC[id](F));if(ids.length)scene=ids[Math.floor(Math.random()*ids.length)]}
+  STY.pend=scene?{id:scene,t:G.turn}:null;
+  /* 방송 — render()가 later() 타이머를 지우므로 setTimeout */
+  const fc=styForecast();const txt=`${styHead()} ${lines.length?lines.join(' '):styGen(S)}${fc?' '+fc:''}`;S.radio.push({t:G.turn,x:txt});if(S.radio.length>8)S.radio.shift();STY.lastR=txt;
+  const ev=G.cur&&G.cur.ev;const hasB=typeof BCAST!=='undefined'&&ev&&BCAST[ev];const d=hasB?7200:800;STY.rAt=performance.now()+d;
+  clearTimeout(STY.rT);STY.rT=setTimeout(()=>{try{if(G&&G.phase==='shelter'&&UI.screen!=='title'&&styOn()){broadcast(STY_L,txt);STY.cnt.radio++}}catch(e){styErr(e)}},d)}
+function styCanShow(){try{if(!styOn()||STY.open||!G||G.over||G.phase!=='shelter'||UI.screen!=='shelter')return false;if(G.step==='final'||G.step==='fresult')return false;
+  const ev=G.cur&&G.cur.ev;if(ev&&typeof EV!=='undefined'&&EV[ev]&&EV[ev].timed&&G.step==='event')return false;if(document.getElementById('ov'))return false;return true}catch(e){return false}}
+function styShow(){if(!STY.pend||!styCanShow())return false;const wt=STY.rAt+2400-performance.now();if(wt>0){if(!STY.wait){STY.wait=1;setTimeout(()=>{STY.wait=0;try{styShow()}catch(e){styErr(e)}},wt)}return false}const P=STY.pend;if(P.t<G.turn-1){STY.pend=null;return false}const B=STY_SC[P.id]&&STY_SC[P.id](styFam());STY.pend=null;if(!B)return false;
+  const S=stySt();S.lastS=G.turn;S.seen[P.id]=1;STY.cnt.scene++;STY.cur={id:P.id,B};const m=B.m;
+  const ico=B.ico||(m?(m.k==='kid'?'🧒':m.id==='eld'?'🧓':'🧑'):'🏠');const who=B.who||styNm(m);
+  const el=document.createElement('div');el.id='styScene';el.className='sty-scene';
+  el.innerHTML=`<div class="sty-card" role="dialog" aria-label="${m?'가족 이야기':'문 앞'}"><div class="sty-who"><i>${ico}</i><span>${m?'가족 이야기 · ':''}${who}</span></div><p class="sty-line">${m?'“'+B.line+'”':B.line}</p><div class="sty-ch">${B.ch.map((c,i)=>`<button type="button" data-sty="${i}">${c.t}${c.s?`<small>${c.s}</small>`:''}</button>`).join('')}</div></div>`;
+  document.body.appendChild(el);STY.open=true;try{SND.tick&&SND.tick()}catch(e){}return true}
+function styPick(i){const C=STY.cur;if(!C||C.done)return;const c=C.B.ch[i];if(!c)return;FX=[];let txt='';try{txt=c.go()||''}catch(e){styErr(e)}const fx=FX.slice();C.done={i,txt,fx};STY.cnt.pick++;
+  const S=stySt();S.log.push({t:G.turn,id:C.id,i});if(S.log.length>30)S.log.shift();
+  const ch=document.querySelector('#styScene .sty-ch');if(ch)ch.outerHTML=`<p class="sty-res">${txt}</p>${fxChips(fx)}<div class="sty-ch"><button type="button" class="sty-ok" data-sty="ok">계속</button></div>`;
+  try{save()}catch(e){}}
+function styClose(){const el=document.getElementById('styScene');if(el)el.remove();STY.open=false;STY.cur=null;try{render()}catch(e){styErr(e)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sty]');if(!b)return;e.stopPropagation();e.preventDefault();try{if(b.dataset.sty==='ok')styClose();else styPick(+b.dataset.sty)}catch(x){styErr(x)}},true);
+
+/* ---------- 외출 전후: 무엇을 했나 ---------- */
+function stySnap(){const f=G.flags||{};return{t:G.turn,civ:f.gunCrime|0,ran:f.ranOver|0,prot:f.protectN|0,spy:(f.spyCap|0)+(f.spyKill|0),cr:typeof CR!=='undefined'?(CR.kills|0):0,log:(G.log||[]).length}}
+function styAfterOut(why){const a=STY.snap;STY.snap=null;if(!a)return;const n=stySnap();const S=stySt();S.outT=Math.max(S.outT,a.t);const t=a.t;const add=(k,d)=>styPlant(k,d,t);
+  const atDoor=why==='door'||why==='fast'||why==='time';const fol=atDoor?(OUT.follow||[]).length:0;const L=(G.log||[]).slice(a.log).map(x=>x.id);
+  if(n.civ>a.civ)add('civ',1);if(n.ran>a.ran)add('ran',1);if(n.prot>a.prot){add('help',1);add('door',2)}if(fol>0){add('guest',1);add('med',2)}
+  if(n.cr>a.cr||L.includes('gun-thug'))add('crime',1);if(n.spy>a.spy)add('spy',1);if(STY.olMax>=2)add('want',1);if(STY.oj)add('oj',1);
+  STY.last={why,civ:n.civ-a.civ,ran:n.ran-a.ran,prot:n.prot-a.prot,fol,cr:n.cr-a.cr,spy:n.spy-a.spy,ol:STY.olMax,oj:STY.oj,seeds:S.seeds.map(s=>s.k+'@'+s.at)}}
+(function(){const b=window.startOutside;if(typeof b!=='function')return;window.startOutside=function(){try{if(styOn()&&G){STY.snap=stySnap();STY.olMax=0;STY.oj=null}}catch(e){styErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(why){try{if(OUT.on&&why!=='dead'&&styOn())styAfterOut(why)}catch(e){styErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.olAdd;if(typeof b!=='function')return;window.olAdd=function(){const r=b.apply(this,arguments);try{if(typeof OL!=='undefined')STY.olMax=Math.max(STY.olMax,OL.star|0)}catch(e){}return r}})();
+(function(){const b=window.ojComplete;if(typeof b!=='function')return;window.ojComplete=function(){let id=null;try{id=OJ.cur&&OJ.cur.def&&OJ.cur.def.id}catch(e){}const r=b.apply(this,arguments);try{if(id)STY.oj=id}catch(e){}return r}})();
+/* 예보대로 날씨가 온다(가끔 빗나간다) */
+(function(){const b=window.wxPick;if(typeof b!=='function')return;STY.pick0=b;window.wxPick=function(){try{const f=WX.fc;if(f&&f.turn===G.turn&&styOn()){STY.cnt.fcUse++;if(Math.random()<STY.fcP)return f.k}}catch(e){styErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 연결 ---------- */
+(function(){const b=window.beginTurn;if(typeof b!=='function')return;window.beginTurn=function(){const r=b.apply(this,arguments);try{styTurn()}catch(e){styErr(e)}return r}})();
+(function(){const b=window.render;if(typeof b!=='function')return;window.render=function(){const r=b.apply(this,arguments);try{if(STY.pend&&!STY.open&&!STY.wait&&styCanShow()){STY.wait=1;const d=Math.max(900,STY.rAt-performance.now()+2600);setTimeout(()=>{STY.wait=0;try{styShow()}catch(e){styErr(e)}},Math.min(d,11000))}}catch(e){styErr(e)}return r}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="story"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('story','이야기','📻 턴마다 가상 라디오 · 가족이 말을 건다 · 밖에서 한 일이 몇 턴 뒤 돌아온다',[[1,'켬'],[0,'끔']],store.get('sg.story',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){styErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='story')return;try{store.set('sg.story',b.dataset.v==='1');toast(b.dataset.v==='1'?'📻 이야기 켬 — 다음 턴부터':'이야기 끔 — 라디오·가족 이야기 없음',2000)}catch(x){styErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['📻 이야기(v16.3)','대피소에서 턴이 바뀔 때마다 <b>탕정 생활 라디오</b>(게임 속 가상 방송)가 한 꼭지 나온다 — 전황 · 생활 안전 수칙 · <b>오늘 날씨 예보</b>(그 턴 외출의 날씨가 예보대로 온다, 가끔 빗나간다). 밖에서 한 일은 다음 방송에 나온다: 주민을 쏘면 목격자를 찾고, 사람을 도우면 \'이름 모를 이웃\'이 된다. 가족이 이름을 부르며 말을 걸고(🏠), 고른 답에 따라 사기가 바뀐다 — 숨긴 일은 며칠 뒤 다시 묻고, \'구해 오겠다\'는 약속은 지켜야 한다. 도와준 사람이 문 앞에 보따리를 두고 가기도 한다(🚪). 설정 \'이야기\'에서 끌 수 있다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
