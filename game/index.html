@@ -1783,6 +1783,8 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .sv3.cine-on .oj-call,.sv3.br-on .oj-call{visibility:hidden}
 /* v16.0 몰입 연출: 저체력 붉은 가장자리 */
 .imm-hurt{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,rgba(120,0,0,0) 48%,rgba(150,8,8,.55) 78%,rgba(90,0,0,.92) 100%);opacity:0;transition:opacity .12s linear}
+/* v16.2 날씨 배지(위쪽 띠) */
+.fr-bar>.wx-badge{border-color:rgba(150,190,230,.55);color:#d3e6f8}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13870,7 +13872,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.1';
+const APP_VER='16.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -24551,6 +24553,87 @@ for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="city"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('city','살아있는 도시','피난 행렬 · 총성에 엎드리는 사람들 · 불탄 차·연기 기둥 · 머리 위 전투기 · 비둘기 떼(끄면 조금 가벼워진다)',[[1,'켬'],[0,'끔']],store.get('sg.city',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){cityErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='city')return;try{store.set('sg.city',b.dataset.v==='1');toast(b.dataset.v==='1'?'🏙 살아있는 도시 켬 — 다음 외출부터':'살아있는 도시 끔 — 다음 외출부터',2000)}catch(x){cityErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🏙 살아있는 도시(v16.1)','길에서 <b>피난 행렬</b>이 짐을 지고 줄지어 지나간다. 총소리가 나면 사람들이 <b>그 자리에 웅크렸다가</b> 흩어져 달아난다(몇 명은 비명). 거리 곳곳에 <b>불탄 차</b>가 연기를 뿜고, 지평선에는 <b>연기 기둥</b>이 오른다. 가끔 <b>전투기 두 대</b>가 머리 위를 지나간다(표식 없는 가상 기체). 광장의 <b>비둘기 떼</b>는 다가가거나 총을 쏘면 한꺼번에 날아오른다. 피난민을 쏘면 주민과 똑같이 판정된다. 설정 <b>살아있는 도시</b>로 끌 수 있다.']);
+
+/* ===================== 136 · v16.2 날씨 · 시간 흐름 — 비·폭풍(번개)·안개·눈·흐림 · 젖은 땅 · 행동 시간만큼 해가 움직인다 ===================== */
+/* 사용자 요청(2026-11-21 11:00) "게임을 더욱 몰입하고 실감.흥미있게" → 고른 축 세 번째 '날씨·시간 흐름'
+   · 날씨(외출마다 · 11월 기준 확률): 맑음 38 · 흐림 22 · 비 18 · 안개 10 · 폭풍 6 · 눈 6(%) — 4~7분마다 이웃 날씨로 20초에 걸쳐 바뀐다
+     비·폭풍: 카메라 둘레 빗줄기(화질별 400~1400줄 · 바람에 기울어) · 빗소리(실내 먹먹) · 땅이 젖어 번들거림 · 폭풍은 7~18초마다 번개(번쩍 두 번) + 거리만큼 늦은 천둥
+     안개: 보이는 거리 ×0.3 · 흐림/비: 해·하늘 빛 어둡게 · 눈: 천천히 흩날리는 눈송이
+   · 날씨가 싸움에 미치는 것: 적이 나를 알아보는 거리(116 IS_SEE 80m) — 안개 30 · 폭풍 45 · 비 60 · 눈 55m / 적 명중 — 안개·폭풍 ×0.8 · 비·눈 ×0.9
+     수배 감시 드론(131)이 보는 거리 42m — 안개 22 · 폭풍 28 · 비 34 · 눈 32m (날씨는 달아나는 쪽 편)
+   · 시간 흐름: 행동 시간을 쓴 만큼 시계가 간다(시작 시각 + 쓴 시간). 경계(새벽→낮 8시 · 낮→저녁 16시 · 밤→새벽 4시)를 넘으면 그 자리에서 빛·하늘·안개가 바뀌고 알린다
+     경계 1시간 전부터 햇빛 색·세기가 다음 시간대 쪽으로 조금씩 기운다. 저녁→밤(22시)은 대피소 기준(다음 턴)에 맡긴다
+   · 설정 '날씨'(기본 켬 — 끄면 늘 맑음) · 자동 점검은 __wxTest일 때만 */
+const WX={k:'clear',i:0,next:null,tT:0,chT:300,el:null,rain:null,snow:null,snd:null,boltT:9,bolts:0,base:null,wetM:null,flash:0,err:0,hour:null,flowN:0,clock:0,seeN:0};
+const WX_K={clear:{n:'맑음',ico:'☀️',fog:0,far:3000,dark:0,see:80,acc:1,dr:42,wet:0},cloud:{n:'흐림',ico:'☁️',fog:.25,far:900,dark:.3,see:80,acc:1,dr:42,wet:0},rain:{n:'비',ico:'🌧',fog:.6,far:260,dark:.38,see:60,acc:.9,dr:34,wet:1},storm:{n:'폭풍',ico:'⛈',fog:.75,far:170,dark:.52,see:45,acc:.8,dr:28,wet:1},fog:{n:'안개',ico:'🌫',fog:.95,far:70,dark:.2,see:30,acc:.8,dr:22,wet:0},snow:{n:'눈',ico:'🌨',fog:.6,far:220,dark:.15,see:55,acc:.9,dr:32,wet:0}};
+const WX_P=[['clear',38],['cloud',22],['rain',18],['fog',10],['storm',6],['snow',6]];
+const WX_NB={clear:['cloud','fog'],cloud:['clear','rain','snow'],rain:['cloud','storm'],storm:['rain'],fog:['clear','cloud'],snow:['cloud']};
+function wxErr(e){if(WX.err<6){WX.err++;try{console.error(e)}catch(x){}}}
+function wxOn(){try{return store.get('sg.wx',true)!==false&&!(navigator.webdriver&&!window.__wxTest)}catch(e){return false}}
+function wxPick(){let r=Math.random()*100;for(const [k,w] of WX_P){r-=w;if(r<=0)return k}return'clear'}
+function wxNow(){return WX_K[WX.k]||WX_K.clear}
+/* 현재 날씨 값(바뀌는 중이면 섞어서) */
+function wxMix(f){const a=WX_K[WX.k]||WX_K.clear;if(!WX.next)return a[f]*WX.i+WX_K.clear[f]*(1-WX.i);const b=WX_K[WX.next];const u=WX.tT;return (a[f]*(1-u)+b[f]*u)}
+function wxSet(k,instant){if(!WX_K[k])return;if(instant){WX.k=k;WX.next=null;WX.i=1;WX.tT=0}else{WX.next=k;WX.tT=0}WX.chT=240+Math.random()*180}
+/* ---------- 비·눈 ---------- */
+function wxRainMk(n){const g=new T.BufferGeometry();const pos=new Float32Array(n*6);g.setAttribute('position',new T.BufferAttribute(pos,3));const m=new T.LineBasicMaterial({color:'#e4eaf1',transparent:true,opacity:.7,depthWrite:false,fog:true});const L=new T.LineSegments(g,m);L.frustumCulled=false;L.userData.wx=1;
+  const P=new Float32Array(n*3);for(let i=0;i<n;i++){P[i*3]=(Math.random()-.5)*32;P[i*3+1]=Math.random()*15;P[i*3+2]=(Math.random()-.5)*32}return{L,g,pos,P,n}}
+function wxSnowMk(n){const g=new T.BufferGeometry();const pos=new Float32Array(n*3);for(let i=0;i<n;i++){pos[i*3]=(Math.random()-.5)*30;pos[i*3+1]=Math.random()*14;pos[i*3+2]=(Math.random()-.5)*30}g.setAttribute('position',new T.BufferAttribute(pos,3));const m=new T.PointsMaterial({color:'#f4f7fa',size:.21,transparent:true,opacity:.9,depthWrite:false,fog:true});const S=new T.Points(g,m);S.frustumCulled=false;S.userData.wx=1;S.userData.keepPts=1;return{S,g,pos,n,ph:new Float32Array(n).map(()=>Math.random()*6.28)}}
+function wxPrecip(dt){const sc=OUT.scene;if(!sc)return;const q=SV3.qt||'high';const nR=q==='low'?400:q==='mid'?800:1400;const rk=WX.k==='rain'||WX.k==='storm'?WX.i*(WX.next&&!(WX.next==='rain'||WX.next==='storm')?1-WX.tT:1):(WX.next==='rain'||WX.next==='storm')?WX.tT:0;const sk=WX.k==='snow'?WX.i*(WX.next?1-WX.tT:1):WX.next==='snow'?WX.tT:0;
+  const c=SV3.cam.position;const inn=(typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on);
+  if(rk>.02&&!inn){if(!WX.rain||WX.rain.L.parent!==sc){WX.rain=wxRainMk(nR);sc.add(WX.rain.L)}const R=WX.rain;R.L.visible=true;const storm=WX.k==='storm'||WX.next==='storm';const v=storm?22:17,wx=storm?4.5:1.6,wz=storm?1.5:.6,len=storm?1:.8;const act=Math.floor(R.n*Math.min(1,rk*(storm?1:.75)));R.L.material.opacity=.7*Math.min(1,rk*1.3);
+    for(let i=0;i<R.n;i++){const j=i*3;if(i>=act){R.pos.fill(0,i*6,i*6+6);continue}R.P[j+1]-=v*dt;R.P[j]+=wx*dt;R.P[j+2]+=wz*dt;if(R.P[j+1]<0){R.P[j+1]+=15;R.P[j]=(Math.random()-.5)*32;R.P[j+2]=(Math.random()-.5)*32}if(R.P[j]>16)R.P[j]-=32;if(R.P[j+2]>16)R.P[j+2]-=32;
+      const x=c.x+R.P[j],y=Math.max(0,c.y-4+R.P[j+1]),z=c.z+R.P[j+2];const o=i*6;R.pos[o]=x;R.pos[o+1]=y;R.pos[o+2]=z;R.pos[o+3]=x-wx*.035;R.pos[o+4]=y+len;R.pos[o+5]=z-wz*.035}R.g.attributes.position.needsUpdate=true;WX.drops=act}
+  else{if(WX.rain)WX.rain.L.visible=false;WX.drops=0}
+  if(sk>.02&&!inn){if(!WX.snow||WX.snow.S.parent!==sc){WX.snow=wxSnowMk(q==='low'?500:1100);sc.add(WX.snow.S)}const S=WX.snow;S.S.visible=true;S.S.material.opacity=.9*Math.min(1,sk*1.3);S.S.position.set(c.x,c.y-4,c.z);
+    for(let i=0;i<S.n;i++){const j=i*3;S.ph[i]+=dt;S.pos[j+1]-=(1+Math.sin(S.ph[i]*.7)*.3)*dt;S.pos[j]+=Math.sin(S.ph[i])*.35*dt;if(S.pos[j+1]<0){S.pos[j+1]+=14;S.pos[j]=(Math.random()-.5)*30;S.pos[j+2]=(Math.random()-.5)*30}}S.g.attributes.position.needsUpdate=true;WX.flakes=S.n}
+  else{if(WX.snow)WX.snow.S.visible=false;WX.flakes=0}
+  WX.rk=rk;WX.sk=sk}
+/* ---------- 빛·안개·젖은 땅 ---------- */
+function wxBase(sc){const B={far:sc.fog?sc.fog.far:430,near:sc.fog?sc.fog.near:70,fog:sc.fog?sc.fog.color.clone():new T.Color('#b0b9c1'),bg:sc.background&&sc.background.isColor?sc.background.clone():null,hemi:[],sun:[],dome:null,tod:OUT.tod};
+  sc.traverse(o=>{if(o.isHemisphereLight)B.hemi.push([o,o.intensity]);else if(o.isDirectionalLight)B.sun.push([o,o.intensity,o.color.clone(),o.position.clone()])});const d=sc.userData.gfxDome;if(d&&d.material)B.dome=[d,d.material.color.clone()];return B}
+function wxLook(){const sc=OUT.scene;if(!sc)return;if(!WX.base||WX.base.sc!==sc||WX.base.tod!==OUT.tod){WX.base=wxBase(sc);WX.base.sc=sc}const B=WX.base;const fogK=wxMix('fog'),dark=wxMix('dark'),cap=wxMix('far');const grey=new T.Color(WX.k==='snow'?'#c8ced4':'#8e959c');
+  if(sc.fog){sc.fog.far=Math.min(B.far,cap);sc.fog.near=Math.min(B.near,sc.fog.far*.2);sc.fog.color.copy(B.fog).lerp(grey,Math.min(1,fogK))}if(B.bg&&sc.background&&sc.background.isColor)sc.background.copy(B.bg).lerp(grey,Math.min(1,fogK)).multiplyScalar(1-dark*.35);
+  const fl=WX.flash>0?WX.flash:0;for(const [o,i0] of B.hemi)o.intensity=i0*(1-dark*.4)+fl*1.6;for(const [o,i0,c0] of B.sun){o.intensity=i0*(1-dark*.8)*(WX.sunK||1);if(WX.sunC)o.color.copy(c0).lerp(WX.sunC,WX.sunU||0)}
+  if(B.dome){B.dome[0].material.color.copy(B.dome[1]).multiplyScalar(1-dark*.55+fl*.8)}
+  /* 젖은 땅: 지면(바탕 그림) 거칠기를 낮춘다 */const wet=wxMix('wet')||0;if(!WX.wetM){sc.traverse(o=>{if(!WX.wetM&&o.isMesh&&o.material&&o.material.map&&typeof TJ!=='undefined'&&TJ.tex&&o.material.map===TJ.tex.g)WX.wetM={m:o.material,r:o.material.roughness,c:o.material.color.clone()}})}
+  if(WX.wetM){const W=WX.wetM;W.m.roughness=W.r-(W.r-.38)*wet;W.m.color.copy(W.c).multiplyScalar(1-.22*wet)}WX.wet=wet}
+function wxRestore(){try{const B=WX.base;if(B&&B.sc){if(B.sc.fog){B.sc.fog.far=B.far;B.sc.fog.near=B.near;B.sc.fog.color.copy(B.fog)}if(B.bg&&B.sc.background&&B.sc.background.isColor)B.sc.background.copy(B.bg);for(const [o,i0] of B.hemi)o.intensity=i0;for(const [o,i0,c0] of B.sun){o.intensity=i0;o.color.copy(c0)}if(B.dome)B.dome[0].material.color.copy(B.dome[1])}if(WX.wetM){WX.wetM.m.roughness=WX.wetM.r;WX.wetM.m.color.copy(WX.wetM.c)}}catch(e){wxErr(e)}WX.base=null;WX.wetM=null}
+/* ---------- 소리: 빗소리 · 천둥 ---------- */
+function wxSound(){if(!SND.on){if(WX.snd){try{WX.snd.s.stop()}catch(e){}WX.snd=null}return}const c=SND.ac();if(!c)return;let bus=null;try{bus=SFX.bus()}catch(e){}if(!bus)return;const want=(WX.rk||0)*(WX.k==='storm'?1:.7);
+  if(!WX.snd&&want>.02){const s=c.createBufferSource();s.buffer=SND.noise();s.loop=true;const hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=900;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=7000;const g=c.createGain();g.gain.value=0;s.connect(hp);hp.connect(lp);lp.connect(g);g.connect(bus);s.start(0,Math.random());WX.snd={s,g,lp}}
+  if(WX.snd){const inn=(typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on);const t=c.currentTime;WX.snd.g.gain.setTargetAtTime(want*.07*(inn?.45:1),t,.5);WX.snd.lp.frequency.setTargetAtTime(inn?900:7000,t,.4);if(want<=.02&&WX.snd.g.gain.value<.002){try{WX.snd.s.stop()}catch(e){}WX.snd=null}}}
+function wxBolt(){WX.bolts++;const d=300+Math.random()*1500;WX.flash=1;setTimeout(()=>{WX.flash=0},80);setTimeout(()=>{WX.flash=.7},160);setTimeout(()=>{WX.flash=0},230);try{if(typeof sv3Flash==='function')sv3Flash(.18)}catch(e){}
+  if(SND.on)try{const c=SND.ac();const bus=SFX.bus();const t=c.currentTime+d/340;const s=c.createBufferSource();s.buffer=SND.noise();const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=d<600?240:120;const g=c.createGain();const v=Math.min(.45,140/d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+(d<600?.03:.4));g.gain.exponentialRampToValueAtTime(v*.5,t+1.2);g.gain.exponentialRampToValueAtTime(.0001,t+3.6);s.connect(f);f.connect(g);g.connect(bus);s.start(t,Math.random());s.stop(t+3.7);WX.thunderD=Math.round(d)}catch(e){wxErr(e)}}
+/* ---------- 시간 흐름 ---------- */
+function wxHour(){try{const [hh,mm]=clockAt(G.turn).split(':').map(Number);const used=Math.max(0,(OUT.h0||0)-(OUT.h||0));return ((hh+mm/60+used)%24+24)%24}catch(e){return null}}
+function wxTodOf(h){return h>=22||h<4?'night':h<8?'dawn':h<16?'day':'dusk'}
+const WX_SUNC={dawn:'#d8e0ff',day:'#fff3e0',dusk:'#ffc890'};
+function wxFlow(){const h=wxHour();if(h==null)return;WX.hour=h;const want=wxTodOf(h);const cur=OUT.tod;
+  /* 경계 1시간 전: 햇빛이 다음 시간대 쪽으로 */const nx={dawn:['day',8],day:['dusk',16],night:['dawn',4]}[cur];if(nx){let left=nx[1]-h;if(left<0)left+=24;if(left<1){WX.sunC=new T.Color(WX_SUNC[nx[0]]||'#fff');WX.sunU=(1-left)*.6;WX.sunK=nx[0]==='dusk'?1-.15*(1-left):1}else{WX.sunU=0;WX.sunK=1}}else{WX.sunU=0;WX.sunK=1}
+  if(want!==cur&&want!=='night'&&cur!=='dusk'){WX.todOv=want;try{outLight(OUT.scene);if(typeof gfxApply==='function')gfxApply(OUT.scene)}catch(e){wxErr(e)}WX.base=null;WX.wetM=null;WX.flowN++;WX.sunU=0;WX.sunK=1;const msg={day:'☀️ 해가 높이 떴다 — 낮',dusk:'🌇 해가 기운다 — 저녁',dawn:'🌄 하늘이 밝아 온다 — 새벽'}[OUT.tod];try{outNote(`<b>${msg}</b><div>행동 시간을 쓴 만큼 시계가 갔다(${Math.floor(h)}시).</div>`,3200)}catch(e){}}}
+/* 외출 중 시계가 넘어간 시간대 — outTod()가 턴 기준으로 되돌리지 않게 */
+(function(){const b=window.outTod;if(typeof b!=='function')return;window.outTod=function(){if(WX.todOv&&typeof OUT!=='undefined'&&OUT.on)return WX.todOv;return b.apply(this,arguments)}})();
+/* ---------- 매 프레임 ---------- */
+function wxTick(dt){if(!dt||dt>.5||!OUT.on)return;WX.clock+=dt;if(!wxOn()){if(WX.base)wxRestore();if(WX.rain)WX.rain.L.visible=false;if(WX.snow)WX.snow.S.visible=false;if(WX.snd){try{WX.snd.s.stop()}catch(e){}WX.snd=null}return}
+  if(WX.next){WX.tT=Math.min(1,WX.tT+dt/20);if(WX.tT>=1){WX.k=WX.next;WX.next=null;WX.i=1;WX.tT=0;wxBadge()}}else WX.i=Math.min(1,WX.i+dt/20);
+  WX.chT-=dt;if(WX.chT<=0){const L=WX_NB[WX.k]||['clear'];wxSet(L[Math.floor(Math.random()*L.length)]);try{toast(`${WX_K[WX.next].ico} 날씨가 바뀐다 — ${WX_K[WX.next].n}`,2200)}catch(e){}}
+  if(WX.k==='storm'&&!WX.next){WX.boltT-=dt;if(WX.boltT<=0){WX.boltT=7+Math.random()*11;wxBolt()}}
+  try{wxPrecip(dt)}catch(e){wxErr(e)}try{wxLook()}catch(e){wxErr(e)}try{wxSound()}catch(e){wxErr(e)}WX.flT=(WX.flT||0)-dt;if(WX.flT<=0){WX.flT=.5;try{wxFlow()}catch(e){wxErr(e)}}}
+function wxBadge(){try{const el=document.getElementById('wxBadge');const K=WX_K[WX.k];const txt=`${K.ico} ${K.n}`;if(el){el.textContent=txt;return}}catch(e){}}
+/* ---------- 싸움에 미치는 것 ---------- */
+(function(){const b=window.isEnStep;if(typeof b!=='function')return;window.isEnStep=function(a,dt){try{if(wxOn()&&a&&a.h&&!a.dead){const see=wxMix('see');if(see<79){const q=a.h.root.position;const d=Math.hypot(q.x-FP3.pos.x,q.z-FP3.pos.z);if(d>see){a.los=false;if(!(a.losT>.4))a.losT=.5;WX.seeN++}}}}catch(e){wxErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.isShot;if(typeof b!=='function')return;window.isShot=function(a){if(!wxOn()||!a||!a.E)return b.apply(this,arguments);const k=wxMix('acc');if(k>=.999)return b.apply(this,arguments);const a0=a.E.acc;a.E.acc=a0*k;try{return b.apply(this,arguments)}finally{a.E.acc=a0}}})();
+(function(){const b=window.olDrStep;if(typeof b!=='function')return;window.olDrStep=function(dt){const r=b.apply(this,arguments);try{if(wxOn()){const R=wxMix('dr');if(R<41.9)for(const d of OL.dr){if(d.see&&Math.hypot(FP3.pos.x-d.p.x,FP3.pos.z-d.p.z)>R)d.see=false}}}catch(e){wxErr(e)}return r}})();
+/* ---------- 연결 ---------- */
+for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[nm];if(typeof b!=='function')return;window[nm]=function(dt){const r=b.apply(this,arguments);try{if(nm!=='outStep'||!((typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on)))wxTick(dt||0)}catch(e){wxErr(e)}return r}})(nm);
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){WX.todOv=null;const r=b.apply(this,arguments);try{WX.base=null;WX.wetM=null;WX.rain=null;WX.snow=null;WX.flash=0;WX.sunU=0;WX.sunK=1;wxSet(wxOn()?wxPick():'clear',true);WX.boltT=6+Math.random()*8;setTimeout(()=>{try{if(OUT.on&&wxOn()&&WX.k!=='clear'){const K=WX_K[WX.k];outNote(`<b>${K.ico} 오늘 날씨: ${K.n}</b><div>${{cloud:'구름이 낮게 깔렸다.',rain:'비가 온다 — 멀리 있는 적은 나를 잘 못 본다.',storm:'폭풍우 — 번개가 친다. 적도 나도 앞이 잘 안 보인다.',fog:'짙은 안개 — 30m 밖은 서로 안 보인다.',snow:'눈이 흩날린다.'}[WX.k]}</div>`,4200)}}catch(e){}},2600)}catch(e){wxErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{WX.todOv=null;wxRestore();if(WX.snd){try{WX.snd.s.stop()}catch(e){}WX.snd=null}}catch(e){wxErr(e)}return b.apply(this,arguments)}})();
+/* 위쪽 띠에 날씨(⋯ 옆 시간 칸 오른쪽) — 외출 화면이 다시 그려질 때마다 */
+(function(){const b=window.outBar;if(typeof b!=='function')return;window.outBar=function(){const r=b.apply(this,arguments);try{const bar=document.getElementById('oBar');if(bar){let el=document.getElementById('wxBadge');const show=OUT.on&&wxOn()&&(WX.k!=='clear'||WX.next);if(!show){if(el)el.remove()}else{const K=WX_K[WX.next||WX.k];const txt=`${K.ico} ${K.n}`;if(!el||el.parentNode!==bar){if(el)el.remove();el=document.createElement('span');el.id='wxBadge';el.className='wx-badge';const btn=bar.querySelector('[data-g3=oback]');bar.insertBefore(el,btn||null)}if(el.textContent!==txt)el.textContent=txt}}}catch(e){wxErr(e)}return r}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="wx"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('wx','날씨','비·폭풍(번개)·안개·눈·흐림 — 시야와 적이 나를 알아보는 거리가 바뀐다(끄면 늘 맑음)',[[1,'켬'],[0,'끔']],store.get('sg.wx',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){wxErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='wx')return;try{store.set('sg.wx',b.dataset.v==='1');toast(b.dataset.v==='1'?'🌦 날씨 켬 — 다음 외출부터':'날씨 끔 — 늘 맑음',2000)}catch(x){wxErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🌦 날씨 · 시간 흐름(v16.2)','외출마다 날씨가 정해지고 몇 분마다 바뀐다: 맑음 · 흐림 · <b>비</b>(빗줄기·빗소리·젖은 땅) · <b>폭풍</b>(번개 뒤 천둥) · <b>안개</b>(30m 밖이 안 보인다) · <b>눈</b>. 궂은 날씨엔 적이 나를 알아보는 거리와 명중이 줄고, 수배 감시 드론도 덜 본다 — 달아나기 좋은 날. 행동 시간을 쓰면 그만큼 시계가 가서 <b>낮이 저녁으로</b>, 새벽이 낮으로 바뀐다. 설정 <b>날씨</b>로 끌 수 있다(늘 맑음).']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
