@@ -1799,6 +1799,33 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .sty-res{font-size:14.5px;line-height:1.55;color:var(--body);margin:6px 0 8px}
 .sty-card .fx-list{margin:0 0 10px}
 @keyframes styIn{from{opacity:0}to{opacity:1}}
+/* v16.5 턴마다 섞이는 공격: 맨 위 경보 띠 · 핵 섬광 */
+.mix-alert{--mx:#ff8a3d;position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translate(-50%,-8px);z-index:92;pointer-events:none;display:flex;gap:10px;align-items:center;width:min(92vw,560px);padding:10px 14px;border-radius:14px;background:rgba(12,10,9,.92);border:1.5px solid var(--mx);box-shadow:0 0 0 3px color-mix(in srgb,var(--mx) 22%,transparent),0 12px 30px rgba(0,0,0,.5);opacity:0}
+.mix-alert.in{animation:mixIn .35s ease forwards}.mix-alert.out{animation:mixOut .5s ease forwards}
+.mix-alert i{font-style:normal;font-size:28px;line-height:1;color:var(--mx)}
+.mix-alert div{display:grid;gap:2px;min-width:0}.mix-alert b{font:800 15px system-ui,sans-serif;color:var(--mx)}.mix-alert span{font-size:13px;line-height:1.4;color:var(--fg)}
+@keyframes mixIn{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translate(-50%,0)}}@keyframes mixOut{from{opacity:1}to{opacity:0;transform:translate(-50%,-10px)}}
+.mix-flash{position:fixed;inset:0;z-index:91;pointer-events:none;background:#fffbe8;animation:mixFlash 1.2s ease-out forwards}
+@keyframes mixFlash{0%{opacity:.95}20%{opacity:.85}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.mix-flash{animation-duration:.4s}.mix-alert.in,.mix-alert.out{animation-duration:.01s}}
+/* v16.6 드론 조준 화면 — 내려다보는 영상 · 조준선 · 방위 · 기관총·미사일 */
+.dv-hud{position:absolute;inset:0;pointer-events:none;z-index:1}
+.dv-x{position:absolute;overflow:visible}
+.dv-x line{stroke-linecap:round;fill:none}
+.dv-x .sh line{stroke:rgba(0,0,0,.5);stroke-width:4}
+.dv-x .fg line{stroke:#f4f6f2;stroke-width:1.8}
+.dv-c{position:absolute;transform:translate(-50%,-50%);font:800 22px/1 ui-monospace,Menlo,monospace;color:#f4f6f2;text-shadow:0 0 3px #000,0 1px 2px #000}
+.dv-c[data-d="N"]{color:#ffd2c6}
+.dv-rd{position:absolute;left:50%;top:10px;transform:translateX(-50%);font:700 12px ui-monospace,Menlo,monospace;color:#e9eee6;background:rgba(10,14,12,.55);padding:3px 10px;border-radius:999px;letter-spacing:.04em;white-space:nowrap}
+.dv-ws{position:absolute;inset:0;pointer-events:none}
+.dv-w{position:absolute;pointer-events:auto;border-radius:50%;display:grid;place-items:center;align-content:center;color:#fff;font-size:26px;line-height:1;border:2px solid rgba(255,255,255,.35);background:rgba(16,18,20,.78);box-shadow:0 6px 18px -6px #000;touch-action:none;user-select:none;-webkit-user-select:none;padding:0}
+.dv-w small{font:800 11px var(--sans);opacity:.85;margin-top:3px}
+.dv-mg{right:max(118px,calc(env(safe-area-inset-right,0px) + 112px));bottom:16px;width:84px;height:84px}
+.dv-mg.on{border-color:#ffa63d;box-shadow:0 0 0 4px rgba(255,166,61,.45),0 6px 18px -6px #000}
+.dv-ms{right:max(214px,calc(env(safe-area-inset-right,0px) + 208px));bottom:28px;width:62px;height:62px;font-size:22px}
+.b-fpv-ov.dv-top .fpv-q:not(.solo){right:max(14px,env(safe-area-inset-right,0px));bottom:122px;width:58px;height:58px}
+.b-fpv-ov .dv-ws .dfr-alt{bottom:122px}.b-fpv-ov .dv-ws .dfr-alt.up{right:max(80px,calc(env(safe-area-inset-right,0px) + 76px))}.b-fpv-ov .dv-ws .dfr-alt.dn{right:max(146px,calc(env(safe-area-inset-right,0px) + 142px))}
+.b-fpv-ov.dv-top .fpv-tip{top:40px;bottom:auto}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -6750,7 +6777,7 @@ const SEASON={winter:{n:'한겨울',t:'바깥 영하 6℃'},cool:{n:'쌀쌀한 �
 function newGame(o){
   const seed=(o.seed>>>0)||(((Date.now()&0xffffffff)^Math.floor(Math.random()*1e9))>>>0);
   RNG.seed(seed);
-  const scen=o.scen==='rand'?pick(['conv','conv','nuke','chem']):o.scen;
+  const scen=o.scen==='rand'?pick(['conv','conv','nuke','chem']):o.scen==='mix'?pick(['conv','nuke','chem']):o.scen;
   const d=DIFF[o.diff], now=new Date();
   const fam=[{id:'me',n:'당신',k:'me',hp:100,c:[]}];
   let home={floor:12,dong:101,sh:PRESET_SH.map(x=>Object.assign({},x)),meet:''};
@@ -6806,8 +6833,11 @@ function addC(m,c){if(m&&!m.c.includes(c)){m.c.push(c);push(m.n+' '+CONDS[c].n,n
 function clrC(m,c){if(m)m.c=m.c.filter(x=>x!==c)}
 function res(k,n){const b=G.res[k];G.res[k]=Math.max(0,Math.round((b+n)*100)/100);const d=G.res[k]-b;if(d)push({water:'물',food:'식량',power:'전력',meds:'의약품'}[k],k==='water'?Math.round(d*10)/10:d,{water:'L',power:'%',food:'',meds:''}[k])}
 function mor(n){const b=G.morale;G.morale=clamp(G.morale+n,0,100);if(G.morale!==b)push('사기',G.morale-b)}
-function pol(n){const b=G.pol;G.pol=clamp(G.pol+Math.round(n>0?n*G.mul:n),0,100);if(G.pol!==b)push(G.scen==='chem'?'오염':'피폭',G.pol-b)}
+function pol(n){const b=G.pol;G.pol=clamp(G.pol+Math.round(n>0?n*G.mul:n),0,100);if(G.pol!==b)push(polLbl(),G.pol-b)}
 function trust(n){G.trust+=n;push('이웃 신뢰',n)}
+/* v16.5: 공격이 턴마다 섞일 수 있어(139) 낙진 시간대·지수 이름을 '마지막 핵 공격 뒤'·'섞임'으로 본다 — 섞임이 아니면 예전과 같다 */
+function nukeHot(){return G.scen==='nuke'&&G.turn-((G.flags&&G.flags.nukeT)|0)<4}
+function polLbl(){return G&&G.mix?'피폭·오염':G&&G.scen==='chem'?'오염':'피폭'}
 const has=k=>(G.inv[k]||0)>0;
 function give(k,n){G.inv[k]=(G.inv[k]||0)+(n||1)}
 function warmth(){return has('blanket')||has('quilt')}
@@ -6913,14 +6943,14 @@ const ACTIONS=[
   {id:'purify',n:'물 정수',ic:'bleach',d:()=>'수돗물 거르고 락스 · 물 +4L',show:()=>has('bleach')&&G.flags.tap&&G.scen==='conv',ok:()=>true},
   {id:'rest',n:'휴식·수면',ic:'moon',d:()=>'전원 체력 +6 · 사기 +2',show:()=>true,ok:()=>true},
   {id:'care',n:'가족 돌보기',ic:'heart',d:()=>has('teddy')&&hasKid()?'사기 +14 (애착인형)':'사기 +8',show:()=>G.fam.length>1,ok:()=>true},
-  {id:'scout',n:'주변 살피기',ic:'pin',d:()=>(G.scen==='nuke'&&G.turn<4)?'낙진 시간대 — 피폭 위험!':'물자 발견 가능 · 부상 위험',show:()=>G.loc!=='gym',ok:()=>!G.fam.find(m=>m.id==='me').c.includes('fracture'),warn:()=>G.scen==='nuke'&&G.turn<4,na:'골절로 움직일 수 없다'},
+  {id:'scout',n:'주변 살피기',ic:'pin',d:()=>(nukeHot())?'낙진 시간대 — 피폭 위험!':'물자 발견 가능 · 부상 위험',show:()=>G.loc!=='gym',ok:()=>!G.fam.find(m=>m.id==='me').c.includes('fracture'),warn:()=>nukeHot(),na:'골절로 움직일 수 없다'},
   {id:'help',n:'이웃 돕기',ic:'group',d:()=>'신뢰 +1 · 사기 +4',show:()=>true,ok:()=>true}
 ];
 function doAction(id){
   FX=[];let t='';
   if(id==='radio'){G.infoTurns=2;if(!(G.scen==='chem'&&!G.flags.chemAlert))reveal();mor(3);
     const L={conv:'"미사일 공격이 이어지고 있습니다. 경보 해제 때까지 대피소에 머무르십시오."',
-      nuke:G.turn<4?'"낙진 지역 주민은 최소 24시간 실내에 머무르십시오. 외출을 삼가십시오."':'"정부 이동 안내를 기다리십시오. 마스크와 우의를 준비하십시오."',
+      nuke:G.turn-(G.flags.nukeT|0)<4?'"낙진 지역 주민은 최소 24시간 실내에 머무르십시오. 외출을 삼가십시오."':'"정부 이동 안내를 기다리십시오. 마스크와 우의를 준비하십시오."',
       chem:G.flags.chemAlert?'"고층 실내에서 창문과 환풍구를 밀폐하십시오. 오염 의심수는 마시지 마십시오."':'"공격 원인을 확인 중입니다. 지하 대피를 유지하십시오."'};
     t='재난방송: '+L[G.scen]}
   else if(id==='phone'){res('power',-8);G.infoTurns=1;if(G.scen!=='chem'||G.flags.chemAlert)reveal();t='재난문자 3건을 확인했다. 정부 안내를 한 번 더 읽어 두었다.'}
@@ -6936,7 +6966,7 @@ function doAction(id){
 }
 function scout(){
   const me=M('me');
-  if(G.scen==='nuke'&&G.turn<4){pol(25);if(chance(.5))res('water',4);
+  if(nukeHot()){pol(25);if(chance(.5))res('water',4);
     logDecision({id:'scout-early',title:'낙진 시간대 외출',lesson:'방사선은 첫 수 시간이 가장 강하다. 최소 24시간은 실내에 머문다.',src:'행정안전부 핵공격 국민행동요령 · 美 FEMA',guide:'now',choices:[{t:'실내에 머문다',ok:true}]},{t:'주변 살피러 나감'},false);
     return '낙진이 가장 강한 시간대에 밖으로 나갔다. 피폭 지수가 크게 올랐다.'}
   if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear){addC(me,'contam');pol(12);return '복도와 계단에도 작용제가 남아 있었다. 팔이 따끔거린다.'}
@@ -6977,9 +7007,9 @@ function endTurn(){
   /* 상태이상 */
   G.fam.forEach(m=>m.c.forEach(c=>{let d=CONDS[c].hp;if(c==='cold'&&warmth())d=3;hurt(m,d)}));
   /* 오염·피폭 환경 */
-  if(G.scen==='nuke'){if(G.turn<4){pol(G.loc==='home'?5:G.loc==='bldg'?2:1)}if(G.flags.noDecon&&G.turn<5)pol(3);if(G.loc==='park'&&G.flags.stayed)pol(2)}
+  if(G.scen==='nuke'){if(G.turn-(G.flags.nukeT|0)<4){pol(G.loc==='home'?5:G.loc==='bldg'?2:1)}if(G.flags.noDecon&&G.turn-(G.flags.nukeT|0)<5)pol(3);if(G.loc==='park'&&G.flags.stayed)pol(2)}
   if(G.scen==='chem'&&G.flags.chemAlert&&G.loc!=='high')pol(10);
-  if(G.pol>=70){hurt('all',6);notes.push((G.scen==='chem'?'오염':'피폭')+' 지수가 위험 수준이다.')}else if(G.pol>=40)hurt('all',3);
+  if(G.pol>=70){hurt('all',6);notes.push((polLbl())+' 지수가 위험 수준이다.')}else if(G.pol>=40)hurt('all',3);
   /* 겨울 지하 냉기 */
   if((G.season==='winter')&&['park','bldg','subway'].includes(G.loc)&&!warmth())mor(-2);
   /* 사기 · 회복 · 전력 */
@@ -7739,7 +7769,7 @@ function vTitle(){
 }
 /* ---------- 설정 ---------- */
 function defaultSetup(){const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
-  return store.get('sg.setup',null)||{diff:'real',scen:'rand',fam:getMy()?'my':3,bag:kc>0?'sync':'none'}}
+  const S=store.get('sg.setup',null)||{diff:'real',scen:'rand',fam:getMy()?'my':3,bag:kc>0?'sync':'none'};/* v16.5: 공격 유형은 기억하지 않는다 — 설정을 열 때마다 '턴마다 섞임'(자동 점검은 예전대로) */if(!(navigator.webdriver&&!window.__mixTest))S.scen='mix';return S}
 function vSetup(){
   const S=UI.setup||(UI.setup=defaultSetup());const k=readHandbookKit();const kc=k?k.filter(Boolean).length:0;
   if(S.bag==='sync'&&!kc)S.bag='none';
@@ -7748,7 +7778,7 @@ function vSetup(){
   const seg=(key,opts)=>`<div class="seg-opts">${opts.map(o=>`<button data-a="opt" data-k="${key}" data-v="${o[0]}" aria-pressed="${String(S[key])===String(o[0])}" ${o[3]?'disabled':''}><b>${o[1]}</b><span>${o[2]}</span></button>`).join('')}</div>`;
   return `<div class="hud"><button class="iconbtn" data-a="home" aria-label="처음으로">${ic('back')}</button><div><div class="eyebrow">훈련 설정</div><div class="sub">한 번 정하면 이 판 동안 바뀌지 않는다</div></div><span class="sp"></span>${sndBtn()}</div>
   <div class="seg"><div class="seg-label">난이도</div>${seg('diff',[['train','훈련','힌트·정답 바로 · 75초'],['real','실전','정답은 끝에 · 60초'],['hard','극한','45초 · 피해 1.3배']])}</div>
-  <div class="seg"><div class="seg-label">상황</div>${seg('scen',[['rand','무작위','무엇인지 모른 채 시작'],['conv','재래식 공습','미사일'],['nuke','핵 공격','섬광·낙진'],['chem','화학무기','화생방']])}</div>
+  <div class="seg"><div class="seg-label">상황</div>${seg('scen',[['mix','턴마다 섞임','미사일·핵·화학이 번갈아'],['rand','무작위','무엇인지 모른 채 시작'],['conv','재래식 공습','미사일'],['nuke','핵 공격','섬광·낙진'],['chem','화학무기','화생방']])}</div>
   <div class="seg"><div class="seg-label"><span>가족</span>${S.fam==='my'?`<button class="link" data-a="family">수정</button>`:''}</div>${seg('fam',[['my','우리 가족',myS],[1,'혼자','1인 가구'],[2,'부부','2인'],[3,'부부+아이','6살 아이와 3인']])}</div>
   <div class="seg"><div class="seg-label"><span>현관 생존배낭</span><span>${kc?`생존 수첩 체크 ${kc}/16`:''}</span></div>
     ${seg('bag',[['sync','생존 수첩 연동',kc?`실제 체크한 ${kc}종`:'연동 데이터 없음',!kc],['none','준비 안 함','현실 평균'],['full','완비','16종 전부']])}
@@ -7846,7 +7876,7 @@ function resGrid(){
     ['battery',G.flags.emp?'—':`${Math.round(G.res.power)}%`,G.flags.emp?'통신망 먹통':'휴대폰 전력',!G.flags.emp&&G.res.power<20],
     ['aid',G.res.meds,'의약품(회)',false],
     ['heart',G.morale,'사기',G.morale<35],
-    G.scen==='nuke'||G.scen==='chem'?[G.scen==='chem'?'flask':'rad',G.pol,G.scen==='chem'?'오염 지수':'피폭 지수',G.pol>=40]:['shield',G.trust,'이웃 신뢰',false]
+    G.scen==='nuke'||G.scen==='chem'?[G.scen==='chem'?'flask':'rad',G.pol,polLbl()+' 지수',G.pol>=40]:['shield',G.trust,'이웃 신뢰',false]
   ];
   return `<div class="res">${cells.map(c=>`<div class="r${c[3]?' low':''}">${ic(c[0])}<div><b>${c[1]}</b><span>${c[2]}</span></div></div>`).join('')}</div>`;
 }
@@ -7893,7 +7923,7 @@ function vEnd(){
   <div class="stats">
     <div class="stat"><b>${e.know}%</b><span>수칙 정답 ${e.right}/${e.total}</span></div>
     <div class="stat"><b>${e.health}</b><span>가족 평균 체력${e.crit?' · 위독 있음':''}</span></div>
-    <div class="stat"><b>${G.scen==='conv'?G.trust:G.pol}</b><span>${G.scen==='conv'?'이웃 신뢰':G.scen==='chem'?'오염 지수':'피폭 지수'}</span></div>
+    <div class="stat"><b>${G.scen==='conv'?G.trust:G.pol}</b><span>${G.scen==='conv'?'이웃 신뢰':polLbl()+' 지수'}</span></div>
     <div class="stat"><b>${g?g.left+'초':'—'}</b><span>탈출 여유 · 배낭 ${g?g.slotsUsed:0}/10칸</span></div>
   </div>
   ${G.newBadges.length?`<div class="sec-h"><h3>새 배지</h3></div><div class="badges">${G.newBadges.map(id=>`<div class="bdg new">${ic(BADGES[id].ic)}<div><b>${BADGES[id].n}</b><small>${BADGES[id].d}</small></div></div>`).join('')}</div>`:''}
@@ -8476,7 +8506,7 @@ const AMB={n:null,kind:null,iv:0,
     let hum=null;if(kind==='shelter'&&!G.flags.blackout&&!['high','home'].includes(G.loc)){hum=c.createOscillator();hum.frequency.value=120;const hg=c.createGain();hg.gain.value=.0035;hum.connect(hg);hg.connect(c.destination);hum.start()}
     this.n={src,lfo,g,hum,base};
     this.iv=setInterval(()=>{if(!this.n||!SND.on)return;
-      const far=AMB.kind==='battle'||(G&&G.phase==='shelter'&&((G.scen==='conv'&&G.turn<9)||(G.scen==='chem'&&G.turn<2)))||(G&&G.phase==='move'&&G.scen!=='nuke');
+      const far=AMB.kind==='battle'||(G&&G.phase==='shelter'&&((G.scen==='conv'&&G.turn-(G.flags.convT|0)<9)||(G.scen==='chem'&&G.turn-(G.flags.chemT|0)<2)))||(G&&G.phase==='move'&&G.scen!=='nuke');
       if(far&&Math.random()<.45){SND.boom(false,.22);vib(30)}},16000)},
   level(x){if(!this.n||!SND.ctx)return;this.n.g.gain.setTargetAtTime(this.n.base*x,SND.ctx.currentTime,.35)},
   stop(){clearInterval(this.iv);if(this.n){try{this.n.src.stop();this.n.lfo.stop();if(this.n.hum)this.n.hum.stop()}catch(e){}}this.n=null;this.kind=null}
@@ -11837,7 +11867,7 @@ function sv3People(sc,o){o=o||{};SH3.people=[];const night=o.night;const fam=G.f
     if(pose==='sleep'){h.root.rotation.x=-Math.PI/2;h.root.position.y+=.1;h.root.rotation.z=r()*6.28}else h.root.rotation.y=r()*6.28;sc.add(h.root);SH3.people.push(h);
     if((pose==='sitF'||pose==='sleep')&&o.mat!==false)FK.mat(1.1,1.5,sc,['#3a5a7a','#6a4a4a','#4a6a5a','#7a6a3a'][i%4]).position.set(x,h.root.position.y-(pose==='sleep'?.1:0),z+(pose==='sleep'?-.3:.15));
     if(i%3===0)FK.cardboard(sc,1+(i%2)).position.set(x+.9,h.root.position.y-(pose==='sleep'?.1:0),z-.4);if(i%4===1)FK.blanketPile(sc).position.set(x-.8,h.root.position.y-(pose==='sleep'?.1:0),z+.3);if(i%5===2)FK.stroller(sc).position.set(x+1.1,h.root.position.y-(pose==='sleep'?.1:0),z+.5)}}
-function sv3ShelterScene(loc,dark){const sc=new T.Scene();const night=(()=>{const h=+clockAt(G.turn).split(':')[0];return h<6||h>=19})();SH3.wins=[];SH3.flames=null;SH3.boomT=(G.scen==='conv'&&G.turn<9)||(G.scen==='chem'&&G.turn<2)?8:null;const qt=SV3.qt||'high';
+function sv3ShelterScene(loc,dark){const sc=new T.Scene();const night=(()=>{const h=+clockAt(G.turn).split(':')[0];return h<6||h>=19})();SH3.wins=[];SH3.flames=null;SH3.boomT=(G.scen==='conv'&&G.turn-(G.flags.convT|0)<9)||(G.scen==='chem'&&G.turn-(G.flags.chemT|0)<2)?8:null;const qt=SV3.qt||'high';
   const lightOn=!dark;/* v9.5: 기본을 밝게(사용자 의견 '대피소가 너무 어둡다') — 정전이어도 비상등 수준은 보이게 */const amb=new T.HemisphereLight(lightOn?'#e4eaf0':'#283244',lightOn?'#45403a':'#0c1014',lightOn?.95:.3);sc.add(amb);sc.background=new T.Color('#06080b');
   SH3.camP=new T.Vector3(0,1.4,.6);SH3.look=new T.Vector3(0,.75,-3.2);
   /* 위에서 내려오는 주광(그림자) */const key=new T.DirectionalLight('#f4f6ff',lightOn?.42:.08);key.position.set(2,9,-4);key.target.position.set(0,0,-6);sc.add(key);sc.add(key.target);if(qt!=='low'&&lightOn){key.castShadow=true;key.shadow.mapSize.set(qt==='high'?2048:1024,qt==='high'?2048:1024);const c=key.shadow.camera;c.left=-12;c.right=12;c.top=12;c.bottom=-12;c.near=1;c.far=30;key.shadow.bias=-.0005;key.shadow.normalBias=.03}
@@ -12401,7 +12431,7 @@ function freeCands(){const L=[];if(!LIFE.on)return L;const c=LIFE.camp,cx=c[0],c
     if(a.kind==='police'||a.kind==='rok'){if(!fu('ask'))add({k:'ask',id:'npc:'+i,a,x:p.x,z:p.z,r:1.9,g:'i',n:a.kind==='rok'?'군인에게 상황 묻기':'경찰에게 상황 묻기',s:'1시간 · 바깥 소식·힌트',h:1});return}
     if(a.talked!==G.turn&&(a.st==='rest'||a.st==='pausing'))add({k:'talk',id:'npc:'+i,a,x:p.x,z:p.z,r:1.7,g:'…',n:a.kind==='kid'?'아이 달래기':'이웃에게 말 걸기',s:a.kind==='kid'?'1시간 · 사기·신뢰':'1시간 · 소문·거래·위로',h:1})});
   if(LIFE.table&&G.turn>=1&&G.freeUsed.relief!==Math.floor(G.turn/4))add({k:'relief',id:'table',x:LIFE.table[0],z:LIFE.table[1],r:2.2,g:'▤',n:'배급 줄 서기',s:'1시간 · 하루 1회 · 물·식량',h:1});
-  if(LIFE.exit&&!fu('scout')&&!M('me').c.includes('fracture'))add({k:'scout',id:'exit',x:LIFE.exit[0],z:LIFE.exit[1],r:2.6,g:'↗',n:'출구 밖 살피기',s:(G.scen==='nuke'&&G.turn<4)?'3시간 · 낙진 시간대 — 피폭 위험!':'3시간 · 물자 발견 · 부상 위험',h:3,warn:G.scen==='nuke'&&G.turn<4});
+  if(LIFE.exit&&!fu('scout')&&!M('me').c.includes('fracture'))add({k:'scout',id:'exit',x:LIFE.exit[0],z:LIFE.exit[1],r:2.6,g:'↗',n:'출구 밖 살피기',s:(nukeHot())?'3시간 · 낙진 시간대 — 피폭 위험!':'3시간 · 물자 발견 · 부상 위험',h:3,warn:nukeHot()});
   FREE.spots.forEach((s,i)=>{if(!s.done)add({k:'search',id:'spot:'+i,s,x:s.x,z:s.z,r:1.5,g:'?',n:'박스 더미 살펴보기',s:'1시간 · 물자 발견 가능',h:1})});
   return L}
 /* ---------- 실행 ---------- */
@@ -12574,7 +12604,7 @@ function outStep(dt){if(!OUT.on)return;const me=OUT.me;const mv=FP3.mv;const len
   /* v9.4: 자동 저장은 멈춰 섰을 때(6초마다) — 걷는 중엔 30초까지 미룬다(큰 저장이 한 프레임을 멈칫하게 한다) */OUT.saveT+=dt;if(OUT.saveT>6&&(FP3.moving<.1||OUT.saveT>30)){OUT.saveT=0;if(OUT.mode==='free')G.freeH=Math.max(0,Math.round(OUT.h*2)/2);save()}}
 /* 위험: 낙진·화학 오염(밖에 있는 동안) */
 function outHazard(dh){let per=0,mask=1;if(G.scen==='nuke'){per=G.turn<4?4:1;mask=has('mask')?.5:1;if(has('vinyl'))mask*=.7}else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear){per=3;mask=has('mask')?.4:1}
-  if(!per)return;OUT.polAcc+=per*mask*dh;if(OUT.polAcc>=1){const n=Math.floor(OUT.polAcc);OUT.polAcc-=n;FX=[];pol(n);OUT.fx.push(...FX);outStat();if(!OUT.polWarn){OUT.polWarn=1;outNote(`<b>${G.scen==='chem'?'오염':'피폭'} 지수가 오르고 있다</b><div>${G.scen==='chem'?'밖 공기에 작용제가 남아 있다. 마스크가 있으면 덜하다.':'밖에 있는 시간만큼 피폭된다. 마스크·우의가 있으면 덜하다.'}</div>`,4200)}}}
+  if(!per)return;OUT.polAcc+=per*mask*dh;if(OUT.polAcc>=1){const n=Math.floor(OUT.polAcc);OUT.polAcc-=n;FX=[];pol(n);OUT.fx.push(...FX);outStat();if(!OUT.polWarn){OUT.polWarn=1;outNote(`<b>${polLbl()} 지수가 오르고 있다</b><div>${G.scen==='chem'?'밖 공기에 작용제가 남아 있다. 마스크가 있으면 덜하다.':'밖에 있는 시간만큼 피폭된다. 마스크·우의가 있으면 덜하다.'}</div>`,4200)}}}
 function outFire(dt){const p=FP3.pos;OUT.heatT=Math.max(0,OUT.heatT-dt);OUT.fires.forEach(f=>{const d=Math.hypot(p.x-f.x,p.z-f.z);if(d<f.r&&OUT.heatT<=0){OUT.heatT=1;FX=[];hurt('me',2);OUT.fx.push(...FX);outStat();sv3Shake(.2);vib(20);outNote('<b>뜨겁다!</b><div>불 가까이 가지 않는다. 차량 화재는 폭발할 수 있다.</div>',1800);if(checkOver()){outReturn('dead')}}})}
 /* 공습경보(재래식): 25초 안에 건물·지하로 */
 function outSiren(dt){if(G.scen!=='conv'||OUT.enc)return;const w=$('#oWarn');
@@ -12655,7 +12685,7 @@ function outEncKid(c){const a=c.a;outEncShow({id:'out-lostkid',cat:'밖 · 구�
       {t:'엄마가 곧 오겠지 — 그대로 둔다',ok:false,go:()=>{mor(-5);return '돌아서자 울음소리가 더 커졌다.'}}],after:()=>{OUT.spots=OUT.spots.filter(s=>!s.taken)}})}
 /* ---------- 나가기·돌아오기 ---------- */
 function startOutside(o){if(!outAvail()){toast('이 대피소에서는 밖으로 나갈 수 없다');return}OUT.torch=null;
-  const danger=(G.scen==='nuke'&&G.turn<4)?'낙진이 가장 강한 시간대다. 밖에 있는 동안 피폭 지수가 빠르게 오른다.':(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)?'밖 공기에 화학 작용제가 남아 있다. 있는 동안 오염 지수가 오른다.':null;
+  const danger=(nukeHot())?'낙진이 가장 강한 시간대다. 밖에 있는 동안 피폭 지수가 빠르게 오른다.':(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)?'밖 공기에 화학 작용제가 남아 있다. 있는 동안 오염 지수가 오른다.':null;
   const go=()=>{OUT.saved={boxes:FP3.boxes,bounds:FP3.bounds,pos:FP3.pos.clone(),yaw:FP3.yaw};Object.assign(OUT,{on:true,mode:o.mode,h:o.h,h0:o.h,vh:0,timed:!!store.get('sg.outTimed',false),fx:[],items:[],enc:null,siren:null,sirenT:G.scen==='conv'?60+Math.random()*50:1e9,polAcc:0,polWarn:0,busy:false,ending:false,boomT:10,sig:'',scene:null});
     if(danger)logDecision({id:'out-danger',title:G.scen==='nuke'?'낙진 시간대 외출':'화학 공격 뒤 외출',lesson:G.scen==='nuke'?'방사선은 첫 수 시간이 가장 강하다. 최소 24시간은 실내에 머문다.':'오염 경보가 해제될 때까지 밀폐한 실내에 머문다.',src:G.scen==='nuke'?SRC.nuke:SRC.chem,guide:'now',choices:[{t:'실내에 머문다',ok:true}]},{t:'밖으로 탐색하러 나감'},false);
     UI.screen='outside';render();outNote(OUT.timed?`<b>${OUT.back?OUT.back.n:'대피소'}에서 나왔다</b><div>남은 시간 ${o.h}h — 표식이 있는 곳을 살피고, 녹색 기둥으로 돌아온다.</div>`:`<b>${OUT.back?OUT.back.n:'대피소'}에서 나왔다</b><div>걷고 둘러보는 데는 시간이 들지 않는다 — 뒤지기·돕기 같은 행동만 ${o.h}h 안에서 쓴다. 언제든 '↩ 대피소로'.</div>`,4600)};
@@ -12677,10 +12707,10 @@ function outReturn(why){if(!OUT.on)return;OUT.on=false;OUT.ending=false;SND.stop
 /* ---------- 연결 ---------- */
 SV3.screens.push('outside');SV3.views=Object.assign(SV3.views||{},{outside:vOutside3});
 /* 자유 모드: 대피소 출구에서 '밖으로 나가 탐색' */
-(function(){const bc=freeCands;window.freeCands=function(){const L=bc();if(outAvail()&&LIFE.exit&&freeHours()>0)L.push({k:'outside',id:'exit',x:LIFE.exit[0],z:LIFE.exit[1],r:2.8,g:'⇱',n:'밖으로 나가 탐색',s:store.get('sg.outTimed',false)?`남은 ${freeHours()}시간 동안 · 물자·구조·위험`:`걷기는 시간 무제한 · 행동 ${freeHours()}시간 · 물자·구조·위험`,h:0,warn:(G.scen==='nuke'&&G.turn<4)||(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)});return L};
+(function(){const bc=freeCands;window.freeCands=function(){const L=bc();if(outAvail()&&LIFE.exit&&freeHours()>0)L.push({k:'outside',id:'exit',x:LIFE.exit[0],z:LIFE.exit[1],r:2.8,g:'⇱',n:'밖으로 나가 탐색',s:store.get('sg.outTimed',false)?`남은 ${freeHours()}시간 동안 · 물자·구조·위험`:`걷기는 시간 무제한 · 행동 ${freeHours()}시간 · 물자·구조·위험`,h:0,warn:(nukeHot())||(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)});return L};
   const bd=freeDo;window.freeDo=function(c){if(c&&c.k==='outside'){startOutside({mode:'free',h:freeHours()});return}return bd(c)}})();
 /* 카드 모드: 행동 카드에 '밖으로 나가 탐색' (6시간) */
-ACTIONS.push({id:'explore',n:'밖으로 나가 탐색',ic:'pin',d:()=>(G.scen==='nuke'&&G.turn<4)?'6시간 · 낙진 시간대 — 피폭 위험!':'6시간 · 물자 수집·구조·위험',show:()=>outAvail()&&UI.screen==='shelter'&&((LIFE.on&&!!LIFE.me)||G.loc==='home'||G.loc==='high'),ok:()=>!M('me').c.includes('fracture'),na:'골절로 움직일 수 없다',warn:()=>(G.scen==='nuke'&&G.turn<4)||(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)});
+ACTIONS.push({id:'explore',n:'밖으로 나가 탐색',ic:'pin',d:()=>(nukeHot())?'6시간 · 낙진 시간대 — 피폭 위험!':'6시간 · 물자 수집·구조·위험',show:()=>outAvail()&&UI.screen==='shelter'&&((LIFE.on&&!!LIFE.me)||G.loc==='home'||G.loc==='high'),ok:()=>!M('me').c.includes('fracture'),na:'골절로 움직일 수 없다',warn:()=>(nukeHot())||(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a=act][data-v=explore]');if(!b||b.disabled)return;e.stopImmediatePropagation();e.preventDefault();startOutside({mode:'card',h:6})},true);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=oact],[data-g3=oenc],[data-g3=oencx],[data-g3=oback]');if(!b)return;const k=b.dataset.g3;
   if(k==='oact'){outDo(OUT.near[+b.dataset.i]);return}if(k==='oenc'){outEncPick(+b.dataset.i);return}if(k==='oencx'){outEncClose();return}
@@ -13813,7 +13843,7 @@ E({id:'wv_rally',pool:1,cond:()=>G.turn>=4&&!G.flags.wvRally,w:1.2,art:'group',t
    4턴 이후: 이순신대로 북쪽 차로로 경광등을 켠 검은 승용차 행렬(경찰 선도차 포함)이 서쪽으로 지나간다. 인물은 모두 가상, 특정 집단을 겨냥하지 않는다 */
 const CROWD={snd:null};
 /* v10.2: 집회는 세 시나리오 모두(2턴부터) — 핵은 낙진이 걷힌 4턴부터, 화학은 경보가 풀린 뒤(사용자: "시위하는 군중들 다 없어졌다" — 재래식 3턴 이후에만 있었다) */
-function crowdOK(){if(!G||G.turn<2)return false;if(G.scen==='nuke'&&G.turn<4)return false;if(G.scen==='chem'&&G.flags&&G.flags.chemAlert&&!G.flags.allClear)return false;return true}
+function crowdOK(){if(!G||G.turn<2)return false;if(nukeHot())return false;if(G.scen==='chem'&&G.flags&&G.flags.chemAlert&&!G.flags.allClear)return false;return true}
 (function(){const base=tjPopulate;window.tjPopulate=function(sc){base(sc);CROWD.ag=null;CROWD.box=null;CROWD.signs=[];if(!G)return;const P=TJ_DATA.POI;
   if(crowdOK()&&P.vgreen){const c=P.vgreen;const cx=c[0]+6,cz=c[1]+4;const done=G.outDone||(G.outDone={});
     const ag=civHuman(61,'angry','civ');ag.root.position.set(cx,.45,cz);sc.add(ag.root);CROWD.box=MM(GG.box(.9,.45,.7),mat('#6a5a44',{r:.9}),cx,.22,cz,{p:sc});OUT.npcs.push({h:ag,kind:'crowd',ag:1});CROWD.ag=ag;
@@ -13886,7 +13916,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.3';
+const APP_VER='16.6';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -15952,7 +15982,7 @@ if(typeof HELP84!=='undefined'){const i=HELP84.findIndex(h=>/^팀/.test(h[0]));H
 const HUB={defs:[],act:new Map(),t:0,chk:0,scat:0,regT:0,sc:null};
 const HUB_LOOK=[0,1,2,3,4,5,7,8,9];/* civ 겉모습(6번 = 내 겉모습은 뺀다) */
 function hubYaw(dx,dz){return Math.atan2(dx,dz)}
-function hubCap(){const q=SV3.qt||'high';let n=q==='low'?8:q==='mid'?16:30;if(OUT.tod==='night')n=Math.round(n*.6);if(G.scen==='nuke'&&G.turn<4)n=Math.round(n*.35);else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)n=Math.round(n*.35);return n}
+function hubCap(){const q=SV3.qt||'high';let n=q==='low'?8:q==='mid'?16:30;if(OUT.tod==='night')n=Math.round(n*.6);if(nukeHot())n=Math.round(n*.35);else if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear)n=Math.round(n*.35);return n}
 function hubDefs(){const P=TJ_DATA.POI;const L=[];const add=(id,x,z,fx,fz,kind,n,o)=>L.push(Object.assign({id,x,z,fx,fz,kind,n},o||{}));
   const vg=P.vgreen;if(vg){add('vboard',vg[0]-3,vg[1]+2.3,0,-1,'board',4);add('vvend',vg[0]+2,vg[1]+1.3,0,-1,'line',3,{gap:.85});add('vchat',vg[0]+5.5,vg[1]+7.5,0,1,'chat',4);add('vkids',vg[0]-7,vg[1]+11,0,1,'kids',4);
     add('vsit',vg[0]+9,vg[1]+1.5,0,1,'gather',5,{sign:'급수 · 의료 안내'});add('vwalk',vg[0]+1,vg[1]+9,0,1,'stroll',5,{rad:11});add('vchat2',vg[0]-8,vg[1]+3.5,1,0,'chat',3)}
@@ -23613,7 +23643,7 @@ if(typeof HELP84!=='undefined')HELP84.push(['🛸 진지 교전 → 제자리 2�
    · 조종: 왼쪽 막대 = 속도·선회 · 오른쪽 끌기 = 기수(위·아래·좌우) · [기폭](PC Space) · [복귀](PC Q — 터뜨리지 않은 기체는 재고로 돌아온다)
      띄우고 1.5초 뒤 안전장치가 풀린다(그 전엔 부딪혀도 안 터진다). 배터리 45초 · 신호 260m — 신호가 끊기거나 배터리가 다 되면 안전장치가 다시 걸린 채 떨어진다(터지지 않고 기체만 잃는다)
    · 제자리 교전(116·123·124) 중에도 띄울 수 있다 — 조종하는 동안 내 몸은 그 자리에 서 있다(맞을 수 있다). 적 자폭 드론에 부딪혀도 터진다
-   · 시작 장비: 새 게임을 시작할 때마다 💥 자폭 드론 50 · 💣 폭탄 투하 드론 10 · AK-47 소총 1정(2배율 조준경 장착, 탄창 장전) · 7.62mm 100발.
+   · 시작 장비: 새 게임을 시작할 때마다 💥 자폭 드론 50 · 💣 폭탄 투하 드론 10 · AK-47 소총 1정(2배율 조준경 장착, 탄창 장전) · 7.62mm 100발(v16.5부터 200발).
      하던 저장 게임에도 한 번 넣는다(G.flags.kit139). 쓰러져 실려 돌아오는 것은 리스폰이 아니다 — 다시 주지 않는다. 교육용 모드에서는 넣지 않는다
    · 시작 장비 드론은 공방을 차리지 않아도 쓴다(dfS().kit) — 공방 교전 아이템 줄(94)에도 잡힌다
    · 게임 속 연출일 뿐 실제 장비의 사양·운용법이 아니다 */
@@ -23624,11 +23654,11 @@ function dfkN(){try{return typeof dfCount==='function'?dfCount('fpv'):0}catch(e)
 window.dfrBombN=function(){try{if(typeof dfCount!=='function'||typeof dfS!=='function')return 0;const S=dfS();return S.on||S.kit?dfCount('bomb'):0}catch(e){return 0}};
 /* ---------- 시작 장비 ---------- */
 function kitOk(){try{return !!G&&!(navigator.webdriver&&!window.__kitTest)&&!(typeof eduOn==='function'&&eduOn())&&G.phase!=='end'}catch(e){return false}}
-function kitGrant(why){if(!kitOk())return false;G.flags=G.flags||{};if(G.flags.kit139)return false;G.flags.kit139=1;const r={fpv:50,bomb:10,ak:false,opt:false,ammo:100};
+function kitGrant(why){if(!kitOk())return false;G.flags=G.flags||{};if(G.flags.kit139)return false;G.flags.kit139=1;const r={fpv:50,bomb:10,ak:false,opt:false,ammo:200};/* v16.5: 사용자 요청 "초반에 총알 200발 기본으로" — 7.62mm 100 → 200 */
   try{const S=dfS();S.kit=1;const tn=G.turn|0;for(let i=0;i<50;i++)S.inv.push({t:'fpv',g:'B',turn:tn,kit:1});for(let i=0;i<10;i++)S.inv.push({t:'bomb',g:'B',turn:tn,kit:1})}catch(e){dfkErr(e)}
-  try{const a=gunAdd('ak47',{force:true,ammo:100});r.ak=a===true?'new':a;G.inv=G.inv||{};const rec=(G.arms||[]).find(x=>x.id==='ak47');G.inv.opt_x2=(G.inv.opt_x2||0)+1;if(rec&&!(rec.opt&&typeof OPT!=='undefined'&&OPT[rec.opt]))r.opt=!!optAttach('ak47','x2',true)}catch(e){dfkErr(e)}
+  try{const a=gunAdd('ak47',{force:true,ammo:200});r.ak=a===true?'new':a;G.inv=G.inv||{};const rec=(G.arms||[]).find(x=>x.id==='ak47');G.inv.opt_x2=(G.inv.opt_x2||0)+1;if(rec&&!(rec.opt&&typeof OPT!=='undefined'&&OPT[rec.opt]))r.opt=!!optAttach('ak47','x2',true)}catch(e){dfkErr(e)}
   KIT.last=Object.assign({why},r);
-  try{toast(`🎒 ${why==='old'?'시작 장비 지급':'시작 장비'} — 💥 자폭 드론 50 · 💣 폭탄 드론 10 · AK-47(2배율 조준경) · 7.62mm 100발`,3600)}catch(e){}try{save()}catch(e){}return true}
+  try{toast(`🎒 ${why==='old'?'시작 장비 지급':'시작 장비'} — 💥 자폭 드론 50 · 💣 폭탄 드론 10 · AK-47(2배율 조준경) · 7.62mm 200발`,3600)}catch(e){}try{save()}catch(e){}return true}
 const KIT={last:null};
 (function(){const n=window.newGame;if(typeof n!=='function')return;window.newGame=function(){const r=n.apply(this,arguments);try{kitGrant('new')}catch(e){dfkErr(e)}return r}})();
 /* 하던 저장 게임: 처음 화면이 바뀔 때 한 번 */
@@ -24810,6 +24840,191 @@ function styAfterOut(why){const a=STY.snap;STY.snap=null;if(!a)return;const n=st
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="story"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('story','이야기','📻 턴마다 가상 라디오 · 가족이 말을 건다 · 밖에서 한 일이 몇 턴 뒤 돌아온다',[[1,'켬'],[0,'끔']],store.get('sg.story',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){styErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='story')return;try{store.set('sg.story',b.dataset.v==='1');toast(b.dataset.v==='1'?'📻 이야기 켬 — 다음 턴부터':'이야기 끔 — 라디오·가족 이야기 없음',2000)}catch(x){styErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['📻 이야기(v16.3)','대피소에서 턴이 바뀔 때마다 <b>탕정 생활 라디오</b>(게임 속 가상 방송)가 한 꼭지 나온다 — 전황 · 생활 안전 수칙 · <b>오늘 날씨 예보</b>(그 턴 외출의 날씨가 예보대로 온다, 가끔 빗나간다). 밖에서 한 일은 다음 방송에 나온다: 주민을 쏘면 목격자를 찾고, 사람을 도우면 \'이름 모를 이웃\'이 된다. 가족이 이름을 부르며 말을 걸고(🏠), 고른 답에 따라 사기가 바뀐다 — 숨긴 일은 며칠 뒤 다시 묻고, \'구해 오겠다\'는 약속은 지켜야 한다. 도와준 사람이 문 앞에 보따리를 두고 가기도 한다(🚪). 설정 \'이야기\'에서 끌 수 있다.']);
+
+/* ===================== 138 · v16.4 탈것 1인칭 — 손잡이가 늘 보이고 탈것 방향을 본다 · 시작 탄 200발 · 이야기 카드와 방송 띠 ===================== */
+/* 사용자 제보(2026-11-21 17:53, 사진: 밤·비·자전거 1인칭): "탈 것 타면 1인칭 시 핸들도 안나오고 방향도 이상해"
+   찾은 것: ① 손잡이(45 fpdVM)는 화면 맨 아래 15%(NDC y −0.67)에 걸쳐 있어 폰에서는 속도계·'내리기'·사건 띠에 가려졌다. 밤에는 빛을 거의 못 받아 거의 안 보였다
+     ② 1인칭 카메라는 45의 ridePost 감싸개가 잡는데, 그 뒤에 도는 장치가 카메라를 다시 건드리면 그대로 남았다(마지막에 다시 잡는 곳이 없었다)
+     ③ 화면 가운데(가로 42% 오른쪽)나 위쪽에서 시작한 손가락은 '둘러보기'라서, 엄지로 조향하다 가운데로 넘어가면 고개가 최대 ±109°까지 돌아가 손잡이가 화면 밖으로 나가고 길과 다른 쪽을 봤다
+     ④ 기울기(롤)가 탈것 기울기의 0.7배라 돌 때 지평선이 16°까지 기울었다
+   고침: 프레임 맨 끝(모든 장치 뒤)에서 1인칭 카메라를 다시 잡는다 — 눈은 머리 자리(탈것 가운데 선 위로 맞춤) · 보는 쪽 = 탈것 방향 + 고개 · 롤 0.3배
+     · 손잡이를 화면 아래 4분의 1 위(NDC y ≈ −0.5)로 올리고, 조향만큼 손잡이가 돈다 · 밤에도 보이게 스스로 은은히 빛난다(재질 복제 — 공유 재질은 그대로)
+     · 탈 때(자전거·킥보드·오토바이·차) 화면 왼쪽 절반(위 16% 아래)에서 시작한 손가락은 조향 — 둘러보기는 오른쪽 절반에서
+     · 달리는 중(2m/s 넘게)에는 고개를 ±63°까지만 돌린다(멈추면 ±109°)
+   + 시작 탄: 시작 장비(125) AK-47 탄 7.62mm 100 → 200발(사용자 요청 '초반에 총알 200발') — 시작 장비가 이미 AK-47을 주므로 그 탄을 늘린다
+   + 이야기(137) 카드가 뜨면 방송 자막 띠를 접는다(폰 가로 화면에서 겹쳤다 — 음성은 계속) */
+const RFP={err:0,n:0,lit:0,steer:0,clampN:0,start:0};const _rfv=[new T.Vector3(),new T.Vector3(),new T.Vector3(),new T.Vector3()];
+function rfpErr(e){if(RFP.err<6){RFP.err++;try{console.error(e)}catch(x){}}}
+/* 손잡이 재질: 한 번 복제해서 은은히 스스로 빛나게(밤에도 보인다) */
+function rfpLit(g){if(!g||g.userData.rfpLit)return;g.userData.rfpLit=1;RFP.lit++;g.traverse(o=>{if(!o.isMesh||!o.material)return;const m=o.material.clone();if(m.color&&m.emissive){m.emissive.copy(m.color).multiplyScalar(.32);m.emissiveIntensity=1}o.material=m;o.renderOrder=5})}
+function rfpCam(dt){const R=OUT.ride;if(!R||!OUT.on||typeof FPD==='undefined'||FPD.mode!=='fp')return;const h=RIDE.rider;if(!h||!h.b||!h.b.head||!R.mesh)return;const M=R.mesh;M.updateMatrixWorld(true);
+  const fx=Math.sin(R.yaw),fz=Math.cos(R.yaw);const H=_rfv[0];h.b.head.getWorldPosition(H);const mx=M.position.x,mz=M.position.z;const along=(H.x-mx)*fx+(H.z-mz)*fz;
+  /* 눈: 머리 높이 · 탈것 가운데 선 위(옆으로 밀린 자세를 따라가지 않는다) */const ex=mx+fx*(along+.1),ez=mz+fz*(along+.1),ey=H.y+.07;
+  const sp=Math.abs(R.v);const lim=sp>2?1.1:1.9;if(Math.abs(FP3.yaw)>lim){FP3.yaw=clamp(FP3.yaw,-lim,lim);RFP.clampN++}
+  const cam=SV3.cam;cam.position.set(ex,ey,ez);cam.rotation.order='YXZ';const jit=R.kind==='moto'&&sp>11?(sp-11)*.0018:0;const sh=SV3.shake||0;
+  cam.rotation.set(clamp(FP3.pitch*.7,-.5,.3)-.12+Math.sin(SV3.t*31)*jit+sh*Math.sin(SV3.t*41)*.01,R.yaw+Math.PI+FP3.yaw,-R.lean*.3+Math.sin(SV3.t*23)*jit);cam.updateMatrixWorld(true);
+  /* 손잡이: 탈것 방향 · 화면 아래 4분의 1 위 · 조향만큼 돈다 */const vm=fpdVM(R.kind);if(!vm)return;rfpLit(vm);fpdVMHide();vm.visible=true;
+  const fwd=_rfv[1].set(0,0,1).applyQuaternion(M.quaternion),up=_rfv[2].set(0,1,0).applyQuaternion(M.quaternion);const st=(FP3.mv&&!(OUT.enc||FP3.lock||OUT.busy||OUT.mapOpen))?clamp(FP3.mv.x,-1,1):0;RFP.steer+=(st-RFP.steer)*Math.min(1,dt*8);
+  const F=R.kind==='kick'?.58:.55,U=R.kind==='moto'?-.27:R.kind==='kick'?-.33:-.31;vm.position.set(ex,ey,ez).addScaledVector(fwd,F).addScaledVector(up,U);vm.rotation.order='YXZ';vm.rotation.set(.15,R.yaw-RFP.steer*.32,R.lean*.6);RFP.n++}
+/* 프레임 맨 끝에서 다시 잡는다(이 파일이 마지막에 실리므로 outStep의 가장 바깥) */
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(OUT.ride)rfpCam(dt||0)}catch(e){rfpErr(e)}return r}})();
+/* 탈 때: 왼쪽 절반에서 시작한 손가락은 조향 */
+(function(){if(typeof FP3==='undefined'||typeof FP3.down!=='function')return;const d0=FP3.down;FP3.down=function(e){const r=d0.apply(this,arguments);try{if(OUT.on&&(OUT.ride||OUT.drv)&&e&&e.pointerId!=null){const q=this.ptr[e.pointerId];if(q&&q.role==='look'&&!q.moved){const W=SV3.vw,Hh=SV3.vh;if(q.x<W*.5&&q.y>Hh*.16){q.role='move';this.nav=null;try{sv3JoyDraw(q.x,q.y,q.x,q.y)}catch(x){}}}}}catch(x){rfpErr(x)}return r}})();
+/* (v16.5) 시작 탄은 시작 장비(125)의 AK-47 탄을 100 → 200발로 — 따로 주던 5.56mm는 뺐다(쓸 총이 없었다) */
+/* 이야기 카드가 뜨면 방송 띠를 접는다 */
+(function(){const b=window.styShow;if(typeof b!=='function')return;window.styShow=function(){const r=b.apply(this,arguments);try{if(r){const c=document.getElementById('bcast');if(c)c.hidden=true}}catch(e){}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🚲 탈것 1인칭 · 시작 탄(v16.4)','탈것 1인칭에서 손잡이가 화면 아래쪽에 늘 보이고, 조향하면 손잡이가 돈다. 탈 때는 화면 <b>왼쪽 절반</b> 어디서 시작해도 조향, 둘러보기는 오른쪽 절반 — 달리는 중에는 고개를 63°까지만 돌리고 손을 떼면 앞으로 돌아온다. 새 판을 시작하면 시작 장비 AK-47 탄이 <b>7.62mm 200발</b>이다.']);
+
+/* ===================== 139 · v16.5 공격이 턴마다 섞인다 — 미사일 공습 · 핵 공격 · 화학 공격 ===================== */
+/* 사용자 요청(2026-11-21 17:53): "핵공격.미사일공격.화학공격이 1번 설정되면 지속 적용인데, 그 때 그 때 마다 다르게 랜덤으로" → 고른 답(17:58): '턴마다 공격이 섞임'
+   · 훈련 설정 '상황'에 '턴마다 섞임'(맨 앞 · 기본) — 공격 유형은 기억하지 않는다(설정을 열 때마다 '섞임'으로). 다른 유형을 골라도 그 판에만
+   · 섞임 판: 첫 공격은 셋 중 무작위. 대피소에서 턴이 바뀔 때마다 새 공격이 온다 — 미사일 45 · 화학 30 · 핵 25(%) · 핵은 두 턴 잇달아 오지 않는다
+     - 🚀 미사일: 먼 폭음 · 공습 사이렌(이 턴의 사건·밖 미사일·공수 등은 '재래식'으로)
+     - ☢ 핵: 섬광 · 그 턴부터 4턴(24시간) 낙진 시간대 — 밖·주변 살피기 피폭(03·24 nukeHot이 '마지막 핵 공격 뒤'로 본다)
+     - ☣ 화학: 화생방경보 · 작용제가 낮은 곳에 고인다 — 높은 층이 안전 · 밖 오염
+   · 맨 위 경보 띠(5초) · 라디오(137)는 경보 뒤로 미룬다 · 피폭/오염 지수는 하나로 '피폭·오염 지수'
+   · 공격 유형별 사건·마지막 날 사건·라디오 꼭지는 그 턴의 공격을 따른다. 섞임이 아닌 판은 예전과 똑같다 */
+const MIX={err:0,cnt:{conv:0,nuke:0,chem:0},waves:0,last:null,el:null,t:null};
+const MIX_W=[['conv',.45],['chem',.3],['nuke',.25]];
+const MIX_T={conv:{ico:'🚀',n:'미사일 공습',c:'#ff8a3d',t:'공습경보 — 미사일이 날아온다. 창문에서 떨어져 지하로.'},
+  nuke:{ico:'☢',n:'핵 공격',c:'#ffd23d',t:'핵 섬광 — 낙진이 내려온다. 24시간은 실내에. 밖에 다녀오면 옷을 비닐에.'},
+  chem:{ico:'☣',n:'화학 공격',c:'#7fe07a',t:'화생방경보 — 작용제는 낮은 곳에 고인다. 높은 층으로, 창문·환풍구를 막는다.'}};
+function mixErr(e){if(MIX.err<6){MIX.err++;try{console.error(e)}catch(x){}}}
+function mixOn(){return !!(typeof G!=='undefined'&&G&&G.mix)}
+function mixPick(){let k=null;for(let n=0;n<6;n++){let r=Math.random();k=null;for(const [kk,w] of MIX_W){r-=w;if(r<=0){k=kk;break}}if(!k)k='conv';if(!(k==='nuke'&&G.scen==='nuke'))break}return k==='nuke'&&G.scen==='nuke'?'conv':k}
+function mixWave(k){const T=MIX_T[k];if(!T)return;const prev=G.scen;G.scen=k;G.scenKnown=true;G.mix.n=(G.mix.n|0)+1;(G.mix.hist||(G.mix.hist=[])).push({t:G.turn,k});if(G.mix.hist.length>40)G.mix.hist.shift();
+  if(k==='nuke')G.flags.nukeT=G.turn;else if(k==='chem'){G.flags.chemAlert=1;G.flags.chemT=G.turn}else G.flags.convT=G.turn;
+  MIX.cnt[k]++;MIX.waves++;MIX.last={t:G.turn,k,prev};setTimeout(()=>{try{mixAlert(k)}catch(e){mixErr(e)}},250)}
+function mixAlert(k){if(!G||G.phase!=='shelter'||UI.screen==='title')return;const T=MIX_T[k];let el=document.getElementById('mixAlert');if(!el){el=document.createElement('div');el.id='mixAlert';el.className='mix-alert';el.setAttribute('role','alert');document.body.appendChild(el)}
+  el.style.setProperty('--mx',T.c);el.innerHTML=`<i>${T.ico}</i><div><b>${G.turn*6}시간째 — ${T.n}</b><span>${T.t}</span></div>`;el.hidden=false;el.classList.remove('out');void el.offsetWidth;el.classList.add('in');clearTimeout(MIX.t);MIX.t=setTimeout(()=>{el.classList.add('out');setTimeout(()=>{el.hidden=true},600)},5200);
+  try{if(k==='nuke'){SND.boom&&SND.boom(true,.55);vib([200,80,200])}else if(k==='chem'){SND.siren&&SND.siren(3);vib([60,60,60,60,60])}else{SND.siren&&SND.siren(3);setTimeout(()=>{try{SND.boom&&SND.boom(false,.35)}catch(e){}},1400);vib([90,40,90])}}catch(e){}
+  if(k==='nuke'){const f=document.createElement('div');f.className='mix-flash';document.body.appendChild(f);setTimeout(()=>f.remove(),1300)}}
+/* 새 판: '턴마다 섞임'이면 기록을 단다 */
+(function(){const b=window.newGame;if(typeof b!=='function')return;window.newGame=function(o){const r=b.apply(this,arguments);try{if(o&&o.scen==='mix'&&G){G.mix={n:1,hist:[{t:0,k:G.scen}]};MIX.cnt={conv:0,nuke:0,chem:0};MIX.cnt[G.scen]++}}catch(e){mixErr(e)}return r}})();
+/* 턴이 바뀔 때 — 사건을 고르기 전에 공격 유형을 바꾼다(그래서 사건·라디오가 그 공격을 따른다) */
+(function(){const b=window.beginTurn;if(typeof b!=='function')return;window.beginTurn=function(){let waved=false;try{if(mixOn()&&G.phase==='shelter'&&G.turn>=1&&G.mix.lastT!==G.turn){G.mix.lastT=G.turn;mixWave(mixPick());waved=true}}catch(e){mixErr(e)}
+  const r=b.apply(this,arguments);
+  /* 라디오(137)는 경보 띠 뒤로 */try{if(waved&&typeof STY!=='undefined'&&STY.rT&&STY.lastR){clearTimeout(STY.rT);const txt=STY.lastR;STY.rAt=performance.now()+6200;STY.rT=setTimeout(()=>{try{if(G&&G.phase==='shelter'&&UI.screen!=='title'&&styOn()){broadcast(STY_L,txt);STY.cnt.radio++}}catch(e){}},6200)}}catch(e){mixErr(e)}
+  return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🔀 턴마다 섞이는 공격(v16.5)','훈련 설정 \'상황\'의 <b>턴마다 섞임</b>(기본): 대피소에서 턴이 바뀔 때마다 새 공격이 온다 — 🚀 미사일 공습 · ☢ 핵 공격(그때부터 24시간 낙진 시간대) · ☣ 화학 공격(낮은 곳에 고인다 — 높은 층으로). 맨 위 경보 띠가 무엇이 왔는지 알려 주고, 그 턴의 사건·라디오·밖 위험이 그 공격을 따른다. 피폭·오염은 지수 하나로 센다. 공격 유형은 기억하지 않아 설정을 열 때마다 \'섞임\'으로 돌아온다.']);
+
+/* ===================== 140 · v16.5 태블릿 — 세로로 들어도 그대로 · 큰 화면 화소 예산 · iPad 판별 ===================== */
+/* 사용자 요청(2026-11-21 20:41): "테블릿pc에서도 즐길 수 있게 준비해서 같이 배포해 주세요"
+   점검(iPad 1180×820 · 820×1180, 갤럭시탭 1280×800 · 800×1280 — 밖 · 탈것 1인칭 · 대피소 · 설정 · 첫 화면):
+   ① 세로로 들면 3D 화면을 90° 돌려 그리고 '기기를 가로로 돌려 주세요'를 띄웠다 — 폰은 맞지만 태블릿은 세로도 충분히 넓다
+     → 짧은 변이 600px 넘는 터치 기기(태블릿·펼친 폴더블)는 세로 그대로 그린다(돌리지 않는다). 폰은 예전대로
+   ② 큰 화면에서 화소가 폰의 3~6배(iPad 가로 2360×1640=390만)라 버벅일 수 있었다
+     → 화질별 화소 예산(낮음 60만 · 중간 130만 · 높음 220만)을 넘지 않게 해상도 배율 상한을 둔다 — 폰(832×384)은 예산 안이라 그대로. 자동 해상도 조절(35 DRS)은 그 위에서 그대로 돈다
+   ③ iPad는 사파리가 'Mac'으로 자신을 알린다 — 손가락(coarse) 기기이면 PC 조작으로 보지 않는다(트랙패드·키보드를 쓰면 예전대로 PC 조작)
+   ④ 세로 화면: 위쪽 띠가 두 줄로 접히고, 조이스틱 구역(왼쪽 42%·위 28% 아래)은 그대로 — 세로에서는 아래 절반 왼쪽이 조이스틱 */
+const TAB={err:0,port:0,cap:0,last:null};
+function tabErr(e){if(TAB.err<6){TAB.err++;try{console.error(e)}catch(x){}}}
+function tabTouch(){try{return (navigator.maxTouchPoints||0)>0||'ontouchstart' in window}catch(e){return false}}
+function tabBig(){try{if(typeof window.__tabTest==='boolean')return window.__tabTest;return tabTouch()&&Math.min(window.innerWidth,window.innerHeight)>=600}catch(e){return false}}
+function tabIPad(){try{const ua=navigator.userAgent||'';return /iPad/.test(ua)||(/Macintosh/.test(ua)&&(navigator.maxTouchPoints||0)>1)}catch(e){return false}}
+/* ① 세로 그대로: 돌릴지 정하는 두 곳(밖 sv3Resize · 전투 bResize)이 'PC 조작이면 돌리지 않는다'를 쓰므로, 태블릿일 때만 그 순간 pcOn을 참으로 */
+function tabNoRot(b){return function(){if(!tabBig())return b.apply(this,arguments);const p0=window.pcOn;window.pcOn=()=>true;try{const r=b.apply(this,arguments);if(window.innerWidth<window.innerHeight)TAB.port++;return r}finally{window.pcOn=p0}}}
+(function(){if(typeof window.sv3Resize==='function')window.sv3Resize=tabNoRot(window.sv3Resize);if(typeof window.bResize==='function')window.bResize=tabNoRot(window.bResize)})();
+/* ② 화소 예산 */
+const TAB_B={low:6e5,mid:1.3e6,high:2.2e6};
+function tabCap(base,kind){try{const w=kind==='b'?window.innerWidth:(SV3.vw||window.innerWidth),h=kind==='b'?window.innerHeight:(SV3.vh||window.innerHeight);const t=kind==='b'?(typeof BS!=='undefined'&&BS&&BS.qt)||'mid':(SV3.qt||'mid');const B=TAB_B[t]||TAB_B.mid;const c=Math.max(1,Math.sqrt(B/Math.max(1,w*h)));if(c<base){TAB.cap++;TAB.last={w,h,t,base,c:+c.toFixed(3)};return c}return base}catch(e){tabErr(e);return base}}
+(function(){const b=window.drsBase;if(typeof b!=='function')return;window.drsBase=function(kind){return tabCap(b.apply(this,arguments),kind)}})();
+(function(){const b=window.sv3SetQual;if(typeof b!=='function')return;window.sv3SetQual=function(t,force){const r=b.apply(this,arguments);try{const R=R3.r;if(R){const pr=R.getPixelRatio(),c=tabCap(pr,'sv');if(c<pr-.01){R.setPixelRatio(c);if(SV3.comp&&SV3.comp.setPixelRatio)SV3.comp.setPixelRatio(c);try{sv3Resize()}catch(e){}}}}catch(e){tabErr(e)}return r}})();
+/* ③ iPad(Mac으로 알림) + 손가락 기기 → PC 조작으로 보지 않는다 */
+(function(){const b=window.pcDetect;if(typeof b!=='function')return;window.pcDetect=function(){try{if(typeof window.__pcTest==='boolean')return window.__pcTest;if(tabIPad()&&!(window.matchMedia&&matchMedia('(pointer:fine)').matches))return false}catch(e){}return b.apply(this,arguments)}})();
+/* ④ 세로 화면: 위쪽 띠(#oBar)가 두 줄로 접히면 상태 줄(#oStat)·미니맵·도움말을 그 아래로 내린다(겹칠 때만) */
+TAB.lay=0;
+function tabLayout(){try{if(!document.body.classList.contains('tab'))return;const bar=document.getElementById('oBar'),st=document.getElementById('oStat');if(!bar||!st)return;const mini=document.querySelector('#sv3 .tj-mini'),hint=document.getElementById('sv3Hint');const L=[st,mini,hint].filter(Boolean);
+  L.forEach(e=>{e.style.transform=e.dataset.tabT0||''});const a=bar.getBoundingClientRect(),b=st.getBoundingClientRect();if(!a.width||!b.width||bar.hidden||st.hidden)return;
+  const ov=b.right>a.left+2&&b.left<a.right-2&&b.bottom>a.top+2&&b.top<a.bottom-2;if(!ov)return;const d=Math.ceil(a.bottom+4-b.top);L.forEach(e=>{if(e.dataset.tabT0==null)e.dataset.tabT0=e.style.transform||'';e.style.transform=(e.dataset.tabT0+' translateY('+d+'px)').trim()});TAB.lay++;TAB.d=d}catch(e){tabErr(e)}}
+setInterval(tabLayout,500);
+/* 몸에 표시 — 세로 태블릿 CSS */
+function tabMark(){try{const big=tabBig();document.body.classList.toggle('tab',big);document.body.classList.toggle('tab-port',big&&window.innerWidth<window.innerHeight)}catch(e){}}
+window.addEventListener('resize',()=>{tabMark();setTimeout(tabLayout,60);/* 화면 크기가 바뀌면 화소 예산을 다시(줄였던 배율도 되돌린다) */clearTimeout(TAB.rq);TAB.rq=setTimeout(()=>{try{if((TAB.cap||tabBig())&&SV3.qt&&R3.r&&typeof sv3SetQual==='function'){sv3SetQual(SV3.qt,true);TAB.re=(TAB.re|0)+1}}catch(e){tabErr(e)}},120)});window.addEventListener('orientationchange',()=>setTimeout(()=>{tabMark();try{sv3Resize()}catch(e){}try{bResize()}catch(e){}},250));try{if(document.body)tabMark();else document.addEventListener('DOMContentLoaded',tabMark)}catch(e){}
+if(typeof HELP84!=='undefined')HELP84.push(['📱 태블릿(v16.5)','태블릿(짧은 변 600px 이상 터치 기기)에서는 <b>세로로 들어도</b> 화면을 돌리지 않고 그대로 그린다. 큰 화면은 화질별 화소 예산 안에서 해상도를 맞춰 부드럽게 돈다. iPad에 키보드·트랙패드를 붙이면 PC 조작(WASD·마우스)도 된다.']);
+
+/* ===================== 141 · v16.6 드론 조준 화면 — 바로 내려다보는 영상 · 조준선 · 방위(N·E·S·W) · 🔫 기관총 · 🚀 미사일 · 💣 투하 ===================== */
+/* 사용자 요청(2026-11-21 21:00, 드론 게임 광고 화면 3장): "드론 운용 시 위와 같이 해 주세요"
+   광고 화면에서 읽은 것: 드론 카메라가 땅을 바로 내려다본다 · 가운데 십자 조준선(눈금 3개씩 · 가운데는 비움) · 둘레에 N/E/S/W가 기수 방향에 따라 돈다 ·
+     왼쪽 아래 막대(앞·옆) · 오른쪽 아래 둥근 버튼들 — 기관총(크게) · 미사일 · 폭탄 · 소리 · 명중하면 사방으로 튀는 불꽃과 연기, 미사일은 불꽃 꼬리를 끌며 내리꽂힌다
+   이렇게 바꾼다(105 평시 드론 — 🛸 드론 버튼의 🛰 정찰 · 💣 공격 드론):
+   · 시점: 기체 바로 아래를 내려다보는 영상(화면 위 = 기수 방향) — 설정 '드론 시점'에서 예전 '뒤따라 보기'로 바꿀 수 있다
+   · 조준선 · 방위 글자(북 = 미니맵 위쪽) · 기수 각도·고도·거리 표시
+   · 조작: 왼쪽 막대 위아래 = 앞뒤, 좌우 = 옆으로(내려다보는 화면이라 옆걸음이 자연스럽다) · 오른쪽 끌기 = 기수 돌리기 · ▲▼ 고도(15~70m)
+   · 💣 공격 드론(공방 재고·시작 장비 폭탄 드론): 💣 투하(예전 그대로 — 붉은 원이 떨어질 곳) + 🚀 미사일 2발(조준선 가운데로 내리꽂힘 · 반경 5.5m) + 🔫 기관총 120발(누르고 있으면 연사 · 조준선 둘레 1.1m에 흩어져 맞는다)
+     판정은 밖 총·발사기(65)와 같다 — 적대만 쓰러지고, 주민이면 '주민 사격', 군인이면 연행. 가족·데려가는 사람은 기관총에 맞지 않는다 · 내 발밑 6m 안이면 나도 다친다
+   · 명중: 사방으로 튀는 불꽃(선분 60개) + 연기 · 미사일: 불꽃 꼬리 + 연기 줄 · 교육용 모드는 예전처럼 공격 드론을 쓸 수 없다 */
+const DV={err:0,P:[],shots:0,hits:0,ms:0,booms:0,fire:false,fireT:0,el:null,n:0};const _dvv=[new T.Vector3(),new T.Vector3()];
+function dvErr(e){if(DV.err<6){DV.err++;try{console.error(e)}catch(x){}}}
+function dvTop(){try{return store.get('sg.dview','top')!=='chase'}catch(e){return true}}
+const DV_DIR=[['N',0,-1],['E',1,0],['S',0,1],['W',-1,0]];
+/* 내려다보는 카메라 */
+(function(){const b=window.dfrCam;if(typeof b!=='function')return;window.dfrCam=function(B){if(!dvTop())return b.apply(this,arguments);try{const c=SV3.cam;c.rotation.order='YXZ';c.position.set(B.pos.x,B.pos.y-.35,B.pos.z);c.rotation.set(-Math.PI/2+1e-4,B.yaw,0);const fov=58;if(Math.abs(c.fov-fov)>.05){c.fov=fov;c.updateProjectionMatrix()}if(B.q)B.q.visible=false;dvHud(B)}catch(e){dvErr(e);return b.apply(this,arguments)}}})();
+/* 조준 지점: 내려다볼 때는 기체 바로 아래 · 뒤따라 볼 때는 붉은 원 */
+function dvAim(B){const P=_dvv[0];if(!dvTop()&&B.ring){P.copy(B.ring.position);return P.clone()}const h=dfrGroundH(B.pos.x,B.pos.z);return new T.Vector3(B.pos.x,Math.max(.2,h),B.pos.z)}
+/* 화면 표시 */
+function dvHudMk(B){const ov=document.getElementById('dfrOv');if(!ov||ov.querySelector('.dv-hud'))return;ov.classList.add('dv-top');
+  const tick=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;let L='';L+=tick(-96,0,-14,0)+tick(14,0,96,0)+tick(0,-96,0,-14)+tick(0,14,0,96);[34,58,82].forEach(v=>{L+=tick(-v,-5,-v,5)+tick(v,-5,v,5)+tick(-5,-v,5,-v)+tick(-5,v,5,v)});
+  const h=document.createElement('div');h.className='dv-hud';h.innerHTML=`<svg class="dv-x" viewBox="-100 -100 200 200" aria-hidden="true"><g class="sh">${L}</g><g class="fg">${L}</g></svg>${DV_DIR.map(d=>`<b class="dv-c" data-d="${d[0]}">${d[0]}</b>`).join('')}<div class="dv-rd" id="dvRd"></div>`;ov.appendChild(h);
+  if(B.type==='bomb'){const w=document.createElement('div');w.className='dv-ws';w.innerHTML=`<button class="dv-w dv-mg" data-dv="mg" aria-label="기관총">🔫<small id="dvMgN">${B.mg}</small></button><button class="dv-w dv-ms" data-dv="ms" aria-label="미사일">🚀<small id="dvMsN">${B.ms}</small></button><button class="dfr-alt up dv-a" data-g3="dfrup">▲<small>고도</small></button><button class="dfr-alt dn dv-a" data-g3="dfrdn">▼<small>고도</small></button>`;ov.appendChild(w);
+    const tip=ov.querySelector('.fpv-tip');if(tip)tip.textContent='왼쪽 막대: 앞뒤·옆 · 오른쪽 끌기: 기수 · 🔫 누르고 있기 · 🚀 가운데로 · 💣 붉은 원 · 주민·군인 근처 금지'}
+  else{const tip=ov.querySelector('.fpv-tip');if(tip)tip.textContent='왼쪽 막대: 앞뒤·옆 · 오른쪽 끌기: 기수 · ▲▼ 고도 · 붉은 표시 = 적대'}}
+function dvHud(B){const ov=document.getElementById('dfrOv');if(!ov)return;if(!ov.querySelector('.dv-hud'))dvHudMk(B);const W=SV3.vw||ov.clientWidth,H=SV3.vh||ov.clientHeight;const cx=W/2,cy=H/2,R=Math.min(W,H)*.36;const cs=Math.cos(B.yaw),sn=Math.sin(B.yaw);
+  ov.querySelectorAll('.dv-c').forEach(el=>{const d=DV_DIR.find(q=>q[0]===el.dataset.d);const sx=d[1]*cs-d[2]*sn,sy=-d[1]*sn-d[2]*cs;el.style.left=(cx+R*sx)+'px';el.style.top=(cy-R*sy)+'px'});
+  const x=ov.querySelector('.dv-x');if(x){const s=Math.min(W,H)*.62;x.style.width=x.style.height=s+'px';x.style.left=(cx-s/2)+'px';x.style.top=(cy-s/2)+'px'}
+  B.dvT=(B.dvT||0)-1;if(B.dvT<=0){B.dvT=6;/* 방위각: 북=0 · 동=90 (앞 = (−sin, −cos), 북 = −z) */const hdg=Math.round(((-B.yaw*180/Math.PI)%360+360)%360);const rd=document.getElementById('dvRd');const t=`HDG ${String(hdg).padStart(3,'0')}° · ALT ${Math.round(B.pos.y)}m`;if(rd&&rd.textContent!==t)rd.textContent=t}}
+/* 띄울 때: 공격 드론에 기관총·미사일 · 내려다보면 조금 더 높이 */
+(function(){const b=window.dfrStart;if(typeof b!=='function')return;window.dfrStart=function(type){const r=b.apply(this,arguments);try{const B=DFR.B;if(r&&B){if(B.type==='bomb'){B.mg=120;B.ms=2;if(dvTop())B.alt=32}DV.n++;if(dvTop())dvHudMk(B)}}catch(e){dvErr(e)}return r}})();
+/* 고도: 공격 드론도 ▲▼(15~70m) */
+(function(){const b=window.dfrAlt;if(typeof b!=='function')return;window.dfrAlt=function(d){const B=DFR.B;if(B&&!B.end&&B.type==='bomb'){B.alt=Math.max(15,Math.min(70,B.alt+d));dfrMsg(`고도 ${B.alt}m`,.8);return}return b.apply(this,arguments)}})();
+/* 조작: 내려다볼 때 왼쪽 막대 좌우 = 옆으로(기수는 오른쪽 끌기) */
+(function(){const b=window.dfrStep;if(typeof b!=='function')return;window.dfrStep=function(dt,mv){const B=DFR.B;if(!B||!dvTop()||B.end||!(B.t>1&&B.batt>0))return b.apply(this,arguments);
+  const sx=mv?clamp(mv.x,-1,1):0;const m2={x:0,y:mv?mv.y:0};const r=b.call(this,dt,m2);try{const B2=DFR.B;if(B2&&!B2.end){const rx=Math.cos(B2.yaw),rz=-Math.sin(B2.yaw);const sp=sx*(B2.type==='bomb'?8:10);B2.vx+=rx*sp*Math.min(1,dt*1.6);B2.vz+=rz*sp*Math.min(1,dt*1.6);/* 기수는 오른쪽 끌기(105가 이미 B.yaw로 넘긴다) */
+    if(B2.type==='bomb'){DV.fireT-=dt;if(DV.fire&&DV.fireT<=0){DV.fireT=.1;dvShoot(B2)}}}}catch(e){dvErr(e)}return r}})();
+/* ---------- 🔫 기관총 ---------- */
+function dvShoot(B){if(!B||B.end||B.type!=='bomb'||B.t<1.2)return false;if((B.mg|0)<=0){DV.fire=false;dfrMsg('기관총 탄을 다 썼다',1);return false}B.mg--;DV.shots++;const a=dvAim(B);const g=Math.random()*6.283,rr=Math.random()*1.1;const pt=new T.Vector3(a.x+Math.cos(g)*rr,a.y+.05,a.z+Math.sin(g)*rr);
+  dvTracer(B.pos,pt);dvSparks(pt,10,.3,5);try{SND.tone(140+Math.random()*40,.05,'square',.035);vib(8)}catch(e){}
+  try{gunHitList(true);let best=null,bd=.9;const seen=new Set();GUN.hitMap.forEach(t=>{if(seen.has(t.h))return;seen.add(t.h);if(t.kind==='fam'||t.kind==='follow'||(t.a&&(t.a.fam||t.a.kind==='fam')))return;const q=t.h.root.position;const d=Math.hypot(q.x-pt.x,q.z-pt.z);if(d<bd){bd=d;best=t}});
+    if(best){DV.hits++;gunHitPerson(Object.assign({},best,{part:'body'}),pt.clone().setY(best.h.root.position.y+1),Math.hypot(B.pos.x-pt.x,B.pos.y-pt.y,B.pos.z-pt.z),{id:'dvmg',n:'드론 기관총',dmg:.9},true)}}catch(e){dvErr(e)}
+  const el=document.getElementById('dvMgN');if(el)el.textContent=B.mg;return true}
+/* ---------- 🚀 미사일 ---------- */
+function dvMissile(){const B=DFR.B;if(!B||B.end||B.type!=='bomb'||B.t<1.2)return false;if((B.ms|0)<=0){dfrMsg('미사일을 다 썼다',1.2);return false}B.ms--;DV.ms++;const tgt=dvAim(B);
+  const g=new T.Group();const body=new T.Mesh(GG.cyl(.09,.09,.9,8),mat('#d8dcd4',{r:.5,m:.3}));body.rotation.x=Math.PI/2;g.add(body);const nose=new T.Mesh(GG.cone?GG.cone(.09,.22,8):GG.cyl(.01,.09,.22,8),mat('#c43a2a',{r:.5}));nose.rotation.x=Math.PI/2;nose.position.z=.55;g.add(nose);
+  const fl=new T.Sprite(new T.SpriteMaterial({map:dvGlowTex(),color:'#ffb35a',transparent:true,depthWrite:false,blending:T.AdditiveBlending,fog:false}));fl.scale.set(1.6,1.6,1);fl.position.z=-.75;g.add(fl);
+  g.position.set(B.pos.x+(Math.random()-.5)*.6,B.pos.y-.6,B.pos.z+(Math.random()-.5)*.6);OUT.scene.add(g);DV.P.push({k:'ms',g,fl,tgt,v:18,t:0,sm:0});
+  try{SND.tone(520,.5,'sawtooth',.04);setTimeout(()=>{try{SND.tone(260,.6,'sawtooth',.03)}catch(e){}},150);vib(25)}catch(e){}dfrMsg('🚀 미사일 발사',1);const el=document.getElementById('dvMsN');if(el)el.textContent=B.ms;return true}
+function dvBlast(P,r,n){const B=DFR.B;let host=0;try{gunHitList(true);const seen=new Set();GUN.hitMap.forEach(t=>{if(seen.has(t.h))return;seen.add(t.h);const q=t.h.root.position;if(Math.hypot(q.x-P.x,q.y+1-P.y,q.z-P.z)<=r&&gunHostile(t))host++})}catch(e){}
+  try{gunBoom(P,r,7,{n,dmg:7})}catch(e){dvErr(e)}DV.booms++;dvSparks(P,60,1,26);dvSmoke(P,10);const dm=Math.hypot(FP3.pos.x-P.x,FP3.pos.z-P.z);if(dm<6){try{FX=[];hurt('me',Math.round(8+34*(1-dm/6)));OUT.fx.push(...FX);outStat();outNote('<b>내 발밑에 떨어졌다!</b><div>파편에 다쳤다 — 내 위치에서 멀리 쏜다.</div>',2600)}catch(e){}}
+  if(B)B.kills=(B.kills|0)+host;try{dfrMsg(host?`💥 명중 · ${host}명 무력화`:'💥 명중',1.4)}catch(e){}return host}
+/* 투하탄도 불꽃·연기를 더한다 */
+(function(){const b=window.dfrBlast;if(typeof b!=='function')return;window.dfrBlast=function(P){const r=b.apply(this,arguments);try{dvSparks(P,46,.9,22);dvSmoke(P,7)}catch(e){}return r}})();
+/* ---------- 불꽃 · 연기 · 예광 ---------- */
+let _dvGlow=null;function dvGlowTex(){if(_dvGlow)return _dvGlow;const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,240,1)');g.addColorStop(.35,'rgba(255,190,90,.8)');g.addColorStop(1,'rgba(255,120,30,0)');x.fillStyle=g;x.fillRect(0,0,64,64);_dvGlow=new T.CanvasTexture(c);return _dvGlow}
+function dvSparks(P,n,life,sp){try{const pos=new Float32Array(n*6);const dirs=[];for(let i=0;i<n;i++){const a=Math.random()*6.283,e=Math.random()*1.25;dirs.push([Math.cos(a)*Math.cos(e),Math.sin(e)*.9+.15,Math.sin(a)*Math.cos(e),(.6+Math.random()*.8)*(sp||10)])}
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));const m=new T.LineBasicMaterial({color:'#ffe2a8',transparent:true,opacity:1,blending:T.AdditiveBlending,depthWrite:false,fog:false});const L=new T.LineSegments(g,m);L.frustumCulled=false;L.renderOrder=7;OUT.scene.add(L);
+  DV.P.push({k:'sp',L,g,m,pos,dirs,P:P.clone(),t:0,life:life||.5,n})}catch(e){dvErr(e)}}
+function dvSmoke(P,n){try{for(let i=0;i<n;i++){const s=new T.Sprite(new T.SpriteMaterial({map:dvGlowTex(),color:'#8a8a86',transparent:true,opacity:.0,depthWrite:false,fog:true}));const a=Math.random()*6.283,r=Math.random()*2.4;s.position.set(P.x+Math.cos(a)*r,P.y+.5,P.z+Math.sin(a)*r);s.scale.set(3,3,1);OUT.scene.add(s);DV.P.push({k:'sm',s,t:0,life:2.6+Math.random()*1.8,vy:.8+Math.random()*1.4,g:2.2+Math.random()*1.6})}}catch(e){dvErr(e)}}
+function dvTracer(A,B2){try{const g=new T.BufferGeometry().setFromPoints([A.clone().setY(A.y-.4),B2.clone()]);const m=new T.LineBasicMaterial({color:'#ffd27a',transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false,fog:false});const L=new T.Line(g,m);L.frustumCulled=false;OUT.scene.add(L);DV.P.push({k:'tr',L,g,m,t:0,life:.07})}catch(e){dvErr(e)}}
+function dvTick(dt){if(!DV.P.length)return;const sc=OUT.scene;/* 도는 동안 새로 생긴 것(미사일 폭발의 불꽃·연기)은 따로 모았다 붙인다 */const cur=DV.P;DV.P=[];const keep=cur.filter(q=>{q.t+=dt;
+  if(q.k==='ms'){if(!q.g.parent||q.g.parent!==sc)return false;q.v=Math.min(95,q.v+dt*140);const p=q.g.position;const d=_dvv[1].copy(q.tgt).sub(p);const L=d.length();const step=q.v*dt;q.g.lookAt(q.tgt);q.fl.scale.setScalar(1.3+Math.random()*.6);q.sm-=dt;if(q.sm<=0){q.sm=.035;dvSmoke1(p)}
+    if(L<=step+.4||p.y<=dfrGroundH(p.x,p.z)+.2){q.g.parent.remove(q.g);dvBlast(q.tgt.clone().setY(q.tgt.y+.3),5.5,'드론 미사일');return false}p.addScaledVector(d,step/L);return true}
+  if(q.k==='sp'){const k=q.t/q.life;if(k>=1||!q.L.parent){if(q.L.parent)q.L.parent.remove(q.L);q.g.dispose();q.m.dispose();return false}for(let i=0;i<q.n;i++){const D=q.dirs[i];const r1=D[3]*q.t,r0=Math.max(0,r1-D[3]*.09);const j=i*6;const dy=-4.9*q.t*q.t;q.pos[j]=q.P.x+D[0]*r0;q.pos[j+1]=q.P.y+D[1]*r0+dy;q.pos[j+2]=q.P.z+D[2]*r0;q.pos[j+3]=q.P.x+D[0]*r1;q.pos[j+4]=q.P.y+D[1]*r1+dy;q.pos[j+5]=q.P.z+D[2]*r1}q.g.attributes.position.needsUpdate=true;q.m.opacity=1-k*k;return true}
+  if(q.k==='sm'){const k=q.t/q.life;if(k>=1||!q.s.parent){if(q.s.parent)q.s.parent.remove(q.s);q.s.material.dispose();return false}q.s.position.y+=q.vy*dt;const sz=3+q.g*q.t*2;q.s.scale.set(sz,sz,1);q.s.material.opacity=Math.min(.55,k*4)*(1-k);return true}
+  if(q.k==='tr'){if(q.t>=q.life||!q.L.parent){if(q.L.parent)q.L.parent.remove(q.L);q.g.dispose();q.m.dispose();return false}return true}return false});DV.P=keep.concat(DV.P)}
+function dvSmoke1(p){try{const s=new T.Sprite(new T.SpriteMaterial({map:dvGlowTex(),color:'#b9b6ae',transparent:true,opacity:.0,depthWrite:false,fog:true}));s.position.copy(p);s.scale.set(.8,.8,1);OUT.scene.add(s);DV.P.push({k:'sm',s,t:0,life:1.1,vy:.3,g:.9})}catch(e){}}
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{dvTick(dt||0)}catch(e){dvErr(e)}return r}})();
+/* 돌아오면 정리 */
+(function(){const b=window.dfrEnd;if(typeof b!=='function')return;window.dfrEnd=function(){DV.fire=false;return b.apply(this,arguments)}})();
+/* 버튼: 기관총은 누르고 있는 동안 · 미사일은 한 번 */
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('[data-dv]');if(!b)return;e.preventDefault();e.stopPropagation();try{if(b.dataset.dv==='mg'){DV.fire=true;DV.fireT=0;b.classList.add('on');try{b.setPointerCapture(e.pointerId)}catch(x){}}else if(b.dataset.dv==='ms')dvMissile()}catch(x){dvErr(x)}},true);
+['pointerup','pointercancel','lostpointercapture'].forEach(t=>document.addEventListener(t,()=>{if(!DV.fire)return;DV.fire=false;document.querySelectorAll('.dv-mg.on').forEach(x=>x.classList.remove('on'))},true));
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-dv]')){e.preventDefault();e.stopPropagation()}},true);
+/* PC: F = 기관총(누르는 동안) · R = 미사일 */
+document.addEventListener('keydown',e=>{if(!DFR.B||DFR.B.type!=='bomb'||e.repeat)return;if(e.code==='KeyF'){DV.fire=true;DV.fireT=0}else if(e.code==='KeyR')dvMissile()});document.addEventListener('keyup',e=>{if(e.code==='KeyF')DV.fire=false});
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="dview"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('dview','드론 시점','🛸 드론을 띄웠을 때 — 바로 내려다보는 조준 화면 또는 기체를 뒤따라 보기',[['top','내려다보기'],['chase','뒤따라']],dvTop()?'top':'chase');h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){dvErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='dview')return;try{store.set('sg.dview',b.dataset.v);toast(b.dataset.v==='top'?'🛸 드론: 내려다보는 조준 화면':'🛸 드론: 뒤따라 보기',1800)}catch(x){dvErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🛸 드론 조준 화면(v16.6)','🛸 드론을 띄우면 기체가 <b>바로 내려다보는 영상</b>이 된다 — 가운데 십자 조준선 · 둘레의 N/E/S/W(북 = 미니맵 위) · 기수 각도·고도. 왼쪽 막대 위아래 앞뒤·좌우 옆으로, 오른쪽 끌기로 기수, ▲▼ 고도. <b>💣 공격 드론</b>은 🔫 기관총 120발(누르고 있기 · PC F) · 🚀 미사일 2발(조준선 가운데 · PC R) · 💣 투하(붉은 원). 적대만 쓰러지고 주민·군인을 맞히면 그 결과를 진다. 설정 \'드론 시점\'에서 예전 뒤따라 보기로 바꿀 수 있다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
