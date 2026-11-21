@@ -13870,7 +13870,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.0';
+const APP_VER='16.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -24456,6 +24456,101 @@ for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="imm"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('imm','몰입 연출','밖 소리 풍경(바람·먼 포성·총성·새·풀벌레) · 총성 메아리 · 폭발 이명 · 저체력 심장·붉은 화면 · 달리기 숨·흔들림 · 탄착음',[[1,'켬'],[0,'끔']],store.get('sg.imm',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){immErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='imm')return;try{store.set('sg.imm',b.dataset.v==='1');if(b.dataset.v!=='1'){immAmbStop();immHurtUI(100,0)}toast(b.dataset.v==='1'?'🎧 몰입 연출 켬':'몰입 연출 끔',1800)}catch(x){immErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🎧 몰입 연출(v16.0)','밖에 나가면 바람·먼 포성·먼 총성·사이렌, 낮엔 새와 도시 웅성, 밤엔 풀벌레가 들린다(집·상가 안은 먹먹하게). 골목에서 쏘면 벽에 부딪힌 <b>메아리</b>가 늦게 돌아온다. 14m 안 폭발이면 <b>이명</b>(삐— 소리·먹먹함). 체력 40 아래면 심장 소리와 붉은 가장자리, 22 아래면 화면 색이 빠진다. 오래 달리면 숨이 차고 화면이 흔들린다. 설정 <b>몰입 연출</b>로 끌 수 있다.']);
+
+/* ===================== 135 · v16.1 살아있는 도시 — 피난 행렬 · 총성에 엎드리는 사람들 · 불탄 차·연기 기둥 · 전투기 · 비둘기 떼 ===================== */
+/* 사용자 요청(2026-11-21 11:00) "게임을 더욱 몰입하고 실감.흥미있게" → 고른 축 두 번째 '살아있는 도시'
+   · 피난 행렬: 60~110m 밖 인도에 5~7명(짐 진 사람 섞임)이 줄지어 천천히 걷는다(1.0~1.2m/s, 앞사람 발자취를 따라 1.35m 간격). 170m 넘게 멀어지면 치우고 50~90초 뒤 다른 곳에 새 행렬
+     총소리가 나면 그 자리에 웅크렸다가(1.2~2.5초) 나에게서 먼 쪽으로 흩어져 달아난다. 쏘면 주민과 똑같이 판정(⛔ · 수배)
+   · 총성 반응: 내 총(소음기 제외)·적 총·가까운 폭발 55m 안 행인은 웅크린다(1.2~2.5초 · 몇 명은 "꺄악!"·"엎드려!") → 뛰어 달아난다
+   · 불탄 차(2~3대): 새까맣게 탄 차 + 불꽃 + 위로 피어오르는 연기 · 먼 연기 기둥 2개(350~600m — 지평선 너머 도시가 탄다)
+   · 전투기: 45~100초마다 두 대가 95~140m 높이로 머리 위를 지나간다(표식 없음 · 가상) — 다가오는 굉음, 지나가며 낮아지는 소리
+   · 비둘기 떼(3~4무리 · 7~12마리): 땅에서 쪼다가 6m 안으로 다가가거나 총소리·폭발이 나면 한꺼번에 날아오른다(날갯짓 소리) — 인스턴스 2벌이라 무리당 그리기 2번
+   · 설정 '살아있는 도시'(기본 켬) · 화질 낮음이면 행렬 1·차 1·기둥 1·무리 2 · 자동 점검은 __cityTest일 때만 */
+const CITY={cols:[],colT:6,wrecks:[],pillars:[],jets:[],jetT:22,flocks:[],alarm:null,alarmT:-9,clock:0,err:0,seq:0,cnt:{evac:0,cower:0,jet:0,fly:0,scream:0},mat:null};
+function cityErr(e){if(CITY.err<6){CITY.err++;try{console.error(e)}catch(x){}}}
+function cityOn(){try{return store.get('sg.city',true)!==false&&!(navigator.webdriver&&!window.__cityTest)}catch(e){return false}}
+function cityQ(){const q=SV3.qt||'high';return q==='low'?0:q==='mid'?1:2}
+const CITY_SCREAM=['꺄악!','엎드려!','총소리야!','피해!','애들 숙여!','저쪽이야, 뛰어!'];
+/* ---------- 경보(총성·폭발) ---------- */
+function cityAlarm(x,z,r){CITY.alarm={x,z,r:r||55,t:CITY.clock};CITY.alarmT=CITY.clock}
+(function(){const b=window.gunNoise;if(typeof b!=='function')return;window.gunNoise=function(pt,W){const r=b.apply(this,arguments);try{if(cityOn()&&W&&!W.quiet){const p=pt||FP3.pos;cityAlarm(p.x,p.z,55)}}catch(e){cityErr(e)}return r}})();
+(function(){const b=window.isShot;if(typeof b!=='function')return;window.isShot=function(a){const r=b.apply(this,arguments);try{if(cityOn()&&a&&a.h&&CITY.clock-CITY.alarmT>1.5){const q=a.h.root.position;cityAlarm(q.x,q.z,50)}}catch(e){cityErr(e)}return r}})();
+(function(){if(typeof FX3==='undefined'||typeof FX3.explode!=='function')return;const b=FX3.explode;FX3.explode=function(p,o){const r=b.apply(this,arguments);try{if(cityOn()&&OUT.on&&p&&!(o&&o.kind==='far'))cityAlarm(p.x,p.z,70)}catch(e){cityErr(e)}return r}})();
+function cityCower(dt){const A=CITY.alarm;if(A&&!A.done){A.done=1;let n=0,said=0;for(const a of (typeof PED!=='undefined'?PED.list:[])){if(a.kind!=='ped'||!a.h||a.h.pose==='dead'||a.cowT>0||a.mode==='kid')continue;const q=a.h.root.position;if(Math.hypot(q.x-A.x,q.z-A.z)>A.r)continue;a.cowT=1.2+Math.random()*1.3;a.cowM=a.mode;a.mode='stand';try{a.h.setPose('crouch')}catch(e){try{a.h.setPose('nervous')}catch(x){}}n++;
+      if(said<2&&Math.random()<.45&&typeof bubSay==='function'){bubSay(a.h,CITY_SCREAM[Math.floor(Math.random()*CITY_SCREAM.length)],1.6,'scared');said++;CITY.cnt.scream++}}
+    for(const C of CITY.cols)for(const m of C.m){if(m.dead||m.h.dead||m.sc)continue;const q=m.h.root.position;if(Math.hypot(q.x-A.x,q.z-A.z)<A.r+10)m.flee=Math.max(m.flee||0,4)}CITY.cnt.cower+=n}
+  for(const a of (typeof PED!=='undefined'?PED.list:[])){if(a.cowT>0){a.cowT-=dt;if(a.cowT<=0){a.mode='run';a.sp=3+Math.random()*.6;a.flee=5;try{a.h.setPose('run')}catch(e){}}}else if(a.cowM&&!(a.flee>0)&&a.mode==='run'){/* 진정하면 원래대로 */if(a.cowM==='walk'){a.mode='walk';a.sp=1.05+Math.random()*.6;try{a.h.setPose('walk')}catch(e){}}else a.mode='run';a.cowM=null}}}
+/* ---------- 피난 행렬 ---------- */
+function cityMats(){return CITY.mat||(CITY.mat={bag:[mat('#5a4b3a',{r:.95}),mat('#3e4a5c',{r:.9}),mat('#6b2f2a',{r:.9})],burnt:mat('#1a1816',{r:1}),glass:mat('#0b0b0c',{r:.4})})}
+function cityBag(h,i){try{if(!h.b||!h.b.chest)return;if(!h.offQ){/* 가슴 기준 몸 좌표계(y 위·z 앞) → 가슴뼈 로컬(71과 같은 방식) */h.root.updateMatrixWorld(true);const qc=new T.Quaternion(),qr=new T.Quaternion();h.b.chest.getWorldQuaternion(qc);h.root.getWorldQuaternion(qr);h.offQ=qc.invert().multiply(qr)}const M=cityMats();const g=new T.Group();g.quaternion.copy(h.offQ);h.b.chest.add(g);MM(GG.box(.34,.42,.2,.04),M.bag[i%3],0,-.06,-.24,{p:g,cast:false})}catch(e){cityErr(e)}}
+function cityLeadStep(L,d){const S=PED.segs;let left=d;let k=0;while(left>0&&k++<8){const s=S[L.seg];const room=L.dir>0?s.L-L.s:L.s;if(left<=room){L.s+=L.dir*left;left=0;break}left-=room;L.s=L.dir>0?s.L:0;const nx=PED.adj[L.seg][L.dir>0?1:0];let pick=null;if(nx&&nx.length){const dx=s.tx*L.dir,dz=s.tz*L.dir;let best=-9;for(const [j,dr] of nx){const q=S[j];const dot=q.tx*dr*dx+q.tz*dr*dz;if(dot>best){best=dot;pick=[j,dr]}}}
+    if(!pick){L.dir*=-1;continue}L.seg=pick[0];L.dir=pick[1];L.s=L.dir>0?0:S[L.seg].L}const s=S[L.seg];return{x:s.ax+s.tx*L.s,z:s.az+s.tz*L.s}}
+function cityCol(){if(typeof PED==='undefined'||!PED.segs||!PED.adj||!RBX.ok||!OUT.scene)return null;const P=FP3.pos;const pk=pedPick(P.x,P.z,60,110,true);if(!pk)return null;const n=cityQ()===0?4:5+Math.floor(Math.random()*3);const gap=1.35;
+  const L={seg:pk.i,s:pk.u,dir:Math.random()<.5?1:-1};const crumbs=[];let dist=0;let last=cityLeadStep(L,0);crumbs.push({x:last.x,z:last.z,d:0});for(let i=0;i<n*gap/0.3+4;i++){const q=cityLeadStep(L,.3);dist+=.3;crumbs.push({x:q.x,z:q.z,d:dist});last=q}
+  const C={L,crumbs,dist,sp:1+Math.random()*.2,gap,m:[],id:++CITY.seq,t:0};for(let i=0;i<n;i++){const id=900+CITY.seq*13+i;const h=civHuman(id,'walk','civ');if(!h)continue;OUT.scene.add(h.root);if(i%2===0)cityBag(h,i);
+    const m={h,kind:'civ',nm:'피난민',evac:1,flee:0,mode:'evac',idx:i,lat:(i%2?.45:-.45)+(Math.random()-.5)*.2};OUT.npcs.push(m);C.m.push(m)}
+  if(!C.m.length)return null;cityColPlace(C,0);CITY.cols.push(C);CITY.cnt.evac++;try{GUN.hits=[]}catch(e){}return C}
+function cityCrumb(C,d){const A=C.crumbs;if(d<=A[0].d)return A[0];for(let i=A.length-1;i>0;i--){if(A[i-1].d<=d){const a=A[i-1],b=A[i];const u=(d-a.d)/Math.max(.001,b.d-a.d);return{x:a.x+(b.x-a.x)*u,z:a.z+(b.z-a.z)*u,dx:b.x-a.x,dz:b.z-a.z}}}return A[A.length-1]}
+function cityColPlace(C,dt){const P=FP3.pos;for(const m of C.m){if(m.dead||m.h.dead||m.gone)continue;const h=m.h;
+    if(m.flee>0&&!m.sc){m.sc=1;m.cowT=1.1+Math.random()*1.2;try{h.setPose('crouch')}catch(e){}if(Math.random()<.4&&typeof bubSay==='function'){bubSay(h,CITY_SCREAM[Math.floor(Math.random()*CITY_SCREAM.length)],1.6,'scared');CITY.cnt.scream++}}
+    if(m.sc){if(m.cowT>0){m.cowT-=dt;if(m.cowT<=0){try{h.setPose('run')}catch(e){}}continue}const q=h.root.position;let dx=q.x-P.x,dz=q.z-P.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;let moved=false;for(const tw of [0,.6,-.6,1.2,-1.2]){const c=Math.cos(tw),s=Math.sin(tw);const vx=dx*c-dz*s,vz=dx*s+dz*c;const nx=q.x+vx*3.3*dt,nz=q.z+vz*3.3*dt;if(pedFree(nx,nz)){q.x=nx;q.z=nz;h.root.rotation.y=Math.atan2(vx,vz);moved=true;break}}if(!moved)m.stuck=(m.stuck||0)+dt;continue}
+    const q=cityCrumb(C,C.dist-m.idx*C.gap-.2);const nx=q.dx!=null?-q.dz:0,nz=q.dx!=null?q.dx:0;const nl=Math.hypot(nx,nz)||1;h.root.position.set(q.x+nx/nl*m.lat,0,q.z+nz/nl*m.lat);if(q.dx!=null&&(q.dx||q.dz))h.root.rotation.y=Math.atan2(q.dx,q.dz);if(h.pose!=='walk'&&h.pose!=='dead')try{h.setPose('walk')}catch(e){}}}
+function cityColStep(dt){const P=FP3.pos;for(const C of CITY.cols){C.t+=dt;const anyCalm=C.m.some(m=>!m.sc&&!m.dead&&!m.h.dead);if(anyCalm){const q=cityLeadStep(C.L,C.sp*dt);C.dist+=C.sp*dt;C.crumbs.push({x:q.x,z:q.z,d:C.dist});const keep=C.dist-(C.m.length+2)*C.gap-2;while(C.crumbs.length>2&&C.crumbs[1].d<keep)C.crumbs.shift()}cityColPlace(C,dt);
+    const far=C.m.every(m=>m.dead||m.h.dead||Math.hypot(m.h.root.position.x-P.x,m.h.root.position.z-P.z)>170);if(far||C.t>600)cityColDrop(C)}CITY.cols=CITY.cols.filter(C=>!C.gone)}
+function cityColDrop(C){C.gone=1;for(const m of C.m){if(m.dead||m.h.dead)continue;m.gone=1;try{m.h.root.removeFromParent();RBX.live.delete(m.h)}catch(e){}}OUT.npcs=OUT.npcs.filter(a=>!(a.evac&&a.gone));try{GUN.hits=[]}catch(e){}}
+/* ---------- 불탄 차 · 연기 ---------- */
+function citySmoke(p,o){const parts=[];const n=o.n;for(let i=0;i<n;i++){const sp=PK.sprite(smokeTex(),o.col,o.s0,OUT.scene,{op:0,fog:o.fog?1:0});sp.position.set(p.x,p.y||0,p.z);parts.push({sp,u:i/n})}return{p:{x:p.x,y:p.y||0,z:p.z},parts,o}}
+function citySmokeStep(S,dt){const o=S.o;for(const q of S.parts){q.u+=dt/o.life;if(q.u>1)q.u-=1;const u=q.u;const sp=q.sp;sp.position.set(S.p.x+Math.sin(u*5+q.u)*o.drift*u,S.p.y+o.h*u,S.p.z+Math.cos(u*4)*o.drift*u*.6);const s=o.s0+(o.s1-o.s0)*u;sp.scale.set(s,s,1);sp.material.opacity=o.op*Math.min(1,u*6)*(1-u)}}
+function cityWreck(p){let g=null;try{const types=Object.keys(VEH_T);g=vehMake(types[Math.floor(Math.random()*types.length)],'#1a1816',OUT.scene,false)}catch(e){cityErr(e);return null}const M=cityMats();
+  g.position.set(p.x,0,p.z);g.rotation.y=Math.random()*6.283;g.rotation.z=(Math.random()-.5)*.08;g.traverse(o=>{if(o.isMesh&&o.material){const nm=o.name||'';o.material=/glass|head|tail|chrome|rim/.test(nm)?M.glass:M.burnt}});g.userData.cityWreck=1;cityOccMark(p.x,p.z,g.rotation.y,2.4,1.05);
+  const fl=[];for(let i=0;i<2;i++){const sp=PK.sprite(fireTex(),i?'#ff8a2a':'#ffd070',1.3+i*.4,OUT.scene,{add:1});sp.position.set(p.x+(Math.random()-.5)*.8,.9+i*.3,p.z+(Math.random()-.5)*.8);fl.push(sp)}
+  const sm=citySmoke({x:p.x,y:1.2,z:p.z},{n:7,col:'#2b2926',s0:1.2,s1:6,h:16,life:7,op:.55,drift:3,fog:1});const W={g,fl,sm,p};CITY.wrecks.push(W);return W}
+/* 불탄 차 자리는 막는다(점유 격자) — 장면이 바뀌면 되돌린다 */
+function cityOccMark(x,z,yaw,hl,hw){try{const O=TJ.occ;if(!O)return;const n=O.n;const c=Math.cos(yaw),s=Math.sin(yaw);CITY.occ=CITY.occ||[];for(let i=Math.floor(x-3-O.x0);i<=Math.floor(x+3-O.x0);i++)for(let j=Math.floor(z-3-O.z0);j<=Math.floor(z+3-O.z0);j++){if(i<0||j<0||i>=n||j>=n)continue;const cx=i+O.x0+.5-x,cz=j+O.z0+.5-z;const u=cx*s+cz*c,v=cx*c-cz*s;if(Math.abs(u)<=hl&&Math.abs(v)<=hw){const k=j*n+i;if(!O.b[k]){O.b[k]=1;CITY.occ.push(k)}}}}catch(e){cityErr(e)}}
+function cityOccClear(){try{const O=TJ.occ;if(O&&CITY.occ)for(const k of CITY.occ)O.b[k]=0}catch(e){}CITY.occ=[]}
+function cityPillar(p){const sm=citySmoke({x:p.x,y:4,z:p.z},{n:9,col:'#3a3633',s0:14,s1:55,h:150,life:26,op:.42,drift:24,fog:0});const P={sm,p};CITY.pillars.push(P);return P}
+/* ---------- 전투기 ---------- */
+function cityJetMesh(){const g=new T.Group();const M=CITY.jm||(CITY.jm={b:mat('#7b858f',{r:.45,m:.3}),d:mat('#4d555c',{r:.5}),c:mat('#1c2430',{r:.2})});MM(GG.cyl(.55,.7,13,8),M.b,0,0,0,{p:g,rx:Math.PI/2});MM(GG.cyl(.05,.55,3,8),M.b,0,0,8,{p:g,rx:Math.PI/2});MM(GG.box(10.5,.16,3.2),M.b,0,0,-.8,{p:g});MM(GG.box(4.2,.12,1.4),M.d,0,.1,-5.6,{p:g});MM(GG.box(.14,2.4,1.9),M.d,0,1.2,-5.3,{p:g});MM(GG.box(.6,.5,2),M.c,0,.55,3.6,{p:g});
+  const ab=PK.sprite(glowTex(),'#ffb070',2.2,g,{add:1});ab.position.set(0,0,-7.1);return g}
+function cityJet(){if(!OUT.scene)return;const P=FP3.pos;const a=Math.random()*6.283,dx=Math.sin(a),dz=Math.cos(a);const off=(Math.random()<.5?-1:1)*(70+Math.random()*190),alt=95+Math.random()*45,sp=210+Math.random()*40;const lx=-dz,lz=dx;
+  const J={t:0,dur:2800/sp,sp,dx,dz,alt,ms:[],cx:P.x+lx*off,cz:P.z+lz*off};for(let k=0;k<2;k++){const m=cityJetMesh();OUT.scene.add(m);m.rotation.y=Math.atan2(dx,dz);m.userData.off={l:k*26,b:k*-30,y:k*6};J.ms.push(m)}cityJetPos(J);CITY.jets.push(J);CITY.cnt.jet++;cityJetSnd(J,Math.abs(off),alt)}
+function cityJetPos(J){const s=-1400+J.sp*J.t;for(const m of J.ms){const o=m.userData.off;m.position.set(J.cx+J.dx*(s+o.b)-J.dz*o.l,J.alt+o.y,J.cz+J.dz*(s+o.b)+J.dx*o.l)}}
+function cityJetSnd(J,off,alt){if(!SND.on)return;try{const c=SND.ac();if(!c)return;const bus=SFX.bus();const t0=c.currentTime;const tc=1400/J.sp;const dmin=Math.hypot(off,alt);const tPeak=t0+tc+dmin/340;
+  const s=c.createBufferSource();s.buffer=SND.noise();s.loop=true;const f=c.createBiquadFilter();f.type='lowpass';f.Q.value=.7;const g=c.createGain();const pk=Math.min(.32,26/dmin);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(pk*.25,tPeak-2.2);g.gain.exponentialRampToValueAtTime(pk,tPeak);g.gain.exponentialRampToValueAtTime(pk*.4,tPeak+1.5);g.gain.exponentialRampToValueAtTime(.0001,tPeak+6);
+  f.frequency.setValueAtTime(1500,t0);f.frequency.setValueAtTime(1800,tPeak-.3);f.frequency.exponentialRampToValueAtTime(420,tPeak+1.6);s.connect(f);f.connect(g);g.connect(bus);s.start(t0);s.stop(tPeak+6.2);J.snd=1}catch(e){cityErr(e)}}
+function cityJetStep(dt){for(const J of CITY.jets){J.t+=dt;cityJetPos(J);if(J.t>J.dur){J.ms.forEach(m=>{try{m.removeFromParent()}catch(e){}});J.gone=1}}CITY.jets=CITY.jets.filter(J=>!J.gone)}
+/* ---------- 비둘기 ---------- */
+function cityFlock(p,n){const M=CITY.bm||(CITY.bm={b:mat('#6f7378',{r:.85}),w:mat('#5c6066',{r:.85})});const G0=CITY.bg||(CITY.bg={b:(()=>{const g=new T.SphereGeometry(1,7,5);g.scale(.085,.075,.16);return g})(),w:(()=>{const g=new T.BoxGeometry(.24,.012,.1);g.translate(.12,0,0);return g})()});
+  const bi=new T.InstancedMesh(G0.b,M.b,n),wi=new T.InstancedMesh(G0.w,M.w,n*2);bi.frustumCulled=false;wi.frustumCulled=false;OUT.scene.add(bi);OUT.scene.add(wi);const B=[];for(let i=0;i<n;i++){const a=Math.random()*6.283,r=Math.random()*2.6;B.push({x:p.x+Math.sin(a)*r,y:.08,z:p.z+Math.cos(a)*r,yaw:Math.random()*6.283,vx:0,vy:0,vz:0,ph:Math.random()*6.283,peck:Math.random()*3})}
+  const F={p,B,bi,wi,st:'ground',t:0,n};CITY.flocks.push(F);cityFlockDraw(F,0);return F}
+const _ctm=new T.Matrix4(),_ctq=new T.Quaternion(),_cte=new T.Euler(),_ctv=new T.Vector3(),_cts=new T.Vector3(1,1,1);
+function cityFlockDraw(F,dt){const gnd=F.st==='ground';for(let i=0;i<F.B.length;i++){const b=F.B[i];_cte.set(gnd?(b.peck<.25?.5:0):-.15,b.yaw,0,'YXZ');_ctq.setFromEuler(_cte);_ctv.set(b.x,b.y+(gnd?.07:0),b.z);_ctm.compose(_ctv,_ctq,_cts);F.bi.setMatrixAt(i,_ctm);
+    const fl=gnd?.12:Math.sin(b.ph)*1.1;for(let w=0;w<2;w++){_cte.set(0,b.yaw+(w?Math.PI:0),fl,'YXZ');_ctq.setFromEuler(_cte);_ctv.set(b.x,b.y+(gnd?.1:.02),b.z);_ctm.compose(_ctv,_ctq,_cts);F.wi.setMatrixAt(i*2+w,_ctm)}}
+  F.bi.instanceMatrix.needsUpdate=true;F.wi.instanceMatrix.needsUpdate=true}
+function cityFlush(F,from){if(F.st!=='ground')return;F.st='fly';F.t=0;CITY.cnt.fly++;const P=from||FP3.pos;for(const b of F.B){let dx=b.x-P.x,dz=b.z-P.z;const l=Math.hypot(dx,dz)||1;const sp=4+Math.random()*3;b.vx=dx/l*sp+(Math.random()-.5)*2;b.vz=dz/l*sp+(Math.random()-.5)*2;b.vy=3.5+Math.random()*2.5;b.yaw=Math.atan2(b.vx,b.vz)}
+  if(SND.on)try{const c=SND.ac();const bus=SFX.bus();const d=Math.hypot(F.p.x-FP3.pos.x,F.p.z-FP3.pos.z);const v=Math.max(.01,.07*(1-d/60));for(let k=0;k<14;k++){const t=c.currentTime+k*.055+Math.random()*.03;const s=c.createBufferSource();s.buffer=SND.noise();const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=1100+Math.random()*500;f.Q.value=1.2;const g=c.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.05);s.connect(f);f.connect(g);g.connect(bus);s.start(t,Math.random());s.stop(t+.06)}}catch(e){}}
+function cityFlockStep(dt){const P=FP3.pos;const A=CITY.alarm;for(const F of CITY.flocks){const d=Math.hypot(F.p.x-P.x,F.p.z-P.z);if(F.st==='ground'){const near=d<6||(OUT.drv&&d<15);const shot=A&&CITY.clock-A.t<.5&&Math.hypot(F.p.x-A.x,F.p.z-A.z)<70;if(near||shot)cityFlush(F,shot&&!near?{x:A.x,z:A.z}:P);
+      else if(d<80){for(const b of F.B){b.peck-=dt;if(b.peck<0)b.peck=1.5+Math.random()*2.5;if(Math.random()<dt*.4)b.yaw+=(Math.random()-.5)*1.4}cityFlockDraw(F,dt)}}
+    else{F.t+=dt;for(const b of F.B){b.ph+=dt*15;b.x+=b.vx*dt;b.y+=b.vy*dt;b.z+=b.vz*dt;b.vy=Math.max(.4,b.vy-dt*1.2)}cityFlockDraw(F,dt);if(F.t>14){try{F.bi.removeFromParent();F.wi.removeFromParent()}catch(e){}F.gone=1}}}CITY.flocks=CITY.flocks.filter(F=>!F.gone)}
+/* ---------- 장면 채우기 · 매 프레임 ---------- */
+function cityPopulate(){cityOccClear();CITY.cols=[];CITY.wrecks=[];CITY.pillars=[];CITY.jets=[];CITY.flocks=[];CITY.alarm=null;CITY.colT=4+Math.random()*4;CITY.jetT=20+Math.random()*15;if(!cityOn()||!OUT.scene||typeof ojSpot!=='function')return;const q=cityQ();const st=(()=>{try{return tjStartPt()}catch(e){return FP3.pos}})();
+  const used=[st];for(let i=0;i<(q?3:1)-(q===1?1:0);i++){const p=ojSpot(45,220,{from:st,r:2.6,away:used,awayD:40});if(p){used.push(p);try{cityWreck(p)}catch(e){cityErr(e)}}}
+  for(let i=0;i<(q?2:1);i++){const a=Math.random()*6.283,d=350+Math.random()*250;cityPillar({x:st.x+Math.sin(a)*d,z:st.z+Math.cos(a)*d})}
+  for(let i=0;i<(q?4:2);i++){const p=ojSpot(25,150,{from:st,r:3,away:used,awayD:25});if(p){used.push(p);try{cityFlock(p,7+Math.floor(Math.random()*6))}catch(e){cityErr(e)}}}}
+function cityTick(dt){if(!dt||dt>.5||!OUT.on)return;CITY.clock+=dt;if(!cityOn())return;
+  try{cityCower(dt)}catch(e){cityErr(e)}
+  const inn=(typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on);
+  try{cityColStep(dt)}catch(e){cityErr(e)}if(!inn){CITY.colT-=dt;const cap=cityQ()===2?2:1;if(CITY.colT<=0){CITY.colT=50+Math.random()*40;if(CITY.cols.length<cap)try{cityCol()}catch(e){cityErr(e)}}}
+  try{for(const W of CITY.wrecks){citySmokeStep(W.sm,dt);for(let i=0;i<W.fl.length;i++){const s=(1.3+i*.4)*(.85+Math.random()*.3);W.fl[i].scale.set(s,s*1.2,1)}}for(const Pl of CITY.pillars)citySmokeStep(Pl.sm,dt)}catch(e){cityErr(e)}
+  CITY.jetT-=dt;if(CITY.jetT<=0&&!inn){CITY.jetT=45+Math.random()*55;try{cityJet()}catch(e){cityErr(e)}}try{cityJetStep(dt)}catch(e){cityErr(e)}
+  try{cityFlockStep(dt)}catch(e){cityErr(e)}}
+for(const nm of ['outStep','tjAptStep','shopStep'])(function(nm){const b=window[nm];if(typeof b!=='function')return;window[nm]=function(dt){const r=b.apply(this,arguments);try{if(nm!=='outStep'||!((typeof APT!=='undefined'&&APT.on)||(typeof SHOP!=='undefined'&&SHOP.on)))cityTick(dt||0)}catch(e){cityErr(e)}return r}})(nm);
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){const r=b.apply(this,arguments);try{cityPopulate()}catch(e){cityErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{cityOccClear();for(const C of CITY.cols)cityColDrop(C);CITY.cols=[];CITY.jets.forEach(J=>J.ms.forEach(m=>{try{m.removeFromParent()}catch(e){}}));CITY.jets=[]}catch(e){cityErr(e)}return b.apply(this,arguments)}})();
+/* 피난민은 주민 판정 그대로(roeOf·gunCivShot) — 이름만 '피난민' */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="city"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('city','살아있는 도시','피난 행렬 · 총성에 엎드리는 사람들 · 불탄 차·연기 기둥 · 머리 위 전투기 · 비둘기 떼(끄면 조금 가벼워진다)',[[1,'켬'],[0,'끔']],store.get('sg.city',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){cityErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='city')return;try{store.set('sg.city',b.dataset.v==='1');toast(b.dataset.v==='1'?'🏙 살아있는 도시 켬 — 다음 외출부터':'살아있는 도시 끔 — 다음 외출부터',2000)}catch(x){cityErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🏙 살아있는 도시(v16.1)','길에서 <b>피난 행렬</b>이 짐을 지고 줄지어 지나간다. 총소리가 나면 사람들이 <b>그 자리에 웅크렸다가</b> 흩어져 달아난다(몇 명은 비명). 거리 곳곳에 <b>불탄 차</b>가 연기를 뿜고, 지평선에는 <b>연기 기둥</b>이 오른다. 가끔 <b>전투기 두 대</b>가 머리 위를 지나간다(표식 없는 가상 기체). 광장의 <b>비둘기 떼</b>는 다가가거나 총을 쏘면 한꺼번에 날아오른다. 피난민을 쏘면 주민과 똑같이 판정된다. 설정 <b>살아있는 도시</b>로 끌 수 있다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
