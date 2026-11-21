@@ -1826,6 +1826,20 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .b-fpv-ov.dv-top .fpv-q:not(.solo){right:max(14px,env(safe-area-inset-right,0px));bottom:122px;width:58px;height:58px}
 .b-fpv-ov .dv-ws .dfr-alt{bottom:122px}.b-fpv-ov .dv-ws .dfr-alt.up{right:max(80px,calc(env(safe-area-inset-right,0px) + 76px))}.b-fpv-ov .dv-ws .dfr-alt.dn{right:max(146px,calc(env(safe-area-inset-right,0px) + 142px))}
 .b-fpv-ov.dv-top .fpv-tip{top:40px;bottom:auto}
+/* v16.7 창가 🎯 조준경 버튼 */
+#awSr.on{border-color:#ffb24a;box-shadow:0 0 0 3px rgba(255,178,74,.4)}
+/* v16.7 🔫 총기 도감 */
+.a3-dex{position:fixed;inset:0;z-index:96;background:rgba(6,8,10,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.a3-card{width:min(100%,720px);max-height:min(92vh,820px);display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line2);border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.55);overflow:hidden}
+.a3-hd{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line2)}
+.a3-hd b{font-size:16px;color:var(--fg)}.a3-hd span{font-size:12.5px;color:var(--mut);flex:1}
+.a3-x{width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);background:var(--panel2);color:var(--fg);cursor:pointer}
+.a3-bd{overflow:auto;padding:6px 14px 14px;-webkit-overflow-scrolling:touch}
+.a3-sec{position:sticky;top:0;background:var(--panel);padding:10px 0 6px;font:800 13px var(--sans);color:var(--amber)}.a3-sec small{color:var(--mut);font-weight:600}
+.a3-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:7px 9px;border-radius:10px;border:1px solid transparent}
+.a3-row b{font-size:13.5px;color:var(--fg)}.a3-row span{font:600 11.5px ui-monospace,Menlo,monospace;color:var(--body);text-align:right}
+.a3-row small{grid-column:1/-1;font-size:11.5px;color:var(--mut)}
+.a3-row.own{border-color:rgba(232,180,58,.45);background:rgba(232,180,58,.07)}.a3-row.own b::after{content:' · 보유';color:var(--amber);font-size:11px}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -12432,7 +12446,7 @@ function freeCands(){const L=[];if(!LIFE.on)return L;const c=LIFE.camp,cx=c[0],c
     if(a.talked!==G.turn&&(a.st==='rest'||a.st==='pausing'))add({k:'talk',id:'npc:'+i,a,x:p.x,z:p.z,r:1.7,g:'…',n:a.kind==='kid'?'아이 달래기':'이웃에게 말 걸기',s:a.kind==='kid'?'1시간 · 사기·신뢰':'1시간 · 소문·거래·위로',h:1})});
   if(LIFE.table&&G.turn>=1&&G.freeUsed.relief!==Math.floor(G.turn/4))add({k:'relief',id:'table',x:LIFE.table[0],z:LIFE.table[1],r:2.2,g:'▤',n:'배급 줄 서기',s:'1시간 · 하루 1회 · 물·식량',h:1});
   if(LIFE.exit&&!fu('scout')&&!M('me').c.includes('fracture'))add({k:'scout',id:'exit',x:LIFE.exit[0],z:LIFE.exit[1],r:2.6,g:'↗',n:'출구 밖 살피기',s:(nukeHot())?'3시간 · 낙진 시간대 — 피폭 위험!':'3시간 · 물자 발견 · 부상 위험',h:3,warn:nukeHot()});
-  FREE.spots.forEach((s,i)=>{if(!s.done)add({k:'search',id:'spot:'+i,s,x:s.x,z:s.z,r:1.5,g:'?',n:'박스 더미 살펴보기',s:'1시간 · 물자 발견 가능',h:1})});
+  FREE.spots.forEach((s,i)=>{if(!s.done)add({k:'search',id:'spot:'+i,spot:s/* v16.7: 예전엔 키 's'가 두 번 — 뒤의 안내 문구가 박스 자리를 덮어써 누르면 오류(빈 동작) */,x:s.x,z:s.z,r:1.5,g:'?',n:'박스 더미 살펴보기',s:'1시간 · 탄·약·식량·물 파밍',h:1})});
   return L}
 /* ---------- 실행 ---------- */
 function freeDo(c){if(!c||FREE.busy||LIFE.cho)return;const H=freeHours();const cost=c.h==='all'?H:c.h;if(cost>H){toast('남은 시간이 모자란다');return}
@@ -12449,7 +12463,7 @@ function freeDo(c){if(!c||FREE.busy||LIFE.cho)return;const H=freeHours();const c
   else if(c.k==='aidn'){if(G.res.meds>0&&chance(.5))res('meds',-1);trust(2);mor(3);t='쓰러진 이웃의 상처를 세게 눌러 지혈하고 의료진을 불렀다.';face(me,c.a.h.root.position.x,c.a.h.root.position.z);if(me)me.setPose('crouch')}
   else if(c.k==='relief'){res('water',2);res('food',1);G.freeUsed.relief=Math.floor(G.turn/4);t='줄을 서서 생수 2L와 전투식량 한 봉지를 받았다.';face(me,LIFE.table[0],LIFE.table[1]);if(me)me.setPose('bag')}
   else if(c.k==='scout'){t=scout();if(me)me.setPose('look');sv3Flash&&sv3Flash(.25)}
-  else if(c.k==='search'){t=freeSearch(c.s);if(me)me.setPose('crouch')}
+  else if(c.k==='search'){t=freeSearch(c.spot||c.s);if(me)me.setPose('crouch')}
   if(['radio','phone','purify','wash','care','scout','medic','ask'].includes(c.k))fuSet(c.k);if(c.k==='aidn')fuSet('aid_'+LIFE.npcs.indexOf(c.a));
   logFree(c,t);const fx=FX.slice();G.freeH=Math.max(0,H-cost);
   /* 짧은 동작(2.6초) 뒤 자세 원위치 — 그동안에도 걸어서 벗어날 수 있다 */if(c.k!=='sleep'){FREE.busy=true;setTimeout(()=>{FREE.busy=false;FREE.sig='';if(me&&!me.sleeping&&!LIFE.cho&&!/walk|run/.test(me.pose||''))me.setPose('idle');if(c.a&&c.a.st==='rest'&&!c.a.lying)c.a.h.setPose(c.a.restPose);if(['radio','phone','care','treat'].includes(c.k))lifeFamRest()},2600)}
@@ -13916,7 +13930,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='16.6';
+const APP_VER='16.7';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -23643,7 +23657,7 @@ if(typeof HELP84!=='undefined')HELP84.push(['🛸 진지 교전 → 제자리 2�
    · 조종: 왼쪽 막대 = 속도·선회 · 오른쪽 끌기 = 기수(위·아래·좌우) · [기폭](PC Space) · [복귀](PC Q — 터뜨리지 않은 기체는 재고로 돌아온다)
      띄우고 1.5초 뒤 안전장치가 풀린다(그 전엔 부딪혀도 안 터진다). 배터리 45초 · 신호 260m — 신호가 끊기거나 배터리가 다 되면 안전장치가 다시 걸린 채 떨어진다(터지지 않고 기체만 잃는다)
    · 제자리 교전(116·123·124) 중에도 띄울 수 있다 — 조종하는 동안 내 몸은 그 자리에 서 있다(맞을 수 있다). 적 자폭 드론에 부딪혀도 터진다
-   · 시작 장비: 새 게임을 시작할 때마다 💥 자폭 드론 50 · 💣 폭탄 투하 드론 10 · AK-47 소총 1정(2배율 조준경 장착, 탄창 장전) · 7.62mm 100발(v16.5부터 200발).
+   · 시작 장비: 새 게임을 시작할 때마다 💥 자폭 드론 50 · 💣 폭탄 투하 드론 10 · AK-47 소총 1정(2배율 조준경 장착, 탄창 장전) · 7.62mm 100발(v16.5 200발) → v16.7부터 K2 소총(4배율 조준경) · 5.56mm 300발.
      하던 저장 게임에도 한 번 넣는다(G.flags.kit139). 쓰러져 실려 돌아오는 것은 리스폰이 아니다 — 다시 주지 않는다. 교육용 모드에서는 넣지 않는다
    · 시작 장비 드론은 공방을 차리지 않아도 쓴다(dfS().kit) — 공방 교전 아이템 줄(94)에도 잡힌다
    · 게임 속 연출일 뿐 실제 장비의 사양·운용법이 아니다 */
@@ -23654,11 +23668,11 @@ function dfkN(){try{return typeof dfCount==='function'?dfCount('fpv'):0}catch(e)
 window.dfrBombN=function(){try{if(typeof dfCount!=='function'||typeof dfS!=='function')return 0;const S=dfS();return S.on||S.kit?dfCount('bomb'):0}catch(e){return 0}};
 /* ---------- 시작 장비 ---------- */
 function kitOk(){try{return !!G&&!(navigator.webdriver&&!window.__kitTest)&&!(typeof eduOn==='function'&&eduOn())&&G.phase!=='end'}catch(e){return false}}
-function kitGrant(why){if(!kitOk())return false;G.flags=G.flags||{};if(G.flags.kit139)return false;G.flags.kit139=1;const r={fpv:50,bomb:10,ak:false,opt:false,ammo:200};/* v16.5: 사용자 요청 "초반에 총알 200발 기본으로" — 7.62mm 100 → 200 */
+function kitGrant(why){if(!kitOk())return false;G.flags=G.flags||{};if(G.flags.kit139)return false;G.flags.kit139=1;const r={fpv:50,bomb:10,ak:false,opt:false,ammo:300};/* v16.7: 사용자 요청(21:17) "시작 총을 k2로 바꿔주시고 조준경도 넣어주시고 … 300발로" — AK-47 7.62mm → K2C1 4배율 5.56mm 300발 */
   try{const S=dfS();S.kit=1;const tn=G.turn|0;for(let i=0;i<50;i++)S.inv.push({t:'fpv',g:'B',turn:tn,kit:1});for(let i=0;i<10;i++)S.inv.push({t:'bomb',g:'B',turn:tn,kit:1})}catch(e){dfkErr(e)}
-  try{const a=gunAdd('ak47',{force:true,ammo:200});r.ak=a===true?'new':a;G.inv=G.inv||{};const rec=(G.arms||[]).find(x=>x.id==='ak47');G.inv.opt_x2=(G.inv.opt_x2||0)+1;if(rec&&!(rec.opt&&typeof OPT!=='undefined'&&OPT[rec.opt]))r.opt=!!optAttach('ak47','x2',true)}catch(e){dfkErr(e)}
+  try{const a=gunAdd('k2',{force:true,ammo:300});r.ak=a===true?'new':a;G.inv=G.inv||{};const rec=(G.arms||[]).find(x=>x.id==='k2');G.inv.opt_x4=(G.inv.opt_x4||0)+1;if(rec&&!(rec.opt&&typeof OPT!=='undefined'&&OPT[rec.opt]))r.opt=!!optAttach('k2','x4',true);G.flags.kit167=1;try{if(!GUN.eq||GUN.eq==='ak47'){GUN.eq='k2';G.eq='k2'}}catch(x){}}catch(e){dfkErr(e)}
   KIT.last=Object.assign({why},r);
-  try{toast(`🎒 ${why==='old'?'시작 장비 지급':'시작 장비'} — 💥 자폭 드론 50 · 💣 폭탄 드론 10 · AK-47(2배율 조준경) · 7.62mm 200발`,3600)}catch(e){}try{save()}catch(e){}return true}
+  try{toast(`🎒 ${why==='old'?'시작 장비 지급':'시작 장비'} — 💥 자폭 드론 50 · 💣 폭탄 드론 10 · K2 소총(4배율 조준경) · 5.56mm 300발`,3600)}catch(e){}try{save()}catch(e){}return true}
 const KIT={last:null};
 (function(){const n=window.newGame;if(typeof n!=='function')return;window.newGame=function(){const r=n.apply(this,arguments);try{kitGrant('new')}catch(e){dfkErr(e)}return r}})();
 /* 하던 저장 게임: 처음 화면이 바뀔 때 한 번 */
@@ -25025,6 +25039,168 @@ document.addEventListener('keydown',e=>{if(!DFR.B||DFR.B.type!=='bomb'||e.repeat
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="dview"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('dview','드론 시점','🛸 드론을 띄웠을 때 — 바로 내려다보는 조준 화면 또는 기체를 뒤따라 보기',[['top','내려다보기'],['chase','뒤따라']],dvTop()?'top':'chase');h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){dvErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='dview')return;try{store.set('sg.dview',b.dataset.v);toast(b.dataset.v==='top'?'🛸 드론: 내려다보는 조준 화면':'🛸 드론: 뒤따라 보기',1800)}catch(x){dvErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🛸 드론 조준 화면(v16.6)','🛸 드론을 띄우면 기체가 <b>바로 내려다보는 영상</b>이 된다 — 가운데 십자 조준선 · 둘레의 N/E/S/W(북 = 미니맵 위) · 기수 각도·고도. 왼쪽 막대 위아래 앞뒤·좌우 옆으로, 오른쪽 끌기로 기수, ▲▼ 고도. <b>💣 공격 드론</b>은 🔫 기관총 120발(누르고 있기 · PC F) · 🚀 미사일 2발(조준선 가운데 · PC R) · 💣 투하(붉은 원). 적대만 쓰러지고 주민·군인을 맞히면 그 결과를 진다. 설정 \'드론 시점\'에서 예전 뒤따라 보기로 바꿀 수 있다.']);
+
+/* ===================== 142 · v16.7 시작 총 K2(4배율) · 박스 더미 파밍 · 공수 교전 총기 지급 · 창가 조준경 소총 ===================== */
+/* 사용자 요청(2026-11-21 21:17, 대피소 사진 — '박스 더미 살펴보기'):
+   "시작 총을 k2로 바꿔주시고 조준경도 넣어주시고 희망 총알은 300발로 늘려주시되, 박스더미 클릭이안되는데 박스더미에는 총알.의약품.식량.물 등을 파밍하게끔 해 주세요.
+    그리고 공수부대와 싸울 때 총기.무기지급이 안되는 것 같네요..이건 개선 필요하고 창밖에서 적 제거 시 유탄 말고 소총(조준경) 기능 넣어주시구요."
+   ① 시작 장비(125): AK-47(2배율)·7.62mm → K2 소총 + 4배율 전투 조준경 + 5.56mm 300발. 이미 시작 장비를 받은 판은 한 번 K2 묶음을 더 받는다(AK는 그대로)
+   ② 박스 더미: 원인 — 후보(23 freeCands)에 키 's'가 두 번(박스 자리 → 안내 문구가 덮어씀)이라, 누르면 엄격 모드에서 문자열에 표시를 달다 오류 → 아무 일도 안 일어났다(23에서 고침)
+      파밍: 탄(내 총 구경 · 20~60발) · 의약품 · 식량 · 물 · 전지 — 1~3가지 · 드물게 권총·조준경 · 다친다/오염(화학) 확률은 줄였다
+   ③ 공수부대 교전(제자리 교전 para · praid): 예전 진지 방식은 'K2 소총을 받는다'였는데, 제자리 방식(v13.7)으로 바뀌며 지급이 빠졌다 →
+      시작할 때 예비군 소대장이 쓸 총이 없으면 K2 소총 + 5.56mm 120발, 있으면 탄창 두 개(5.56mm 60발)와 수류탄 2개를 건넨다(한 교전에 한 번)
+   ④ 창가 저지(101): '💣 유탄' 옆에 '🎯 조준경' — 조준경 달린 내 총(없으면 창가 지급 K2 지정사수소총 3배율 + 5.56mm 40발)을 들고 바로 조준경으로 본다. 다시 누르면 조준 풀기 */
+const KB={err:0,kit:0,box:0,issue:0,sr:0,last:null};
+function kbErr(e){if(KB.err<6){KB.err++;try{console.error(e)}catch(x){}}}
+/* ---------- ① 이미 시작 장비를 받은 판: K2 묶음 한 번 ---------- */
+function kbKit167(why){try{if(!G||!G.flags||!G.flags.kit139||G.flags.kit167)return false;if(typeof kitOk==='function'&&!kitOk())return false;G.flags.kit167=1;gunAdd('k2',{force:true,ammo:300});G.inv=G.inv||{};G.inv.opt_x4=(G.inv.opt_x4||0)+1;const rec=(G.arms||[]).find(x=>x.id==='k2');if(rec&&!(rec.opt&&OPT[rec.opt]))optAttach('k2','x4',true);
+  try{if(!GUN.eq||GUN.eq==='ak47'){GUN.eq='k2';G.eq='k2'}}catch(e){}KB.kit++;try{toast('🎒 시작 장비 바뀜 — K2 소총(4배율 조준경) · 5.56mm 300발',3400)}catch(e){}try{save()}catch(e){}return true}catch(e){kbErr(e);return false}}
+(function(){const b=window.setScreen;if(typeof b!=='function')return;window.setScreen=function(){const r=b.apply(this,arguments);try{if(G&&G.phase&&G.phase!=='end')kbKit167('old')}catch(e){}return r}})();
+/* ---------- ② 박스 더미 파밍 ---------- */
+const KB_CAL={'556':'5.56mm 탄','762':'7.62mm 탄','545':'5.45mm 탄','9mm':'9mm 탄','12ga':'12게이지 산탄','38':'.38 탄','50':'.50 탄'};
+function kbCal(){try{const L=gunArms().map(a=>ARMS[a.id]).filter(W=>W&&W.am&&KB_CAL[W.am]);if(L.length&&Math.random()<.8)return L[Math.floor(Math.random()*L.length)].am}catch(e){}return pick(['556','556','9mm','762'])}
+function kbLoot(){const got=[];const n=1+(Math.random()<.55?1:0)+(Math.random()<.25?1:0);const pool=[['ammo',34],['meds',18],['food',20],['water',20],['power',8]];const used=new Set();
+  for(let i=0;i<n;i++){let tot=pool.filter(p=>!used.has(p[0])).reduce((s,p)=>s+p[1],0);let r=Math.random()*tot,k=null;for(const p of pool){if(used.has(p[0]))continue;r-=p[1];if(r<=0){k=p[0];break}}if(!k)break;used.add(k);
+    if(k==='ammo'){const am=kbCal();const c=10*(2+Math.floor(Math.random()*5));gunAmmoAdd(am,c);push(KB_CAL[am]||'탄',c,'발');got.push(`${KB_CAL[am]||'탄'} ${c}발`)}
+    else if(k==='meds'){res('meds',1);got.push('구급함(소독약·거즈)')}else if(k==='food'){const f=Math.random()<.4?2:1;res('food',f);got.push(f>1?'통조림 두 개':'에너지바 한 봉지')}
+    else if(k==='water'){const w=2+(Math.random()<.4?1:0);res('water',w);got.push(`뜯지 않은 생수 ${w}L`)}else if(k==='power'){res('power',12);got.push('보조배터리')}}
+  /* 드물게: 권총 · 조준경 */const r2=Math.random();if(r2<.05){if(!gunHas('k5')&&gunAdd('k5',{force:true,ammo:26})){got.push('K5 권총과 9mm 26발')}else{gunAmmoAdd('9mm',30);push('9mm 탄',30,'발');got.push('9mm 탄 30발')}}else if(r2<.09){const o=pick(['dot','x2']);G.inv=G.inv||{};G.inv['opt_'+o]=(G.inv['opt_'+o]||0)+1;got.push(OPT[o].n)}
+  return got}
+(function(){const b=window.freeSearch;if(typeof b!=='function')return;window.freeSearch=function(s){try{if(!s||typeof s!=='object')return b.apply(this,arguments);s.done=1;if(s.obj)s.obj.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive){o.material=o.material.clone();o.material.emissiveIntensity=0}});KB.box++;
+  if(G.scen==='chem'&&G.flags.chemAlert&&!G.flags.allClear&&Math.random()<.08){addC(M('me'),'contam');pol(4);const g=kbLoot();return `구석에 고인 물이 이상한 냄새를 풍겼다 — 손을 씻어야 한다. 그래도 ${g.join(' · ')}를 챙겼다.`}
+  if(Math.random()<.06){hurt('me',4);const g=kbLoot();return `철제 선반에 무릎을 부딪쳤지만, ${g.join(' · ')}를 찾았다.`}
+  const g=kbLoot();KB.last=g;return g.length?`박스 더미를 뒤져 ${g.join(' · ')}를 찾았다.`:'박스 더미를 뒤졌지만 빈 상자뿐이었다.'}catch(e){kbErr(e);return b.apply(this,arguments)}}})();
+/* ---------- ③ 공수부대 교전: 총기·탄 지급 ---------- */
+function kbIssue(kind){try{if(!(kind==='para'||kind==='praid'))return null;if(typeof IS==='undefined'||!IS.on)return null;if(G.flags.paraIssueT===G.turn+':'+kind)return null;G.flags.paraIssueT=G.turn+':'+kind;
+  const ok=id=>{const W=ARMS[id];return !!(W&&W.cat!=='mel'&&W.mag&&!W.rocket&&!W.nade&&!W.nonlethal)};const has=gunArms().some(a=>ok(a.id));const out=[];
+  if(!has){gunAdd('k2',{force:true,ammo:120});out.push('K2 소총','5.56mm 120발')}else{gunAmmoAdd('556',60);out.push('5.56mm 탄창 두 개(60발)')}
+  try{if(bagGive('nade',2))out.push('수류탄 2개')}catch(e){}try{if(!GUN.eq||!ok(GUN.eq)){const id=has?gunArms().find(a=>ok(a.id)).id:'k2';gunEquip(id,true)}}catch(e){}
+  KB.issue++;try{outNote(`<b>🪖 예비군 소대장이 무기를 건넸다</b><div>${out.join(' · ')} — "현관을 지킵시다. 탄은 아껴 쓰고!"</div>`,4200)}catch(e){}return out}catch(e){kbErr(e);return null}}
+(function(){const b=window.owcStart;if(typeof b!=='function')return;window.owcStart=function(kind){const r=b.apply(this,arguments);try{kbIssue(kind)}catch(e){kbErr(e)}return r}})();
+/* ---------- ④ 창가: 🎯 조준경 소총 ---------- */
+function kbZ(id){try{const W=ARMS[id];if(!W||W.cat==='mel'||!W.mag||W.rocket||W.nade)return 0;const rec=(G.arms||[]).find(a=>a.id===id);const o=rec&&rec.opt&&typeof OPT!=='undefined'&&OPT[rec.opt];return o?o.z:(W.zoom||0)}catch(e){return 0}}
+function kbScoped(){const L=gunArms().map(a=>a.id).filter(id=>kbZ(id)>=2).sort((a,b)=>kbZ(b)-kbZ(a));return L[0]||null}
+function kbSrBtn(){try{const box=document.querySelector('#awUI .aw-btns');if(!box||box.querySelector('#awSr'))return;const b=document.createElement('button');b.className='aw-b';b.id='awSr';b.dataset.g3='awsr';b.innerHTML='<b>🎯</b><span id="awSrN">조준경</span>';box.appendChild(b)}catch(e){kbErr(e)}}
+function kbSniper(){if(typeof AW==='undefined'||!AW.on)return false;let id=kbScoped();if(!id){gunAdd('k2dmr',{force:true,ammo:40});id='k2dmr';try{outNote('<b>🎯 창가 지급 — K2 지정사수소총</b><div>3배율 조준경 · 5.56mm 40발. 창가에서 한 발씩 정확히.</div>',3000)}catch(e){}}
+  AW.gl=false;if(GUN.eq!==id){try{gunEquip(id,true)}catch(e){kbErr(e)}}GUN.ads=!(GUN.ads&&GUN.eq===id);AW.uiT=0;KB.sr++;const n=document.getElementById('awSrN');if(n)n.textContent=GUN.ads?`${kbZ(id)}배 조준`:'조준경';const b=document.getElementById('awSr');if(b)b.classList.toggle('on',!!GUN.ads);return true}
+(function(){const b=window.awUI;if(typeof b!=='function')return;window.awUI=function(){const r=b.apply(this,arguments);try{if(AW.on)kbSrBtn();const bt=document.getElementById('awSr');if(bt){const on=!!(GUN.ads&&kbZ(GUN.eq)>=2);bt.classList.toggle('on',on);const n=document.getElementById('awSrN');const t=on?`${kbZ(GUN.eq)}배 조준`:'조준경';if(n&&n.textContent!==t)n.textContent=t}}catch(e){kbErr(e)}return r}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=awsr]');if(!b)return;e.preventDefault();e.stopPropagation();try{kbSniper()}catch(x){kbErr(x)}},true);
+document.addEventListener('keydown',e=>{if(e.code==='KeyV'&&!e.repeat&&typeof AW!=='undefined'&&AW.on){kbSniper()}});
+if(typeof HELP84!=='undefined')HELP84.push(['🎒 K2 시작 장비 · 박스 파밍 · 창가 조준경(v16.7)','새 판 시작 장비는 <b>K2 소총(4배율 조준경) · 5.56mm 300발</b>. 대피소 <b>박스 더미 살펴보기</b>(1시간)로 탄·의약품·식량·물·전지를 1~3가지 찾는다(드물게 권총·조준경). 공수부대 교전이 시작되면 예비군 소대장이 총(없으면 K2)·탄·수류탄을 건넨다. 창가 저지에서 <b>🎯 조준경</b>(PC V)을 누르면 조준경 달린 총으로 바로 조준한다(없으면 창가 지급 K2 지정사수소총).']);
+
+/* ===================== 143 · v16.7 총기 100종 — 62종 추가(38 → 100) · 겉모양 변형 · 얻는 곳 · 🔫 총기 도감 ===================== */
+/* 사용자 요청(2026-11-21 21:17): "전체적으로 총기 종류를 100종 만들어 주세요. 총기 종류가 넘 다양하지 않네요."
+   · 총기(근접무기·조명탄 권총·석궁·전기충격기 제외) 38종 → 100종: 권총 +10 · 기관단총 +10 · 소총·카빈 +14 · 지정사수·저격 +10 · 산탄총 +8 · 기관총 +6 · 발사기 +4
+   · 이름은 제식명·일반명만(회사 상표 없음 — 64·118과 같은 원칙). 수치는 게임용 단순화: 기준 총에서 시작해 탄창·연사·위력·흩어짐·재장전·배율을 바꾼다
+   · 탄은 있던 것만(5.56 · 7.62 · 5.45 · 9mm · .45 · .38 · 12게이지 · .50 · 40mm · 로켓) — 새 탄을 늘리지 않는다
+   · 겉모양: 기존 모양(makeGun2)을 바탕으로 길이·색·소음기·조준경·양각대·드럼 탄창을 달리한다(코드로 그린다)
+   · 얻는 곳: 군용 상자(67) · 총포사(95) · 세력 노획(118 ARMS2_POOL) · 박스 더미 드물게(142) — 그리고 🎒 배낭·총포사에서 여는 '🔫 총기 도감'(100종 · 가진 것 표시) */
+const A3={err:0,n:0,add:[]};
+function a3Err(e){if(A3.err<6){A3.err++;try{console.error(e)}catch(x){}}}
+/* [id, 이름, 기준, 바꿀 값, 모양{look,len,col,sup,sc,bip,drum}, 얻는 곳, 설명] */
+const ARMS3_DEF=[
+  /* ── 권총 10 ── */
+  ['p9c','9mm 소형 권총','p9',{mag:12,sp:2.5,spA:.95,reload:1.4},{look:'p9',len:.85},'shop','작아서 숨기기 쉽다. 12발'],
+  ['p9l','9mm 장총열 권총','p9',{mag:17,sp:2.0,spA:.7,dmg:.8},{look:'p9',len:1.2},'pol','긴 총열 — 권총 가운데 정확하다'],
+  ['p45c','.45 소형 권총','m1911',{mag:6,sp:2.5,spA:.95,reload:1.5},{look:'m1911',len:.85},'shop','6발. 작지만 한 발이 무겁다'],
+  ['rev38l','.38 장총열 리볼버','rev',{sp:1.8,spA:.6,dmg:1.1},{look:'rev',len:1.25},'shop','긴 총열 6연발. 느리지만 정확'],
+  ['rev38s','.38 스너브 리볼버','rev',{mag:5,sp:2.5,spA:.9,dmg:.9},{look:'rev',len:.8},'shop','5발 단축 리볼버. 주머니에 들어간다'],
+  ['m9','M9 권총','p9',{mag:15,dmg:.78},{look:'k5',col:'#3a3a36'},'drop','미군 9mm 권총. 15발'],
+  ['pst9o','구형 반자동 권총(노획)','k5',{mag:8,dmg:.8,sp:2.6,spA:1},{look:'k5',col:'#2a2622'},'cap','적군 구형 권총. 8발'],
+  ['p9b','9mm 3점사 권총','mpst',{rate:.09,mag:20,sp:2.8,spA:1.1},{look:'mpst',col:'#2e3238'},'drop','방아쇠 한 번에 세 발'],
+  ['m1911m','.45 경기용 권총','m1911',{sp:1.9,spA:.65,mag:8},{look:'m1911',len:1.1,col:'#6a6e72'},'shop','손질된 경기용. 반동이 덜하다'],
+  ['p9q','9mm 무소음 소형 권총','p9s',{mag:10,dmg:.66},{look:'p9s',len:.85},'cap','짧은 소음기 권총 — 쏴도 주변이 흩어지지 않는다'],
+  /* ── 기관단총 10 ── */
+  ['smg9','9mm 표준 기관단총','mp9',{mag:30,rate:.075,sp:1.9,spA:.5,dmg:.7},{look:'mp9',len:1.1},'pol','경찰·특수부대 표준. 정확하고 다루기 쉽다'],
+  ['smg9k','9mm 단축 기관단총','mp9',{mag:30,rate:.068,sp:2.6,spA:.8},{look:'mp9',len:.8},'pol','손잡이만 한 크기. 가까울 때'],
+  ['smg9sd','9mm 소음 기관단총','k7',{dmg:.66,rate:.078},{look:'k7',col:'#30332e'},'drop','소음기 일체형 — 사람들이 덜 놀란다'],
+  ['pdw','개인방어화기(PDW)','mp9',{mag:40,rate:.06,dmg:.62,sp:2.1,spA:.6},{look:'smg45',len:.85,col:'#4a4e44'},'drop','40발 · 분당 1,000발. 차량 승무원용'],
+  ['smg9b','9mm 불펍 기관단총','mp9',{mag:32,sp:1.9,spA:.55},{look:'smg45',len:.75,col:'#2f3a30'},'drop','짧은 몸에 긴 총열'],
+  ['smg45l','.45 경량 기관단총','smg45',{mag:25,rate:.07,sp:2.1,spA:.65},{look:'smg45',len:.9,col:'#5a5a50'},'shop','가벼워진 .45 기관단총'],
+  ['smgdr','드럼 탄창 기관단총(노획)','uzi',{mag:71,rate:.06,dmg:.62,sp:2.8,spA:.9,reload:3.2},{look:'smg45',drum:1,col:'#3a3026'},'cap','71발 드럼. 오래 쏜다'],
+  ['smgf','9mm 접이식 기관단총','uzi',{mag:32,rate:.07,sp:2.4,spA:.75},{look:'uzi',len:1.1},'cap','접이식 개머리판'],
+  ['cb9','9mm 경찰 카빈','mp9',{mag:30,rate:.2,auto:0,dmg:.82,sp:1.4,spA:.35},{look:'mp9',len:1.35,col:'#22262a'},'pol','반자동 9mm 카빈. 권총탄으로 멀리'],
+  ['smgt','9mm 전술 기관단총','mp9',{mag:30,rate:.072,sp:1.8,spA:.45},{look:'mp9',sc:'dot',col:'#3e4038'},'drop','레일 · 도트사이트 기본'],
+  /* ── 소총·카빈 14 ── */
+  ['k2s','K2 단축 카빈','k1a',{dmg:.92,sp:2.0,spA:.5},{look:'k1a',len:1.1},'chk','K2 계열 단축형'],
+  ['m4s','M4 단축 카빈','m4',{dmg:.92,rate:.09,sp:2.0,spA:.5},{look:'m4',len:.85},'drop','짧은 총열 M4. 건물 안에서'],
+  ['m16a4','M16A4 소총','m16',{auto:0,sp:1.4,spA:.3},{look:'m16',sc:'x4',col:'#2a2c2a'},'drop','레일형 M16 · 4배율'],
+  ['akm','AKM 소총(노획)','ak47',{sp:2.2,spA:.55,dmg:1.25},{look:'ak74',col:'#5a3a20'},'cap','개량 AK. 7.62mm'],
+  ['aks74u','AK-74 단축형(노획)','ak74',{sp:2.5,spA:.75,dmg:.95,rate:.09},{look:'ak74',len:.72},'cap','아주 짧은 AK. 승무원용'],
+  ['t58','58식 보총(노획)','ak47',{sp:2.4,spA:.6},{look:'t88',col:'#3a3024'},'cap','적군 구형 제식 소총'],
+  ['bp556','5.56mm 불펍 소총','k2c1',{sp:1.6,spA:.38},{look:'k2c1',len:.82,col:'#3c4232'},'drop','짧고 긴 총열 — 균형이 좋다'],
+  ['br762l','7.62mm 경량 전투소총','br762',{mag:20,sp:1.9,spA:.5,rate:.1},{look:'br762',len:.9,col:'#2c2c28'},'drop','가벼운 7.62mm 연사 소총'],
+  ['br762r','7.62mm 롤러 전투소총','br762',{mag:20,rate:.1,dmg:1.35},{look:'br762',col:'#1e1e1c'},'drop','무겁고 세다. 반동이 크다'],
+  ['br762n','7.62mm 장총열 전투소총','br762',{sp:1.4,spA:.35,dmg:1.4},{look:'br762',len:1.15,col:'#3a2e22'},'drop','긴 총열 — 멀리까지 세다'],
+  ['m14','M14 소총','br762',{auto:0,rate:.16,sp:1.3,spA:.3,dmg:1.45},{look:'br762',len:1.12,col:'#5a3c22'},'drop','나무 총몸 반자동. 정확'],
+  ['sks','SKS 반자동 카빈(노획)','ak47',{auto:0,mag:10,rate:.18,sp:1.6,spA:.4},{look:'lev38',col:'#4a3020'},'cap','10발 고정 탄창 반자동'],
+  ['ar556q','5.56mm 소음 소총','k2c1',{dmg:.92,snd:'supp',quiet:1},{look:'k2c1',sup:1,col:'#2a2e2a'},'drop','소음기 — 총소리가 작다'],
+  ['cb556','경찰 5.56mm 카빈','m4',{auto:0,rate:.14,sp:1.5,spA:.35},{look:'m4',col:'#1c1e22'},'pol','반자동 경찰 카빈'],
+  /* ── 지정사수·저격 10 ── */
+  ['sr762a','7.62mm 반자동 저격소총','dmr762',{zoom:6,dmg:2.4,rate:.45},{look:'dmr762',sc:'x6',col:'#2f2f2a'},'drop','반자동 6배율. 빠른 두 번째 탄'],
+  ['smr556','5.56mm 특수목적소총','k2dmr',{zoom:4,dmg:1.35,rate:.16},{look:'k2dmr',col:'#4a4436'},'drop','5.56mm 정밀 · 4배율'],
+  ['dmr556','5.56mm 지정사수소총','k2dmr',{zoom:4,dmg:1.3,mag:30},{look:'k2c1',sc:'x4',bip:1},'chk','30발 · 4배율 · 양각대'],
+  ['sr88','88식 저격보총(노획)','svd',{zoom:4,mag:10,am:'545',dmg:2.0},{look:'svd',col:'#3a3024'},'cap','적군 5.45mm 저격보총'],
+  ['amr50b','.50 볼트액션 대물총','amr',{zoom:10,dmg:7,rate:2.0,mag:5},{look:'amr',len:1.1,col:'#3a3e34'},'drop','10배율. 장갑도 뚫는다. 아주 무겁다'],
+  ['m40','M40 저격소총','m24',{zoom:6,dmg:3.1},{look:'m24',col:'#3a3a2e'},'drop','볼트액션 6배율'],
+  ['huntb','수렵용 대형 소총','huntr',{dmg:2.8,zoom:4,rate:1.3},{look:'huntr',len:1.1},'shop','큰 짐승용 볼트액션. 총포사'],
+  ['sr556b','5.56mm 볼트 저격총','m24',{am:'556',dmg:2.3,zoom:6,mag:10},{look:'m24',col:'#4a4a3e'},'drop','가벼운 볼트액션 · 5.56mm'],
+  ['srbp','불펍 저격소총(노획)','svd',{zoom:6,dmg:2.5},{look:'svd',len:.85,col:'#2a2a26'},'cap','짧은 몸 반자동 6배율'],
+  ['srlong','장거리 저격소총','m24',{zoom:8,dmg:3.6,rate:1.6,mag:5},{look:'m24',len:1.15,sc:'x8',bip:1,col:'#30342c'},'drop','8배율 · 아주 먼 거리'],
+  /* ── 산탄총 8 ── */
+  ['sgpl','경찰 펌프 산탄총','sgp',{mag:6},{look:'sgp',col:'#1c1c1c'},'pol','6발 펌프액션'],
+  ['sgbp','불펍 산탄총','sga',{mag:14,rate:.5,reload:4.2},{look:'sga',len:.8,col:'#2a2a26'},'drop','탄창 두 개 — 14발'],
+  ['sgdr','드럼 자동 산탄총','sga',{mag:20,rate:.3,reload:4.4,sp:5.2,spA:3.6},{look:'sga',drum:1},'drop','20발 드럼. 순식간에 비운다'],
+  ['sgsw','소드오프 쌍열','dbs',{sp:6,spA:4.4,dmg:.46},{look:'sgs',len:.8},'shop','두 발 · 아주 가깝게'],
+  ['sghs','반자동 사냥 산탄총','sga',{mag:5,sp:4.2,spA:3},{look:'dbs',col:'#5a3c22'},'shop','사냥용 반자동. 총포사'],
+  ['sglv','레버액션 산탄총','sgp',{mag:5,rate:.7},{look:'lev38',col:'#3a2a1a'},'shop','레버로 장전하는 산탄총'],
+  ['sgmil','군용 전투 산탄총','sga',{mag:8,sp:4.4,spA:3},{look:'sgp',len:1.05,col:'#3a4032'},'chk','군용 반자동 8발'],
+  ['sgslug','슬러그 산탄총','sgp',{pel:1,dmg:2.2,sp:1.6,spA:.6},{look:'sgp',col:'#4a3a2a'},'shop','한 덩어리 탄 — 산탄총으로 멀리'],
+  /* ── 기관총 6 ── */
+  ['m60','M60 기관총','pkm',{mag:100,dmg:1.3},{look:'pkm',col:'#2c2e2a'},'drop','7.62mm 100발 벨트'],
+  ['lmg556','5.56mm 경기관총(벨트)','k3',{mag:200,rate:.07},{look:'k3',col:'#3a3e32'},'drop','5.56mm 200발 · 연사가 빠르다'],
+  ['rpd','벨트 경기관총(노획)','rpk',{mag:100,am:'762',dmg:1.25},{look:'rpk',drum:1,col:'#4a3020'},'cap','적군 드럼형 7.62mm'],
+  ['lmgs','5.56mm 경량 분대지원화기','k3',{mag:100,sp:2.4,spA:.75},{look:'k3',len:.85},'drop','가벼운 분대지원화기 · 100발'],
+  ['k3p','K3 공수형','k3',{mag:200,sp:2.6,spA:.85},{look:'k3',len:.82},'chk','짧은 총열·접이식 개머리판'],
+  ['hmg50','.50 중기관총','pkm',{am:'50',mag:50,dmg:4,rate:.13,sp:3.2,spA:1.4,reload:6},{look:'pkm',len:1.2,col:'#2a2c28'},'drop','차량·벽도 뚫는다. 아주 무겁다'],
+  /* ── 발사기 4 ── */
+  ['law66','66mm 일회용 대전차 로켓','pzf',{dmg:9,am:'pzf'},{look:'pzf',len:.75,col:'#4a5236'},'drop','가볍다 · 한 발 쏘고 버린다'],
+  ['gl6','6연발 유탄발사기','gl40',{mag:6,rate:.8,reload:5.5},{look:'gl40',drum:1},'drop','40mm 여섯 발 회전 탄창'],
+  ['at84','84mm 무반동 대전차화기','pzf',{dmg:13},{look:'pzf',len:1.1,col:'#3c4430'},'chk','장갑차·벙커. 뒤 후폭풍'],
+  ['gl1','단발 유탄발사기(구형)','gl40',{reload:2.4,sp:2.2},{look:'gl40',col:'#5a3c22'},'shop','나무 개머리판 단발']
+];
+/* 기준 총을 복사해 값만 바꾼다 */
+(function(){try{for(const [id,n,ref,ov,lk,src,d] of ARMS3_DEF){if(ARMS[id])continue;const R=ARMS[ref];if(!R)continue;const W=Object.assign({},R,ov,{n,src,d,look:lk.look||ref,lk,a3:1});ARMS[id]=W;A3.add.push(id)}A3.n=A3.add.length}catch(e){a3Err(e)}})();
+function a3Guns(){return Object.keys(ARMS).filter(k=>{const W=ARMS[k];return W&&W.cat&&W.cat!=='mel'&&!W.flare&&!W.nonlethal&&k!=='xbow'&&(W.mag||W.rocket||W.nade)})}
+/* ---------- 겉모양: 기존 모양 + 길이 · 색 · 소음기 · 조준경 · 양각대 · 드럼 ---------- */
+function a3Tint(g,col){try{const c=new T.Color(col);g.traverse(o=>{if(!o.isMesh||!o.material||o.name==='scope')return;const m=o.material.clone();if(m.color){const l=(m.color.r+m.color.g+m.color.b)/3;if(l<.5&&!(m.map))m.color.lerp(c,.55)}o.material=m})}catch(e){a3Err(e)}}
+(function(){const b=window.makeGun;if(typeof b!=='function')return;window.makeGun=function(type,att){const W=type&&ARMS[type];if(!W||!W.a3)return b.apply(this,arguments);try{const L=W.lk||{};const g0=b.call(this,W.look,att);const g=new T.Group();g.userData.type=type;g.add(g0);
+  const len=L.len||1;if(len!==1)g0.scale.z=len;const mz=g0.getObjectByName('muzzle');const mzp=mz?mz.position.clone().multiply(g0.scale):new T.Vector3(0,.045,.5);
+  const blk=GM.blk(),dk=GM.dk();const cyl=(r,l,x,y,z,m)=>{const e=new T.Mesh(GG.cyl(r,r,l,10),m||blk);e.rotation.x=Math.PI/2;e.position.set(x,y,z);g.add(e);return e};
+  if(L.sup){cyl(.02,.18,mzp.x,mzp.y,mzp.z+.09,dk);mzp.z+=.18}
+  if(L.sc){const big=L.sc==='x8'||L.sc==='x6';const r=L.sc==='dot'?.016:big?.024:.02,l=L.sc==='dot'?.07:big?.3:.22;const s=cyl(r,l,0,.105,.02);s.name='scope';cyl(r*1.25,.03,0,.105,.02+l/2-.01);cyl(r*1.2,.03,0,.105,.02-l/2+.01);const mt=new T.Mesh(GG.box(.02,.03,.02),blk);mt.position.set(0,.075,.02);g.add(mt)}
+  if(L.bip){for(const x of [-.03,.03]){const e=new T.Mesh(GG.cyl(.005,.005,.26,6),dk);e.position.set(x,-.08,mzp.z*.7);e.rotation.x=.15;e.rotation.z=x*9;g.add(e)}}
+  if(L.drum){const e=new T.Mesh(GG.cyl(.06,.06,.05,16),dk);e.rotation.z=Math.PI/2;e.position.set(0,-.07,mzp.z*.25);e.name='mag';g.add(e)}
+  if(L.col)a3Tint(g0,L.col);if(mz){const m2=new T.Object3D();m2.name='muzzle';m2.position.copy(mzp);g.add(m2);mz.name='muzzle0'}return g}catch(e){a3Err(e);return b.call(this,W.look,att)}}})();
+/* ---------- 얻는 곳 ---------- */
+(function(){try{const ids=A3.add;const by=s=>ids.filter(id=>ARMS[id].src===s);
+  if(typeof LOOT_CRATE_W!=='undefined')for(const k of [...by('chk'),...by('drop')])if(!LOOT_CRATE_W.includes(k))LOOT_CRATE_W.push(k);
+  if(typeof GS_LIST!=='undefined'){for(const k of [...by('shop'),...by('pol')]){if(GS_LIST.some(x=>x[0]===k))continue;const W=ARMS[k];const base={pst:5,smg:9,ar:12,sr:16,sg:6,lmg:26,lch:24}[W.cat]||8;const t=Math.round(base+(W.dmg||1)*2+(W.zoom||0));GS_LIST.push([k,t,Math.max(2,Math.round(t/2.4))])}GS_LIST.sort((a,b)=>a[1]-b[1])}
+  if(typeof ARMS2_POOL!=='undefined'){const cap=by('cap');const add=(f,kind,L)=>{const P=ARMS2_POOL[f];if(!P)return;P[kind]=P[kind]||[];L.forEach(k=>{if(ARMS[k]&&!P[kind].includes(k))P[kind].push(k)})};
+    add('spy','gun',['sr88','pst9o','p9q']);add('spy','lead',['aks74u','rpd']);add('fuse','gun',['smgdr','smgf','aks74u']);add('fuse','mark',['srbp','sr88']);add('ash','gun',['akm','t58','sks']);add('ash','lead',['akm']);add('feud','gun',['sks','smgf']);add('rob','gun',['rev38s','p45c','sgsw']);add('rob','rush',['sgsw','p9c']);add('desert','gun',['k2s','dmr556']);add('desert','lead',['k3p'])}
+}catch(e){a3Err(e)}})();
+/* 박스 더미에서 드물게 권총·기관단총 하나(142) */
+(function(){const b=window.kbLoot;if(typeof b!=='function')return;window.kbLoot=function(){const r=b.apply(this,arguments);try{if(Math.random()<.04){const P=A3.add.filter(id=>['pst','smg'].includes(ARMS[id].cat)&&['shop','pol','cap'].includes(ARMS[id].src));const id=P[Math.floor(Math.random()*P.length)];if(id&&!gunHas(id)&&gunAdd(id,{force:true,ammo:ARMS[id].mag||10}))r.push(`${ARMS[id].n}(탄 ${ARMS[id].mag}발)`)}}catch(e){a3Err(e)}return r}})();
+/* ---------- 🔫 총기 도감 ---------- */
+const A3_CAT=[['pst','권총'],['smg','기관단총'],['ar','소총·카빈'],['sr','지정사수·저격'],['sg','산탄총'],['lmg','기관총'],['lch','발사기']];
+const A3_SRC={chk:'검문소·군',drop:'군용 상자',cap:'노획',pol:'경찰',shop:'총포사'};
+function a3Open(){try{a3Close();const all=a3Guns();const own=new Set(gunArms().map(a=>a.id));const el=document.createElement('div');el.id='a3Dex';el.className='a3-dex';const am=k=>(typeof AMMO!=='undefined'&&AMMO[k]&&AMMO[k].n)||k;
+  el.innerHTML=`<div class="a3-card" role="dialog" aria-label="총기 도감"><div class="a3-hd"><b>🔫 총기 도감</b><span>${all.length}종 · 가진 것 ${all.filter(k=>own.has(k)).length}</span><button type="button" class="a3-x" data-a3="x" aria-label="닫기">✕</button></div><div class="a3-bd">${A3_CAT.map(([c,cn])=>{const L=all.filter(k=>ARMS[k].cat===c);if(!L.length)return '';return `<div class="a3-sec">${cn} <small>${L.length}</small></div>`+L.map(k=>{const W=ARMS[k];return `<div class="a3-row${own.has(k)?' own':''}"><b>${W.n}</b><span>${am(W.am)}${W.mag?' · '+W.mag+'발':''}${W.zoom?' · '+W.zoom+'배':''}${W.auto?' · 연사':''}${W.quiet?' · 소음':''}</span><small>${W.d||''} · ${A3_SRC[W.src]||''}</small></div>`}).join('')}).join('')}</div></div>`;
+  document.body.appendChild(el);A3.open=1;return all.length}catch(e){a3Err(e);return 0}}
+function a3Close(){const el=document.getElementById('a3Dex');if(el)el.remove();A3.open=0}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a3]');if(b){e.preventDefault();e.stopPropagation();if(b.dataset.a3==='x')a3Close();else if(b.dataset.a3==='open')a3Open();return}if(A3.open&&e.target.id==='a3Dex')a3Close()},true);
+/* 배낭 보기에 '🔫 도감' 버튼 */(function(){const b=window.bagOpen;if(typeof b!=='function')return;window.bagOpen=function(){const r=b.apply(this,arguments);try{const hd=document.querySelector('#bagOv .ov-head');if(hd&&!hd.querySelector('[data-a3="open"]')){const x=document.createElement('button');x.type='button';x.className='btn a3-open';x.dataset.a3='open';x.textContent='🔫 도감';const c=hd.querySelector('[data-bag="close"]');hd.insertBefore(x,c||null)}}catch(e){a3Err(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🔫 총기 100종(v16.7)','총기가 38종에서 <b>100종</b>으로 늘었다 — 권총 16 · 기관단총 14 · 소총·카빈 27(지정사수 소총 포함) · 저격 14 · 산탄총 12 · 기관총 10 · 발사기 7. 이름은 제식명·일반명이고 수치는 게임용이다. 군용 상자·총포사·경찰·노획·박스 더미에서 얻는다. 🎒 배낭의 <b>🔫 도감</b>에서 100종과 가진 것을 본다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
