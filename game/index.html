@@ -2025,6 +2025,36 @@ body.kc-on #toast,body.kc-on #kcChip{visibility:hidden!important}
 .mot-tiers div.got{opacity:.85}
 .mot-tasks div{padding:6px 8px;font:700 12.5px var(--sans)}
 .mot-tasks div.done{opacity:.6;text-decoration:line-through}
+/* v18.3 정전 잠입 */
+.snk-btn{position:absolute;z-index:31;right:84px;top:46%;width:58px;height:58px;border-radius:50%;border:2px solid rgba(180,190,255,.65);background:rgba(28,32,70,.78);color:#fff;font-size:22px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:auto}
+.snk-btn small{font:800 9.5px var(--sans);margin-top:2px;opacity:.92}
+.snk-btn.on{background:rgba(70,80,170,.9);border-color:#c8d0ff;box-shadow:0 0 0 3px rgba(150,160,255,.25)}
+.snk-hud{position:absolute;z-index:30;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 148px);display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(92vw,460px);padding:6px 12px;border-radius:12px;background:rgba(12,14,30,.8);border:1px solid rgba(160,170,255,.3);color:#e6e9ff;font:700 12px var(--sans);pointer-events:none}
+.snk-hud b{font-weight:800}
+.snk-bar{display:inline-block;position:relative;width:110px;height:8px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden}
+.snk-bar>i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#7fd1ff,#ffd24a 55%,#ff5a4a);border-radius:5px;transition:width .15s}
+.snk-hud.hot{border-color:rgba(255,120,90,.7);box-shadow:0 0 0 2px rgba(255,90,60,.2)}
+.snk-hud .snk-pc{min-width:34px;text-align:right}
+.snk-hud .snk-st{opacity:.85;font-weight:600}
+/* v18.4 대피소 내통자 */
+.mole-chip{position:absolute;z-index:31;right:12px;top:calc(env(safe-area-inset-top,0px) + 104px);display:flex;gap:6px;align-items:center;border:1px solid rgba(200,170,255,.45);background:rgba(24,18,40,.82);color:#ece6ff;border-radius:999px;padding:6px 12px;font:700 12px var(--sans);pointer-events:auto}
+.mole-chip b{font-weight:800}.mole-chip em{font-style:normal;color:#ffd24a;font-weight:800}
+.mole-chip.done{opacity:.75}
+.mole-panel .mole-st{font:700 12px var(--sans);opacity:.85;margin:2px 0 8px}
+.mole-cl{padding:6px 8px;margin:4px 0;border-radius:8px;background:rgba(255,255,255,.05);font:600 12.5px/1.4 var(--sans)}
+.mole-cl b{font-weight:800;margin-right:4px}.mole-cl small{display:block;opacity:.7;font-size:11px}
+.mole-list{display:grid;gap:6px;margin:10px 0 6px}
+.mole-sus{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.mole-sus b{display:block;font:800 13px var(--sans)}.mole-sus small{display:block;font:600 11px var(--sans);opacity:.75}
+.mole-sus.clr{opacity:.5}.mole-sus.m{border-color:rgba(255,120,90,.7);background:rgba(255,90,60,.08)}.mole-sus.hot{border-color:rgba(255,210,74,.7)}
+.mole-dots{display:flex;gap:4px;font-size:13px}.mole-dots i{font-style:normal;opacity:.55}.mole-dots i.on{color:#ffd24a;opacity:1}.mole-dots i.q{opacity:.35}
+.mole-go{border:1px solid rgba(200,170,255,.5);background:rgba(80,60,140,.55);color:#fff;border-radius:8px;padding:6px 9px;font:800 11.5px var(--sans)}
+.mole-go.arm{background:rgba(190,60,50,.85);border-color:#ff9a8a}
+.mole-tip{font:600 11px/1.45 var(--sans);opacity:.7;margin-top:6px}
+.mole-log{margin-top:8px;font:600 11px/1.4 var(--sans);opacity:.8;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+/* v18.3 탕정역 연계 — 장면이 바뀔 때 짧게 어둡게 */
+.alk-fade{position:fixed;inset:0;z-index:410;background:#05070a;opacity:0;pointer-events:none;transition:opacity .22s ease}
+.alk-fade.on{opacity:.92;transition:none}.alk-fade.out{opacity:0}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14121,7 +14151,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.2';
+const APP_VER='18.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -27569,6 +27599,140 @@ function motBagBonus(){try{if(!motOn())return 0;const L=typeof tmData==='functio
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='motiv')return;try{store.set('sg.motiv',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined'){HELP84.push(['🤝 신뢰·🔥 사기 등급(v18.2)','상단 칩(🤝 · 🔥 · 📋)을 누르면 등급표. 신뢰: 불신(<0) 총포사 거절·팀 영입 어려움 / 아는 사이(5) 이웃 귀띔(돌발 상황 방향·거리) / 믿음직한 이웃(10) 총포사·조준경 할인 / 동네 버팀목(20) 매 턴 물·식량 배달 / 동네 대표(35) 교전에 주민 자경대 2명. 사기: 절망(<20) 팀 명중 −20%·외출 −1h / 지침(<40) −10%·−30분 / 사기 충천(70+) 팀 명중 +10%·걸음 +6%·가족 회복 +1. 📋 오늘의 이웃 일 2가지(하나마다 신뢰 +2·사기 +3). 신뢰 10 이상은 두 턴 동안 돕지 않으면 −1, 사기는 물·식량이 넉넉하면 60까지 오르고 75를 넘으면 가라앉는다.']);
   HELP84.push(['🔭 정찰 · 💪 체력 대원(v18.2)','🔭 정찰 대원이 40m 안에 있으면 오른쪽에 [🔭 정찰] 단추 — 120m(레벨마다 +15m) 안 적·드론을 붉은 표식 10초, 60초(레벨마다 −5초, 최소 35초)마다. 돌발 상황이 생기면 몇 시 방향 몇 m인지 먼저 알리고, 적 드론이 150m 안에 오면 경보. 💪 체력 대원: 대신 맞을 때 🛡 말풍선 + 외출 끝 집계, 18 넘는 큰 타격을 외출마다 한 번 몸으로 막는다(9m 안), 팀에 있으면 배낭 +10칸.'])}
+
+/* v18.3 야간 정전 잠입 (2026-11-22 19:52 사전검토 후보 ⑦) — 밤·새벽(정전 뒤엔 해 질 녘도)에만 생기는 돌발 상황 '🌑 정전 잠입'
+   가상의 '선로 약탈단'이 빼앗아 간 구호품이 창고 앞마당에 쌓여 있다. 보초 4명이 손전등을 들고 정해진 길을 돈다(빛줄기가 보인다).
+   - 들킴 게이지: 보초 손전등 빛줄기(23°) 안에서 서로 보이면 차오른다(가까울수록 빨리) · 뛰면 7m 안 보초가 소리를 듣는다 · 차·오토바이는 30m 안이면 들린다 · 안 보이면 천천히 빠진다
+   - 🤫 숙이기 단추(PC: C): 느리게(최대 1.3m/s) 걷고 눈높이가 낮아진다 — 보초가 알아보는 거리 15m → 9m · 뛰면 19m
+   - 게이지 45%: 그 보초가 "거기 누구야?" 하고 마지막 본 자리로 다가와 둘러본다 · 100% 또는 총성: 발각 → 116 제자리 교전(그 자리 그대로)
+   - 상자 옆 '구호품 챙기기'(4초, 움직이면 끊김) → 창고에서 50m 밖으로 빠져나가면 성공: 물 4L·식량 3·의약품 2·현금 봉투 1 · 신뢰 +3
+     들킨 뒤 이기면 상자를 챙겨 끝(물 4L·식량 3·의약품 2 · 신뢰 +1) · 따돌리면 빈손
+   - 가까이(90m) 가면 제한 시간이 멈춘다 · 진짜 조명 대신 빛줄기 메시(셰이더 재컴파일 없음)
+   - 모든 인물 가상 · 행동으로 정의(실존 인물·국적·단체 무관) · 가족·아이는 겨누지 않는다(116) · 교육용 모드 제외 · 설정 '정전 잠입' · 자동 점검(webdriver)은 __snkTest일 때만 */
+const SNK={E:null,sus:0,crouch:false,take:0,takeP:null,outN:0,err:0,n:{start:0,win:0,clean:0,alarm:0,take:0,miss:0,inv:0},eye0:null};
+const SNK_FOV=.40,SNK_D={crouch:9,walk:15,run:19},SNK_HEAR=7;
+function snkErr(e){if(SNK.err<6){SNK.err++;try{console.error(e)}catch(x){}}}
+function snkOn(){try{if(navigator.webdriver&&!window.__snkTest)return false;if(typeof eduOn==='function'&&eduOn())return false;return store.get('sg.sneak',true)!==false&&store.get('sg.owc',true)!==false}catch(e){return false}}
+function snkNight(){try{const t=typeof outTod==='function'?outTod():OUT.tod;return t==='night'||t==='dawn'||(t==='dusk'&&!!(G.flags&&G.flags.blackout))}catch(e){return false}}
+function snkLive(E){return ((E&&E.H&&E.H.ag)||[]).filter(a=>!a.gone&&!a.dead&&!(a.h&&a.h.dead))}
+/* 보초 손전등: 보이는 빛줄기 + 땅 위 빛 웅덩이(진짜 조명 없음) */
+function snkLamp(h){const g=new T.Group();g.position.set(0,1.42,.2);const R=15*Math.tan(SNK_FOV);const cg=new T.ConeGeometry(R,15,20,1,true);cg.translate(0,-7.5,0);cg.rotateX(-Math.PI/2+.09);
+  const cm=new T.MeshBasicMaterial({color:'#fff1c0',transparent:true,opacity:.085,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending,fog:false});const cone=new T.Mesh(cg,cm);cone.renderOrder=3;cone.frustumCulled=false;g.add(cone);
+  const pg=new T.CircleGeometry(1,28);pg.rotateX(-Math.PI/2);const pm=new T.MeshBasicMaterial({color:'#fff0b8',transparent:true,opacity:.11,depthWrite:false,blending:T.AdditiveBlending,fog:false});const pool=new T.Mesh(pg,pm);pool.scale.set(R*.42,1,R*.75);pool.position.set(0,.04,9.5);pool.renderOrder=3;
+  const bulb=new T.Mesh(new T.SphereGeometry(.06,8,6),new T.MeshBasicMaterial({color:'#fffbe6'}));bulb.position.set(.1,0,.12);g.add(bulb);
+  h.root.add(g);h.root.add(pool);return {g,cone,pool,bulb}}
+function snkLampFree(L){try{L.g.removeFromParent();L.pool.removeFromParent();for(const m of [L.cone,L.pool,L.bulb]){m.geometry.dispose();m.material.dispose()}}catch(e){}}
+function snkFwd(a){const y=a.h.root.rotation.y;return {x:Math.sin(y),z:Math.cos(y)}}
+function snkSees(a,P,D){const q=a.h.root.position;const dx=P.x-q.x,dz=P.z-q.z;const d=Math.hypot(dx,dz);if(d>D)return 0;if(d<1.2)return 1;const f=snkFwd(a);const c=(dx*f.x+dz*f.z)/d;if(c<Math.cos(SNK_FOV))return 0;try{if(!owcLos(q.x,1.45,q.z,P.x,SNK.crouch?.9:1.4,P.z))return 0}catch(e){}return 1-d/D}
+function snkRun(){try{return !SNK.crouch&&Math.hypot(FP3.mv.x||0,FP3.mv.y||0)>.7}catch(e){return false}}
+function snkCrouch(on){on=!!on;if(on===SNK.crouch)return;SNK.crouch=on;try{if(on){SNK.eye0=FP3.eye;FP3.eye=1.0}else{FP3.eye=SNK.eye0&&SNK.eye0>1.2?SNK.eye0:1.55}if(OUT.me)OUT.me.setPose(on?'crouch':'idle')}catch(e){snkErr(e)}try{snkUI()}catch(e){}}
+function snkNear(E){return E&&E.site&&Math.hypot(E.site.x-FP3.pos.x,E.site.z-FP3.pos.z)<90}
+function snkUI(){const el=SV3.el;const E=SNK.E;const show=!!(el&&E&&EVD.cur===E&&E.ph==='go'&&!(typeof IS!=='undefined'&&IS.on)&&snkNear(E));let b=document.getElementById('snkBtn'),h=document.getElementById('snkHud');
+  if(!show){if(b)b.remove();if(h)h.remove();return}
+  if(!b||b.parentNode!==el){if(b)b.remove();b=document.createElement('button');b.id='snkBtn';b.className='snk-btn';b.type='button';b.dataset.snk='crouch';el.appendChild(b)}const bh=SNK.crouch?'🤫<small>숙임</small>':'🧍<small>숙이기</small>';if(b._h!==bh){b._h=bh;b.innerHTML=bh;b.classList.toggle('on',SNK.crouch)}
+  if(!h||h.parentNode!==el){if(h)h.remove();h=document.createElement('div');h.id='snkHud';h.className='snk-hud';el.appendChild(h)}const pc=Math.round(SNK.sus*100);const st=E.got?'📦 챙김 — 50m 밖으로':SNK.take>0?'📦 챙기는 중 '+Math.max(0,4-SNK.take).toFixed(1)+'초':'📦 상자는 창고 앞마당 가운데';const hh=`<b>🌑 들킴</b><i class="snk-bar"><i style="width:${pc}%"></i></i><span class="snk-pc">${pc}%</span><span class="snk-st">${st}</span>`;if(h._h!==hh){h._h=hh;h.innerHTML=hh}h.classList.toggle('hot',SNK.sus>.45)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-snk]');if(!b)return;e.preventDefault();e.stopPropagation();try{if(b.dataset.snk==='crouch')snkCrouch(!SNK.crouch)}catch(x){snkErr(x)}},true);
+document.addEventListener('keydown',e=>{if(e.code!=='KeyC'||e.repeat||!SNK.E||!document.getElementById('snkBtn'))return;e.preventDefault();try{snkCrouch(!SNK.crouch)}catch(x){snkErr(x)}},true);
+/* 숙이면: 느리게(조이스틱을 끝까지 밀어도 1.3m/s) · 걷는 자세 */
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){if(!SNK.crouch||OUT.drv||OUT.ride)return b.apply(this,arguments);const mv={x:FP3.mv.x,y:FP3.mv.y};const m=Math.hypot(mv.x,mv.y);if(m>.01){const k=.54*Math.min(1,m)/m;FP3.mv.x=mv.x*k;FP3.mv.y=mv.y*k}let r;try{r=b.apply(this,arguments)}finally{FP3.mv.x=mv.x;FP3.mv.y=mv.y}try{const me=OUT.me;if(me&&!OUT.busy){const want=FP3.moving>.05?'walk':'crouch';if(me.pose!==want)me.setPose(want)}}catch(e){}return r}})();
+/* 순찰 · 수상하면 다가와 둘러본다 */
+function snkGo(a,tx,tz,sp,dt){const P=a.h.root.position;const dx=tx-P.x,dz=tz-P.z,L=Math.hypot(dx,dz);if(L<.45)return L;const s=Math.min(L,sp*dt);const nx=P.x+dx/L*s,nz=P.z+dz/L*s;let ok=true;try{ok=owcFree(nx,nz,.35)}catch(e){}if(ok){P.x=nx;P.z=nz}else a.snkStk=(a.snkStk||0)+dt;
+  const want=Math.atan2(dx,dz);let dy=want-a.h.root.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));a.h.root.rotation.y+=dy*Math.min(1,dt*4);if(a.h.pose!=='walk')try{a.h.setPose('walk')}catch(e){}return L}
+function snkPatrol(a,dt){
+  if(a.snkInv){const t=a.snkInv;if(!t.at){const L=snkGo(a,t.x,t.z,1.6,dt);if(L<.6||(a.snkStk||0)>1.2){t.at=1;a.snkStk=0}return}t.t=(t.t||0)+dt;if(a.h.pose!=='look')try{a.h.setPose('look')}catch(e){}a.h.root.rotation.y+=Math.sin(t.t*1.7)*dt*1.5;if(t.t>4.5)a.snkInv=null;return}
+  const W=a.snkW;if(!W||!W.length)return;if(a.snkWait>0){a.snkWait-=dt;a.h.root.rotation.y+=Math.sin(a.snkWait*2.2)*dt*1.1;if(a.h.pose!=='look')try{a.h.setPose('look')}catch(e){}return}
+  const t=W[a.snkI%W.length];const L=snkGo(a,t.x,t.z,1.05,dt);if(L<.45||(a.snkStk||0)>1.5){a.snkI++;a.snkStk=0;a.snkWait=1.3+Math.random()*1.5}}
+function snkClear(E){const H=E&&E.H;if(H){for(const L of H.lamps||[])snkLampFree(L);H.lamps=[]}if(SNK.crouch)snkCrouch(false);SNK.take=0;if(SNK.E===E)SNK.E=null;try{snkUI()}catch(e){}}
+function snkReward(clean){FX=[];res('water',4);res('food',3);res('meds',2);if(clean){try{G.inv.cash=(G.inv.cash|0)+1}catch(e){}trust(3)}else trust(1);try{OUT.fx.push(...FX);outStat()}catch(e){}}
+function snkOpt(E){return {k:'sneak',ico:'🌑',nm:'선로 약탈단 창고 보초',arms:{gun:['k2','dbs','smg45']},look:(t,seed)=>owcLook('spyg',seed),dress:(h,t,seed)=>{try{crMask(h,seed)}catch(e){}},stat:{gun:{n:'약탈단 보초'}},say:'보초들이다! 엄폐해요!',
+  onEnd:r=>{try{E.isDone=1;E.won=!!(r&&r.win);if(E.won)return `<b>🌑 보초 제압</b><div>창고 앞마당이 조용해졌다 — 가운데 구호품 상자 옆 '구호품 챙기기'.</div>`}catch(e){snkErr(e)}return ''}}}
+EVK.sneak={n:'정전 잠입 — 빼앗긴 구호품 창고',ico:'🌑',col:'#3a4a7a',er:62,
+  w:()=>{if(!snkOn()||(G.turn|0)<2||SNK.outN>=1||!snkNight())return 0;try{if(!isAvail())return 0}catch(e){return 0}return 1.5},
+  site(){/* 사람 많은 곳(광장·대피소·검문소·놀이터)은 피한다 */return evPickSite(s=>!s.plaza&&!s.crowd&&!s.road,100,360)||evPickSite(s=>!s.plaza&&!/대피소|검문소/.test(s.n||''),100,360)},lim(d){return Math.round(clamp(150+d/2,200,360))},
+  announce(E){SNK.E=E;try{if(E.site&&!/약탈단 창고/.test(E.site.n||''))E.site.n=(E.site.n||'')+' — 약탈단 창고'}catch(e){}SNK.outN++;SNK.n.start++;SNK.sus=0;SNK.take=0;const H=E.H={ag:[],lamps:[],props:[],ppl:[],ring:[]};const S=E.site;
+    /* 구호품 상자(가운데) */try{const g=new T.Group();const box=(x,y,z,w,h,d,c)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color:c,roughness:.85}));m.position.set(x,y,z);m.castShadow=true;g.add(m)};box(0,.35,0,1.1,.7,.8,'#6a5a3a');box(.15,.95,.05,.9,.5,.7,'#7a6844');box(-.9,.3,.4,.8,.6,.6,'#5a6a3a');box(.85,.25,-.45,.6,.5,.5,'#2f5a7a');
+      const tarp=new T.Mesh(new T.PlaneGeometry(1.7,1.2),new T.MeshStandardMaterial({color:'#2f4a6a',roughness:.9,side:T.DoubleSide}));tarp.position.set(.2,1.23,0);tarp.rotation.x=-Math.PI/2+.25;g.add(tarp);g.position.set(S.x,0,S.z);OUT.scene.add(g);H.props.push(g);H.crate={x:S.x,z:S.z};H.crateG=g}catch(e){snkErr(e)}
+    const o=snkOpt(E);const R0=[11,14,17,12.5];for(let i=0;i<4;i++){const r=R0[i];const a0=i*1.5708+Math.random()*.5;const dir=i%2?1:-1;const W=[];for(let k=0;k<4;k++){const ang=a0+k*1.5708*dir;let q=null;for(const rr of [r,r*.8,r*1.2,r*.6]){const x=S.x+Math.sin(ang)*rr,z=S.z+Math.cos(ang)*rr;let ok=false;try{ok=owcFree(x,z,.6)}catch(e){}if(ok){q={x,z};break}}if(q)W.push(q)}if(W.length<2)continue;
+      let a=null;try{a=isHoldMk('gun',W[0].x,W[0].z,((G.seed|0)||1)*7+i*13+(G.turn|0)*31,o)}catch(e){snkErr(e)}if(!a)continue;a.snk=1;a.snkW=W;a.snkI=1;a.snkWait=Math.random()*2;a.tagL=a.nm='약탈단 보초';try{H.lamps.push(snkLamp(a.h))}catch(e){snkErr(e)}H.ag.push(a)}
+    E.radio=`<b>📻 "정전이다 — 창고 앞마당에 구호품이 쌓여 있다"</b><div>선로 약탈단이 빼앗아 간 구호품. 보초 ${H.ag.length}명이 손전등을 들고 돈다 — 빛줄기를 피해 🤫 숙이고 다가가 상자를 챙겨 빠져나온다. 들키면 총격전.</div>`},
+  step(E,dt){const H=E.H;if(!H)return;const P=FP3.pos;const isOn=typeof IS!=='undefined'&&IS.on;const dS=Math.hypot(P.x-E.site.x,P.z-E.site.z);
+    if(E.ph==='go'){if(!H.ag.length){evhEnd(E,false,'정전 잠입 — 자리가 없다','창고 앞마당에 보초를 세울 자리가 없었다.','시작 못 함',null);return}
+      if(dS<90){E.t=Math.max(0,E.t-dt);E.wait='🌑 90m 안 — 시간 멈춤'}else E.wait='';
+      if(isOn){snkUI();return}
+      const live=snkLive(E);const D0=SNK.crouch?SNK_D.crouch:snkRun()?SNK_D.run:SNK_D.walk;const loud=!!(OUT.drv||OUT.ride);let see=0,who=null,shot=live.length<H.ag.length;
+      for(const a of live){if(a.flinch>0)shot=true;snkPatrol(a,dt);const s=snkSees(a,P,D0);if(s>see){see=s;who=a}const q=a.h.root.position;const dq=Math.hypot(q.x-P.x,q.z-P.z);if((snkRun()&&dq<SNK_HEAR)||(loud&&dq<30)){if(.4>see){see=.4;who=a}}}
+      if(see>0){SNK.sus=Math.min(1,SNK.sus+dt*(.35+1.1*see));if(who&&SNK.sus>.45&&!who.snkInv){who.snkInv={x:P.x,z:P.z};SNK.n.inv++;try{bubSay(who.h,'거기 누구야?',2.2,'bad')}catch(e){}}}else SNK.sus=Math.max(0,SNK.sus-dt*.18);
+      /* 상자 챙기기 */if(SNK.take>0){if(Math.hypot(P.x-SNK.takeP.x,P.z-SNK.takeP.z)>1.2){SNK.take=0;outNote('<b>📦 끊겼다</b><div>움직이면 상자를 못 챙긴다.</div>',1600)}else{SNK.take+=dt;if(SNK.take>=4){SNK.take=0;E.got=1;SNK.n.take++;try{if(H.crateG)H.crateG.visible=false}catch(e){}outNote('<b>📦 구호품을 챙겼다</b><div>이제 창고에서 50m 밖으로 조용히 빠져나간다.</div>',3000)}}}
+      if(E.got&&dS>50){SNK.n.win++;SNK.n.clean++;snkReward(true);evhEnd(E,true,'정전 잠입 성공','들키지 않고 구호품을 되찾았다 — 물 4L·식량 3·의약품 2·현금 봉투 1. 이웃에게 나눈다(신뢰 +3).','성공',null);return}
+      if(SNK.sus>=1||shot){SNK.n.alarm++;SNK.sus=1;E.ph='act';E.ta=E.t;E.alarm=1;E.wait='';try{evHudOff()}catch(e){}if(SNK.crouch)snkCrouch(false);SNK.take=0;for(const a of live)a.snkInv=null;snkUI();let ok=false;
+        try{ok=live.length>0&&isStart(Object.assign(snkOpt(E),{agents:live,waves:[[]],intro:`<b>🌑 발각!</b><div>"${shot?'총소리다':'침입자다'}!" — 보초들이 총을 든다. 엄폐하고 싸우거나 어둠 속으로 달아난다.</div>`}))}catch(e){snkErr(e)}
+        if(!ok){try{isHoldDrop(live)}catch(e){}evhEnd(E,false,'정전 잠입 — 들켰다','보초들이 호루라기를 불었다. 물러섰다.','발각',null)}return}
+      snkUI();return}
+    if(E.ph==='act'){if(isOn)return;snkUI();
+      if(E.won&&!E.got){if(SNK.take>0){if(Math.hypot(P.x-SNK.takeP.x,P.z-SNK.takeP.z)>1.2){SNK.take=0}else{SNK.take+=dt;if(SNK.take>=4){SNK.take=0;E.got=1;SNK.n.take++;SNK.n.win++;snkReward(false);evhEnd(E,true,'구호품 되찾음 — 시끄럽게','보초를 제압하고 상자를 챙겼다 — 물 4L·식량 3·의약품 2. 총소리에 동네가 놀랐다(신뢰 +1).','교전 뒤 회수',null)}}}
+        else if(dS>80)evhEnd(E,false,'정전 잠입 — 상자를 두고 왔다','보초는 제압했지만 구호품 상자를 챙기지 않고 떠났다.','두고 옴',null);return}
+      E.offT=(E.offT||0)+dt;if(E.offT>3&&EVD.cur===E)evhEnd(E,false,'정전 잠입 — 물러섰다','들킨 뒤 어둠 속으로 빠져나왔다. 구호품은 약탈단 손에 남았다.','물러남',null)}},
+  ready(E){return false},
+  miss(E){SNK.n.miss++;try{if(E&&E.H&&E.H.ag)isHoldDrop(E.H.ag)}catch(e){}snkClear(E);return '정전이 풀리기 전에 가지 못했다 — 구호품은 약탈단 손에 남았다.'},
+  clear(E){try{if(E&&E.H&&E.H.ag&&!(typeof IS!=='undefined'&&IS.on))isHoldDrop(E.H.ag.filter(a=>!a.dead&&!(a.h&&a.h.dead)))}catch(e){}snkClear(E);try{evhDrop(E)}catch(e){}}};
+/* 상자 앞 단추 */
+(function(){const b=window.outCands;if(typeof b!=='function')return;window.outCands=function(){const L=b.apply(this,arguments);try{const E=SNK.E;if(E&&EVD.cur===E&&!E.got&&(E.ph==='go'||(E.ph==='act'&&E.won))&&E.H&&E.H.crate&&!OUT.drv&&!OUT.ride&&!(SNK.take>0)&&Array.isArray(L)&&!(typeof IS!=='undefined'&&IS.on)){const c=E.H.crate;const p=FP3.pos;if(Math.hypot(c.x-p.x,c.z-p.z)<2.6)L.push({id:'snkTake',k:'snkTake',x:c.x,z:c.z,r:2.6,g:'📦',n:'구호품 챙기기',s:'4초 · 움직이면 끊긴다'+(E.ph==='go'?' · 보초 빛줄기 조심':''),h:0})}}catch(e){snkErr(e)}return L}})();
+function snkTakeStart(){const E=SNK.E;if(!E||E.got||SNK.take>0)return false;SNK.take=.001;SNK.takeP={x:FP3.pos.x,z:FP3.pos.z};try{FP3.mv.x=FP3.mv.y=0}catch(e){}if(E.ph==='go'&&!SNK.crouch)snkCrouch(true);outNote('<b>📦 상자를 챙긴다</b><div>4초 — 움직이지 않는다.</div>',2000);return true}
+(function(){const b=window.outDo;if(typeof b!=='function')return;window.outDo=function(c){if(c&&c.k==='snkTake'){try{snkTakeStart()}catch(e){snkErr(e)}return}return b.apply(this,arguments)}})();
+/* 외출이 끝나면 숙이기·카운트 초기화 */
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{if(SNK.crouch)snkCrouch(false);SNK.outN=0;SNK.E=null;SNK.take=0;snkUI()}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.startOutside;if(typeof b!=='function')return;window.startOutside=function(){try{SNK.outN=0;SNK.E=null;SNK.crouch=false;SNK.take=0;SNK.sus=0}catch(e){}return b.apply(this,arguments)}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="sneak"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('sneak','정전 잠입','밤·새벽에 약탈단 창고에서 구호품을 몰래 되찾는 돌발 상황(숙이기 · 손전등 빛줄기 · 들킴 게이지)',[[1,'켬'],[0,'끔']],store.get('sg.sneak',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){snkErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='sneak')return;try{store.set('sg.sneak',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🌑 정전 잠입(v18.3)','밤·새벽(정전 뒤엔 해 질 녘도)에만 생기는 돌발 상황. 가상의 선로 약탈단이 빼앗아 간 구호품이 창고 앞마당에 있고, 보초 4명이 손전등을 들고 돈다(빛줄기가 보인다). 빛줄기 안에서 보초와 서로 보이면 들킴 게이지가 차오른다(가까울수록 빨리) · 뛰면 7m 안 보초가 소리를 듣는다 · 차·오토바이는 30m 안이면 들린다. 🤫 숙이기(PC: C): 느리게 걷고 보초가 알아보는 거리가 15m → 9m. 게이지 45%면 보초가 "거기 누구야?" 하고 다가와 둘러보고, 100%(또는 총성)면 발각 → 그 자리에서 교전. 상자 옆 \'구호품 챙기기\'(4초, 움직이면 끊김) → 50m 밖으로 빠져나가면 성공: 물 4L·식량 3·의약품 2·현금 봉투 1·신뢰 +3. 들킨 뒤 이기면 상자를 챙겨 신뢰 +1, 따돌리면 빈손. 가까이(90m) 가면 제한 시간이 멈춘다. 설정 \'정전 잠입\' · 교육용 모드 제외.']);
+
+/* v18.3 탕정역 연계 — 사용자 요청(2026-11-23 00:40 "탕정역 방향 이동 시 팀원들도 안 따라오고 가방도 열 수 없고 … 자연스럽게 장소를 연계할 수 없나요"
+   · 00:48 "매번 탕정역으로 이동하는 것도 일이라 … 텔레포트 기능을 만들어서 리셋장소에서 탕정역 이동 경계까지 이동되게 해 주세요")
+   ① 팀·가족이 따라 들어온다: 탕정역·아산역 권역(155)에 들어가면 팀원·함께 나온 가족도 같은 장면으로 — 같은 줄지어 걷기(54 tmStep)를 권역 발걸음에서 돌린다
+      권역의 막힘 격자(점유)로 자리를 고르고 · 승강장으로 오르내리면 곁으로 모인다 · 열차를 타는 동안은 숨었다가 내리면 곁에 · 시내로 나오면 함께 나온다
+   ② 권역에서도 🎒 배낭: 권역 위쪽 띠에 배낭 단추(밖과 같은 배낭)
+   ③ 🚉 탕정역 앞으로 빠른 이동: 외출을 시작하는 자리(대피소 입구) 30m 안에서 단추 — 집 구역 동쪽 끝 '탕정역 방면' 입구 바로 앞으로(팀 함께 · 15분)
+      걸어서 탈것을 안 탄 상태에서만 · 교전·돌발 상황·카드 중엔 안 됨 · 도착하면 '탕정역으로 들어간다'(역 카드) 또는 그대로 동쪽 확장 구역으로 걸어간다
+   · 넘어갈 때 짧게 어두워졌다 밝아진다(장면 바뀜을 덜 어색하게) · 설정 '탕정역 빠른 이동' · 자동 점검(webdriver)은 __alkTest일 때만 */
+const ALK={err:0,in:false,n:{tp:0,inTeam:0,outTeam:0,bag:0},fadeT:0};
+function alkErr(e){if(ALK.err<6){ALK.err++;try{console.error(e)}catch(x){}}}
+function alkOn(){try{if(navigator.webdriver&&!window.__alkTest)return false;return true}catch(e){return false}}
+function alkTpOn(){try{return alkOn()&&store.get('sg.anxtp',true)!==false}catch(e){return false}}
+function alkTeam(){try{return typeof TEAM!=='undefined'?TEAM.list.filter(m=>m.d&&m.d.st!=='kia'):[]}catch(e){return []}}
+function alkFam(){try{return typeof FAM!=='undefined'?FAM.list.filter(a=>a.d&&a.d.st!=='kia'&&!a.carried&&!a.carry):[]}catch(e){return []}}
+function alkFamPlace(){alkFam().forEach((a,i)=>{try{tmPlace(a,2+i*.8);a.v=0}catch(e){alkErr(e)}})}
+/* 장면이 바뀔 때 잠깐 어둡게 */
+function alkFade(ms){try{let f=document.getElementById('alkFade');if(!f){f=document.createElement('div');f.id='alkFade';f.className='alk-fade';document.body.appendChild(f)}f.classList.remove('out');void f.offsetWidth;f.classList.add('on');clearTimeout(ALK.fadeT);ALK.fadeT=setTimeout(()=>{f.classList.add('out');f.classList.remove('on')},ms||260)}catch(e){}}
+/* ---------- ① 팀이 권역으로 ---------- */
+function alkTeamIn(){const W=ANX.W;if(!W||!W.sc)return;const L=alkTeam().concat(alkFam());if(!L.length)return;for(const m of L){try{W.sc.add(m.h.root);m.h.root.visible=m.d.st!=='away';m.h.root.position.y=0;m.v=0;m.stuck=0}catch(e){alkErr(e)}}ALK.in=true;ALK.n.inTeam++;try{TEAM.hid=false;tmRegroup();alkFamPlace()}catch(e){alkErr(e)}}
+function alkTeamOut(){if(!ALK.in)return;ALK.in=false;ALK.hid=false;const sc=OUT.scene;for(const m of alkTeam().concat(alkFam())){try{if(sc)sc.add(m.h.root);m.h.root.visible=true;m.v=0}catch(e){alkErr(e)}}ALK.n.outTeam++;try{tmRegroup();alkFamPlace()}catch(e){alkErr(e)}}
+function alkRiding(){try{return !!((typeof TRN!=='undefined'&&TRN.ride)||(typeof TRR!=='undefined'&&TRR.R&&TRR.R.ph&&TRR.R.ph!=='end'))}catch(e){return false}}
+(function(){const b=window.vAnx3;if(typeof b!=='function')return;window.vAnx3=function(){const r=b.apply(this,arguments);try{if(alkOn()&&ANX.on)alkTeamIn()}catch(e){alkErr(e)}try{alkFade(380)}catch(e){}return r};/* 155는 화면 표(SV3.views.anx)에 원래 함수를 넣어 두었다 → 표도 바꾼다 */try{if(SV3.views&&SV3.views.anx)SV3.views.anx=window.vAnx3}catch(e){}})();
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){const r=b.apply(this,arguments);try{if(ALK.in&&ANX.on&&OUT.on){const L=alkTeam();const hide=alkRiding()||!!OUT.enc;
+      if(hide!==!!ALK.hid){ALK.hid=hide;for(const m of L.concat(alkFam()))m.h.root.visible=!hide&&m.d.st!=='away';if(!hide){tmRegroup();alkFamPlace()}}
+      if(!hide){tmStep(dt);for(const m of L){if(!m.h.root.visible)continue;const P=m.h.root.position;if(Math.hypot(P.x-FP3.pos.x,P.z-FP3.pos.z)<70)try{m.h.update(dt)}catch(e){}}}}}catch(e){alkErr(e)}return r}})();
+/* 권역 안에서는 권역의 막힘 격자로 자리를 고른다(54 pedFree는 집 구역 격자를 본다) */
+(function(){const b=window.pedFree;if(typeof b!=='function')return;window.pedFree=function(x,z){try{if(typeof ANX!=='undefined'&&ANX.on&&ANX.W&&FP3.occ){const B=anxZ().box;if(x<B[0]+2||z<B[1]+2||x>B[2]-2||z>B[3]-2)return false;return anxFree(FP3.occ,x,z,.35)}}catch(e){alkErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.anxLevel;if(typeof b!=='function')return;window.anxLevel=function(){const r=b.apply(this,arguments);try{if(ALK.in){tmRegroup();alkFamPlace();alkFade(260)}}catch(e){alkErr(e)}return r}})();
+(function(){const b=window.anxLeave;if(typeof b!=='function')return;window.anxLeave=function(silent){const was=typeof ANX!=='undefined'&&ANX.on;const r=b.apply(this,arguments);try{if(was)alkTeamOut();if(was&&!silent)alkFade(380)}catch(e){alkErr(e)}return r}})();
+/* ---------- ② 권역 띠에 배낭 ---------- */
+(function(){const b=window.anxBar;if(typeof b!=='function')return;window.anxBar=function(){const r=b.apply(this,arguments);try{const bar=document.getElementById('xBar');if(bar&&typeof bagBtnHtml==='function'){let t=bar.querySelector('[data-g3=bagopen]');const txt=`🎒 배낭 ${bagUsed()}/${bagCapN()}`;if(!t){t=document.createElement('button');t.dataset.g3='bagopen';t.className='mis-btn bag-btn';const x=bar.querySelector('[data-g3=anxx]');if(x)bar.insertBefore(t,x);else bar.appendChild(t)}if(t.textContent!==txt)t.textContent=txt}}catch(e){alkErr(e)}return r}})();
+/* ---------- ③ 빠른 이동 ---------- */
+function alkHome(){try{return !(typeof ZN!=='undefined'&&ZN.k&&ZN.k!=='home')}catch(e){return true}}
+function alkStart(){const B=OUT.back;return B?{x:B.x,z:B.z}:null}
+function alkDest(){let e=null;try{e=anxEdge()}catch(x){alkErr(x)}if(!e)return null;/* 입구에서 서쪽으로 6m(길 위) — 바로 앞에 '탕정역 방면' 단추가 보이게 */for(const back of [6,4,8,3,10]){const x=e.x-back,z=e.z;let ok=true;try{ok=owcFree(x,z,.8)}catch(x2){}if(ok)return {x,z,e}}return {x:e.x-2,z:e.z,e}}
+function alkCan(){if(!alkTpOn()||!OUT.on||!alkHome()||OUT.drv||OUT.ride||OUT.enc||OUT.busy||OUT.mapOpen)return false;try{if(typeof IS!=='undefined'&&IS.on)return false;if(typeof OWC!=='undefined'&&OWC.on)return false;if(typeof ANX!=='undefined'&&ANX.on)return false;if(typeof ZN!=='undefined'&&ZN.busy)return false;if(typeof EVD!=='undefined'&&EVD.cur&&EVD.cur.ph==='act')return false}catch(e){}return true}
+function alkTp(){if(!alkCan())return false;const D=alkDest();if(!D)return false;const cost=.25;if(OUT.timed&&OUT.h<cost+.4){outNote('<b>남은 시간이 모자란다</b><div>빠른 이동(15분)을 하고 나서 역에 다녀올 시간이 없다.</div>',2400);return false}
+  alkFade(520);if(OUT.timed)OUT.h=Math.max(0,OUT.h-cost);const yaw=Math.atan2(-(D.e.x-D.x),-(D.e.z-D.z));FP3.pos.set(D.x,0,D.z);FP3.yaw=yaw;FP3.nav=null;FP3.mv.x=FP3.mv.y=0;try{if(OUT.me){OUT.me.root.position.set(D.x,0,D.z);OUT.me.root.rotation.y=yaw+Math.PI}}catch(e){}
+  try{TJ.goal=null}catch(e){}try{tmRegroup()}catch(e){alkErr(e)}ALK.n.tp++;try{outStat()}catch(e){}
+  outNote(`<b>🚉 탕정역 방면 — 빠른 이동</b><div>집 구역 동쪽 끝 큰길(15분). 바로 앞 '탕정역 방면'에서 역으로 들어가거나, 그대로 동쪽으로 걸어 동쪽 확장 구역으로 간다.${alkTeam().length?` 팀원 ${alkTeam().length}명 함께.`:''}</div>`,4200);return true}
+(function(){const b=window.outCands;if(typeof b!=='function')return;window.outCands=function(){const L=b.apply(this,arguments);try{if(Array.isArray(L)&&alkCan()){const S=alkStart();const p=FP3.pos;if(S&&Math.hypot(S.x-p.x,S.z-p.z)<30){const D=alkDest();if(D&&Math.hypot(D.x-p.x,D.z-p.z)>80)L.push({id:'alkTp',k:'alkTp',x:p.x,z:p.z,r:30,g:'🚉',n:'탕정역 앞으로 빠른 이동',s:`집 구역 동쪽 끝 '탕정역 방면' 입구까지 · 15분${alkTeam().length?' · 팀 함께':''}`,h:0})}}}catch(e){alkErr(e)}return L}})();
+(function(){const b=window.outDo;if(typeof b!=='function')return;window.outDo=function(c){if(c&&c.k==='alkTp'){try{alkTp()}catch(e){alkErr(e)}return}return b.apply(this,arguments)}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="anxtp"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('anxtp','탕정역 빠른 이동','외출을 시작하는 자리에서 집 구역 동쪽 끝 탕정역 방면 입구까지 한 번에(15분)',[[1,'켬'],[0,'끔']],store.get('sg.anxtp',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){alkErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='anxtp')return;try{store.set('sg.anxtp',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🚉 탕정역 연계(v18.3)','외출을 시작하는 자리(대피소 입구) 30m 안에서 \'🚉 탕정역 앞으로 빠른 이동\' — 집 구역 동쪽 끝 \'탕정역 방면\' 입구 바로 앞으로 한 번에 간다(15분 · 팀 함께 · 걸어서일 때만). 탕정역·아산역 권역에 들어가면 팀원과 함께 나온 가족도 들어와 뒤따르고(승강장에 오르면 곁으로 모이고, 열차를 타는 동안엔 보이지 않다가 내리면 곁에), 권역 위쪽 띠에서 🎒 배낭을 연다. 시내로 나오면 함께 나온다. 설정 \'탕정역 빠른 이동\'.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
