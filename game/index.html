@@ -1916,6 +1916,11 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .wf-kill b{color:#ff6b5a}.wf-kill span{color:#ffd37a;font-size:12px}.wf-kill i{font-style:normal;opacity:.7;font-size:12px}
 .wf-kill.on{animation:wfk 1.4s ease-out forwards}
 @keyframes wfk{0%{opacity:0;transform:translate(-50%,-30%) scale(1.25)}12%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%)}}
+/* v17.3 그래픽 보정 — 해를 바라볼 때 번지는 빛 · 필름 낟알 */
+.g2-veil{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0;background:radial-gradient(ellipse at 50% 38%,rgba(255,236,200,.9),rgba(255,214,160,.35) 45%,rgba(255,200,140,0) 80%);mix-blend-mode:screen;transition:opacity .25s linear}
+.g2-grain{position:absolute;inset:-40px;pointer-events:none;z-index:1;opacity:.05;background-size:96px 96px;mix-blend-mode:overlay;animation:g2gr .5s steps(5) infinite}
+@keyframes g2gr{0%{transform:translate(0,0)}20%{transform:translate(-17px,9px)}40%{transform:translate(11px,-21px)}60%{transform:translate(-23px,-7px)}80%{transform:translate(19px,15px)}100%{transform:translate(0,0)}}
+@media (prefers-reduced-motion:reduce){.g2-grain{animation:none}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -6668,7 +6673,7 @@ void main() {
 			#include <tonemapping_fragment>
 			#include <colorspace_fragment>
 
-		}`};window.T3={Bone:rs,Skeleton:tr,SkinnedMesh:er,SkeletonHelper:qr,Scene:Js,PerspectiveCamera:Ut,OrthographicCamera:kn,WebGLRenderer:Il,Color:Re,Fog:Zs,FogExp2:Ys,HemisphereLight:Fr,DirectionalLight:Gr,PointLight:zr,SpotLight:Br,AmbientLight:kr,Mesh:Et,Group:On,Object3D:gt,Sprite:js,Points:ir,Line:as,LineSegments:os,BoxGeometry:dn,SphereGeometry:wr,CylinderGeometry:cs,ConeGeometry:hr,CapsuleGeometry:lr,PlaneGeometry:bi,TorusGeometry:Rr,CircleGeometry:cr,RingGeometry:Ar,IcosahedronGeometry:br,TetrahedronGeometry:Cr,DodecahedronGeometry:ur,LatheGeometry:Tr,TubeGeometry:Ir,EdgesGeometry:dr,TorusKnotGeometry:Pr,BufferGeometry:ct,BufferAttribute:Vt,Float32BufferAttribute:Ie,InstancedMesh:nr,InstancedBufferAttribute:ni,MeshStandardMaterial:ms,MeshBasicMaterial:ei,MeshLambertMaterial:Nr,ShadowMaterial:Lr,SpriteMaterial:ss,PointsMaterial:ls,LineBasicMaterial:yi,CanvasTexture:rr,Texture:Ot,RepeatWrapping:Ki,ClampToEdgeWrapping:ln,SRGBColorSpace:qt,NearestFilter:At,LinearFilter:Ft,LinearMipmapLinearFilter:yn,Vector2:ee,Vector3:R,Quaternion:hn,Euler:un,Matrix4:He,Box3:en,Raycaster:Hr,MathUtils:wl,Clock:Wr,CatmullRomCurve3:ds,Shape:Mi,ExtrudeGeometry:Sr,ShapeGeometry:Er,PCFSoftShadowMap:Bo,ACESFilmicToneMapping:Ei,NoToneMapping:pn,AdditiveBlending:Ti,NormalBlending:oi,DoubleSide:fn,FrontSide:wn,BackSide:wt,Plane:jt,Frustum:En,Sphere:Zt,Spherical:Xr,RoundedBoxGeometry:Nl,mergeGeometries:Zd,EffectComposer:Fl,RenderPass:Ol,UnrealBloomPass:As,ShaderPass:Ts,OutputPass:Bl,Sky:ga,ShaderMaterial:yt,UniformsUtils:rn,Vector4:lt,MeshPhysicalMaterial:Dr,DataTexture:ti,RGBAFormat:$t,FloatType:Yt,HalfFloatType:Ct,WebGLRenderTarget:Mt,LinearSRGBColorSpace:xi,Matrix3:ke,DynamicDrawUsage:qc,StaticDrawUsage:la};})();
+		}`};window.T3={ShaderChunk:Je,Bone:rs,Skeleton:tr,SkinnedMesh:er,SkeletonHelper:qr,Scene:Js,PerspectiveCamera:Ut,OrthographicCamera:kn,WebGLRenderer:Il,Color:Re,Fog:Zs,FogExp2:Ys,HemisphereLight:Fr,DirectionalLight:Gr,PointLight:zr,SpotLight:Br,AmbientLight:kr,Mesh:Et,Group:On,Object3D:gt,Sprite:js,Points:ir,Line:as,LineSegments:os,BoxGeometry:dn,SphereGeometry:wr,CylinderGeometry:cs,ConeGeometry:hr,CapsuleGeometry:lr,PlaneGeometry:bi,TorusGeometry:Rr,CircleGeometry:cr,RingGeometry:Ar,IcosahedronGeometry:br,TetrahedronGeometry:Cr,DodecahedronGeometry:ur,LatheGeometry:Tr,TubeGeometry:Ir,EdgesGeometry:dr,TorusKnotGeometry:Pr,BufferGeometry:ct,BufferAttribute:Vt,Float32BufferAttribute:Ie,InstancedMesh:nr,InstancedBufferAttribute:ni,MeshStandardMaterial:ms,MeshBasicMaterial:ei,MeshLambertMaterial:Nr,ShadowMaterial:Lr,SpriteMaterial:ss,PointsMaterial:ls,LineBasicMaterial:yi,CanvasTexture:rr,Texture:Ot,RepeatWrapping:Ki,ClampToEdgeWrapping:ln,SRGBColorSpace:qt,NearestFilter:At,LinearFilter:Ft,LinearMipmapLinearFilter:yn,Vector2:ee,Vector3:R,Quaternion:hn,Euler:un,Matrix4:He,Box3:en,Raycaster:Hr,MathUtils:wl,Clock:Wr,CatmullRomCurve3:ds,Shape:Mi,ExtrudeGeometry:Sr,ShapeGeometry:Er,PCFSoftShadowMap:Bo,ACESFilmicToneMapping:Ei,NoToneMapping:pn,AdditiveBlending:Ti,NormalBlending:oi,DoubleSide:fn,FrontSide:wn,BackSide:wt,Plane:jt,Frustum:En,Sphere:Zt,Spherical:Xr,RoundedBoxGeometry:Nl,mergeGeometries:Zd,EffectComposer:Fl,RenderPass:Ol,UnrealBloomPass:As,ShaderPass:Ts,OutputPass:Bl,Sky:ga,ShaderMaterial:yt,UniformsUtils:rn,Vector4:lt,MeshPhysicalMaterial:Dr,DataTexture:ti,RGBAFormat:$t,FloatType:Yt,HalfFloatType:Ct,WebGLRenderTarget:Mt,LinearSRGBColorSpace:xi,Matrix3:ke,DynamicDrawUsage:qc,StaticDrawUsage:la};})();
 /*! Bundled license information:
 
 three/build/three.core.js:
@@ -14006,7 +14011,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.2';
+const APP_VER='17.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -26000,6 +26005,87 @@ function dirTick(dt){if(!OUT.on||!OUT.scene)return;const E=DIR.cur;if(E){if(E.sc
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="director"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const m=dirMode();const add=s4Seg('director','전장 감독','저절로 벌어지는 전시 상황 — 포격·정전·수송 행렬·헬기·드론 떼·저격수·구호 배급',[['norm','보통'],['often','잦음'],['off','끔']],m);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){dirErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='director')return;try{store.set('sg.director',b.dataset.v)}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🎬 전장 감독(v17.1)','밖에 있으면 누르지 않아도 1~2분마다 전시 상황이 저절로 벌어진다(모두 가상): 💥 포격(재난 문자 → 포탄 → 불·연기 → 구급차와 구급대원) · 🌑 정전(저녁·밤 — 손전등 행렬) · 🚛 군 수송 행렬(큰길로 트럭·전차) · 🚁 헬기 강습(로프로 병력 강하) · 🛸 정찰 드론 떼 · 🎯 저격수(옥상의 저격수를 쏘면 멈춘다) · 📦 구호 배급(줄 앞 몸싸움). 같은 것이 잇달아 나오지 않고 교전·실내·카드 중에는 쉰다. 설정 \'전장 감독\'(보통/잦음/끔).']);
+
+/* ===================== 152 · v17.3 그래픽 절충 업그레이드 — 색 보정 · 햇무리 · 빛 번짐 · 젖은 길 · 필름 질감 · 자동 화질 지킴이 ===================== */
+/* 사용자 요청(2026-11-21 23:31): "GTA6처럼 디자인 퀄리티를 좀 올려줄 수 있나요? 다만, 게임 플레이 시 끊김이 있어서는 안됩니다. 딱 절충선에서"
+   원칙: 프레임 부담이 거의 없는 것부터 — 합성기(추가 렌더 패스)는 쓰지 않는다(v9.5에서 그림자 샘플러 문제로 꺼 둔 길)
+   ① 색 보정: 톤매핑 셰이더 조각(three ShaderChunk)에 'ACES + 따뜻한 밝은 부분 · 청록 그림자 · 채도 +10% · 대비 +5%'를 넣고 렌더러를 사용자 톤매핑(5)으로 — 재질 셰이더 안에서 끝나 추가 비용 0
+   ② 햇무리·햇빛 번짐: 해 방향 하늘에 큰 빛무리 스프라이트(더하기 합성) — 건물에 가리면 0.25초마다 확인해 흐려진다 · 해를 바라보면 화면이 살짝 밝아진다(CSS)
+   ③ 빛 번짐(가짜 블룸): 밤·새벽 가로등 머리에 가까운 순 24개 빛무리 · 폭발이 0.7초 크게 번진다(FX3.explode 뒤)
+   ③-2 밤 차량 불빛: 달리는 차 앞 전조등 두 개 빛무리 + 길에 번지는 빛 웅덩이 · 뒤 미등 붉은 빛무리(차에 붙어 따라간다 — 달리는 차만, 정체 행렬은 그대로)
+   ④ 젖은 길: 136(날씨)은 먼 바탕 땅만 적셔 정작 발밑(가운데 고운 땅 ±560m)은 마른 채였다 — 같은 젖음 값(WX.wet)으로 발밑 땅도 매끈·어둡게 하고 하늘 반사를 키운다
+   ⑤ 필름 질감: 아주 옅은 움직이는 낟알(CSS · GPU 0) — 낮음 화질은 끔
+   ⑥ 자동 화질 지킴이: 113의 프레임 측정(PX.gov.fps)을 같이 본다 — 2번 연속 30fps 아래면 빛무리·낟알을 끄고(가벼움) 50fps 넘게 2번이면 되살린다
+   · 설정 '그래픽 보정'(켬/끔 — 끄면 ACES 그대로) · 자동 점검(webdriver)은 __g2Test일 때만 */
+const G2={err:0,on:false,orig:null,patched:false,lite:false,lo:0,hi:0,sun:null,sunV:0,glows:[],gx:[],gT:0,wet:0,wsc:null,wm:[],set:null,setAt:0,tex:null,n:{boom:0,lamp:0,flip:0},chk:0};
+function g2Err(e){if(G2.err<6){G2.err++;try{console.error(e)}catch(x){}}}
+function g2Set(){try{G2.set=store.get('sg.grade',true)!==false}catch(e){G2.set=true}G2.setAt=performance.now();return G2.set}
+function g2On(){try{if(navigator.webdriver&&!window.__g2Test)return false;if(G2.set==null||performance.now()-(G2.setAt||0)>2000)g2Set();return G2.set}catch(e){return false}}
+/* ---------- ① 색 보정 ---------- */
+const G2_GLSL=`vec3 CustomToneMapping( vec3 color ) {
+	vec3 c = ACESFilmicToneMapping( color );
+	float l = dot( c, vec3( 0.2126, 0.7152, 0.0722 ) );
+	c = mix( vec3( l ), c, 1.10 );
+	float hi = smoothstep( 0.45, 1.0, l ), lo = 1.0 - smoothstep( 0.0, 0.42, l );
+	c += vec3( 0.030, 0.012, -0.028 ) * hi;
+	c += vec3( -0.018, 0.006, 0.026 ) * lo;
+	c = ( c - 0.5 ) * 1.05 + 0.5;
+	return clamp( c, 0.0, 1.0 );
+}`;
+function g2Patch(){if(G2.patched)return true;try{const C=T.ShaderChunk;if(!C||typeof C.tonemapping_pars_fragment!=='string')return false;const s=C.tonemapping_pars_fragment;const a='vec3 CustomToneMapping( vec3 color ) { return color; }';if(s.indexOf(a)<0)return false;G2.orig=s;C.tonemapping_pars_fragment=s.replace(a,G2_GLSL);G2.patched=true;return true}catch(e){g2Err(e);return false}}
+function g2Tone(){const r=R3&&R3.r;if(!r)return;const want=g2On()&&G2.patched?5:(T.ACESFilmicToneMapping||4);if(r.toneMapping!==want){r.toneMapping=want;G2.n.flip++}}
+/* ---------- 공용 빛무리 그림 ---------- */
+function g2Tex(){if(G2.tex)return G2.tex;const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');const g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.18,'rgba(255,255,255,.55)');g.addColorStop(.45,'rgba(255,255,255,.14)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,128,128);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return G2.tex=t}
+function g2Sprite(col,op){const m=new T.SpriteMaterial({map:g2Tex(),color:col,transparent:true,opacity:op==null?1:op,depthWrite:false,blending:T.AdditiveBlending,fog:false});const s=new T.Sprite(m);s.renderOrder=5;return s}
+function g2Tier(){return (typeof SV3!=='undefined'&&SV3.qt)||'mid'}
+/* ---------- ② 해 ---------- */
+function g2SunStep(dt){const sc=OUT.scene;if(!sc)return;let P=null;try{P=typeof GFX_SKY!=='undefined'&&GFX&&GFX_SKY[GFX.tod||'day']}catch(e){}const d=P&&typeof gfxSunDir==='function'?gfxSunDir(P):null;const tod=(typeof GFX!=='undefined'&&GFX.tod)||OUT.tod||'day';
+  if(!G2.sun||G2.sun.parent!==sc){G2.sun=g2Sprite('#fff1d0',.0);G2.sun.scale.set(95,95,1);sc.add(G2.sun)}const s=G2.sun;if(!d||d.y<.02||tod==='night'||G2.lite){s.visible=false;G2.sunV=0;g2Veil(0);return}s.visible=true;
+  const cam=SV3.cam;cam.updateMatrixWorld();s.position.set(cam.position.x+d.x*260,cam.position.y+d.y*260,cam.position.z+d.z*260);G2.chk-=dt;if(G2.chk<=0){G2.chk=.25;let occ=false;try{occ=typeof owcRayHG==='function'&&owcRayHG(cam.position,new T.Vector3(d.x,d.y,d.z),260)<260}catch(e){}G2.occ=occ}
+  const want=G2.occ?.0:(tod==='day'?.55:.75);G2.sunV+=(want-G2.sunV)*Math.min(1,dt*5);s.material.opacity=G2.sunV;s.material.color.set(tod==='day'?'#fff1d0':'#ffb46a');
+  const v=_g2v.copy(cam.getWorldDirection(_g2v));const facing=Math.max(0,v.x*d.x+v.y*d.y+v.z*d.z);g2Veil(G2.occ?0:Math.pow(facing,4)*(tod==='day'?.14:.2))}
+const _g2v=new T.Vector3();
+function g2Veil(a){try{let el=document.getElementById('g2Veil');if(!el&&SV3.el){el=document.createElement('div');el.id='g2Veil';el.className='g2-veil';g2Ins(el)}if(el){const o=+a.toFixed(2);if(el._o!==o){el._o=o;el.style.opacity=o}}}catch(e){}}
+/* ---------- ③ 가로등·폭발 빛무리 ---------- */
+function g2Lamps(dt){const sc=OUT.scene;const tod=(typeof GFX!=='undefined'&&GFX.tod)||OUT.tod||'day';const night=tod==='night'||tod==='dawn'||tod==='dusk';const L=(typeof TOWN!=='undefined'&&TOWN.lampPos)||[];
+  if(!night||G2.lite||g2Tier()==='low'||!L.length){G2.glows.forEach(s=>{s.visible=false});return}G2.gT-=dt;if(G2.gT>0)return;G2.gT=1;
+  while(G2.glows.length<24){const s=g2Sprite('#ffc877',.5);s.scale.set(5,5,1);G2.glows.push(s)}G2.glows.forEach(s=>{if(s.parent!==sc)sc.add(s)});const P=FP3.pos;const near=L.map(l=>({l,d:(l.p.x-P.x)**2+(l.p.z-P.z)**2})).filter(q=>q.d<130*130).sort((a,b)=>a.d-b.d).slice(0,24);
+  G2.glows.forEach((s,i)=>{const q=near[i];if(!q){s.visible=false;return}s.visible=true;s.position.copy(q.l.p);s.material.color.set(q.l.col||'#ffc877');s.material.opacity=tod==='night'?.55:.35});G2.n.lamp=near.length}
+function g2Boom(p,o){try{if(G2.lite||!OUT.scene||g2Tier()==='low')return;const s=g2Sprite((o&&o.kind)==='fuel'?'#ffae5a':'#ffcf8a',1);s.position.set(p.x,(p.y||1)+1.2,p.z);s.scale.set(2,2,1);OUT.scene.add(s);G2.gx.push({s,t:0,r:Math.max(10,((o&&o.r)||4)*4.2)});G2.n.boom++}catch(e){g2Err(e)}}
+function g2Fx(dt){for(let i=G2.gx.length-1;i>=0;i--){const q=G2.gx[i];q.t+=dt;const u=q.t/.7;if(u>=1){try{q.s.removeFromParent();q.s.material.dispose()}catch(e){}G2.gx.splice(i,1);continue}const k=u<.18?u/.18:1;q.s.scale.setScalar(q.r*(.35+.65*k));q.s.material.opacity=(1-u)*(1-u)}}
+(function(){try{if(typeof FX3==='undefined'||typeof FX3.explode!=='function')return;const b=FX3.explode;FX3.explode=function(p,o){const r=b.apply(this,arguments);try{if(g2On()&&OUT.on&&this.scene===OUT.scene)g2Boom(p,o)}catch(e){}return r}}catch(e){}})();
+/* ---------- ③-2 밤 차량 불빛 ---------- */
+function g2PoolTex(){if(G2.ptex)return G2.ptex;const c=document.createElement('canvas');c.width=64;c.height=128;const x=c.getContext('2d');const g=x.createRadialGradient(32,10,2,32,40,70);g.addColorStop(0,'rgba(255,255,255,.9)');g.addColorStop(.35,'rgba(255,255,255,.35)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,128);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return G2.ptex=t}
+function g2CarRig(car){const g=new T.Group();g.name='g2lights';for(const sx of [-.6,.6]){const s=g2Sprite('#fff2cf',.85);s.scale.set(1.5,1.5,1);s.position.set(sx,.72,2.25);g.add(s)}const r=g2Sprite('#ff3a24',.7);r.scale.set(1.3,.7,1);r.position.set(0,.76,-2.2);g.add(r);
+  const pm=new T.MeshBasicMaterial({map:g2PoolTex(),color:'#ffe6b0',transparent:true,opacity:.42,depthWrite:false,blending:T.AdditiveBlending,fog:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4});const pl=new T.Mesh(new T.PlaneGeometry(4.2,9),pm);pl.rotation.x=-Math.PI/2;pl.position.set(0,.06,6.6);pl.renderOrder=4;g.add(pl);car.add(g);return g}
+function g2Cars(dt){const tod=(typeof GFX!=='undefined'&&GFX.tod)||OUT.tod||'day';const on=(tod==='night'||tod==='dusk'||tod==='dawn')&&!G2.lite&&g2Tier()!=='low';G2.cT=(G2.cT||0)-dt;if(G2.cT>0&&on===G2.cOn)return;G2.cT=1;G2.cOn=on;let n=0;
+  const L=(typeof TOWN!=='undefined'&&TOWN.cars)||[];for(const c of L){if(!c||c.static||!c.obj||!c.obj.parent)continue;let g=c.g2;if(!g&&on){g=c.g2=g2CarRig(c.obj)}if(g){g.visible=on&&!c.dead&&!c.obj.userData.burnt;if(g.visible)n++}}G2.n.car=n}
+function g2CarsOff(){const L=(typeof TOWN!=='undefined'&&TOWN.cars)||[];for(const c of L)if(c&&c.g2)c.g2.visible=false;G2.cOn=false}
+/* ---------- ④ 젖은 길 ---------- */
+function g2WetMats(){const sc=OUT.scene;const L=[];if(!sc||typeof TJ==='undefined'||!TJ.tex)return L;sc.traverse(o=>{if(o.isMesh&&o.userData&&o.userData.ground&&o.material&&!Array.isArray(o.material)&&o.material.map&&(o.material.map===TJ.tex.gc||o.material.map===TJ.tex.g))L.push(o.material)});return L}
+function g2Wet(dt){const sc=OUT.scene;if(!sc)return;if(G2.wsc!==sc){G2.wsc=sc;G2.wm=g2WetMats().map(m=>({m,core:m.map===TJ.tex.gc,r:m.roughness,c:m.color.clone(),e:m.envMapIntensity==null?1:m.envMapIntensity}))}
+  const w=typeof WX!=='undefined'&&WX.wet>0?Math.min(1,WX.wet):0;G2.wet=w;for(const q of G2.wm){const m=q.m;if(q.core){const r=q.r-(q.r-.38)*w;if(Math.abs(m.roughness-r)>.004){m.roughness=r;m.color.copy(q.c).multiplyScalar(1-.22*w)}}const e=q.e*(1+1.3*w);if(Math.abs(m.envMapIntensity-e)>.01)m.envMapIntensity=e}}
+function g2WetOff(){for(const q of (G2.wm||[])){try{if(q.core){q.m.roughness=q.r;q.m.color.copy(q.c)}q.m.envMapIntensity=q.e}catch(e){}}G2.wet=0}
+/* 캔버스(#sv3Wrap) 바로 뒤에 — 화면 조작 단추들보다 앞서 그려지게(104의 비네트와 같은 자리) */
+function g2Ins(el){const w=SV3.el.querySelector(':scope>#sv3Wrap');if(w&&w.nextSibling)SV3.el.insertBefore(el,w.nextSibling);else SV3.el.appendChild(el)}
+/* ---------- ⑤ 필름 질감 ---------- */
+function g2Grain(on){try{let el=document.getElementById('g2Grain');if(!on){if(el)el.remove();return}if(!SV3.el)return;if(!el){el=document.createElement('div');el.id='g2Grain';el.className='g2-grain';if(!G2.noise){const c=document.createElement('canvas');c.width=c.height=96;const x=c.getContext('2d');const D=x.createImageData(96,96);for(let i=0;i<D.data.length;i+=4){const v=Math.random()*255|0;D.data[i]=D.data[i+1]=D.data[i+2]=v;D.data[i+3]=255}x.putImageData(D,0,0);G2.noise=c.toDataURL('image/png')}el.style.backgroundImage=`url(${G2.noise})`}if(el.parentNode!==SV3.el)g2Ins(el)}catch(e){g2Err(e)}}
+/* ---------- ⑥ 자동 화질 지킴이 ---------- */
+function g2Guard(f){try{if(!f||!G2.on)return;G2.lastF=f;if(f<30){G2.lo++;G2.hi=0}else if(f>50){G2.hi++;G2.lo=0}else{G2.lo=0;G2.hi=0}
+  if(!G2.lite&&G2.lo>=2){G2.lite=true;G2.lo=0;G2.n.lite=(G2.n.lite|0)+1}else if(G2.lite&&G2.hi>=2){G2.lite=false;G2.hi=0}}catch(e){}}
+/* ---------- 매 프레임 ---------- */
+function g2Step(dt){if(!g2On()){if(G2.on){G2.on=false;g2Grain(false);g2Veil(0);if(G2.sun)G2.sun.visible=false;G2.glows.forEach(s=>{s.visible=false});g2CarsOff();g2WetOff()}g2Tone();return}
+  G2.on=true;g2Tone();if(!OUT.on||!OUT.scene)return;try{g2SunStep(dt)}catch(e){g2Err(e)}try{g2Lamps(dt)}catch(e){g2Err(e)}try{g2Fx(dt)}catch(e){g2Err(e)}try{g2Cars(dt)}catch(e){g2Err(e)}try{g2Wet(dt)}catch(e){g2Err(e)}g2Grain(!G2.lite&&g2Tier()!=='low')}
+g2Patch();
+/* 2초마다 113이 잰 fps를 같이 받는다 */
+(function(){const b=window.pxGovern;if(typeof b!=='function')return;window.pxGovern=function(fps){const r=b.apply(this,arguments);try{g2Guard(fps)}catch(e){}return r}})();
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{g2Step(dt||0)}catch(e){g2Err(e)}return r}})();
+/* 대피소·실내에서도 톤매핑은 같게(바꿀 때마다 셰이더를 다시 만들지 않도록 한 번 정해 두고 둔다) */
+(function(){const b=window.render;if(typeof b!=='function')return;window.render=function(){const r=b.apply(this,arguments);try{g2Tone()}catch(e){}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{g2Grain(false);g2Veil(0);G2.gx.forEach(q=>{try{q.s.removeFromParent()}catch(e){}});G2.gx=[];g2WetOff();G2.wsc=null;G2.wm=[]}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="grade"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('grade','그래픽 보정','색 보정 · 햇무리 · 가로등·차량·폭발 빛 번짐 · 젖은 길 · 필름 질감(끊기면 저절로 가벼워진다 · 바꾸는 순간 한 번 잠깐 멈춘다)',[[1,'켬'],[0,'끔']],store.get('sg.grade',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){g2Err(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='grade')return;try{store.set('sg.grade',b.dataset.v==='1');g2Set();g2Tone()}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎨 그래픽 보정(v17.3)','영화처럼 따뜻한 밝은 부분과 청록 그림자로 색을 다듬고(추가 부담 없음), 해를 바라보면 햇무리가 번지고, 밤에는 가로등·폭발 불빛이 번지고 달리는 차는 전조등 빛무리와 길에 번지는 빛, 붉은 미등을 켠다. 비가 세지면 땅이 젖어 하늘과 불빛이 비친다. 화면에 아주 옅은 필름 낟알. 프레임이 30 아래로 떨어지면 빛무리·낟알을 저절로 끄고, 여유가 생기면 되살린다. 설정 \'그래픽 보정\'.']);
 
 /* ===================== 153 · v17.2 드론 미니맵 — 나는 동안 미니맵이 기체를 따라가고, 찾은 표적이 미니맵에 바로 올라간다 · ⏩ 가속 ===================== */
 /* 사용자 요청(2026-11-22 07:52): "드론 하늘을 날 때, 미니맵에서 반영해 주시고, 드론이 표적을 감지했을 때, 미니맵에 UPDATE 해 주세요. 그리고 드론 나는 속도가 넘 느립니다"
