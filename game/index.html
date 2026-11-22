@@ -1973,6 +1973,36 @@ body.trr-duck .trr-duck{background:rgba(255,178,36,.85);color:#111}
 /* v17.9 숙적 */
 .nem-tag{display:block;margin-top:4px;color:#ff8a7a;font-size:11px;font-weight:700}
 .mis-row.nem-row{border-left:3px solid #c0352b;background:rgba(192,53,43,.1)}
+/* v18.0 결정적 장면 */
+body.kc-on #sv3>*:not(.b3dwrap){visibility:hidden!important}
+body.kc-on #toast,body.kc-on #kcChip{visibility:hidden!important}
+.kc-ov{position:fixed;inset:0;z-index:400;background:transparent!important;border:0!important;padding:0!important;margin:0!important;border-radius:0!important;box-shadow:none!important;pointer-events:auto;touch-action:none;overflow:hidden;-webkit-user-select:none;user-select:none}
+.kc-bar{position:absolute;left:0;right:0;height:11vh;background:#000;transition:transform .28s ease}
+.kc-bar.t{top:0;transform:translateY(-100%)}
+.kc-bar.b{bottom:0;transform:translateY(100%)}
+.kc-ov.in .kc-bar{transform:none}
+.kc-vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 52%,rgba(0,0,0,.5) 100%);opacity:0;transition:opacity .3s}
+.kc-ov.in .kc-vig{opacity:1}
+.kc-tag{position:absolute;left:16px;top:calc(11vh + 12px);color:#fff;font:800 12px var(--sans);letter-spacing:.04em;background:rgba(200,40,30,.88);padding:5px 11px;border-radius:999px;opacity:0;transition:opacity .3s}
+.kc-tag small{opacity:.85;margin-left:4px;font-weight:700}
+.kc-ttl{position:absolute;left:16px;right:16px;bottom:calc(11vh + 14px);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.95);opacity:0;transform:translateY(8px);transition:opacity .35s .1s,transform .35s .1s}
+.kc-ttl b{display:block;font:900 22px/1.25 var(--sans)}
+.kc-ttl small{display:block;color:#f2c45a;font:800 13px/1.35 var(--sans);margin-top:3px}
+.kc-ov.in .kc-tag,.kc-ov.in .kc-ttl{opacity:1;transform:none}
+.kc-skip{position:absolute;right:16px;bottom:calc(5.5vh - 8px);color:rgba(255,255,255,.62);font:700 11px var(--sans)}
+.kc-chip{position:fixed;z-index:390;left:50%;top:calc(env(safe-area-inset-top,0px) + 62px);transform:translateX(-50%);display:flex;align-items:center;gap:9px;border:1px solid rgba(255,255,255,.35);background:rgba(16,19,23,.9);color:#fff;border-radius:999px;padding:5px 14px 5px 5px;font:800 12.5px var(--sans);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.kc-chip img{width:30px;height:38px;object-fit:cover;border-radius:999px 6px 6px 999px}
+.kc-chip span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.kc-chip small{font:600 10.5px var(--sans);opacity:.7}
+.kc-view{position:fixed;inset:0;z-index:410;background:rgba(6,7,9,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
+.kc-view img{max-width:100%;max-height:70vh;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.kc-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.kc-acts button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:9px 16px;font:800 13px var(--sans);min-height:40px}
+.kc-acts button[data-kc=share]{background:rgba(200,40,30,.9);border-color:rgba(255,200,190,.7)}
+.kc-note{color:rgba(255,255,255,.6);font:600 11px/1.5 var(--sans);text-align:center;max-width:420px;margin:0}
+.kc-th{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px}
+.kc-th button{border:0;padding:0;background:none;flex:0 0 auto}
+.kc-th img{width:60px;height:75px;object-fit:cover;border-radius:6px;display:block;border:1px solid rgba(255,255,255,.2)}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14066,7 +14096,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.9';
+const APP_VER='18.0';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -27082,6 +27112,153 @@ function nemBoardHtml(){const S=nemS();const N=S.cur;const OUTN={esc:'흉터를 
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='nemesis')return;try{store.set('sg.nemesis',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🦂 숙적(v17.9)','2턴부터 가상의 \'선로 약탈단\' 두목이 가끔 나타난다(별명 · 계급). 무전으로 지난 일을 기억해 도발하고, 거리 한복판에 부하들과 진을 친다 — 다가가면 그 자리에서 교전. 체력이 40% 아래면 흉터를 안고 달아나 계급이 오르고 경호원이 늘어난다. 조준경 총으로 싸웠으면 대응 저격수를, 드론을 띄웠으면 전파 방해(160m)를, 팀원이 많이 잡았거나 내가 달아났으면 돌격조를 데려온다. 두목(계급 4)이 되면 달아나지 않는다 — 쓰러뜨리면 \'최후\'(신뢰 +5 · 사기 +5 · 현금 봉투 3), 두 턴 뒤 새 숙적. 열차 습격도 같은 패거리. 🚨 상황판에 숙적 칸. 설정 \'숙적\' · 교육용 모드 제외.']);
 
+/* v18.0 결정적 장면 — 마지막 적 · 장거리(80m+) · 숙적 · 자폭 드론 다중 명중 · 열차 습격 격퇴의 순간을
+   느린 화면(×0.2) + 영화 카메라(쓰러지는 사람 주위를 도는 궤도)로 약 2.6초 다시 보여 주고, 장면 카드(1080×1350 그림)를 만든다.
+   - 느린 화면: 바깥쪽 sv3Loop가 그 프레임 동안만 SV3.step을 '시간 배율' 함수로 바꿔 끼운다(모든 단계 dt × 배율) · 카메라는 단계 뒤에 덮어쓴다
+   - 카드: 3D 캔버스만 찍는다(글자 HUD·이름표·개인 정보 없음) + 제목·거리·무기·일차 + '가상의 상황 · 게임 화면' 표기
+   - 이 기기 메모리에만 최근 5장 · 저장/공유는 사용자가 누를 때만 · 교육용 모드 제외 · 자동 점검(webdriver)은 __kcTest일 때만 */
+const KC={on:false,t:0,dur:2.6,lo:.2,scale:1,gdt:0,rl:0,capAt:1.05,capped:false,snap:null,c:null,h:null,P:null,gy:0,a0:0,sw:.75,r0:5.2,r1:3.4,y0:1.75,y1:1.15,l0:1.1,l1:.45,fov:44,
+  cam0:null,scene:null,open:false,last:-1e9,gap:30,longD:80,fpvMin:2,pend:null,cards:[],seq:0,chipT:0,err:0,
+  n:{start:0,skip:0,card:0,share:0,save:0,view:0,nem:0,last:0,long:0,fpv:0,trr:0}};
+try{const s=store.get('sg.kcN',null);if(s&&typeof s==='object')for(const k in KC.n)if(typeof s[k]==='number')KC.n[k]=s[k]}catch(e){}
+function kcErr(e){if(KC.err<6){KC.err++;console.error(e)}}
+function kcOn(){try{if(navigator.webdriver&&!window.__kcTest)return false;if(typeof eduOn==='function'&&eduOn())return false;return store.get('sg.killcam',true)!==false}catch(e){return false}}
+function kcSaveN(){try{if(typeof plogOn==='function'&&!plogOn())return;store.set('sg.kcN',KC.n)}catch(e){}}
+function kcH(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function kcWhen(){try{return `${dayOf(G.turn|0)}일차 ${clockAt(G.turn|0)}`}catch(e){return ''}}
+function kcWeap(){try{const W=typeof gunW==='function'?gunW():null;if(W&&W.n)return String(W.n)}catch(e){}return ''}
+function kcFight(){try{if(typeof IS!=='undefined'&&IS.on)return (IS.o&&IS.o.nm)||'길거리 교전'}catch(e){}try{if(typeof AW!=='undefined'&&AW.on)return '아파트 전투'}catch(e){}try{if(typeof OWC!=='undefined'&&OWC.on)return '단지 교전'}catch(e){}return ''}
+/* 지금 싸움에 남은 적(도망치는 사람 제외) — 싸움 중이 아니면 null */
+function kcFoesLeft(){try{if(typeof IS!=='undefined'&&IS.on){const o=IS.o||{};const more=(o.waves||[]).length-1>(IS.wave|0);return isLive().filter(a=>a.st!=='flee').length+(more?1:0)}}catch(e){}
+  try{if(typeof AW!=='undefined'&&AW.on){if(AW.ph!=='cqb')return 9;return AW.cq.filter(a=>!a.dead&&!a.h.dead).length+((AW.q_&&AW.q_.length)|0)}}catch(e){}
+  try{if(typeof OWC!=='undefined'&&OWC.on&&!OWC.done)return OWC.en.filter(a=>!a.prot&&a.st!=='down'&&!a.gone).length+((OWC.q&&OWC.q.length)|0)}catch(e){}
+  return null}
+function kcFree(x,z){if(KC.open)return true;try{return !FP3.blocked(x,z,.25)}catch(e){return true}}
+function kcClear(P,a,r){const sx=Math.sin(a),sz=Math.cos(a);for(let d=.7;d<=r+1e-6;d+=.35){if(!kcFree(P.x+sx*d,P.z+sz*d))return Math.max(0,d-.45)}return r}
+/* 카메라 자리: 쏜 쪽에서 옆으로 약 57° 돈 곳부터 — 막히지 않은 방향을 고르고, 도는 끝자리도 비어 있는지 본다 */
+function kcPick(P,from,R0,R1){const base=Math.atan2(from.x-P.x,from.z-P.z);let best=null;
+  for(const da of [1,-1,1.6,-1.6,.55,-.55,2.3,-2.3,3.1]){const a=base+da;const sw=(da>=0?1:-1)*.75;const cl=kcClear(P,a,R0),cl2=kcClear(P,a+sw,R1);const sc=cl/R0+cl2/R1*.7;if(!best||sc>best.sc+1e-6)best={a,sw,cl,cl2,sc};if(cl>=R0&&cl2>=R1)break}
+  return best}
+function kcEase(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2}
+function kcScale(t){const D=KC.dur;if(t<.22)return 1-(1-KC.lo)*(t/.22);if(t>D-.3)return KC.lo+(1-KC.lo)*clamp((t-(D-.3))/.3,0,1);return KC.lo}
+function kcCam(){if(!KC.on||!SV3.cam||SV3.scene!==KC.scene)return;const c=SV3.cam;const k=kcEase(clamp(KC.t/KC.dur,0,1));
+  try{if(KC.h&&KC.h.root&&KC.h.root.parent){const q=KC.h.root.position;KC.P.x=q.x;KC.P.z=q.z}}catch(e){}
+  const a=KC.a0+KC.sw*k,r=KC.r0+(KC.r1-KC.r0)*k,y=KC.gy+KC.y0+(KC.y1-KC.y0)*k,ly=KC.gy+KC.l0+(KC.l1-KC.l0)*k;
+  c.position.set(KC.P.x+Math.sin(a)*r,y,KC.P.z+Math.cos(a)*r);c.up.set(0,1,0);c.lookAt(KC.P.x,ly,KC.P.z);if(Math.abs(c.fov-KC.fov)>.01){c.fov=KC.fov;c.updateProjectionMatrix()}c.updateMatrixWorld()}
+/* 1인칭 총(덧그리기 장면)은 영화 카메라에선 숨긴다 */
+function kcHideVM(hide,prev){if(!hide){if(prev)prev.L.forEach((S,i)=>{S.visible=prev.v[i]});return null}
+  const L=[];try{if(typeof GUN!=='undefined'&&GUN.vm&&GUN.vm.S)L.push(GUN.vm.S)}catch(e){}try{if(typeof OWC!=='undefined'&&OWC.vm&&OWC.vm.S)L.push(OWC.vm.S)}catch(e){}
+  const v=L.map(S=>S.visible);L.forEach(S=>{S.visible=false});return {L,v}}
+function kcOv(on){let o=document.getElementById('kcOv');if(!on){if(o)o.remove();document.body.classList.remove('kc-on');return}
+  if(!o){o=document.createElement('div');o.id='kcOv';o.className='kc-ov';document.body.appendChild(o);o.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();kcStop(true)},{passive:false})}
+  const C=KC.c;o.innerHTML=`<i class="kc-bar t"></i><i class="kc-bar b"></i><i class="kc-vig"></i><div class="kc-tag">● 결정적 장면 <small>느린 화면 ×${KC.lo}</small></div><div class="kc-ttl"><b>${kcH(C.title)}</b>${C.sub?`<small>${kcH(C.sub)}</small>`:''}</div><div class="kc-skip">탭하면 건너뛴다</div>`;
+  document.body.classList.add('kc-on');try{requestAnimationFrame(()=>{const e=document.getElementById('kcOv');if(e)e.classList.add('in')})}catch(e){}setTimeout(()=>{const e=document.getElementById('kcOv');if(e)e.classList.add('in')},40)}
+function kcStart(o){if(KC.on||!o||!o.P||!kcOn())return false;if(!SV3.el||!SV3.scene||!SV3.cam)return false;const now=performance.now();if(!o.force&&now-KC.last<KC.gap*1000)return false;
+  try{if(typeof OUT!=='undefined'&&(OUT.enc||OUT.mapOpen))return false}catch(e){}
+  try{if(typeof DFR!=='undefined'&&DFR.B)return false}catch(e){}
+  const c=SV3.cam;KC.last=now;KC.c={kind:o.kind,title:o.title||'결정적 장면',sub:o.sub||'',d:o.d|0,head:!!o.head,w:o.w||'',when:kcWhen(),k:o.k|0};
+  KC.h=o.h||null;KC.P=new T.Vector3(o.P.x,o.P.y||0,o.P.z);KC.gy=o.gy!=null?o.gy:(o.P.y||0);KC.open=!!o.open;
+  const wide=o.kind==='fpv';const R0=wide?7.5:5.2,R1=wide?5.4:3.4;const pk=kcPick(KC.P,o.from||{x:c.position.x,z:c.position.z},R0,R1);
+  KC.a0=pk.a;KC.sw=pk.sw;KC.r0=clamp(pk.cl,wide?3:1.9,R0);KC.r1=clamp(Math.min(pk.cl2,KC.r0),wide?2.6:1.6,R1);
+  KC.y0=wide?3.6:1.75;KC.y1=wide?2.3:1.15;KC.l0=wide?.9:1.1;KC.l1=wide?.3:.45;KC.fov=wide?52:44;
+  KC.cam0={p:c.position.clone(),q:c.quaternion.clone(),fov:c.fov};KC.scene=SV3.scene;KC.on=true;KC.t=0;KC.rl=now;KC.scale=1;KC.capped=false;KC.snap=null;
+  KC.n.start++;KC.n[o.kind]=(KC.n[o.kind]|0)+1;kcSaveN();
+  try{if(typeof GUN!=='undefined')GUN.fire=false}catch(e){}try{if(typeof OWC!=='undefined')OWC.fire=false}catch(e){}try{if(typeof TRR!=='undefined'&&TRR.R)TRR.R.fire=0}catch(e){}
+  try{FP3.ptr={};FP3.mv.x=FP3.mv.y=0;const j=$('#sv3Joy');if(j)j.hidden=true}catch(e){}
+  kcOv(true);try{SND.tone(110,.55,'sine',.16,0,60);SND.tone(1600,.07,'square',.02)}catch(e){}try{vib([20,40,20])}catch(e){}
+  return true}
+/* 화면 찍기: render=true면 지금 카메라로 한 번 그려 바로 옮겨 담는다(같은 작업 안이라 그림이 남아 있다) */
+function kcSnap(render){const r=R3.r;if(!r||!SV3.scene||!SV3.cam)return false;const hid=kcHideVM(true);
+  try{if(render){r.autoClear=true;if(SV3.comp){if(SV3.rp)SV3.rp.scene=SV3.scene;SV3.comp.render()}else r.render(SV3.scene,SV3.cam)}}finally{kcHideVM(false,hid)}
+  const cv=r.domElement;const W=cv.width,H=cv.height;if(!W||!H)return false;const k=Math.min(1,1600/Math.max(W,H));const s=document.createElement('canvas');s.width=Math.max(1,Math.round(W*k));s.height=Math.max(1,Math.round(H*k));
+  s.getContext('2d').drawImage(cv,0,0,s.width,s.height);KC.snap=s;KC.capped=true;return true}
+function kcStop(skip){if(!KC.on)return;const same=!!(KC.scene&&SV3.scene===KC.scene&&SV3.cam);
+  if(same&&!KC.capped){try{kcCam();kcSnap(true)}catch(e){kcErr(e)}}
+  KC.on=false;KC.scale=1;kcOv(false);
+  if(same&&KC.cam0){try{const c=SV3.cam;c.position.copy(KC.cam0.p);c.quaternion.copy(KC.cam0.q);c.fov=KC.cam0.fov;c.updateProjectionMatrix();c.updateMatrixWorld()}catch(e){kcErr(e)}}
+  if(skip){KC.n.skip++;kcSaveN()}
+  if(KC.snap){try{kcMake()}catch(e){kcErr(e)}}KC.snap=null;KC.h=null;KC.scene=null}
+/* ---------- 장면 카드 ---------- */
+function kcFit(g,txt,maxW,size,wt,F){let s=size;g.font=`${wt} ${s}px ${F}`;while(s>24&&g.measureText(txt).width>maxW){s-=2;g.font=`${wt} ${s}px ${F}`}return s}
+function kcRR(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function kcMake(){const S=KC.snap,C=KC.c;if(!S||!C)return null;const W=1080,H=1350;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');
+  const F='"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic",system-ui,sans-serif';
+  g.fillStyle='#0b0d10';g.fillRect(0,0,W,H);const sc=Math.max(W/S.width,H/S.height);const dw=S.width*sc,dh=S.height*sc;g.drawImage(S,(W-dw)/2,(H-dh)/2,dw,dh);
+  const vg=g.createRadialGradient(W/2,H*.45,H*.25,W/2,H*.5,H*.78);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.5)');g.fillStyle=vg;g.fillRect(0,0,W,H);
+  const gt=g.createLinearGradient(0,0,0,240);gt.addColorStop(0,'rgba(6,7,9,.8)');gt.addColorStop(1,'rgba(6,7,9,0)');g.fillStyle=gt;g.fillRect(0,0,W,240);
+  const gb=g.createLinearGradient(0,H*.5,0,H);gb.addColorStop(0,'rgba(6,7,9,0)');gb.addColorStop(.55,'rgba(6,7,9,.78)');gb.addColorStop(1,'rgba(6,7,9,.95)');g.fillStyle=gb;g.fillRect(0,H*.5,W,H*.5);
+  g.textBaseline='middle';g.font=`800 28px ${F}`;const tw=g.measureText('● 결정적 장면').width;g.fillStyle='rgba(200,40,30,.92)';kcRR(g,56,52,tw+48,58,29);g.fill();g.fillStyle='#fff';g.fillText('● 결정적 장면',80,82);
+  g.textAlign='right';g.fillStyle='rgba(255,255,255,.85)';g.font=`800 28px ${F}`;g.fillText('생존of탕정',W-56,82);g.textAlign='left';
+  g.textBaseline='alphabetic';g.fillStyle='#fff';kcFit(g,C.title,W-112,76,900,F);g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=12;g.fillText(C.title,56,H-268);g.shadowBlur=0;
+  if(C.sub){g.fillStyle='#f2c45a';kcFit(g,C.sub,W-112,40,800,F);g.fillText(C.sub,56,H-200)}
+  g.fillStyle='rgba(255,255,255,.22)';g.fillRect(56,H-166,W-112,2);
+  const meta=[C.when,C.w].filter(Boolean).join(' · ');g.fillStyle='rgba(255,255,255,.8)';kcFit(g,meta||' ',W-112,30,700,F);g.fillText(meta,56,H-116);
+  const foot='가상의 상황 · 게임 화면 · 실제 인물·단체와 무관';g.fillStyle='rgba(255,255,255,.55)';g.font=`600 25px ${F}`;g.fillText(foot,56,H-68);
+  const it={i:++KC.seq,kind:C.kind,title:C.title,sub:C.sub,when:C.when,cv,url:null,blob:null,fn:`saengjon-scene-${KC.seq}-${Date.now()%1e8}.jpg`,txt:[C.title,C.sub,meta,foot].join(' | ')};
+  KC.cards.unshift(it);while(KC.cards.length>5){const o=KC.cards.pop();try{if(o.url&&o.url.indexOf('blob:')===0)URL.revokeObjectURL(o.url)}catch(e){}}
+  KC.n.card++;kcSaveN();
+  const fin=()=>{try{kcChip(it)}catch(e){kcErr(e)}};
+  try{cv.toBlob(b=>{try{if(b){it.blob=b;it.url=URL.createObjectURL(b)}else it.url=cv.toDataURL('image/jpeg',.88)}catch(e){try{it.url=cv.toDataURL('image/jpeg',.88)}catch(x){}}fin()},'image/jpeg',.88)}catch(e){try{it.url=cv.toDataURL('image/jpeg',.88)}catch(x){}fin()}
+  return it}
+function kcChip(it){if(!it||!it.url||!SV3.el)return;let el=document.getElementById('kcChip');if(!el){el=document.createElement('button');el.id='kcChip';el.className='kc-chip';el.type='button';document.body.appendChild(el)}
+  el.dataset.kc='view';el.dataset.id=String(it.i);el.innerHTML=`<img src="${it.url}" alt=""><span>📸 장면 카드<small>저장 · 공유</small></span>`;el.hidden=false;
+  clearTimeout(KC.chipT);KC.chipT=setTimeout(()=>{const e=document.getElementById('kcChip');if(e)e.remove()},9000)}
+function kcFind(id){return KC.cards.find(x=>x.i===+id)||null}
+function kcView(id){const it=kcFind(id)||KC.cards[0];if(!it||!it.url)return false;KC.n.view++;let el=document.getElementById('kcView');if(!el){el=document.createElement('div');el.id='kcView';el.className='kc-view';document.body.appendChild(el)}
+  el.innerHTML=`<img src="${it.url}" alt="결정적 장면 카드"><div class="kc-acts"><button type="button" data-kc="share" data-id="${it.i}">📤 공유</button><button type="button" data-kc="save" data-id="${it.i}">💾 저장</button><button type="button" data-kc="close">닫기</button></div><p class="kc-note">게임 화면 · 가상의 상황 — 이 기기 메모리에만 있다(최근 5장 · 앱을 닫으면 사라진다). 공유·저장은 직접 누를 때만.<br>저장이 안 되면 그림을 길게 눌러 저장한다.</p>`;el.hidden=false;return true}
+function kcBlobOf(it){if(it.blob)return it.blob;try{const u=it.url||'';const i=u.indexOf(',');if(u.indexOf('data:')!==0||i<0)return null;const bin=atob(u.slice(i+1));const a=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);return it.blob=new Blob([a],{type:'image/jpeg'})}catch(e){return null}}
+function kcSave(id,fb){const it=kcFind(id);if(!it||!it.url)return false;KC.n.save++;kcSaveN();try{const a=document.createElement('a');a.href=it.url;a.download=it.fn;a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}catch(e){}
+  try{toast(fb?'이 화면에선 공유를 쓸 수 없어 그림 파일로 저장했다 — 안 되면 그림을 길게 눌러 저장':'장면 카드를 그림 파일로 저장했다 — 안 되면 그림을 길게 눌러 저장',3200)}catch(e){}return true}
+function kcShare(id){const it=kcFind(id);if(!it)return false;const bl=kcBlobOf(it);
+  try{if(bl&&typeof File==='function'&&navigator.canShare&&navigator.share){const f=new File([bl],it.fn,{type:'image/jpeg'});if(navigator.canShare({files:[f]})){KC.n.share++;kcSaveN();navigator.share({files:[f],title:'생존of탕정 — 결정적 장면',text:`${it.title} — 가상의 상황 · 게임 화면`}).catch(()=>{});return true}}}catch(e){}
+  return kcSave(id,true)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-kc]');if(!b)return;const k=b.dataset.kc;e.stopPropagation();
+  try{if(k==='view'){kcView(b.dataset.id);const c=document.getElementById('kcChip');if(c)c.remove()}else if(k==='share')kcShare(b.dataset.id);else if(k==='save')kcSave(b.dataset.id);else if(k==='close'){const v=document.getElementById('kcView');if(v)v.remove()}}catch(x){kcErr(x)}},true);
+/* ---------- 계기 ---------- */
+function kcOnKill(h,a,head,src,host){if(KC.on||!h||!h.root||!kcOn())return false;if(a&&a.owKill)return false;
+  const P=h.root.position;const me=SV3.cam?SV3.cam.position:FP3.pos;const d=Math.round(Math.hypot(P.x-me.x,P.z-me.z));const W=kcWeap();const left=kcFoesLeft();
+  let kind=null,title='',sub='';
+  if(a&&a.nem){kind='nem';let N=null;try{N=nemS().cur}catch(e){}const nm=(N&&N.nm)||'숙적';const boss=!!(N&&N.rk>=3);title=boss?`🦂 '${nm}'의 최후`:`🦂 숙적 '${nm}' 쓰러짐`;
+    sub=[N&&typeof NEM_RK!=='undefined'?NEM_RK[N.rk]||'':'',N&&N.scar&&N.scar.length?`흉터 ${N.scar.length}`:'',`${d}m`,head?'머리':''].filter(Boolean).join(' · ')}
+  else if(left===0){kind='last';title='마지막 적 — 제압';sub=[kcFight(),`${d}m`,head?'머리':''].filter(Boolean).join(' · ')}
+  else if(d>=KC.longD&&(left!=null||host==='en')){kind='long';title=`🎯 ${d}m 장거리 명중`;sub=[head?'머리':'몸통',kcFight()].filter(Boolean).join(' · ')}
+  if(!kind)return false;
+  return kcStart({kind,h,P,from:{x:me.x,z:me.z},title,sub,d,head:!!head,w:W})}
+function kcPendTry(){const p=KC.pend;if(!p)return;if(performance.now()-p.t>9000||!kcOn()){KC.pend=null;return}try{if(typeof DFR!=='undefined'&&DFR.B)return}catch(e){}if(!SV3.scene||!SV3.cam)return;KC.pend=null;
+  const me=FP3.pos;kcStart({kind:'fpv',P:{x:p.P.x,y:p.gy,z:p.P.z},gy:p.gy,from:{x:me.x,z:me.z},title:'💥 자폭 드론 명중',sub:[p.k?`${p.k}명 무력화`:'',p.dr?`드론 ${p.dr}대`:'',`${p.dm}m 밖에서`].filter(Boolean).join(' · '),d:p.dm,k:p.k,force:!!p.force})}
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t,host,d,head){const a=t&&t.a;const was=!!(a&&(a.dead||a.kcD));const r=b.apply(this,arguments);
+  try{if(a&&!was&&t.h&&(a.dead||t.h.dead)){a.kcD=1;kcOnKill(t.h,a,head,'gun',host)}}catch(e){kcErr(e)}return r}})();
+(function(){const b=window.owcKill;if(typeof b!=='function')return;window.owcKill=function(a,by,d,head){const was=!!(a&&a.st==='down');const r=b.apply(this,arguments);
+  try{if(a&&!was&&a.st==='down'&&by==='me'&&a.h&&!a.prot)kcOnKill(a.h,a,head,'owc','en')}catch(e){kcErr(e)}return r}})();
+(function(){const b=window.dfkBoom;if(typeof b!=='function')return;window.dfkBoom=function(P){const B=typeof DFR!=='undefined'?DFR.B:null;const r=b.apply(this,arguments);
+  try{if(B&&B.res==='boom'&&P&&((B.kills|0)>=KC.fpvMin||(B.dr|0)>=2)&&kcOn()){const me=FP3.pos;KC.pend={P:{x:P.x,y:P.y,z:P.z},gy:SV3.kind==='outside'?0:P.y-1,k:B.kills|0,dr:B.dr|0,dm:Math.round(Math.hypot(P.x-me.x,P.z-me.z)),t:performance.now()}}}catch(e){kcErr(e)}return r}})();
+(function(){const b=window.trrShoot;if(typeof b!=='function')return;window.trrShoot=function(){const R=typeof TRR!=='undefined'?TRR.R:null;const dn=R?new Set(R.en.filter(x=>x.st==='down')):null;const r=b.apply(this,arguments);
+  try{if(R&&dn&&kcOn()&&typeof TRR_KILL!=='undefined'&&R.down>=TRR_KILL){const a=R.en.find(x=>x.st==='down'&&!dn.has(x));if(a&&a.h){const c=SV3.cam.position;const P=a.h.root.position;const d=Math.round(Math.hypot(P.x-c.x,P.z-c.z));
+    kcStart({kind:'trr',h:a.h,P,from:{x:c.x,z:c.z},title:'🚆 열차 습격 격퇴',sub:`달리는 열차 창문에서 · ${d}m · 제압 ${R.down}`,d,w:'소총',open:true})}}}catch(e){kcErr(e)}return r}})();
+(function(){const b=window.pipRender;if(typeof b!=='function')return;window.pipRender=function(){if(KC.on)return false;return b.apply(this,arguments)}})();
+(function(){const b=window.sv3Unmount;if(typeof b!=='function')return;window.sv3Unmount=function(){try{if(KC.on)kcStop(false)}catch(e){kcErr(e)}return b.apply(this,arguments)}})();
+/* 바깥쪽 루프: 그 프레임 동안만 단계에 시간 배율을 건다 · 카메라는 단계 뒤에 덮어쓴다 · 1.05초쯤 화면을 찍는다 */
+(function(){const b=window.sv3Loop;if(typeof b!=='function')return;window.sv3Loop=function(now){
+  if(!KC.on){if(KC.pend){try{kcPendTry()}catch(e){kcErr(e)}}if(!KC.on)return b.apply(this,arguments)}
+  if(!SV3.el||!SV3.scene||SV3.scene!==KC.scene){try{kcStop(false)}catch(e){kcErr(e)}return b.apply(this,arguments)}
+  let real=clamp(((now||performance.now())-KC.rl)/1000,0,.1);KC.rl=now||performance.now();if(window.__kcDt!=null)real=+window.__kcDt;
+  KC.t+=real;KC.scale=kcScale(KC.t);
+  const f=SV3.step;let w=null;if(typeof f==='function'){w=function(dt){const s=KC.on?KC.scale:1;KC.gdt=dt*s;f(dt*s);if(KC.on)try{kcCam()}catch(e){kcErr(e)}};SV3.step=w}
+  const hid=kcHideVM(true);let r;
+  try{r=b.apply(this,arguments)}finally{if(w&&SV3.step===w)SV3.step=f;kcHideVM(false,hid)}
+  try{if(KC.on&&!KC.capped&&KC.t>=KC.capAt&&!window.__noRender)kcSnap(false)}catch(e){kcErr(e)}
+  if(KC.on&&KC.t>=KC.dur)try{kcStop(false)}catch(e){kcErr(e)}
+  return r}})();
+/* ---------- 설정 · 플레이 기록 · 도움말 ---------- */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="killcam"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('killcam','결정적 장면','마지막 적·장거리·숙적·자폭 드론 명중 순간을 느린 화면으로 다시 보고 장면 카드를 만든다',[[1,'켬'],[0,'끔']],store.get('sg.killcam',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){kcErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='killcam')return;try{store.set('sg.killcam',b.dataset.v==='1')}catch(x){}},true);
+(function(){const b=window.plogShow;if(typeof b!=='function')return;window.plogShow=function(){const r=b.apply(this,arguments);try{const o=document.getElementById('set84');const row=o&&o.querySelector('.s84 .row');if(!row)return r;const n=KC.n;
+  const th=KC.cards.filter(x=>x.url).map(x=>`<button type="button" data-kc="view" data-id="${x.i}" title="${kcH(x.title)}"><img src="${x.url}" alt=""></button>`).join('');
+  row.insertAdjacentHTML('beforebegin',`<div class="s4-sec kc-sec">🎬 결정적 장면 <small class="mut">v18.0 · 재생 ${n.start}회 · 카드 ${n.card}장</small></div>${th?`<div class="kc-th">${th}</div>`:''}<p class="s4-p small">마지막 적 ${n.last} · 숙적 ${n.nem} · 장거리 ${n.long} · 자폭 드론 ${n.fpv} · 열차 습격 ${n.trr} · 건너뜀 ${n.skip} · 공유 ${n.share} · 저장 ${n.save} — 카드는 이 기기 메모리에만(최근 5장)</p>`)}catch(e){kcErr(e)}return r}})();
+(function(){const b=window.plogText;if(typeof b!=='function')return;window.plogText=function(){let t=b.apply(this,arguments);try{const n=KC.n;t+=`\n[결정적 장면 v18.0] 재생 ${n.start} · 마지막 적 ${n.last} · 숙적 ${n.nem} · 장거리 ${n.long} · 자폭 드론 ${n.fpv} · 열차 습격 ${n.trr} · 건너뜀 ${n.skip} · 카드 ${n.card} · 공유 ${n.share} · 저장 ${n.save}`}catch(e){kcErr(e)}return t}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-g3=plogwipe]');if(!b)return;try{for(const k in KC.n)KC.n[k]=0;store.set('sg.kcN',KC.n)}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎬 결정적 장면(v18.0)','마지막 적을 쓰러뜨리거나, 80m 넘게 맞히거나, 숙적을 쓰러뜨리거나, 자폭 드론이 두 명 이상을 무력화하거나, 열차 습격을 격퇴하면 그 순간을 느린 화면(×0.2)과 영화 카메라(쓰러지는 사람 주위를 돈다)로 약 2.6초 다시 보여 준다 — 탭하면 건너뛴다 · 30초에 한 번. 끝나면 📸 장면 카드(게임 화면 + 제목·거리·무기·일차 · \'가상의 상황 · 게임 화면\' 표기)가 만들어진다. 카드는 이 기기 메모리에만 최근 5장 — 저장·공유는 직접 누를 때만이고, 📈 플레이 기록에서 다시 볼 수 있다. 설정 \'결정적 장면\'으로 끈다 · 교육용 모드 제외.']);
+
 /* 긴급 수정(2026-11-22) 탕정역 가는 길 — 역은 지도 데이터 동쪽 끝 너머(동쪽 확장 구역)라 그쪽을 눌러 자동 이동하면 지도 끝에서 멈추고,
    탈것을 탄 채로는 '탕정역 방면' 단추가 나오지 않아 막혀 보였다.
    ① 위치 이동: 역·동쪽 확장 구역을 누르면 '탕정역 방면' 입구(지도 끝 표지판)로 간다 → 도착하면 탈것에서 내려 역 카드를 연다
@@ -27162,6 +27339,23 @@ function medStep(dt){MED.cool=Math.max(0,MED.cool-dt);
 /* 출혈 표시줄에 대원 상태 */
 (function(){const b=window.wndHud;if(typeof b!=='function')return;window.wndHud=function(){const r=b.apply(this,arguments);try{const h=document.getElementById('wndHud');if(h){let s=h.querySelector('.wnd-med');const m=MED.m;if(!m||!(WND.on&&!(WND.treat>0))){if(s)s.remove()}else{if(!s){s=document.createElement('small');s.className='wnd-med';h.appendChild(s)}const t=MED.ph==='treat'?`⛑ ${clean(m.d.nm,10)} 지혈 중 ${Math.max(0,MED.need-MED.t).toFixed(1)}s`:`⛑ ${clean(m.d.nm,10)} 오는 중 ${Math.round(medDist(m))}m`;if(s.textContent!==t)s.textContent=t}}}catch(e){medErr(e)}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['⛑ 응급처치 대원 지혈(v17.8.1)','밖에서 내가 출혈하면 응급 담당 팀원이 뛰어와 무릎 꿇고 지혈대·압박붕대로 지혈한다(대원 구급낭 · 레벨 1은 4.2초 → 레벨이 오를수록 빨라져 최소 2.2초 · 교전 중엔 1.4배). 응급 담당이 없으면 가장 가까운 팀원이 내 구급상자(없으면 의약품 1)로 6초. 나를 붙잡지 않는다 — 멀어지면 따라온다. 직접 하려면 위쪽 \'🩹 지혈·붕대\'. 부상 자체는 대피소 응급처치로.']);
+
+/* v18.0 상가 재입고(2026-11-22 22:27 사용자 요청: "턴이 지날 때마다 가게 물건이 리셋돼서 파밍에 문제없게")
+   67 상가 7곳(편의점·약국·치킨호프·부동산·학원·카페·마트)은 가져간 물건이 판 끝까지 비어 있었다 → 턴이 바뀌면 진열대 소모품이 다시 채워진다
+   - 다시 채우는 것: 물·음료·식량·라면·과자·약·구급상자·마스크·배터리·라이터·연료·로프·탄·조명탄·현금 봉투 등 소모품
+   - 한 번만: 무기(방망이·도끼·쇠지렛대·석궁)·헬멧·조끼·드론·무전기·조명탄 발사기 — 한 번 가져가면 그 판 끝까지 없다(무한 복제 방지)
+   - 같은 턴 안에서는 다시 채워지지 않는다 · 문 앞 단추가 사라졌던 경우도 턴마다 다시 나온다 */
+const RST={dur:new Set(['helmet','vest','drone','radio','flareg']),n:0,note:-1,err:0};
+function rstErr(e){if(RST.err<6){RST.err++;try{console.error(e)}catch(x){}}}
+function rstDurable(k){try{return !!(typeof ARMS!=='undefined'&&ARMS[k])||RST.dur.has(k)}catch(e){return false}}
+function rstRun(){if(typeof SHOP_DEF==='undefined'||typeof G==='undefined'||!G)return 0;const done=G.outDone||(G.outDone={});const T=G.turn|0;if(done.__rst===T)return 0;done.__rst=T;let n=0;
+  for(const k of Object.keys(SHOP_DEF)){if(done['shop:'+k]){delete done['shop:'+k]}const d=done['shopin:'+k];if(d&&Array.isArray(d.t)&&d.t.length){const items=SHOP_DEF[k].items;const keep=d.t.filter(i=>items[i]&&rstDurable(items[i][0]));n+=d.t.length-keep.length;d.t=keep}}
+  RST.n+=n;if(n)RST.note=T;return n}
+function rstNote(){try{if(RST.note!==(G.turn|0)||!OUT.on||typeof outNote!=='function')return;RST.note=-1;outNote('<b>🔄 상가 재입고</b><div>턴이 바뀌어 상가 진열대의 물·식량·약·배터리·탄 같은 소모품이 다시 채워졌다(무기·장비는 한 번뿐).</div>',3600)}catch(e){rstErr(e)}}
+/* 밖 장면을 새로 만들 때(턴마다) · 상가에 들어갈 때 */
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){try{rstRun()}catch(e){rstErr(e)}const r=b.apply(this,arguments);try{if(RST.note===(G.turn|0))setTimeout(rstNote,1800)}catch(e){rstErr(e)}return r}})();
+(function(){const b=window.shopEnter;if(typeof b!=='function')return;window.shopEnter=function(){try{rstRun()}catch(e){rstErr(e)}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🔄 상가 재입고(v18.0)','턴이 바뀌면 상가 7곳(편의점·약국·치킨호프·부동산·학원·카페·마트) 진열대의 소모품(물·음료·식량·약·구급상자·마스크·배터리·연료·탄·현금 봉투 등)이 다시 채워진다. 무기(방망이·도끼·쇠지렛대·석궁)와 헬멧·조끼·드론·무전기·조명탄 발사기는 한 번 가져가면 그 판 끝까지 없다. 같은 턴 안에서는 다시 채워지지 않는다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
