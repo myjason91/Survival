@@ -1970,6 +1970,9 @@ body.trr-duck .trr-duck{background:rgba(255,178,36,.85);color:#111}
 .dlm-later{margin-top:6px;color:#f2c45a;font-weight:800;font-size:12px}
 .pst-tbl b{position:relative}
 .pst-bar{display:block;height:3px;background:var(--amber);border-radius:2px;margin-top:3px;opacity:.85}
+/* v17.9 숙적 */
+.nem-tag{display:block;margin-top:4px;color:#ff8a7a;font-size:11px;font-weight:700}
+.mis-row.nem-row{border-left:3px solid #c0352b;background:rgba(192,53,43,.1)}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14063,7 +14066,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.8.1';
+const APP_VER='17.9';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -26997,6 +27000,87 @@ function pstDlmTxt(){const D=PST.D;const nm=k=>(typeof DLM_BY!=='undefined'&&DLM
     <p class="s4-p small">그만둔 곳(화면을 닫거나 앱을 바꾼 순간): ${clean(Q.q,160)} · 일차별 ${clean(Q.qd,120)}</p><p class="s4-p small">딜레마 선택: ${clean(pstDlmTxt(),300)}</p>`;row.insertAdjacentHTML('beforebegin',html)}catch(e){pstErr(e)}return r}})();
 (function(){const b=window.plogText;if(typeof b!=='function')return;window.plogText=function(){let t=b.apply(this,arguments);try{const R=pstRows();const Q=pstQuitTxt();t+=`\n[어디서 노는지 v17.8] 접속 ${PST.D.ses}회 · `+R.map(x=>`${x.n} ${Math.round(x.m*10)/10}분(${x.p}%)`).join(' · ')+`\n그만둔 곳: ${Q.q} · 일차별 ${Q.qd}\n딜레마 선택: ${pstDlmTxt()}`}catch(e){pstErr(e)}return t}})();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-g3=plogwipe]');if(!b)return;try{PST.D=pstBlank();pstSave();plogShow()}catch(x){}},true);
+
+/* ===================== 162 · v17.9 숙적 — 나를 기억하는 가상의 적 두목 =====================
+   사용자 결정(2026-11-22 19:52): 사전검토 후보 ④ "숙적(네메시스) — 가상의 적 두목이 나와의 교전을 기억 · 저격당하면 대응 저격수 · 흉터를 안고 도망쳐 무전으로 도발"
+   · 누구: 가상의 '선로 약탈단'(v17.7) 두목 — 행동으로 정의(피란민 물자를 노리는 무장 집단) · 특정 국적·단체·지역·실존 인물과 무관 · 별명만 있다
+   · 만나는 법: 2턴부터 밖에서 가끔 57 돌발 상황 '🦂 숙적'으로 — 무전 도발(지난 일을 기억해서) → 거리 한복판에 부하들과 진을 친다 → 다가가면 116 제자리 교전(화면 그대로)
+   · 기억: 만날 때마다 결과를 남긴다(흉터를 안고 도주 · 나를 쓰러뜨림 · 내가 달아남 · 부하만 잃음 · 열차 습격 실패) → 다음 만남이 달라진다
+     - 달아나 살아남으면 계급이 오르고 흉터가 생기고 경호원 +2 · 체력 ↑
+     - 내가 조준경 총(3배 이상)으로 싸웠으면 대응 저격수(명사수) · 드론을 띄웠으면 전파 방해(근처 160m 드론 이륙 불가) · 팀원이 많이 잡았으면 돌격조 측면 · 내가 달아났으면 더 대담하게(돌격조)
+   · 끝: 두목(계급 4)이 되면 더는 달아나지 않는다 · 쓰러뜨리면 '최후' + 큰 보상, 두 턴 뒤 남은 부하 중 새 숙적이 생긴다
+   · 상황판(🚨)에 숙적 칸: 별명 · 계급 · 흉터 · 특징 · 지난 만남 · 교육용 모드·'길거리 교전' 끔이면 나오지 않는다 · 가족·아이는 겨누지 않는다(116 규칙) */
+const NEM={err:0,n:{meet:0,fight:0,esc:0,kill:0,beat:0,ran:0,jam:0,new:0},outN:0,droneT:-9};
+function nemErr(e){NEM.err++;if(NEM.err<5)console.error('[162]',e)}
+const NEM_NM=['독사','외눈','쇠갈고리','붉은 두건','늑대','먹구름','송곳니','진흙발'];
+const NEM_RK=['행동대원','행동대장','부두목','두목'];
+const NEM_SCAR=['왼뺨','오른쪽 귀','이마','턱','왼손등'];
+const NEM_TR={guard:'경호원 둘',mark:'대응 저격수',jam:'드론 전파 방해',rush:'돌격조 측면',armor:'방탄 조끼'};
+function nemOn(){try{if(navigator.webdriver&&!window.__nemTest)return false;if(typeof eduOn==='function'&&eduOn())return false;return store.get('sg.nemesis',true)!==false&&store.get('sg.owc',true)!==false}catch(e){return false}}
+function nemS(){G.nem=G.nem||{cur:null,past:[],next:0};G.nem.past=G.nem.past||[];return G.nem}
+function nemNew(){const S=nemS();const used=S.past.map(p=>p.nm);const pool=NEM_NM.filter(n=>!used.includes(n)&&!(S.cur&&S.cur.nm===n));const nm=pool.length?pool[Math.floor(Math.random()*pool.length)]:NEM_NM[Math.floor(Math.random()*NEM_NM.length)];
+  S.cur={nm,rk:1,scar:[],tr:[],hist:[],seed:500+Math.floor(Math.random()*400),born:G.turn|0};NEM.n.new++;return S.cur}
+function nemCur(){const S=nemS();if(!S.cur&&(G.turn|0)>=(S.next|0))nemNew();return S.cur}
+function nemTag(N){return `🦂 ${N.nm}(${NEM_RK[N.rk]})${N.scar.length?' · '+N.scar[N.scar.length-1]+' 흉터':''}`}
+function nemAddTr(N,t){if(!N.tr.includes(t)){N.tr.push(t);if(N.tr.length>3)N.tr.shift()}}
+/* 지난 일을 기억하는 도발 */
+function nemTaunt(N){const L=N.hist;const h=L[L.length-1];const nm=`<b>📻 '${N.nm}'</b>`;if(!h)return `${nm}<div>"여기는 선로 약탈단 ${N.nm}. 이 동네 물자는 이제 우리 거다. 길 비켜."</div>`;
+  const t={esc:`"지난번에 내 ${N.scar[N.scar.length-1]||'얼굴'}에 흉터를 남겼지. 이번엔 내 차례다."`,beat:'"기억하지? 바닥에 엎드려 끌려가던 꼴. 오늘은 더 오래 엎드려 있게 해 주지."',ran:'"도망치는 뒷모습, 잘 봤다. 오늘도 뛸 거냐?"',men:'"내 애들을 그렇게 쏴 놓고 발 뻗고 잘 줄 알았나?"',train:'"열차에서 내 애들을 쐈다지. 값은 오늘 치르게 해 주지."',miss:'"어제 사거리, 네가 안 오길래 우리가 다 가져갔다. 고맙다."',trainLost:'"열차에서 숙이고 버티더군. 겁쟁이."'}[h.out]||`"또 보는군."`;
+  const ex=N.tr.includes('jam')?'<div>"하늘에 장난감 띄우는 거, 이번엔 안 통할 거다."</div>':N.tr.includes('mark')?'<div>"저격수 놀이 좋아하더라. 나도 하나 데려왔다."</div>':'';return `${nm}<div>${t}</div>${ex}`}
+/* 교전 구성 */
+function nemTypes(N){const L=['gun','gun','lead'];if(N.rk>=2)L.push('gun');if(N.tr.includes('guard'))L.push('gun','gun');if(N.tr.includes('mark'))L.push('mark');if(N.tr.includes('rush'))L.push('rush','rush');return L}
+function nemOpt(N){return {k:'nem',ico:'🦂',nm:`선로 약탈단 — ${N.nm}`,arms:{gun:['k2','dbs','smg45'],lead:['k2','sgs'],rush:['smg45','m1911'],mark:['k14','k2']},look:(t,seed)=>owcLook('spyg',seed),dress:(h,t,seed)=>{try{crMask(h,seed)}catch(e){}},
+  stat:{gun:{n:'약탈단'},rush:{n:'약탈단 돌격조'},mark:{n:'약탈단 저격수'},lead:{n:nemTag(N),hp:3.2+N.rk*.9+(N.tr.includes('armor')?1.4:0),acc:.7+N.rk*.03,want:[22,34]}},noSurr:1,surrHit:0,say:`${N.nm}다! 엄폐해요!`,
+  onEnd:r=>{try{return nemAfter(N,r)}catch(e){nemErr(e);return ''}}}}
+function nemLead(){try{return (IS.en||[]).find(a=>a.nem)||null}catch(e){return null}}
+function nemAfter(N,r){const S=nemS();const a=nemLead();const dead=!!(a&&(a.dead||(a.h&&a.h.dead)));const gone=!!(a&&a.gone&&!dead);const kills=(r.st.kills||0)+(r.st.tk||0);let out,txt;NEM.n.fight++;
+  let scoped=false;try{scoped=typeof kbZ==='function'&&GUN&&GUN.eq&&kbZ(GUN.eq)>=3}catch(e){}const drone=(G.turn|0)-(NEM.droneT|0)<=1;
+  if(dead){out='dead';NEM.n.kill++;FX=[];try{trust(5);mor(5);G.inv=G.inv||{};G.inv.cash=(G.inv.cash||0)+3;push('현금 봉투',3,'장')}catch(e){}const fx=FX.map(x=>`${x.l} ${x.n>0?'+':''}${x.n}${x.u||''}`).join(' · ');N.hist.push({t:G.turn|0,out,kills});S.past.push(Object.assign({},N,{end:G.turn|0}));S.cur=null;S.next=(G.turn|0)+2;
+    txt=`<b>🦂 '${N.nm}'의 최후</b><div>${NEM_RK[N.rk]} ${N.nm}이(가) 쓰러졌다. 약탈단이 흩어진다 — 동네에 숨통이 트인다. ${fx}</div><small>남은 부하 중 누군가 그 자리를 노릴 것이다(두 턴 뒤).</small>`}
+  else if(gone){out='esc';NEM.n.esc++;const sc=NEM_SCAR.filter(s=>!N.scar.includes(s));N.scar.push(sc.length?sc[0]:NEM_SCAR[0]);N.rk=Math.min(3,N.rk+1);nemAddTr(N,'guard');if(N.scar.length>=2)nemAddTr(N,'armor');
+    txt=`<b>🦂 '${N.nm}'이(가) 피를 흘리며 달아났다</b><div>${N.scar[N.scar.length-1]}에 흉터가 남았다. ${NEM_RK[N.rk]}(으)로 올라 경호원을 늘릴 것이다. 부하 ${kills}명 제압.</div>`}
+  else if(r.why==='down'){out='beat';NEM.n.beat++;N.rk=Math.min(3,N.rk+1);txt=`<b>🦂 '${N.nm}'에게 당했다</b><div>그는 웃으며 물자를 챙겨 갔다. 다음엔 더 대담해질 것이다.</div>`}
+  else if(r.why==='escape'){out='ran';NEM.n.ran++;nemAddTr(N,'rush');txt=`<b>🦂 '${N.nm}'에게서 달아났다</b><div>무전기에서 웃음소리가 들린다. 다음엔 돌격조가 쫓아올 것이다.</div>`}
+  else{out='men';txt=`<b>🦂 '${N.nm}'의 부하 ${kills}명을 제압했다</b><div>그는 모습을 감췄다. 이 일을 기억할 것이다.</div>`}
+  if(out!=='dead'){if(scoped)nemAddTr(N,'mark');if(drone)nemAddTr(N,'jam');if((r.st.tk||0)>=2)nemAddTr(N,'rush');N.hist.push({t:G.turn|0,out,kills})}
+  if(NEM.E&&EVD.cur===NEM.E){const E=NEM.E;setTimeout(()=>{try{if(EVD.cur===E)evhEnd(E,out==='dead'||out==='esc'||out==='men',`숙적 — ${N.nm}`,txt.replace(/<\/?b>/g,''),out,null)}catch(e){nemErr(e)}},200)}NEM.E=null;return txt}
+/* 달아나기: 체력이 40% 아래면(두목이 되기 전까지) */
+(function(){const b=window.isEnStep;if(typeof b!=='function')return;window.isEnStep=function(a,dt){try{if(a&&a.nem&&!a.nemRun&&!a.dead&&!(a.h&&a.h.dead)&&!a.gone&&a.st!=='hold'&&a.hp<=Math.max(.9,a.E.hp*.42)){const N=nemS().cur;if(N&&N.rk<3){a.nemRun=1;a.st='flee';a.goT=0;a.fa=(Math.random()-.5)*.6;a.E=Object.assign({},a.E,{sp:(a.E.sp||3.5)+1.3});outNote(`<b>🦂 '${N.nm}'이(가) 피를 흘리며 달아난다!</b><div>놓치면 흉터를 안고 더 독해져서 돌아온다.</div>`,2600);try{bubSay(a.h,'기억해 둬라!',2.4,'')}catch(e){}}}}catch(e){nemErr(e)}return b.apply(this,arguments)}})();
+/* 드론 전파 방해 */
+function nemJam(){const N=nemS().cur;const E=NEM.E;if(!N||!E||!N.tr.includes('jam')||EVD.cur!==E)return false;const p=FP3.pos;return Math.hypot(E.site.x-p.x,E.site.z-p.z)<160}
+(function(){const b=window.dfrStart;if(typeof b!=='function')return;window.dfrStart=function(type){try{if(nemJam()){NEM.n.jam++;outNote(`<b>📡 전파 방해 — 드론이 뜨지 않는다</b><div>'${nemS().cur.nm}' 쪽에서 방해 전파를 쏜다. 160m 밖으로 나가야 한다.</div>`,2600);return false}}catch(e){nemErr(e)}const r=b.apply(this,arguments);try{if(r)NEM.droneT=G.turn|0}catch(e){}return r}})();
+/* ---------- 57 돌발 상황 '숙적' ---------- */
+EVK.nem={n:'숙적 — 선로 약탈단 두목',ico:'🦂',col:'#c0352b',er:58,
+  w:()=>{if(!nemOn()||(G.turn|0)<2||NEM.outN>=1)return 0;const S=nemS();if(!S.cur&&(G.turn|0)<(S.next|0))return 0;try{if(!isAvail())return 0}catch(e){return 0}const N=S.cur;const last=N&&N.hist.length?N.hist[N.hist.length-1].t:-9;if(N&&(G.turn|0)-last<1)return 0;return N?1.3:1.6},
+  site(){return evPickSite(s=>!s.plaza,120,380)},lim(d){return Math.round(clamp(90+d/2.4,120,260))},
+  announce(E){const N=nemCur();if(!N)return;NEM.E=E;NEM.outN++;NEM.n.meet++;E.N=N;const H=E.H={ppl:[],ring:[],props:[],ag:[]};const o=nemOpt(N);const T=nemTypes(N);const S=E.site;
+    for(let i=0;i<T.length;i++){let q=null;for(let t=0;t<40&&!q;t++){const far=T[i]==='mark'?14+Math.random()*8:T[i]==='rush'?6+Math.random()*4:1.5+Math.random()*5;const ang=Math.random()*6.283;const x=S.x+Math.sin(ang)*far,z=S.z+Math.cos(ang)*far;let ok=false;try{ok=owcFree(x,z,.55)}catch(e){}if(ok&&!H.ag.some(b=>Math.hypot(b.h.root.position.x-x,b.h.root.position.z-z)<1.2))q={x,z}}if(!q)continue;
+      let a=null;try{a=isHoldMk(T[i],q.x,q.z,N.seed+i*11,o)}catch(e){nemErr(e)}if(!a)continue;a.nemCrew=1;if(T[i]==='lead'){a.nem=1;a.tagL=nemTag(N);a.nm=a.tagL}else a.tagL=T[i]==='mark'?'약탈단 저격수':'약탈단';try{a.h.setPose(i%2?'low':'idle',true)}catch(e){}H.ag.push(a)}
+    E.radio=nemTaunt(N)+`<small class="nem-tag">${nemTag(N)} · 부하 ${H.ag.length-1}${N.tr.length?' · '+N.tr.map(t=>NEM_TR[t]).join(' · '):''}</small>`},
+  step(E,dt){/* 부하들은 116 '대기' 상태(IS.pre)라 감독의 '가까이 가면 시작'이 막힌다 → 직접 연다: 28m 안 · 55m 안에서 서로 보임 · 누가 맞으면 */
+    if(E.ph==='go'&&E.H&&E.H.ag&&!(typeof IS!=='undefined'&&IS.on)){const P=FP3.pos;let near=false,hit=false;for(const a of E.H.ag){if(a.gone||a.dead||(a.h&&a.h.dead)){hit=true;continue}const q=a.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(a.flinch>0)hit=true;if(d<28)near=true;else if(d<55){try{if(owcLos(q.x,1.45,q.z,P.x,1.4,P.z))near=true}catch(e){}}}
+      if((near||hit)&&!OUT.enc&&!OUT.mapOpen){E.ph='act';E.ta=E.t;try{evHudOff()}catch(e){}let r=false;try{r=EVK.nem.engage(E)}catch(e){nemErr(e)}if(!r&&EVD.cur===E)evEnd({ok:false,quiet:1,short:'시작 못 함'})}return}
+    /* 교전이 결과 없이 끝났을 때 대비 */if(E.ph==='act'&&!(typeof IS!=='undefined'&&IS.on)){E.offT=(E.offT||0)+dt;if(E.offT>5&&EVD.cur===E){NEM.E=null;evhEnd(E,false,'숙적 — 흩어졌다','약탈단이 골목으로 사라졌다.','흩어짐',null)}}else E.offT=0},
+  ready(E){return !(typeof IS!=='undefined'&&IS.on)},
+  engage(E){const H=E.H;if(!H||!E.N)return false;const live=H.ag.filter(a=>!a.gone&&!a.dead&&!(a.h&&a.h.dead));if(!live.length)return false;const o=Object.assign(nemOpt(E.N),{agents:live,waves:[[]],intro:`<b>🦂 ${nemTag(E.N)}</b><div>"왔구나." — 엄폐하고 한 명씩. 두목을 놓치면 다음엔 더 독해진다.</div>`});let ok=false;try{ok=isStart(o)}catch(e){nemErr(e)}if(!ok){try{isHoldDrop(live)}catch(e){}return false}
+    for(const a of IS.en){if(a.nemCrew&&a.nem)a.tagL=a.nm=nemTag(E.N)}return true},
+  miss(E){const N=E&&E.N;try{if(E&&E.H&&E.H.ag)isHoldDrop(E.H.ag)}catch(e){}NEM.E=null;if(!N)return '';N.hist.push({t:G.turn|0,out:'miss',kills:0});if(N.rk<3&&Math.random()<.5)N.rk++;trust(-1);return `'${N.nm}' 패거리가 사거리를 털어 갔다. 그는 더 대담해졌다.`},
+  clear(E){try{if(E&&E.H&&E.H.ag&&!(typeof IS!=='undefined'&&IS.on))isHoldDrop(E.H.ag.filter(a=>!a.dead&&!(a.h&&a.h.dead)))}catch(e){}evhDrop(E)}};
+/* 열차 습격(159)도 같은 패거리 */
+(function(){const b=window.trrStart;if(typeof b!=='function')return;window.trrStart=function(){const r=b.apply(this,arguments);try{const N=nemOn()?nemS().cur:null;if(N&&TRR.R){TRR.R.nem=N.nm;setTimeout(()=>{try{trrMsg(`⚠ '${N.nm}'의 선로 약탈단 — 열차를 노린다`,3.2)}catch(e){}},1500)}}catch(e){nemErr(e)}return r}})();
+(function(){const b=window.trrEnd;if(typeof b!=='function')return;window.trrEnd=function(kind){const R=TRR.R;const fresh=R&&R.ph!=='end';const r=b.apply(this,arguments);try{const N=nemOn()?nemS().cur:null;if(fresh&&N&&R.nem===N.nm){N.hist.push({t:G.turn|0,out:kind==='win'?'train':'trainLost',kills:R.down|0});if(kind==='win')nemAddTr(N,'rush');else if(N.rk<3)N.rk++}}catch(e){nemErr(e)}return r}})();
+/* 나갈 때마다 1회 */
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){NEM.outN=0;NEM.E=null;return b.apply(this,arguments)}})();
+/* 상황판(🚨)에 숙적 칸 */
+function nemBoardHtml(){const S=nemS();const N=S.cur;const OUTN={esc:'흉터를 안고 달아남',beat:'나를 쓰러뜨림',ran:'내가 달아남',men:'부하만 잃음',train:'열차 습격 실패',trainLost:'열차에서 우리가 숙임',miss:'내가 안 감',dead:'최후'};
+  if(!N){const p=S.past[S.past.length-1];return `<div class="mis-row nem-row"><span class="mis-ico">🦂</span><div><b>숙적 없음</b><small>${p?`'${p.nm}' 쓰러뜨림 — ${(S.next|0)>(G.turn|0)?`${(S.next|0)-(G.turn|0)}턴 뒤 새 숙적`:'곧 새 숙적이 나타난다'}`:'2턴부터 선로 약탈단 두목이 나타난다'}</small></div></div>`}
+  const h=N.hist.slice(-3).map(x=>`${Math.floor(x.t/4)+1}일차 ${OUTN[x.out]||x.out}`).join(' · ');
+  return `<div class="mis-row nem-row"><span class="mis-ico">🦂</span><div><b>숙적 '${N.nm}' · ${NEM_RK[N.rk]}</b><small>${N.scar.length?'흉터 '+N.scar.join('·')+' · ':''}${N.tr.length?N.tr.map(t=>NEM_TR[t]).join(' · '):'특징 없음'}</small>${h?`<em>${h}</em>`:''}</div></div>`}
+(function(){const b=window.evBoard;if(typeof b!=='function')return;window.evBoard=function(open){const r=b.apply(this,arguments);try{if(open&&nemOn()){const p=document.getElementById('misPanel');const hd=p&&p.querySelector('.mis-head');if(hd&&!p.querySelector('.nem-row'))hd.insertAdjacentHTML('afterend',nemBoardHtml())}}catch(e){nemErr(e)}return r}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="nemesis"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('nemesis','숙적','나를 기억하는 가상의 약탈단 두목이 가끔 나타난다(길거리 교전)',[[1,'켬'],[0,'끔']],store.get('sg.nemesis',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){nemErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='nemesis')return;try{store.set('sg.nemesis',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🦂 숙적(v17.9)','2턴부터 가상의 \'선로 약탈단\' 두목이 가끔 나타난다(별명 · 계급). 무전으로 지난 일을 기억해 도발하고, 거리 한복판에 부하들과 진을 친다 — 다가가면 그 자리에서 교전. 체력이 40% 아래면 흉터를 안고 달아나 계급이 오르고 경호원이 늘어난다. 조준경 총으로 싸웠으면 대응 저격수를, 드론을 띄웠으면 전파 방해(160m)를, 팀원이 많이 잡았거나 내가 달아났으면 돌격조를 데려온다. 두목(계급 4)이 되면 달아나지 않는다 — 쓰러뜨리면 \'최후\'(신뢰 +5 · 사기 +5 · 현금 봉투 3), 두 턴 뒤 새 숙적. 열차 습격도 같은 패거리. 🚨 상황판에 숙적 칸. 설정 \'숙적\' · 교육용 모드 제외.']);
 
 /* 긴급 수정(2026-11-22) 탕정역 가는 길 — 역은 지도 데이터 동쪽 끝 너머(동쪽 확장 구역)라 그쪽을 눌러 자동 이동하면 지도 끝에서 멈추고,
    탈것을 탄 채로는 '탕정역 방면' 단추가 나오지 않아 막혀 보였다.
