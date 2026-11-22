@@ -1965,6 +1965,11 @@ body.trr-ads .trr-ads{background:rgba(47,124,246,.8)}
 body.trr-duck .trr-duck{background:rgba(255,178,36,.85);color:#111}
 .trr-skip{position:absolute;left:14px;bottom:16px;border:1px solid rgba(255,255,255,.4);background:rgba(16,19,23,.6);color:#e8edf1;border-radius:999px;padding:7px 12px;font:700 11.5px var(--sans)}
 .trr-help{position:absolute;left:14px;bottom:56px;color:rgba(255,255,255,.75);font:600 10.5px var(--sans);text-shadow:0 1px 2px rgba(0,0,0,.9)}
+/* v17.8 딜레마 카드 · 플레이 통계 */
+.dlm-tag{display:block;margin-top:4px;color:#f2c45a;font-size:11px;font-weight:700}
+.dlm-later{margin-top:6px;color:#f2c45a;font-weight:800;font-size:12px}
+.pst-tbl b{position:relative}
+.pst-bar{display:block;height:3px;background:var(--amber);border-radius:2px;margin-top:3px;opacity:.85}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14058,7 +14063,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.7';
+const APP_VER='17.8';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -26814,6 +26819,213 @@ document.addEventListener('keyup',e=>{if(TRR.R&&e.key===' ')TRR.R.hold=0},true);
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="trainraid"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('trainraid','열차 습격','피란 열차를 타고 가다 선로 약탈단의 습격을 받는다(창가 응사 · 첫 탑승은 반드시, 이후 가끔)',[[1,'켬'],[0,'끔']],store.get('sg.trainraid',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){trrErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='trainraid')return;try{store.set('sg.trainraid',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🚆 열차 습격(v17.7)','피란 열차를 타고 가다 선로 위 불타는 차량에 급제동 — 가상의 \'선로 약탈단\'이 방벽 뒤에서 열차를 쏜다. 경비 요원이 건넨 소총으로 창가에서 응사: 화면을 끌어 조준 · 🔍 조준경 · 🔫 누르고 있으면 연사(조준 보정) · ⬇ 숙이면 안 맞는다. 6명 제압하면 나머지는 달아나고(신뢰 +2), 75초 버티거나 \'숙이고 버틴다\'면 경비 요원들이 밀어낸다(보상 없음). 들판에 달아나는 민간인은 쏘면 안 된다(신뢰 −2). 첫 탑승은 반드시, 이후 가끔 · 설정 \'열차 습격\' · 교육 모드 제외. 이 교전에서 내 체력은 30 아래로 떨어지지 않는다.']);
+
+/* ===================== 160 · v17.8 딜레마 카드 10종 — 정답 없는 선택 · 결과가 나중에 돌아온다 =====================
+   사용자 결정(2026-11-22 19:52): 사전검토 후보 ⑤ "딜레마 카드 10종 — 결과가 하루 뒤 돌아온다" 진행
+   · 왜: 신뢰·사기 수치는 있지만 선택의 대가가 나중에 체감되는 장치가 적었다 → 선택마다 '⏳ 몇 시간 뒤 돌아온다'를 약속하고,
+         턴이 넘어갈 때 결과가 알림으로 돌아오며, 셋은 그 사람이 직접 다시 찾아온다(밖 돌발 상황 '그때 그 사람')
+   · 57 돌발 상황 감독에 10종을 등록한다(가까이 가면 카드) — 정답 표시 없음(판단 기록에는 '정답 없음'으로 남는다)
+   · 모든 인물은 가상이고 특정 국적·지역·집단과 무관 · 폭력은 결과·판단 중심 · 아이·가족은 해를 입지 않는다
+   · 교육용 모드: 밀고 제안·겁먹은 동원 대원은 나오지 않는다 · 한 판에 같은 딜레마는 한 번 */
+const DLM={err:0,n:{fire:0,pick:0,due:0,back:0}};
+function dlmErr(e){DLM.err++;if(DLM.err<5)console.error('[160]',e)}
+function dlmOn(){try{if(navigator.webdriver&&!window.__dlmTest)return false;return store.get('sg.dilemma',true)!==false}catch(e){return false}}
+function dlmEdu(){return typeof eduOn==='function'&&eduOn()}
+function dlmS(){G.dlm=G.dlm||{seen:{},picks:[],back:[]};G.dlm.seen=G.dlm.seen||{};G.dlm.picks=G.dlm.picks||[];G.dlm.back=G.dlm.back||[];return G.dlm}
+function dlmCash(n){G.inv=G.inv||{};const b=G.inv.cash||0;G.inv.cash=Math.max(0,b+n);const d=G.inv.cash-b;if(d)push('현금 봉투',d,'장');return d}
+function dlmTime(h){if(OUT.timed)OUT.h=Math.max(0,OUT.h-h)}
+function dlmSeedG(g,base){try{const L=RBX_LOOK.civ;for(let i=base;i<base+40;i++)if(String(L[i%L.length])[0]===g)return i}catch(e){}return base}
+function dlmNpc(H,S,seed,pose,kind,dx,dz,face){const q=evNear(S.x+dx,S.z+dz)||{x:S.x+dx,z:S.z+dz};const yaw=face!=null?face:Math.atan2(FP3.pos.x-q.x,FP3.pos.z-q.z);const h=evhNpc(seed,pose,kind,q.x,q.z,yaw);if(h)H.ppl.push(h);return h}
+function dlmProp(H,S,geo,col,dx,y,dz,ry,em){const m=new T.Mesh(geo,mat(col,{r:.8,e:em||null}));const q=evNear(S.x+dx,S.z+dz)||{x:S.x+dx,z:S.z+dz};m.position.set(q.x,y,q.z);m.rotation.y=ry||0;m.castShadow=true;OUT.scene.add(m);H.props.push(m);return m}
+function dlmCar(H,S,type,col,dx,dz,ry){try{const c=vehMake(type,col,OUT.scene,false);const q=evNear(S.x+dx,S.z+dz)||{x:S.x+dx,z:S.z+dz};c.position.set(q.x,0,q.z);c.rotation.y=ry||0;H.props.push(c);return c}catch(e){return null}}
+function dlmNm(E,i,g){return evhName(E,i,g||'m')}
+/* ---------- 10종 ---------- */
+const DLM_LIST=[
+ {k:'pain',n:'마지막 진통제',ico:'💊',t0:1,edu:1,
+  scene(E,H,S){H.old=dlmNpc(H,S,300,'sitNervous','eldM',0,0);H.nm=dlmNm(E,0);H.say=['아이고, 다리야…','누구 진통제 있소?','딸이 약 구하러 갔는데 안 와요…']},
+  radio:(E,H)=>`<b>💊 길가의 노인</b><div>"골목 어귀에 다리를 다친 노인이 앉아 계세요. 약을 찾으시는데…"</div>`,
+  card:(E,H)=>({art:'pill',title:`"진통제… 한 알만 있으면 되는데"`,text:`${H.nm} 노인이 부은 발목을 붙잡고 있다. 딸이 약을 구하러 간 지 반나절. 우리 가방에는 가족 몫 비상약이 ${G.res.meds|0}개 있다. 누군가 뒤에서 지켜본다.`,
+   lesson:'비상약은 가족의 보험이다. 그러나 이웃에게 베푼 것은 전시 공동체에서 가장 빨리 돌아오는 자산이기도 하다 — 정답은 상황(남은 양·가족 상태)에 달렸다.',
+   choices:[{t:'우리 비상약을 준다',s:'의약품 −1 · 신뢰 +2',need:()=>(G.res.meds||0)>=1,go(){res('meds',-1);trust(2);return `노인이 약을 꼭 쥔다. "이 은혜를…" 지켜보던 사람이 고개를 끄덕인다.`},later:{n:3},back:'painD'},
+    {t:'붕대만 단단히 감아 준다(10분)',s:'신뢰 +1',go(){dlmTime(1/6);trust(1);return '부목 대신 우산대를 대고 감았다. 노인은 조금 덜 아파한다.'},later:{n:2}},
+    {t:'못 본 척 지나간다',s:'가족 몫을 지킨다',go(){return '등 뒤에서 신음 소리가 멀어진다.'},later:{n:2}}]}),
+  due:[v=>{mor(2);return '아침에 문 앞에 쪽지가 있었다. "그날 아버지께 약을 주신 분께 — 꼭 찾아뵐게요."'},v=>{if(Math.random()<.5){res('food',1);return '붕대를 감아 준 노인이 손주 편에 감자 한 봉지를 보냈다.'}mor(-1);return '그 노인은 사흘째 걷지 못한다는 소식이 들렸다.'},v=>{trust(-2);return '"약 있으면서 노인을 외면했다더라" — 대피소에 소문이 돌았다.'}]},
+ {k:'line',n:'물 배급 줄',ico:'🚰',t0:1,edu:1,
+  scene(E,H,S){for(let i=0;i<5;i++)dlmNpc(H,S,320+i,'idle','civ',-2+i*1.1,4,Math.PI/2);H.mom=dlmNpc(H,S,dlmSeedG('f',340),'carry','civ',1.5,1.2);H.angry=dlmNpc(H,S,dlmSeedG('m',350),'angry','civ',-3,2);dlmProp(H,S,new T.CylinderGeometry(.8,.8,1.6,14),'#3a6fd0',4,0.8,5);H.nm=dlmNm(E,0,'f');H.say=['줄 서요! 다들 몇 시간째 기다렸어요!','아기가 열이 나서요… 먼저 좀…']},
+  radio:()=>`<b>🚰 급수차 앞</b><div>"급수차 줄에서 실랑이가 났어요. 아기 안은 분이 앞에 끼워 달라는데…"</div>`,
+  card:(E,H)=>({art:'water',title:'"아기가 열이 나요, 먼저 받게 해 주세요"',text:`${H.nm} 씨가 열 오른 아기를 안고 내 바로 앞으로 왔다. 뒤에서 "다들 기다렸어요!" 고함이 터진다. 급수차 물은 넉넉하지 않다.`,
+   lesson:'배급 질서는 모두를 지키는 장치지만, 취약한 사람을 먼저 돌보는 규칙을 공동체가 합의하면 다툼이 줄어든다. 혼자 결정하기보다 줄 전체의 동의를 구하는 것이 오래 간다.',
+   choices:[{t:'내 자리를 내준다(30분 더 기다림)',s:'신뢰 +1',go(){dlmTime(.5);trust(1);return '엄마가 연신 고개를 숙인다. 뒤에서 투덜거림이 잦아든다.'},later:{n:2}},
+    {t:'"규칙은 규칙입니다" — 줄을 지키게 한다',s:'질서 유지',go(){mor(1);return '엄마는 맨 뒤로 갔다. 줄은 조용해졌다.'},later:{n:2}},
+    {t:'줄 전체에 "아이 있는 집 먼저" 제안',s:'통하면 신뢰 +3 · 아니면 다툼',go(E,H){if(Math.random()<.55+Math.min(.3,(G.trust||0)*.03)){trust(3);H.ok=1;return '"…그래, 아이부터 줍시다." 줄 여기저기서 손이 올라간다.'}mor(-2);trust(-1);return '"당신이 뭔데!" 고성이 오가고 배급이 20분 멈췄다.'},later:{n:2}}]}),
+  due:[v=>{res('water',3);return '그때 자리를 내준 엄마가 급수차가 다음에 서는 시간과 골목을 알려 줬다 — 물 3L를 미리 받았다.'},v=>{mor(-1);return '그날 맨 뒤로 간 엄마의 아기가 탈진했다는 이야기를 들었다. 규칙은 지켜졌지만 마음이 무겁다.'},v=>{mor(1);return '급수차 줄에 "아이 있는 집 먼저" 팻말이 붙었다. 다툼이 줄었다.'}]},
+ {k:'pharm',n:'주인 없는 약국',ico:'🏥',t0:1,edu:1,
+  scene(E,H,S){const g=new T.Group();const a=new T.Mesh(new T.BoxGeometry(.9,.28,.12),mat('#16a34a',{e:'#0f7a35'}));const b=new T.Mesh(new T.BoxGeometry(.28,.9,.12),mat('#16a34a',{e:'#0f7a35'}));g.add(a,b);const q=evNear(S.x,S.z)||S;g.position.set(q.x,2.6,q.z);OUT.scene.add(g);H.props.push(g);for(let i=0;i<5;i++)dlmProp(H,S,new T.BoxGeometry(.45,.3,.35),i%2?'#d8cfbd':'#c4b59a',(Math.random()-.5)*3,.15,1+Math.random()*2,Math.random()*3);H.say=null},
+  radio:()=>`<b>🏥 무전 — 이웃</b><div>"사거리 약국 문이 부서져 있어요. 주인은 피란 갔대요. 안에 약이 꽤 남았다던데…"</div>`,
+  card:()=>({art:'aid',title:'문이 부서진 약국 — 아무도 없다',text:'선반에 진통제·소독약·해열제가 남아 있다. 계산대에 "곧 돌아옵니다" 쪽지. 멀리서 누가 이쪽을 본다. 대피소에는 약이 모자란다.',
+   lesson:'전시 포고령은 약탈을 무겁게 처벌한다. 생존에 꼭 필요한 만큼, 흔적(쪽지·대가)을 남기고, 가능하면 당국에 알리는 것이 법·공동체 양쪽에서 가장 안전하다.',
+   choices:[{t:'필요한 만큼만 · 쪽지와 현금 봉투 1장을 남긴다',s:'의약품 +2 · 현금 −1',need:()=>((G.inv&&G.inv.cash)||0)>=1,go(){res('meds',2);dlmCash(-1);return '"대피소 ○○동 — 진통제 두 통 가져갑니다. 돌아오시면 찾아오세요." 쪽지를 계산대에 눌러 두었다.'},later:{n:4}},
+    {t:'챙길 수 있는 만큼 다 챙긴다',s:'의약품 +4 · 식량 +1',go(){res('meds',4);res('food',1);return '가방이 묵직하다. 멀리서 보던 사람이 사라졌다.'},later:{n:3}},
+    {t:'손대지 않고 검문소에 알린다',s:'신뢰 +1',go(){trust(1);return '"알려 줘서 고맙습니다. 군에서 봉인하겠습니다."'},later:{n:2}}]}),
+  due:[v=>{res('meds',1);trust(2);return '약국 주인이 돌아와 쪽지를 보고 찾아왔다. "도둑 아닌 분은 처음이네요" — 해열제 한 통을 더 주고 갔다.'},v=>{trust(-3);return '"사거리 약국을 싹 털어 간 사람이 대피소에 있다" — 소문이 돌았다. 눈길이 차갑다.'},v=>{if(Math.random()<.45){res('meds',1);return '봉인된 약국 약이 대피소에 배급됐다 — 우리 몫 의약품 1.'}return '봉인된 약국 약은 군 병원으로 갔다고 한다.'}]},
+ {k:'car',n:'고장 난 피란 차',ico:'🚗',t0:1,edu:1,
+  scene(E,H,S){dlmCar(H,S,'hatch','#8a8f96',0,0,Math.random()*3);H.man=dlmNpc(H,S,dlmSeedG('m',360),'check','civ',1.6,1.2);H.old=dlmNpc(H,S,362,'sitNervous','eldF',-1.8,1.4);H.nm=dlmNm(E,0);H.say=['시동이 안 걸려…','어머니 모시고 아산까지 가야 하는데…']},
+  radio:()=>`<b>🚗 길가</b><div>"피란 가던 차가 길 한가운데 섰어요. 할머니가 차 옆에 앉아 계세요."</div>`,
+  card:(E,H)=>({art:'car',title:'"정비 좀 아세요? 시동이 안 걸려요"',text:`${H.nm} 씨가 보닛을 열어 둔 채 땀을 흘린다. 노모는 길바닥에 앉아 있다. 포성이 점점 가까워진다. 우리도 남은 시간이 많지 않다.`,
+   lesson:'피란길에 멈춘 차는 표적이 된다. 도울 때는 시간을 정해 두고(예: 20분), 안 되면 사람부터 옮긴다 — 차는 버려도 사람은 남는다.',
+   choices:[{t:'같이 고쳐 본다(20분)',s:'성공하면 신뢰 +2',go(E,H){dlmTime(1/3);const tm=typeof tmLive==='function'&&tmLive().some(m=>/정비|운전/.test((m.d&&m.d.sk)||''));if(Math.random()<(tm?.9:.6)){trust(2);H.ok=1;return '배터리 단자를 닦고 다시 물렸다 — 부르릉! "살았다!"'}H.ok=0;return '20분을 썼지만 끝내 시동이 안 걸린다.'},later:{n:3}},
+    {t:'할머니만 대피소까지 부축해 드린다(30분)',s:'신뢰 +2',go(){dlmTime(.5);trust(2);return '할머니가 내 팔을 꼭 잡는다. "아들은 차 옆에 있겠대."'},later:{n:2}},
+    {t:'지나친다 — 우리도 시간이 없다',s:'시간을 지킨다',go(){return '백미러 속 노모가 점점 작아진다.'},later:{n:2}}]}),
+  due:[v=>{mor(3);return '그때 차를 고쳐 준(또는 고쳐 보려 한) 가족이 대피소에 담요 두 장과 자리를 맡아 두었다.'},v=>{mor(2);trust(1);return '부축해 드린 할머니가 대피소 사람들에게 우리 이야기를 했다.'},v=>{mor(-2);return '그 길에 포격이 있었다는 소식. 그 가족 소식은 끊겼다.'}]},
+ {k:'inform',n:'밀고 제안',ico:'📋',t0:2,edu:0,
+  scene(E,H,S){H.off=dlmNpc(H,S,370,'talk','police',0,0);H.nm='치안대 하사';H.say=['이름 하나면 됩니다. 배급표 두 배.','사재기하는 집, 다들 알잖아요?']},
+  radio:()=>`<b>📋 계엄 치안대</b><div>"치안대 하사가 주민들을 한 명씩 불러 뭘 묻고 있어요. 다음 차례가 우리래요."</div>`,
+  card:()=>({art:'id',tone:'red',title:'"사재기한 집, 이름만 대세요. 배급 두 배입니다"',text:'가상의 계엄 치안대 하사가 수첩을 편다. 옆 동 ○○ 씨네가 쌀을 쌓아 둔 걸 안다. 우리 식량은 바닥을 보인다.',
+   lesson:'밀고 체제는 공동체 신뢰를 가장 빨리 무너뜨린다. 거절은 손해처럼 보이지만, 정보를 파는 순간 나도 다음 표적이 된다.',
+   choices:[{t:'모른다고 거절한다',s:'치안대 눈 밖에 날 수도',go(){return '하사가 수첩을 덮는다. "기억해 두죠."'},later:{n:2}},
+    {t:'아는 이름을 댄다',s:'식량 +3',go(){res('food',3);return '배급표 두 장을 받았다. 손이 무겁다.'},later:{n:2},back:'informB'},
+    {t:'시간을 끌고, 그 집에 몰래 귀띔한다',s:'신뢰 +2 · 들킬 수도',go(){trust(2);return '"조사 나온대요, 쌀 좀 옮겨 두세요." 이웃이 놀란 눈으로 고개를 끄덕인다.'},later:{n:2}}]}),
+  due:[v=>{if(Math.random()<.5){mor(-1);return '검문 때 우리 짐만 유난히 오래 뒤졌다. 치안대가 기억하고 있다.'}return '치안대는 다른 동으로 옮겨 갔다.'},v=>{trust(-4);mor(-2);return '옆 동 ○○ 씨네가 조사를 받으러 끌려갔다. 누가 말했는지, 다들 짐작하는 눈치다.'},v=>{if(Math.random()<.4){mor(-2);return '치안대가 귀띔을 알아챘다 — 우리 집이 \'관찰 대상\'이 됐다.'}res('food',2);return '귀띔해 준 이웃이 쌀 한 봉지를 몰래 두고 갔다.'}]},
+ {k:'money',n:'흩어진 현금 봉투',ico:'💴',t0:1,edu:1,
+  scene(E,H,S){const c=dlmCar(H,S,'van','#e8e8e2',0,0,.6);if(c)c.rotation.z=.35;for(let i=0;i<9;i++)dlmProp(H,S,new T.BoxGeometry(.22,.02,.12),'#f1ead8',(Math.random()-.5)*6,.02,2+Math.random()*3,Math.random()*3);for(let i=0;i<3;i++)dlmNpc(H,S,380+i,i?'look':'bag','civ',-3+i*2.5,4);H.say=['이거 주인 없는 돈 아냐?','수송차 직원은 구급차에 실려 갔대…']},
+  radio:()=>`<b>💴 사거리</b><div>"현금 수송차가 넘어져서 봉투가 길에 흩어졌어요. 사람들이 모여들어요."</div>`,
+  card:()=>({art:'cash',title:'길바닥의 현금 봉투 — 주인은 구급차로',text:'넘어진 수송차 옆에 현금 봉투가 흩어져 있다. 직원은 다쳐서 실려 갔다. 사람들이 서로 눈치를 본다. 봉투 하나면 며칠 치 식량이다.',
+   lesson:'주인이 있는 재물을 가져가면 전시에도 점유이탈물횡령·절도다. 당국에 맡기면 시간이 들지만, 신뢰와 기록이 남는다.',
+   choices:[{t:'재빨리 챙긴다',s:'현금 봉투 +4',go(){dlmCash(4);return '주머니가 두툼해졌다. 누군가 내 얼굴을 본 것 같다.'},later:{n:3}},
+    {t:'모인 사람들과 나눈다',s:'현금 +1 · 신뢰 +2 · 사기 +1',go(){dlmCash(1);trust(2);mor(1);return '"한 장씩만, 나머진 맡깁시다!" 사람들이 고개를 끄덕인다.'},later:{n:2}},
+    {t:'모아서 검문소에 맡긴다(30분)',s:'신뢰 +2',go(){dlmTime(.5);trust(2);return '군인이 봉투 수를 세고 영수증을 써 준다.'},later:{n:3}}]}),
+  due:[v=>{if(Math.random()<.5){trust(-3);return '수송사 직원이 CCTV 사진을 들고 대피소를 돌았다. 눈길이 따갑다.'}return '그 돈 이야기는 다시 나오지 않았다.'},v=>{trust(1);return '"그때 돈을 나누자던 사람" — 대피소에서 우리를 알아보는 사람이 늘었다.'},v=>{dlmCash(2);return '수송사가 영수증을 보고 사례금 봉투 2장을 보내왔다.'}]},
+ {k:'deserter',n:'겁먹은 동원 대원',ico:'🪖',t0:2,edu:0,
+  scene(E,H,S){H.s=dlmNpc(H,S,390,'curl','rok',0,0);H.nm=dlmNm(E,0);H.say=['…제발 신고하지 마세요','옷 한 벌만… 물 한 모금만…']},
+  radio:()=>`<b>🪖 지하주차장</b><div>"주차장 구석에 군복 입은 청년이 숨어 떨고 있어요. 부대에서 도망쳤나 봐요."</div>`,
+  card:(E,H)=>({art:'person',title:'"민간인 옷 한 벌만 주세요"',text:`스무 살 남짓한 동원 대원 ${H.nm} 씨가 무릎을 끌어안고 있다. 포격에 분대가 흩어졌고, 다시 돌아갈 용기가 없다고 한다. 헌병이 탈영병을 찾는다는 방송이 나온다.`,
+   lesson:'탈영 방조는 전시에 무거운 처벌 대상이다. 다만 겁에 질린 사람을 설득해 돌려보내는 것이 당사자에게도 가장 나은 길일 때가 많다.',
+   choices:[{t:'옷과 물을 준다',s:'물 −1L · 들키면 신뢰 −3',go(){res('water',-1);return '청년이 옷을 갈아입고 고개를 숙인다. "평생 잊지 않을게요."'},later:{n:3}},
+    {t:'검문소에 알린다',s:'신뢰 +1 · 사기 −2',go(){trust(1);mor(-2);return '헌병 둘이 청년을 데려간다. 청년은 뒤돌아보지 않았다.'},later:{n:2}},
+    {t:'곁에 앉아 돌아가자고 설득한다(15분)',s:'통하면 신뢰 +2 · 사기 +1',go(E,H){dlmTime(1/4);if(Math.random()<.55){trust(2);mor(1);H.ok=1;return '"…같이 검문소까지 가 주실래요?" 청년이 일어선다.'}return '청년이 고개를 젓더니 출구 쪽으로 뛰어간다.'},later:{n:2}}]}),
+  due:[v=>{if(Math.random()<.4){trust(-3);mor(-1);return '헌병이 탐문하다 옷을 준 사람이 우리라는 걸 알아냈다.'}res('power',10);return '그 청년이 부대로 돌아가 무전병 편에 보조배터리를 보내왔다 — 전력 +10%.'},v=>{mor(-1);return '그 청년이 군사재판에 넘겨졌다는 소식을 들었다.'},v=>{trust(1);return '설득해 돌려보낸 청년이 분대에 복귀했다는 소식 — 그 분대가 우리 동네 순찰을 맡았다.'}]},
+ {k:'bread',n:'빵 도둑 청년',ico:'🍞',t0:1,edu:1,
+  scene(E,H,S){H.own=dlmNpc(H,S,dlmSeedG('m',400),'angry','civ',0,0);H.yo=dlmNpc(H,S,dlmSeedG('m',410),'kneel','civ',1.1,.4);H.nm=dlmNm(E,1);H.say=['이놈, 치안대 부른다!','사흘 굶었어요… 동생이…']},
+  radio:()=>`<b>🍞 편의점 앞</b><div>"편의점 사장님이 빵 훔친 청년을 붙잡았어요. 치안대를 부르겠대요."</div>`,
+  card:(E,H)=>({art:'food',title:'"사흘 굶었어요…"',text:`편의점 사장이 ${H.nm} 씨(20대)의 멱살을 잡고 있다. 빵 두 개. 사장도 물건을 못 받은 지 열흘째라고 소리친다. 치안대에 넘기면 전시 포고령 위반으로 무겁게 처벌받는다.`,
+   lesson:'생계형 절도도 절도다. 그러나 피해 회복(값 치르기·노동으로 갚기)과 중재는 처벌보다 공동체를 덜 다치게 한다.',
+   choices:[{t:'내가 빵값을 치른다',s:'현금 봉투 −1',need:()=>((G.inv&&G.inv.cash)||0)>=1,go(){dlmCash(-1);trust(1);return '사장이 손을 놓는다. 청년이 고개를 숙인 채 "갚을게요" 한다.'},later:{n:2},back:'breadY'},
+    {t:'사장 편 — 치안대에 넘긴다',s:'신뢰 +1(사장)',go(){trust(1);return '치안대가 청년을 데려갔다. 사장은 한숨을 쉰다.'},later:{n:2}},
+    {t:'중재한다 — 하루 짐 나르기로 갚게',s:'통하면 신뢰 +3',go(E,H){if(Math.random()<.6){trust(3);H.ok=1;return '"…하루 일하면 봐주지." 청년이 연신 고개를 숙인다.'}mor(-1);return '"남 일에 끼지 마쇼!" 사장이 치안대를 부른다.'},later:{n:2}}]}),
+  due:[v=>{trust(1);return '편의점 사장이 "그때 그 사람" 하며 아는 척을 한다.'},v=>{mor(-1);return '풀려난 청년이 "고발한 사람"을 원망하더라는 이야기를 들었다.'},v=>{res('food',1);return '편의점 사장이 유통기한 지난 빵 한 봉지를 챙겨 줬다.'}]},
+ {k:'radio',n:'확인 안 된 안심 방송',ico:'📻',t0:2,edu:1,
+  scene(E,H,S){H.dj=dlmNpc(H,S,dlmSeedG('f',420),'talk','civ',0,0);const p=dlmProp(H,S,new T.CylinderGeometry(.05,.05,3.2,6),'#666',1.6,1.6,0);dlmProp(H,S,new T.BoxGeometry(.5,.35,.35),'#2b2f36',1.6,3.2,0);H.nm=dlmNm(E,0,'f');H.say=['"북쪽 도로 안전" 이렇게 내보낼까요?','다들 불안해해서…']},
+  radio:()=>`<b>📻 마을 방송 천막</b><div>"마을 방송 담당이 원고를 들고 누굴 찾아요. '북쪽 도로는 안전'이라고 내보내도 되냐고…"</div>`,
+  card:(E,H)=>({art:'radio',title:'"북쪽 도로 안전하다고 내보낼까요?"',text:`마을 방송 담당 ${H.nm} 씨가 원고를 내민다. 근거는 "아까 지나온 사람이 괜찮다더라" 한 마디. 대피소 사람들은 불안에 잠을 못 잔다. 안심 방송 하나면 분위기가 달라진다.`,
+   lesson:'전시 정보는 출처·시각을 붙여 전한다. 확인 안 된 안심은 확인 안 된 공포만큼 위험하다 — "확인 중"이라고 말하는 용기가 사람을 살린다.',
+   choices:[{t:'확인 전까지 내보내지 말자',s:'사기 −1(불안)',go(){mor(-1);return '방송은 "도로 상황 확인 중" 한 줄로 바뀌었다. 사람들이 웅성거린다.'},later:{n:2}},
+    {t:'그대로 내보낸다 — 지금은 안심이 필요하다',s:'사기 +2',go(){mor(2);return '"북쪽 도로는 안전합니다." 대피소에 안도의 한숨이 퍼진다.'},later:{n:2}},
+    {t:'"확인 중 · 오후 3시 기준" 문구로 고쳐 낸다',s:'신뢰 +1',go(){trust(1);return '출처와 시각을 붙인 방송이 나간다.'},later:{n:2}}]}),
+  due:[v=>{if(Math.random()<.7){trust(3);mor(1);return '북쪽 도로에 포격이 있었다는 확인 — "그때 방송을 막은 사람" 덕에 아무도 그 길로 가지 않았다.'}return '북쪽 도로는 실제로 안전했다. 방송은 하루 늦게 나갔다.'},v=>{if(Math.random()<.7){trust(-3);mor(-3);return '안심 방송을 믿고 북쪽 도로로 간 차들이 포격에 발이 묶였다. 방송실 앞에 사람들이 몰려왔다.'}mor(1);return '북쪽 도로는 실제로 안전했다. 다행이다.'},v=>{mor(1);return '"확인 중" 방송 이후 사람들이 방송을 더 믿게 됐다.'}]},
+ {k:'tank',n:'물탱크 독 소문',ico:'🚱',t0:2,edu:1,
+  scene(E,H,S){H.c=dlmNpc(H,S,dlmSeedG('m',430),'nervous','civ',0,0);for(let i=0;i<3;i++)dlmNpc(H,S,432+i,'look','civ',-2+i*2,3);H.say=['누가 옥상 물탱크에 뭘 탔대요!','마시지 마세요!']},
+  radio:()=>`<b>🚱 대피소 입구</b><div>"누가 옥상 물탱크에 뭘 탔다고 소리쳐요. 본 사람은 없대요…"</div>`,
+  card:()=>({art:'drop',title:'"물탱크에 누가 뭘 탔다!"',text:'한 남자가 "밤에 누가 옥상에 올라갔다"며 소리친다. 본 사람은 없다. 대피소 사람들은 그 물로 밥을 짓는다. 지금 알리면 혼란, 안 알리면 만약의 경우…',
+   lesson:'오염이 의심되면 확인될 때까지 그 물을 마시지 않게 하되, 공포를 키우지 않도록 "확인 중"으로 알린다. 수질 검사지·냄새·색·관리자 확인이 기본이다.',
+   choices:[{t:'모두에게 바로 알린다',s:'사기 −2(혼란)',go(){mor(-2);return '"물 마시지 마세요!" 사람들이 생수를 사러 몰려간다.'},later:{n:2}},
+    {t:'먼저 확인한다(30분 · 검사지)',s:'의약품 −1',need:()=>(G.res.meds||0)>=1,go(E,H){dlmTime(.5);res('meds',-1);if(Math.random()<.8){mor(1);H.r='ok';return '검사지는 깨끗하다. 관리인이 "어젯밤 내가 점검했다"고 확인해 줬다.'}trust(4);H.r='bad';return '검사지가 붉게 변했다! 관리인과 함께 급수를 막았다 — 큰일을 막았다.'},later:{n:1}},
+    {t:'헛소문이겠지 — 무시한다',s:'아무 일 없길',go(){return '사람들의 웅성거림이 잦아든다.'},later:{n:2}}]}),
+  due:[v=>{if(Math.random()<.7){trust(-1);return '물탱크 소동은 헛소문이었다. "괜히 겁줬다"는 말이 돈다.'}trust(4);return '물탱크에서 실제로 이물질이 나왔다 — 빨리 알린 덕에 아무도 마시지 않았다.'},v=>'물탱크 검사 결과가 대피소 게시판에 붙었다.',v=>{if(Math.random()<.2){trust(-2);mor(-3);return '그 물을 마신 이웃 몇이 배탈이 났다. 그때 소문이 사실이었다.'}return '물탱크 소동은 헛소문으로 끝났다.'}]}];
+const DLM_BY={};DLM_LIST.forEach(D=>DLM_BY[D.k]=D);
+/* ---------- 감독(57)에 등록 ---------- */
+function dlmAvail(D){if(!dlmOn())return false;if(dlmEdu()&&!D.edu)return false;if((G.turn||0)<(D.t0||1))return false;return !dlmS().seen[D.k]}
+function dlmPick(E,D,c,i){const P=dlmS();P.picks.push({k:D.k,i,turn:G.turn||0});DLM.n.pick++;try{if(typeof pstDlm==='function')pstDlm(D.k,i)}catch(e){}
+  let r='';const fx=evhFx(()=>{r=c.go(E,E.H)||''});FX=[];if(c.later)delay(c.later.n,'dlm',{k:D.k,i,ok:E.H&&E.H.ok,r:E.H&&E.H.r});if(c.back)P.back.push({k:c.back,at:(G.turn||0)+(c.later?c.later.n:2)});
+  /* 판단 기록은 outEncPick이 남긴다(정답 없음 = ok null) */const hh=c.later?c.later.n*6:0;
+  setTimeout(()=>{try{if(EVD.cur===E)evhEnd(E,true,D.n,`${r}${fx?` <small>(${fx})</small>`:''}<div class="dlm-later">⏳ 이 선택은 ${hh?`약 ${hh}시간 뒤`:'곧'} 돌아온다</div>`,c.t.slice(0,40),null)}catch(e){dlmErr(e)}},350);
+  return `${r}${fx?` (${fx})`:''} — ⏳ 결과는 ${hh?`약 ${hh}시간 뒤`:'곧'} 돌아온다`}
+DLM_LIST.forEach(D=>{EVK['dlm_'+D.k]={n:'딜레마 — '+D.n,ico:D.ico,col:'#e0a83a',er:24,
+  w:()=>dlmAvail(D)?.6:0,
+  site(){return evPickSite(null,90,380)},lim(d){return Math.round(clamp(80+d/2.6,110,240))},
+  announce(E){const S=E.site;const H=E.H={ppl:[],ring:[],props:[]};try{D.scene(E,H,S)}catch(e){dlmErr(e)}E.radio=D.radio(E,H)+'<small class="dlm-tag">딜레마 — 정답 없음 · 결과는 나중에 돌아온다</small>'},
+  step(E,dt){const H=E.H;if(!H)return;H.ppl.forEach(h=>{try{h.update(dt)}catch(e){}});if(H.say&&H.ppl.length){H.sT=(H.sT==null?1.2:H.sT)-dt;if(H.sT<=0){H.sT=4.2+Math.random()*2.5;const h=H.ppl[(H.sI=(H.sI||0)+1)%H.ppl.length];evhSay(h,H.say[Math.floor(Math.random()*H.say.length)],3)}}},
+  engage(E){const H=E.H;dlmS().seen[D.k]=G.turn||1;DLM.n.fire++;const C=D.card(E,H);evhCard(E,{id:'dlm-'+D.k,cat:'딜레마 · 정답 없음',art:C.art||'person',tone:C.tone||'',title:C.title,text:C.text,lesson:C.lesson,src:'생존 수첩 · 전시 공동체',guide:'now',
+    choices:C.choices.map((c,i)=>({t:c.t,s:(c.s||'')+(c.later?` · ⏳ ${c.later.n*6}시간 뒤`:''),ok:null,need:c.need,go:()=>dlmPick(E,D,c,i)}))});return true},
+  miss(){dlmS().seen[D.k]=G.turn||1;return `${D.n} — 가 보지 못했다. 누군가 대신 결정했을 것이다.`},clear(E){evhDrop(E)}}});
+/* ---------- 턴이 넘어갈 때 결과 ---------- */
+DELAY.dlm={f:v=>{try{const D=DLM_BY[v.k];if(!D||!D.due||!D.due[v.i])return null;DLM.n.due++;const t=D.due[v.i](v);return t?`⏳ 그때 그 선택(${D.n}) — ${t}`:null}catch(e){dlmErr(e);return null}}};
+/* ---------- 그 사람이 다시 찾아온다(밖 돌발 상황) ---------- */
+const DLM_BACK={
+ painD:{n:'그날의 진통제',ico:'💊',scene(E,H,S){H.p=dlmNpc(H,S,dlmSeedG('f',450),'wave','civ',0,0);H.nm=dlmNm(E,0,'f');H.say=['저기요! 그날 아버지께 약 주신 분!']},radio:()=>`<b>💊 누가 우리를 찾는다</b><div>"젊은 여자분이 '그날 노인에게 약 준 사람'을 찾아요."</div>`,
+  card:(E,H)=>({title:'"그날 아버지께 약을 주신 분이죠?"',text:`${H.nm} 씨가 숨을 고르며 다가온다. 군 병원 간호조무사라고 한다. 가방에서 붕대와 약을 꺼낸다.`,choices:[{t:'고맙게 받는다',go(){res('meds',2);mor(2);return '"이번엔 제가 갚을 차례예요."'}},{t:'"우리보다 더 필요한 곳에 쓰세요"',go(){trust(3);return '그녀가 웃는다. "그럼 대피소 이름으로 기증할게요."'}}]})},
+ informB:{n:'끌려간 이웃의 동생',ico:'📋',scene(E,H,S){H.p=dlmNpc(H,S,dlmSeedG('m',460),'angry','civ',0,0);H.nm=dlmNm(E,0);H.say=['당신이죠? 형 이름 댄 사람!']},radio:()=>`<b>📋 누가 우리를 찾는다</b><div>"끌려간 옆 동 집 동생이 '누가 말했는지 안다'며 찾아다녀요."</div>`,
+  card:(E,H)=>({tone:'red',title:'"당신이죠? 우리 형 이름 댄 사람"',text:`${H.nm} 씨가 주먹을 쥐고 다가온다. 주변 사람들이 걸음을 멈춘다. 형은 아직 돌아오지 않았다.`,choices:[{t:'사실대로 사과한다',go(){trust(1);mor(-1);return '그가 한참 노려보다 돌아선다. "형이 돌아오면 직접 말하세요."'}},{t:'모른다고 잡아뗀다',go(){trust(-2);return '"거짓말." 사람들이 수군거린다.'}},{t:'배급표 한 장을 건넨다',need:()=>(G.res.food||0)>=1,go(){res('food',-1);return '그가 배급표를 바닥에 던지고 간다.'}}]})},
+ breadY:{n:'빚 갚으러 온 청년',ico:'🍞',scene(E,H,S){H.p=dlmNpc(H,S,dlmSeedG('m',410),'carry','civ',0,0);H.nm=dlmNm(E,0);H.say=['형님! 저 기억하세요? 빵!']},radio:()=>`<b>🍞 누가 우리를 찾는다</b><div>"빵 사건 그 청년이 상자를 들고 찾아왔어요."</div>`,
+  card:(E,H)=>({title:'"그때 빵값, 갚으러 왔어요"',text:`${H.nm} 씨가 상자를 내려놓는다. 구호 물자 하역을 하루 거들고 받은 몫이라고 한다.`,choices:[{t:'고맙게 받는다',go(){res('food',2);trust(1);return '"동생도 이제 밥 먹어요."'}},{t:'"동생 주게"라며 돌려준다',go(){mor(2);trust(2);return '청년이 눈시울을 붉힌다.'}}]})}};
+function dlmBackDue(){const P=dlmS();return P.back.find(b=>b.at<=(G.turn||0))||null}
+EVK.dlmBack={n:'그때 그 사람',ico:'⏳',col:'#e0a83a',er:22,w:()=>dlmOn()&&dlmBackDue()?3.5:0,
+  site(){const p=FP3.pos;const a=Math.random()*6.283;const q=evNear(p.x+Math.cos(a)*70,p.z+Math.sin(a)*70)||{x:p.x+10,z:p.z};return{x:q.x,z:q.z,n:'가까운 곳'}},lim(){return 150},
+  announce(E){const b=dlmBackDue();E.B=b;const BD=DLM_BACK[b&&b.k];const H=E.H={ppl:[],ring:[],props:[]};if(!BD)return;try{BD.scene(E,H,E.site)}catch(e){dlmErr(e)}E.radio=BD.radio(E,H)+'<small class="dlm-tag">⏳ 그때 그 선택이 돌아왔다</small>'},
+  step(E,dt){EVK.dlm_pain.step(E,dt)},
+  engage(E){const P=dlmS();const b=E.B;if(b)P.back=P.back.filter(x=>x!==b);const BD=DLM_BACK[b&&b.k];if(!BD)return false;DLM.n.back++;const C=BD.card(E,E.H);evhCard(E,{id:'dlmb-'+b.k,cat:'⏳ 그때 그 사람',art:'person',tone:C.tone||'',title:C.title,text:C.text,lesson:'선택은 사람을 통해 돌아온다.',src:'',guide:'now',
+    choices:C.choices.map(c=>({t:c.t,ok:null,need:c.need,go:()=>{let r='';const fx=evhFx(()=>{r=c.go()});FX=[];setTimeout(()=>{try{if(EVD.cur===E)evhEnd(E,true,BD.n,`${r}${fx?` <small>(${fx})</small>`:''}`,c.t.slice(0,40),null)}catch(e){dlmErr(e)}},350);return r+(fx?` (${fx})`:'')}}))});return true},
+  miss(E){const P=dlmS();if(E&&E.B)P.back=P.back.filter(x=>x!==E.B);return '찾아온 사람을 만나지 못했다.'},clear(E){evhDrop(E)}};
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="dilemma"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('dilemma','딜레마 카드','밖에서 정답 없는 선택이 가끔 생기고, 결과가 몇 시간 뒤 돌아온다',[[1,'켬'],[0,'끔']],store.get('sg.dilemma',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){dlmErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='dilemma')return;try{store.set('sg.dilemma',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['⚖ 딜레마 카드(v17.8)','밖을 다니다 보면 정답 없는 선택이 생긴다(진통제 · 물 배급 줄 · 주인 없는 약국 · 고장 난 피란 차 · 밀고 제안 · 흩어진 현금 · 겁먹은 동원 대원 · 빵 도둑 청년 · 확인 안 된 안심 방송 · 물탱크 독 소문). 선택마다 ⏳ 몇 시간 뒤 결과가 돌아온다 — 턴이 넘어갈 때 알림으로, 어떤 것은 그 사람이 직접 다시 찾아온다. 한 판에 같은 딜레마는 한 번. 설정 \'딜레마 카드\'로 끌 수 있다. 교육용 모드에서는 밀고 제안·동원 대원이 나오지 않는다.']);
+
+/* ===================== 161 · v17.8 플레이 통계 — 어디서 노는지 · 어디서 그만두는지 · 딜레마 선택 =====================
+   사용자 결정(2026-11-22 19:52): 사전검토에서 '어떤 기능을 실제로 하는지 데이터가 없다' → 기기 안에서만 보는 통계를 먼저
+   · 114(v13.2) '📈 플레이 기록'은 프레임·교전 승패 중심 — 여기에 모드별 시간(대피소·밖·교전·운전·드론·아파트 전투·전투 장면·역 구역·열차·열차 습격),
+     그만둔 곳(화면을 닫거나 앱을 바꾼 순간의 모드·일차), 접속 횟수, 딜레마별 선택(A·B·C)을 더한다
+   · 이 기기에만 저장(sg.pstat) · 네트워크 전송 없음 · 개인정보 없음 · '기록 지우기'로 함께 지워진다 · 설정 '플레이 기록' 끔이면 쌓지 않는다 */
+const PST={err:0,acc:0,save:0,cur:null};
+function pstErr(e){PST.err++;if(PST.err<4)console.error('[161]',e)}
+function pstOn(){try{if(navigator.webdriver&&!window.__pstTest)return false;return store.get('sg.plog',true)!==false}catch(e){return false}}
+function pstBlank(){return {v:1,since:new Date().toISOString().slice(0,10),t:{},ses:0,quit:{},qd:{},dlm:{}}}
+function pstLoad(){let D=null;try{D=store.get('sg.pstat',null)}catch(e){}if(!D||D.v!==1)D=pstBlank();return D}
+PST.D=pstLoad();
+function pstSave(){try{store.set('sg.pstat',PST.D)}catch(e){}}
+const PST_K={shelter:'대피소·메뉴',out:'밖(시내)',owc:'밖 교전',drive:'운전',drone:'드론',apt:'아파트 전투',battle:'전투 장면',anx:'역 구역',train:'열차',raid:'열차 습격'};
+function pstMode(){try{if(typeof TRR!=='undefined'&&TRR.R&&TRR.R.ph!=='done')return'raid';if(typeof TRN!=='undefined'&&TRN.ride)return'train';if(typeof ANX!=='undefined'&&ANX.on)return'anx';if(typeof DFR!=='undefined'&&DFR.B)return'drone';if(typeof APT!=='undefined'&&APT.on)return'apt';if(typeof OWC!=='undefined'&&OWC.on)return'owc';if(typeof OUT!=='undefined'&&OUT.on)return OUT.drv?'drive':'out';if(typeof UI!=='undefined'&&UI.screen==='battle')return'battle'}catch(e){}return'shelter'}
+function pstTick(sec){if(!pstOn())return;const D=PST.D;const m=pstMode();PST.cur=m;D.t[m]=Math.round(((D.t[m]||0)+sec)*10)/10;PST.save+=sec;if(PST.save>=15){PST.save=0;pstSave()}}
+function pstQuit(){if(!pstOn())return;const D=PST.D;const m=pstMode();D.quit[m]=(D.quit[m]||0)+1;let day=1;try{day=Math.floor(((G&&G.turn)||0)/4)+1}catch(e){}D.qd[day]=(D.qd[day]||0)+1;pstSave()}
+function pstDlm(k,i){if(!pstOn())return;const D=PST.D;const a=D.dlm[k]=D.dlm[k]||[0,0,0];a[i]=(a[i]||0)+1;pstSave()}
+(function(){try{if(pstOn()){PST.D.ses++;pstSave()}}catch(e){}setInterval(()=>{try{if(document.visibilityState==='visible')pstTick(1)}catch(e){pstErr(e)}},1000);
+  document.addEventListener('visibilitychange',()=>{try{if(document.visibilityState==='hidden')pstQuit()}catch(e){pstErr(e)}});window.addEventListener('pagehide',()=>{try{pstSave()}catch(e){}})})();
+function pstRows(){const D=PST.D;const tot=Object.values(D.t).reduce((a,b)=>a+b,0)||1;return Object.keys(PST_K).filter(k=>D.t[k]>=1).sort((a,b)=>D.t[b]-D.t[a]).map(k=>({k,n:PST_K[k],m:D.t[k]/60,p:Math.round(D.t[k]/tot*100)}))}
+function pstQuitTxt(){const D=PST.D;const q=Object.keys(D.quit).sort((a,b)=>D.quit[b]-D.quit[a]).slice(0,4).map(k=>`${PST_K[k]||k} ${D.quit[k]}회`).join(' · ');const qd=Object.keys(D.qd).sort((a,b)=>a-b).map(d=>`${d}일차 ${D.qd[d]}`).join(' · ');return {q:q||'아직 없음',qd:qd||'—'}}
+function pstDlmTxt(){const D=PST.D;const nm=k=>(typeof DLM_BY!=='undefined'&&DLM_BY[k]?DLM_BY[k].n:k);const L=Object.keys(D.dlm).map(k=>`${nm(k)} ${D.dlm[k].map((n,i)=>'ABC'[i]+n).join('/')}`);return L.length?L.join(' · '):'아직 없음'}
+(function(){const b=window.plogShow;if(typeof b!=='function')return;window.plogShow=function(){const r=b.apply(this,arguments);try{const o=document.getElementById('set84');const row=o&&o.querySelector('.s84 .row');if(!row)return r;const R=pstRows();const Q=pstQuitTxt();const D=PST.D;
+  const html=`<div class="s4-sec pst-sec">어디서 노는지 <small class="mut">v17.8 · ${clean(D.since,12)}부터 · 접속 ${D.ses}회</small></div><div class="s4-tbl pst-tbl">${R.length?R.map(x=>`<div><span>${x.n}</span><b>${x.m<1?Math.round(x.m*60)+'초':Math.round(x.m*10)/10+'분'} <small class="mut">${x.p}%</small><i class="pst-bar" style="width:${Math.max(2,x.p)}%"></i></b></div>`).join(''):'<div><span>기록 없음</span><b class="mut">조금 놀고 다시 보세요</b></div>'}</div>
+    <p class="s4-p small">그만둔 곳(화면을 닫거나 앱을 바꾼 순간): ${clean(Q.q,160)} · 일차별 ${clean(Q.qd,120)}</p><p class="s4-p small">딜레마 선택: ${clean(pstDlmTxt(),300)}</p>`;row.insertAdjacentHTML('beforebegin',html)}catch(e){pstErr(e)}return r}})();
+(function(){const b=window.plogText;if(typeof b!=='function')return;window.plogText=function(){let t=b.apply(this,arguments);try{const R=pstRows();const Q=pstQuitTxt();t+=`\n[어디서 노는지 v17.8] 접속 ${PST.D.ses}회 · `+R.map(x=>`${x.n} ${Math.round(x.m*10)/10}분(${x.p}%)`).join(' · ')+`\n그만둔 곳: ${Q.q} · 일차별 ${Q.qd}\n딜레마 선택: ${pstDlmTxt()}`}catch(e){pstErr(e)}return t}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-g3=plogwipe]');if(!b)return;try{PST.D=pstBlank();pstSave();plogShow()}catch(x){}},true);
+
+/* 긴급 수정(2026-11-22) 탕정역 가는 길 — 역은 지도 데이터 동쪽 끝 너머(동쪽 확장 구역)라 그쪽을 눌러 자동 이동하면 지도 끝에서 멈추고,
+   탈것을 탄 채로는 '탕정역 방면' 단추가 나오지 않아 막혀 보였다.
+   ① 위치 이동: 역·동쪽 확장 구역을 누르면 '탕정역 방면' 입구(지도 끝 표지판)로 간다 → 도착하면 탈것에서 내려 역 카드를 연다
+   ② 탈것(오토바이·자전거·차)을 탄 채 입구 가까이(16m)면 '🚉 탕정역으로' 단추 — 세워 두고 바로 역 카드
+   ③ 걸어서 입구 반경 3.2m → 8m · ④ 입구 45m 안에 오면 한 번 알림(90초 간격) */
+const ANXR={go:null,hintT:-1e9,n:{redirect:0,arrive:0,ride:0,hint:0},err:0};
+function anxrErr(e){if(ANXR.err<6){ANXR.err++;try{console.error(e)}catch(x){}}}
+function anxrSpot(){try{return (OUT.spots||[]).find(s=>s.k==='anx')||null}catch(e){return null}}
+/* 역(동쪽 확장 구역) 쪽을 눌렀나: 입구보다 동쪽 · 지도 데이터 바깥이거나 입구에서 15m 넘게 동쪽 */
+function anxrEast(wx,wz,e){if(!e)return false;if(wx<e.x+15)return false;if(Math.abs(wz-e.z)>900)return false;try{const O=TJ.occ;if(O){const i=Math.floor((wx-O.x0)/O.cs),j=Math.floor((wz-O.z0)/O.cs);if(i<0||j<0||i>=O.n||j>=O.n)return true}}catch(x){}return wx>e.x+60}
+function anxrDismount(){try{if(typeof ADRV!=='undefined'&&ADRV.on)adStop()}catch(e){}try{if(typeof ARUN!=='undefined'&&ARUN.on)arStop()}catch(e){}
+  try{if(OUT.ride)rideEnd()}catch(e){anxrErr(e)}try{if(OUT.drv)tjDriveEnd()}catch(e){anxrErr(e)}return !OUT.ride&&!OUT.drv}
+function anxrOpen(){if(!OUT.on||OUT.enc||OUT.busy||(typeof ANX!=='undefined'&&ANX.on))return false;if(!anxrDismount())return false;FP3.mv.x=FP3.mv.y=0;try{anxCard();return true}catch(e){anxrErr(e);return false}}
+/* ① 위치 이동 */
+(function(){const b=window.tjBigTap;if(typeof b!=='function')return;window.tjBigTap=function(ev){try{if(TJB.move&&!TJB.pin&&OUT.on&&!OUT.enc&&typeof anxOn==='function'&&anxOn()){const e=anxrSpot();const S=tjBigSize();if(e&&S){const rc=S.cv.getBoundingClientRect();const lx=SV3.rot?(ev.clientY-rc.top):(ev.clientX-rc.left),ly=SV3.rot?(rc.right-ev.clientX):(ev.clientY-rc.top);const wx=TJB.cx+(lx-S.w/2)*TJB.mpp,wz=TJB.cz+(ly-S.h/2)*TJB.mpp;
+    if(anxrEast(wx,wz,e)){tjBigClose();ANXR.go={t:performance.now()};ANXR.n.redirect++;const p=FP3.pos;const d=Math.hypot(e.x-p.x,e.z-p.z);
+      if(d<10){anxrOpen();ANXR.go=null;return}
+      let ok=false;if(OUT.drv||OUT.ride){try{ok=adStart(e.x,e.z)}catch(x){anxrErr(x)}}else{try{ok=typeof arStart==='function'&&arStart(e.x,e.z)}catch(x){anxrErr(x)}}
+      outNote(`<b>🚉 탕정역은 지도 동쪽 끝 너머 — 입구 표지판까지 간다</b><div>약 ${Math.round(d)}m. 도착하면 탈것에서 내려 '탕정역으로 간다'를 묻는다(걸어서 20분).</div>`,3600);if(!ok)ANXR.go={t:performance.now(),manual:1};return}}}}catch(x){anxrErr(x)}return b.apply(this,arguments)}})();
+/* ② 탈것을 탄 채 입구 가까이 */
+(function(){const oc=window.outCands;if(typeof oc!=='function')return;window.outCands=function(){const L=oc.apply(this,arguments);try{if((OUT.ride||OUT.drv)&&!(typeof ANX!=='undefined'&&ANX.on)){const e=anxrSpot();const p=FP3.pos;if(e&&Math.hypot(e.x-p.x,e.z-p.z)<16&&Array.isArray(L))L.push({id:'anxride',k:'anxride',x:p.x,z:p.z,r:99,g:'🚉',n:'탕정역으로',s:'탈것을 여기 세워 두고 역으로 · 걸어서 20분',h:0})}}catch(x){anxrErr(x)}return L}})();
+(function(){const od=window.outDo;if(typeof od!=='function')return;window.outDo=function(c){if(c&&c.k==='anxride'){ANXR.n.ride++;anxrOpen();return}return od.apply(this,arguments)}})();
+/* ③ 걸어서 반경 8m */
+(function(){const b=window.anxSpot;if(typeof b!=='function')return;window.anxSpot=function(){const r=b.apply(this,arguments);try{const e=anxrSpot();if(e&&e.r<8){e.r=8;OUT.sig=''}}catch(x){anxrErr(x)}return r}})();
+/* 도착 확인 · ④ 지도 끝 알림 (0.2초마다 도는 outUI에 붙인다) */
+(function(){const b=window.outUI;if(typeof b!=='function')return;window.outUI=function(){const r=b.apply(this,arguments);try{if(!OUT.on||(typeof ANX!=='undefined'&&ANX.on))return r;const e=anxrSpot();if(!e)return r;const p=FP3.pos;const d=Math.hypot(e.x-p.x,e.z-p.z);const now=performance.now();
+    if(ANXR.go){if(now-ANXR.go.t>6*60000)ANXR.go=null;else if(d<12&&!OUT.enc&&!OUT.busy){const mv=(typeof ADRV!=='undefined'&&ADRV.on)||(typeof ARUN!=='undefined'&&ARUN.on);if(d<6||!mv){ANXR.go=null;ANXR.n.arrive++;anxrOpen()}}}
+    if(!ANXR.go&&d<45&&now-ANXR.hintT>90000&&!OUT.enc&&!OUT.busy){ANXR.hintT=now;ANXR.n.hint++;outNote(`<b>🚉 여기가 지도 동쪽 끝</b><div>탕정역은 이 큰길 너머(동쪽 확장 구역). 표지판 자리에서 '탕정역 방면'${OUT.ride||OUT.drv?' — 탈것을 탔으면 \'🚉 탕정역으로\'':''}을 누르면 간다.</div>`,4200)}}catch(x){anxrErr(x)}return r}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
