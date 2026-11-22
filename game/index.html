@@ -2055,6 +2055,15 @@ body.kc-on #toast,body.kc-on #kcChip{visibility:hidden!important}
 /* v18.3 탕정역 연계 — 장면이 바뀔 때 짧게 어둡게 */
 .alk-fade{position:fixed;inset:0;z-index:410;background:#05070a;opacity:0;pointer-events:none;transition:opacity .22s ease}
 .alk-fade.on{opacity:.92;transition:none}.alk-fade.out{opacity:0}
+/* v18.4.1 탕정역 권역 큰 지도 */
+.anx-mini.apl-mini{pointer-events:auto;cursor:pointer;touch-action:manipulation}
+.apl-tag{position:absolute;left:68px;top:calc(112px + 109px);transform:translateX(-50%);z-index:7;font:800 10px system-ui,sans-serif;color:#0b0e12;background:#ffb224;border-radius:8px;padding:1px 8px;cursor:pointer;pointer-events:auto}
+body.trn-on .apl-tag{visibility:hidden}
+.apl-map{position:absolute;inset:0;z-index:60;background:rgba(6,9,14,.82);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:8px 10px;pointer-events:auto}
+.apl-head{display:flex;gap:10px;align-items:center;width:100%;max-width:980px;color:#eef2f7;font:600 12px system-ui,sans-serif;margin-bottom:6px}
+.apl-head b{font-weight:800;font-size:14px}.apl-head span{opacity:.75;flex:1}
+.apl-head button{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;border-radius:8px;padding:6px 12px;font:800 12px system-ui,sans-serif}
+#aplMapC{border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.5);cursor:crosshair;touch-action:manipulation}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14151,7 +14160,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.4';
+const APP_VER='18.4.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -27692,8 +27701,8 @@ if(typeof HELP84!=='undefined')HELP84.push(['🌑 정전 잠입(v18.3)','밤·�
    ① 팀·가족이 따라 들어온다: 탕정역·아산역 권역(155)에 들어가면 팀원·함께 나온 가족도 같은 장면으로 — 같은 줄지어 걷기(54 tmStep)를 권역 발걸음에서 돌린다
       권역의 막힘 격자(점유)로 자리를 고르고 · 승강장으로 오르내리면 곁으로 모인다 · 열차를 타는 동안은 숨었다가 내리면 곁에 · 시내로 나오면 함께 나온다
    ② 권역에서도 🎒 배낭: 권역 위쪽 띠에 배낭 단추(밖과 같은 배낭)
-   ③ 🚉 탕정역 앞으로 빠른 이동: 외출을 시작하는 자리(대피소 입구) 30m 안에서 단추 — 집 구역 동쪽 끝 '탕정역 방면' 입구 바로 앞으로(팀 함께 · 15분)
-      걸어서 탈것을 안 탄 상태에서만 · 교전·돌발 상황·카드 중엔 안 됨 · 도착하면 '탕정역으로 들어간다'(역 카드) 또는 그대로 동쪽 확장 구역으로 걸어간다
+   ③ 🚉 탕정역으로 바로 이동: 외출을 시작하는 자리(대피소 입구) 30m 안에서 단추 — v18.4.1(07:11 "너무 멀어요")부터 탕정역 광장(승강장 계단 앞)으로 곧장(팀·가족 함께 · 30분)
+      걸어서 탈것을 안 탄 상태에서만 · 교전·돌발 상황·카드 중엔 안 됨 · 시내로 나오면 집 구역 동쪽 끝 큰길(v18.3은 입구 앞까지 15분이었다)
    · 넘어갈 때 짧게 어두워졌다 밝아진다(장면 바뀜을 덜 어색하게) · 설정 '탕정역 빠른 이동' · 자동 점검(webdriver)은 __alkTest일 때만 */
 const ALK={err:0,in:false,n:{tp:0,inTeam:0,outTeam:0,bag:0},fadeT:0};
 function alkErr(e){if(ALK.err<6){ALK.err++;try{console.error(e)}catch(x){}}}
@@ -27723,16 +27732,20 @@ function alkHome(){try{return !(typeof ZN!=='undefined'&&ZN.k&&ZN.k!=='home')}ca
 function alkStart(){const B=OUT.back;return B?{x:B.x,z:B.z}:null}
 function alkDest(){let e=null;try{e=anxEdge()}catch(x){alkErr(x)}if(!e)return null;/* 입구에서 서쪽으로 6m(길 위) — 바로 앞에 '탕정역 방면' 단추가 보이게 */for(const back of [6,4,8,3,10]){const x=e.x-back,z=e.z;let ok=true;try{ok=owcFree(x,z,.8)}catch(x2){}if(ok)return {x,z,e}}return {x:e.x-2,z:e.z,e}}
 function alkCan(){if(!alkTpOn()||!OUT.on||!alkHome()||OUT.drv||OUT.ride||OUT.enc||OUT.busy||OUT.mapOpen)return false;try{if(typeof IS!=='undefined'&&IS.on)return false;if(typeof OWC!=='undefined'&&OWC.on)return false;if(typeof ANX!=='undefined'&&ANX.on)return false;if(typeof ZN!=='undefined'&&ZN.busy)return false;if(typeof EVD!=='undefined'&&EVD.cur&&EVD.cur.ph==='act')return false}catch(e){}return true}
-function alkTp(){if(!alkCan())return false;const D=alkDest();if(!D)return false;const cost=.25;if(OUT.timed&&OUT.h<cost+.4){outNote('<b>남은 시간이 모자란다</b><div>빠른 이동(15분)을 하고 나서 역에 다녀올 시간이 없다.</div>',2400);return false}
-  alkFade(520);if(OUT.timed)OUT.h=Math.max(0,OUT.h-cost);const yaw=Math.atan2(-(D.e.x-D.x),-(D.e.z-D.z));FP3.pos.set(D.x,0,D.z);FP3.yaw=yaw;FP3.nav=null;FP3.mv.x=FP3.mv.y=0;try{if(OUT.me){OUT.me.root.position.set(D.x,0,D.z);OUT.me.root.rotation.y=yaw+Math.PI}}catch(e){}
-  try{TJ.goal=null}catch(e){}try{tmRegroup()}catch(e){alkErr(e)}ALK.n.tp++;try{outStat()}catch(e){}
-  outNote(`<b>🚉 탕정역 방면 — 빠른 이동</b><div>집 구역 동쪽 끝 큰길(15분). 바로 앞 '탕정역 방면'에서 역으로 들어가거나, 그대로 동쪽으로 걸어 동쪽 확장 구역으로 간다.${alkTeam().length?` 팀원 ${alkTeam().length}명 함께.`:''}</div>`,4200);return true}
-(function(){const b=window.outCands;if(typeof b!=='function')return;window.outCands=function(){const L=b.apply(this,arguments);try{if(Array.isArray(L)&&alkCan()){const S=alkStart();const p=FP3.pos;if(S&&Math.hypot(S.x-p.x,S.z-p.z)<30){const D=alkDest();if(D&&Math.hypot(D.x-p.x,D.z-p.z)>80)L.push({id:'alkTp',k:'alkTp',x:p.x,z:p.z,r:30,g:'🚉',n:'탕정역 앞으로 빠른 이동',s:`집 구역 동쪽 끝 '탕정역 방면' 입구까지 · 15분${alkTeam().length?' · 팀 함께':''}`,h:0})}}}catch(e){alkErr(e)}return L}})();
+function alkTp(){if(!alkCan())return false;try{if(!anxOn()||!anxEdge())return false}catch(e){return false}
+  /* v18.4.1: 입구 앞이 아니라 탕정역 광장(승강장 계단 앞)으로 바로 — 시간은 입구까지 + 권역 들어가기를 합쳐 30분 */const extra=1/6;if(OUT.timed&&OUT.h<extra+1/3+.4){outNote('<b>남은 시간이 모자란다</b><div>탕정역까지 30분 — 다녀올 시간이 없다.</div>',2400);return false}
+  alkFade(650);if(OUT.timed)OUT.h=Math.max(0,OUT.h-extra);FP3.nav=null;FP3.mv.x=FP3.mv.y=0;try{TJ.goal=null}catch(e){}
+  let ok=false;try{ok=anxEnter()}catch(e){alkErr(e)}if(!ok){if(OUT.timed)OUT.h+=extra;return false}
+  let F=null;try{F=typeof alkStationFront==='function'?alkStationFront():null}catch(e){alkErr(e)}
+  if(F){FP3.pos.set(F.x,0,F.z);FP3.yaw=F.yaw;FP3.pitch=-.04;FP3.nav=null;try{if(OUT.me){OUT.me.root.position.set(F.x,0,F.z);OUT.me.root.rotation.y=F.yaw+Math.PI}}catch(e){}try{tmRegroup();alkFamPlace()}catch(e){alkErr(e)}}
+  ALK.n.tp++;try{outStat()}catch(e){}const n=alkTeam().length+alkFam().length;
+  outNote(`<b>🚉 탕정역 광장 — 빠른 이동(30분)</b><div>바로 앞 계단으로 승강장에 오른다. 시내로는 서쪽 큰길 끝 ↩(미니맵을 누르면 큰 지도).${n?` 함께 온 사람 ${n}명.`:''}</div>`,4600);return true}
+(function(){const b=window.outCands;if(typeof b!=='function')return;window.outCands=function(){const L=b.apply(this,arguments);try{if(Array.isArray(L)&&alkCan()){const S=alkStart();const p=FP3.pos;if(S&&Math.hypot(S.x-p.x,S.z-p.z)<30&&anxOn()&&anxEdge())L.push({id:'alkTp',k:'alkTp',x:p.x,z:p.z,r:30,g:'🚉',n:'탕정역으로 바로 이동',s:`탕정역 광장(승강장 계단 앞)까지 · 30분${alkTeam().length||alkFam().length?' · 팀·가족 함께':''}`,h:0})}}catch(e){alkErr(e)}return L}})();
 (function(){const b=window.outDo;if(typeof b!=='function')return;window.outDo=function(c){if(c&&c.k==='alkTp'){try{alkTp()}catch(e){alkErr(e)}return}return b.apply(this,arguments)}})();
 /* 설정 · 도움말 */
-(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="anxtp"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('anxtp','탕정역 빠른 이동','외출을 시작하는 자리에서 집 구역 동쪽 끝 탕정역 방면 입구까지 한 번에(15분)',[[1,'켬'],[0,'끔']],store.get('sg.anxtp',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){alkErr(e)}return h}})();
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="anxtp"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('anxtp','탕정역 빠른 이동','외출을 시작하는 자리에서 탕정역 광장(승강장 계단 앞)까지 한 번에(30분)',[[1,'켬'],[0,'끔']],store.get('sg.anxtp',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){alkErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='anxtp')return;try{store.set('sg.anxtp',b.dataset.v==='1')}catch(x){}},true);
-if(typeof HELP84!=='undefined')HELP84.push(['🚉 탕정역 연계(v18.3)','외출을 시작하는 자리(대피소 입구) 30m 안에서 \'🚉 탕정역 앞으로 빠른 이동\' — 집 구역 동쪽 끝 \'탕정역 방면\' 입구 바로 앞으로 한 번에 간다(15분 · 팀 함께 · 걸어서일 때만). 탕정역·아산역 권역에 들어가면 팀원과 함께 나온 가족도 들어와 뒤따르고(승강장에 오르면 곁으로 모이고, 열차를 타는 동안엔 보이지 않다가 내리면 곁에), 권역 위쪽 띠에서 🎒 배낭을 연다. 시내로 나오면 함께 나온다. 설정 \'탕정역 빠른 이동\'.']);
+if(typeof HELP84!=='undefined')HELP84.push(['🚉 탕정역 연계(v18.3 · v18.4.1)','외출을 시작하는 자리(대피소 입구) 30m 안에서 \'🚉 탕정역으로 바로 이동\' — 탕정역 광장(승강장 계단 앞)으로 한 번에 간다(30분 · 팀·가족 함께 · 걸어서일 때만). 권역에서도 들고 있던 총을 그대로 쓰고(1인칭 총·조준경·사격), 미니맵을 누르면 큰 지도 — 누른 곳으로 달려간다. 탕정역·아산역 권역에 들어가면 팀원과 함께 나온 가족도 들어와 뒤따르고(승강장에 오르면 곁으로 모이고, 열차를 타는 동안엔 보이지 않다가 내리면 곁에), 권역 위쪽 띠에서 🎒 배낭을 연다. 시내로 나오면 함께 나온다. 설정 \'탕정역 빠른 이동\'.']);
 
 /* v18.4 대피소 속 내통자 찾기 (2026-11-22 19:52 사전검토 후보 ⑧) — 대피소 사람 가운데 가상의 '선로 약탈단'과 내통하는 사람이 있다
    - 2턴이 끝날 때 시작(한 판에 한 번): "대피소 물자가 밤마다 조금씩 사라진다" · 용의자 4명(가상 이름·직업 — 가족·팀원 아님)
@@ -27812,6 +27825,63 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="mole"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('mole','대피소 내통자','2턴이 끝나면 대피소 사람 가운데 약탈단 내통자를 단서로 찾는 수사(한 판에 한 번)',[[1,'켬'],[0,'끔']],store.get('sg.mole',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){moleErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='mole')return;try{store.set('sg.mole',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🕵 대피소 내통자(v18.4)','2턴이 끝나면 "대피소 물자가 밤마다 조금씩 사라진다" — 대피소 사람 가운데 가상의 선로 약탈단과 내통하는 사람이 있다(한 판에 한 번, 용의자 4명은 가족·팀원이 아니다). 단서 3개가 내통자를 가리키는데, 단서마다 결백한 이웃 둘도 함께 걸린다 — 단서 2개면 둘 중 하나, 3개면 한 사람. 단서: 턴이 끝날 때마다 1 · 6시간 행동 \'내통자 탐문\' 1(🔭 정찰 대원이 있으면 2) · 시작할 때 신뢰 \'아는 사이\'(5) 이상이면 이웃 귀띔 1. 잡기 전엔 턴마다 물 1L·식량 1·사기 −1이 새고, 5턴이 지나면 큰 짐을 들고 사라진다. 위쪽 🕵 칩 → 수사판에서 \'지목한다\'(두 번 눌러 확정): 맞히면 신뢰 +4·사기 +5·물 3L·식량 2 되찾음, 틀리면 신뢰 −5·사기 −4. 잡은 사람은 대피소 관리인에게 넘긴다. 설정 \'대피소 내통자\'.']);
+
+/* v18.4.1 탕정역 권역 다듬기 — 사용자 지적(2026-11-23 07:11 "리셋장소에서 탕정역 이동 버튼 클릭 시 바로 탕정역으로 이동하게 해 주세요. 너무 멀어요
+   그리고 탕정역 부근 이동 이후 총도 안보이고 미니맵 클릭도 안돼요")
+   ① 빠른 이동은 170 alkTp가 바로 탕정역 광장(승강장 계단 앞)으로 — 여기서는 도착 자리(alkStationFront)를 만든다
+   ② 권역에서도 총: 155는 들어갈 때 총을 집어넣고(gunHolster) 권역 발걸음엔 총 단계(65 gunStep)가 없어 HUD만 뜨고 총이 안 보였다
+      → 들고 있던 총은 그대로 들고 들어가고, 권역 발걸음에서 gunStep(1인칭 총·조준경·사격·재장전)을 돌린다(72 아파트 안과 같은 방식)
+      맞힐 수 있는 사람(65 gunHitList)·총소리(gunNoise)는 권역 장면에 있는 사람만 — 보이지 않는 시내 사람이 맞지 않게 · 총알 줄(예광)도 권역 장면으로 옮긴다
+   ③ 권역 미니맵을 누르면 큰 지도: 구역 전체 · 역·승강장 계단·물자·편의점·시내로 · 팀·가족 · 나 — 누른 곳으로 자동 달리기(62 A*를 권역 막힘 격자로)
+   ④ 팀원·가족이 카메라 0.9m 안으로 붙으면 그 순간만 숨긴다(화면 가림)
+   · 자동 점검(webdriver)은 __alkTest일 때만 */
+const APL={err:0,map:false,mapS:null,n:{gun:0,map:0,run:0,hide:0}};
+function aplErr(e){if(APL.err<6){APL.err++;try{console.error(e)}catch(x){}}}
+function aplIn(){try{return typeof ANX!=='undefined'&&ANX.on&&!!ANX.W}catch(e){return false}}
+/* ---------- ① 탕정역 광장 앞 자리 ---------- */
+function alkStationFront(){const Z=anxZ(),W=ANX.W;const a=anxAt(Z.rs);const en=ANX.entry||{x:Z.box[0],z:(Z.box[1]+Z.box[3])/2};let best=null;
+  for(const sg of [1,-1])for(const o of [18,16,20,14,23,12,26]){const x=a.x+a.nx*sg*o,z=a.z+a.nz*sg*o;if(!anxFree(W.occG,x,z,.9))continue;const d=Math.hypot(x-en.x,z-en.z)+Math.abs(o-18)*3;if(!best||d<best.d)best={x,z,d,sg};break}
+  if(!best)return null;best.yaw=Math.atan2(-(a.x-best.x),-(a.z-best.z));return best}
+/* ---------- ② 권역에서도 총 ---------- */
+function aplInScene(h){try{let o=h&&h.root;const sc=ANX.W.sc;while(o){if(o===sc)return true;o=o.parent}}catch(e){}return false}
+(function(){const b=window.anxEnter;if(typeof b!=='function')return;window.anxEnter=function(){let was=false;try{was=!!(typeof GUN!=='undefined'&&GUN.eq&&(GUN.on||!GUN.sheathed))}catch(e){}const r=b.apply(this,arguments);try{if(r&&was&&alkOn()){GUN.sheathed=false;APL.n.gun++}}catch(e){aplErr(e)}return r}})();
+(function(){const b=window.gunHitList;if(typeof b!=='function')return;window.gunHitList=function(force){const r=b.apply(this,arguments);try{if(aplIn()&&GUN.hits){const L=[],M=new Map();GUN.hitMap.forEach((t,m)=>{if(aplInScene(t.h)){L.push(m);M.set(m,t)}});GUN.hits=L;GUN.hitMap=M}}catch(e){aplErr(e)}return r}})();
+(function(){const b=window.gunNoise;if(typeof b!=='function')return;window.gunNoise=function(){if(aplIn())return 0;return b.apply(this,arguments)}})();
+function aplPool(sc){try{if(typeof OWC!=='undefined'&&OWC.pool&&sc)for(const r of OWC.pool)if(r.m&&r.m.parent!==sc)sc.add(r.m)}catch(e){aplErr(e)}}
+/* ---------- ③ 큰 지도 + 자동 달리기 ---------- */
+function aplOcc(fn){/* 62 자동 달리기는 TJ.occ(집 구역 격자)를 본다 → 권역에선 그 순간만 권역 격자로 */if(!aplIn()||typeof TJ==='undefined')return fn();const o=TJ.occ;TJ.occ=FP3.occ||ANX.W.occG;try{return fn()}finally{TJ.occ=o}}
+function aplMapOpen(){if(!aplIn()||APL.map||OUT.enc||!ANX.mapC)return;APL.map=true;APL.n.map++;OUT.mapOpen=true;FP3.lock=true;FP3.mv.x=FP3.mv.y=0;const el=SV3.el;let o=document.getElementById('aplMap');if(o)o.remove();o=document.createElement('div');o.id='aplMap';o.className='apl-map';
+  o.innerHTML=`<div class="apl-head"><b>🗺 ${anxNm()[2]} 권역 지도</b><span>누른 곳으로 달려간다 · 표식 가까이 누르면 그 표식으로</span><button data-apl="close">닫기</button></div><canvas id="aplMapC"></canvas>`;el.appendChild(o);aplMapDraw()}
+function aplMapClose(){APL.map=false;OUT.mapOpen=false;FP3.lock=false;const o=document.getElementById('aplMap');if(o)o.remove()}
+function aplMapDraw(){const o=document.getElementById('aplMap'),cv=document.getElementById('aplMapC');if(!o||!cv||!ANX.mapC)return;const mc=ANX.mapC;const Z=anxZ();const [x0,z0]=Z.box;const k=.5;
+  const r=o.getBoundingClientRect();const rot=!!SV3.rot;const aw=(rot?r.height:r.width)-20,ah=(rot?r.width:r.height)-62;const s=Math.max(.2,Math.min(aw/mc.width,ah/mc.height));const W=Math.round(mc.width*s),H=Math.round(mc.height*s);const dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+'px';cv.style.height=H+'px';const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.imageSmoothingEnabled=true;x.drawImage(mc,0,0,W,H);APL.mapS={s,k,x0,z0,W,H};
+  const P=(wx,wz)=>[(wx-x0)*k*s,(wz-z0)*k*s];x.textAlign='center';x.textBaseline='middle';
+  /* 역 */for(const st of Z.st||[]){const [px,pz]=P(st.p[0],st.p[1]);x.fillStyle='#2f7bff';x.beginPath();x.arc(px,pz,9,0,7);x.fill();x.fillStyle='#fff';x.font='800 10px system-ui,sans-serif';x.fillText('역',px,pz);x.font='800 13px system-ui,sans-serif';x.lineWidth=3;x.strokeStyle='rgba(0,0,0,.65)';x.strokeText(st.n+'역',px,pz-17);x.fillText(st.n+'역',px,pz-17)}
+  /* 표식(같은 이름은 글자 한 번 · 가장자리에서 잘리지 않게) */const lv=ANX.lvl||'g';const seen=new Set();const box=[];for(const sp of ANX.spots||[]){if((sp.lv||'g')!==lv)continue;const [px,pz]=P(sp.x,sp.z);x.fillStyle='rgba(255,170,40,.92)';x.beginPath();x.arc(px,pz,7,0,7);x.fill();x.font='12px system-ui,sans-serif';x.fillStyle='#111';x.fillText(sp.g||'•',px,pz+.5);
+    const nm=sp.k==='back'?'↩ 시내로':sp.k==='up'?'승강장 계단':(sp.n||'').split(' — ')[0].slice(0,10);if(seen.has(nm))continue;x.font='700 10.5px system-ui,sans-serif';const tw=x.measureText(nm).width;const lx=Math.max(tw/2+3,Math.min(W-tw/2-3,px));let ly=pz+15;if(ly>H-7)ly=pz-15;
+    if(box.some(b=>Math.abs(b[0]-lx)<(b[2]+tw)/2&&Math.abs(b[1]-ly)<12))continue;seen.add(nm);box.push([lx,ly,tw]);x.lineWidth=3;x.strokeStyle='rgba(0,0,0,.7)';x.strokeText(nm,lx,ly);x.fillStyle='#ffe3b0';x.fillText(nm,lx,ly)}
+  /* 팀·가족 */try{for(const m of (typeof alkTeam==='function'?alkTeam():[]).concat(typeof alkFam==='function'?alkFam():[])){if(!aplInScene(m.h))continue;const q=m.h.root.position;const [px,pz]=P(q.x,q.z);x.fillStyle=m.kind==='fam'||(FAM&&FAM.list.includes(m))?'#ff8fc8':'#5ee08a';x.beginPath();x.arc(px,pz,4,0,7);x.fill()}}catch(e){}
+  /* 자동 달리기 목적지 */try{if(typeof ARUN!=='undefined'&&ARUN.on&&ARUN.tgt){const [px,pz]=P(ARUN.tgt.x,ARUN.tgt.z);x.strokeStyle='#5ee08a';x.lineWidth=3;x.beginPath();x.arc(px,pz,9,0,7);x.stroke()}}catch(e){}
+  /* 나 */{const [px,pz]=P(FP3.pos.x,FP3.pos.z);const fx=-Math.sin(FP3.yaw),fz=-Math.cos(FP3.yaw);x.save();x.translate(px,pz);x.rotate(Math.atan2(fx,-fz));x.fillStyle='#ffd24a';x.strokeStyle='#1a1205';x.lineWidth=2;x.beginPath();x.moveTo(0,-11);x.lineTo(8,8);x.lineTo(0,4);x.lineTo(-8,8);x.closePath();x.fill();x.stroke();x.restore()}}
+function aplMapTap(e){const S=APL.mapS,cv=document.getElementById('aplMapC');if(!S||!cv)return;const rc=cv.getBoundingClientRect();const lx=SV3.rot?(e.clientY-rc.top):(e.clientX-rc.left),ly=SV3.rot?(rc.right-e.clientX):(e.clientY-rc.top);if(lx<0||ly<0||lx>S.W||ly>S.H)return;
+  let wx=S.x0+lx/S.s/S.k,wz=S.z0+ly/S.s/S.k;let snap=null,bd=28;for(const sp of ANX.spots||[]){if((sp.lv||'g')!==(ANX.lvl||'g'))continue;const d=Math.hypot(sp.x-wx,sp.z-wz);if(d<bd){bd=d;snap=sp}}if(snap){wx=snap.x;wz=snap.z}
+  aplMapClose();aplRun(wx,wz,snap)}
+function aplRun(x,z,snap){if(typeof arStart!=='function')return false;const ok=aplOcc(()=>arStart(x,z));if(ok){APL.n.run++;if(snap)outNote(`<b>🏃 ${snap.g||''} ${(snap.n||'').split(' — ')[0]}</b><div>그쪽으로 달려간다 · 조이스틱을 움직이면 멈춘다</div>`,2000)}return ok}
+document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;const m=t.closest('[data-g3=anxmap]');if(m){e.preventDefault();e.stopPropagation();try{aplMapOpen()}catch(x){aplErr(x)}return}
+  const c=t.closest('[data-apl]');if(c){e.preventDefault();e.stopPropagation();if(c.dataset.apl==='close')aplMapClose();return}
+  if(APL.map&&t.closest('#aplMapC')){e.preventDefault();e.stopPropagation();try{aplMapTap(e)}catch(x){aplErr(x)}return}
+  if(APL.map&&t.closest('#aplMap')&&!t.closest('.apl-head')){e.preventDefault();e.stopPropagation();aplMapClose()}},true);
+/* 화면을 열 때: 미니맵을 누를 수 있게 · 총알 줄을 권역 장면으로 */
+(function(){const b=window.vAnx3;if(typeof b!=='function')return;window.vAnx3=function(){const r=b.apply(this,arguments);try{if(alkOn()&&ANX.on){const c=document.getElementById('anxMini');if(c){c.dataset.g3='anxmap';c.classList.add('apl-mini');c.setAttribute('aria-label','큰 지도 열기');const t=document.createElement('span');t.className='apl-tag';t.textContent='지도';t.dataset.g3='anxmap';c.after(t)}aplPool(ANX.W.sc)}}catch(e){aplErr(e)}return r};try{if(SV3.views&&SV3.views.anx)SV3.views.anx=window.vAnx3}catch(e){}})();
+(function(){const b=window.anxLeave;if(typeof b!=='function')return;window.anxLeave=function(){const was=aplIn();try{if(APL.map)aplMapClose();if(typeof ARUN!=='undefined'&&ARUN.on)arStop('cancel')}catch(e){}const r=b.apply(this,arguments);try{if(was)aplPool(OUT.scene)}catch(e){aplErr(e)}return r}})();
+/* 권역 발걸음: 총 · 자동 달리기 · 화면 가림 */
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){try{if(typeof ARUN!=='undefined'&&ARUN.on&&FP3.nav&&FP3.nav.auto&&!OUT.enc){FP3.mv.x=0;FP3.mv.y=0}}catch(e){}const r=b.apply(this,arguments);
+  try{if(alkOn()&&ANX.on&&OUT.on&&typeof GUN!=='undefined'&&!(typeof OWC!=='undefined'&&OWC.on)){if(GUN.on)gunStep(dt);else if(GUN.eq&&!GUN.sheathed&&gunFpOk()&&!OUT.enc&&!OUT.busy&&G.eq===GUN.eq)gunEquip(GUN.eq,true)}}catch(e){aplErr(e)}
+  try{if(typeof ARUN!=='undefined'&&ARUN.on)aplOcc(()=>arFrame(dt))}catch(e){aplErr(e);try{arStop('cancel')}catch(x){}}
+  try{if(APL.map){APL.mt=(APL.mt||0)+dt;if(APL.mt>.25){APL.mt=0;aplMapDraw()}}}catch(e){}
+  try{if(ALK.in&&!ALK.hid){const c=SV3.cam.position;for(const m of (typeof alkTeam==='function'?alkTeam():[]).concat(typeof alkFam==='function'?alkFam():[])){if(!aplInScene(m.h))continue;const q=m.h.root.position;const near=Math.hypot(q.x-c.x,q.z-c.z)<.9;if(near===!!m.aplHid)continue;m.aplHid=near;m.h.root.visible=!near&&m.d.st!=='away';if(near)APL.n.hide++}}}catch(e){aplErr(e)}
+  return r}})();
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
