@@ -1900,6 +1900,22 @@ body.opn-on .title-note{background:rgba(6,8,11,.55);border-radius:10px;padding:6
 .dir-sms{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translate(-50%,-14px);z-index:93;pointer-events:none;display:grid;gap:3px;width:min(92vw,520px);padding:10px 14px;border-radius:14px;background:rgba(14,10,10,.94);border:1.5px solid #ff5a3a;box-shadow:0 8px 24px rgba(0,0,0,.5);color:#f3f0ee;opacity:0;transition:opacity .3s,transform .3s}
 .dir-sms.show{opacity:1;transform:translate(-50%,0)}
 .dir-sms b{font:800 14px var(--sans);color:#ff8a6a}.dir-sms span{font:500 13px/1.4 var(--sans)}
+/* v17.2 드론 가속 버튼 */
+.dmm-boost{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:198px;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(12,16,20,.75);color:#fff;display:grid;place-items:center;align-content:center;font-size:16px;line-height:1;pointer-events:auto;z-index:3;touch-action:none}
+.dmm-boost small{font:700 9px var(--sans);opacity:.85}
+.dmm-boost.on{background:rgba(255,154,46,.88);border-color:#ffd08a}
+/* v17.2 창밖 전투 — 겹친 버튼 숨김 · 저격수 경고 · 유리 금 · 사살 표시 */
+.sv3.wf-on .owc-jp,.sv3.wf-on [data-gun=holster],.sv3.wf-on #gunAds,.sv3.wf-on .gun-help,.sv3.wf-on .fr-acts,.sv3.wf-on .sv3-jump{display:none!important}
+.sv3.wf-ads #awGl,.sv3.wf-ads #awTip,.sv3.wf-ads .fr-note,.sv3.wf-ads #wpkaw,.sv3.wf-ads .aw-tip,.sv3.wf-ads .hud{visibility:hidden!important}
+.wf-warn{position:absolute;left:50%;top:15%;transform:translate(-50%,-50%) scale(.9);padding:8px 16px;border-radius:999px;background:rgba(170,20,14,.9);color:#fff;font:900 15px var(--sans);letter-spacing:.02em;box-shadow:0 0 0 2px rgba(255,210,200,.6),0 6px 24px rgba(0,0,0,.45);opacity:0;pointer-events:none;z-index:40;transition:opacity .12s,transform .12s}
+.wf-warn.on{opacity:1;transform:translate(-50%,-50%) scale(1);animation:wfw .32s steps(2) infinite}
+@keyframes wfw{50%{background:rgba(255,64,40,.95)}}
+.wf-crack{position:absolute;width:min(26vw,160px);aspect-ratio:1;pointer-events:none;z-index:1;opacity:.82;filter:drop-shadow(0 0 1px rgba(0,0,0,.5))}
+.wf-crack svg{width:100%;height:100%;display:block}
+.wf-kill{position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);display:flex;gap:8px;align-items:center;padding:5px 12px;border-radius:10px;background:rgba(10,12,16,.72);color:#fff;font:800 14px var(--sans);opacity:0;pointer-events:none;z-index:40}
+.wf-kill b{color:#ff6b5a}.wf-kill span{color:#ffd37a;font-size:12px}.wf-kill i{font-style:normal;opacity:.7;font-size:12px}
+.wf-kill.on{animation:wfk 1.4s ease-out forwards}
+@keyframes wfk{0%{opacity:0;transform:translate(-50%,-30%) scale(1.25)}12%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%)}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -13990,7 +14006,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.1';
+const APP_VER='17.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -21862,9 +21878,9 @@ if(typeof HELP84!=='undefined')HELP84.push(['🌤 그래픽(v12.0)','밖 장면�
 
 /* ===================== 105 · v12.0 평시 드론 — 교전 밖에서도 띄운다: 🛰 정찰(기본기) · 💣 폭탄 투하(공방 재고) ===================== */
 /* 사용자 요청(2026-11-14): "드론도 평시에 운용할 수 있게 버튼 만들어 주시고"
-   · 밖(자유 이동) 위쪽 띠에 '🛸 드론' 버튼 → 고르기: 🛰 정찰 드론(기본기 — 재고 없이 언제나, 배터리 90초, 내린 뒤 20초 충전) · 💣 폭탄 투하 드론(드론 공방 재고 1대, 투하탄 3발·공방 3단계 4발)
-   · 조종(94의 폭탄 드론과 같은 손맛): 왼쪽 막대 앞뒤·선회 · 오른쪽 끌기 방향 · 정찰은 ▲▼로 고도 10~70m · [복귀]. 신호 한계 220m. 조종하는 동안 내 몸은 그 자리에 서 있다
-   · 🛰 정찰: 기체 75m 안의 사람을 가려 머리 위에 표시(내린 뒤 45초 유지) — 붉은색 적대(불량배·약탈자·도주 중인 간첩·적병) · 주황 난투 · 파랑 계엄군 순찰대.
+   · 밖(자유 이동) 위쪽 띠에 '🛸 드론' 버튼 → 고르기: 🛰 정찰 드론(기본기 — 재고 없이 언제나, 배터리 90초(v17.2부터 110초), 내린 뒤 20초 충전) · 💣 폭탄 투하 드론(드론 공방 재고 1대, 투하탄 3발·공방 3단계 4발)
+   · 조종(94의 폭탄 드론과 같은 손맛): 왼쪽 막대 앞뒤·선회 · 오른쪽 끌기 방향 · 정찰은 ▲▼로 고도 10~70m · [복귀]. 신호 한계 220m(v17.2부터 정찰 450m · 폭탄 350m, 앞 30m/s · ⏩ 가속 ×1.6). 조종하는 동안 내 몸은 그 자리에 서 있다
+   · 🛰 정찰: 기체 90m 안의 사람을(v17.2부터 90m) 가려 머리 위에 표시(내린 뒤 45초 유지) — 붉은색 적대(불량배·약탈자·도주 중인 간첩·적병) · 주황 난투 · 파랑 계엄군 순찰대.
      아직 못 찾은 '숨은 물자' 상자는 푸른 빛기둥으로 60초 보인다. 내리면 결과 한 줄
    · 💣 폭탄 투하: 붉은 원 = 떨어질 곳(반경 4.5m). 판정은 밖 발사기(65 gunBoom)와 같다 — 적대만 쓰러지고, 주민이면 '주민 사격', 군인이면 연행. 벽에 가까우면 불(102)
      내 발밑 6m 안에 떨어뜨리면 나도 다친다. 교육용 모드에서는 폭탄 드론을 쓸 수 없다
@@ -21872,6 +21888,9 @@ if(typeof HELP84!=='undefined')HELP84.push(['🌤 그래픽(v12.0)','밖 장면�
 const DFR={B:null,cool:0,marks:[],n:0,caches:[],last:null};
 function dfrCan(){try{return OUT.on&&!!OUT.scene&&typeof TJ!=='undefined'&&!!TJ.world&&!(typeof APT!=='undefined'&&APT.on)&&!(typeof OWC!=='undefined'&&OWC.on)&&!OUT.drv&&!OUT.enc&&!OUT.busy&&!OUT.mapOpen&&!OUT.ending&&!(typeof PARA!=='undefined'&&PARA.on)&&!(typeof BR!=='undefined'&&BR.on)&&!(typeof FF!=='undefined'&&FF.on)&&!(typeof GUN!=='undefined'&&GUN.ow)&&!(OUT.ride)}catch(e){return false}}
 function dfrEdu(){try{return typeof eduOn==='function'&&eduOn()}catch(e){return false}}
+/* v17.2: 빠르게 — 앞 30m/s(폭탄 22) · 뒤 10 · 옆 20(16) · ⏩ 가속을 누르는 동안 ×1.6(배터리 1.5배로 닳음) · 신호 한계 정찰 450m · 폭탄 350m */
+function dfrBoostK(B){return B&&B.boost?1.6:1}
+function dfrSig(B){return B&&B.type==='bomb'?350:450}
 function dfrBombN(){try{return typeof dfCount==='function'&&typeof dfS==='function'&&dfS().on?dfCount('bomb'):0}catch(e){return 0}}
 /* ---------- 버튼 · 고르기 ---------- */
 (function(){const b=window.outBar;if(typeof b!=='function')return;window.outBar=function(){const r=b.apply(this,arguments);try{const bar=$('#oBar');if(!bar)return r;let t=bar.querySelector('[data-g3=dfrbtn]');const show=OUT.on&&typeof TJ!=='undefined'&&!!TJ.world&&!OUT.drv;if(!show){if(t)t.remove();return r}
@@ -21879,7 +21898,7 @@ function dfrBombN(){try{return typeof dfCount==='function'&&typeof dfS==='functi
 function dfrPickClose(){const el=$('#dfrPick');if(el)el.remove()}
 function dfrPick(){if($('#dfrPick')){dfrPickClose();return}if(DFR.B||!SV3.el)return;if(!dfrCan()){try{outNote('<b>지금은 드론을 띄울 수 없다</b><div>교전·운전·건물 안·다른 행동 중에는 안 된다.</div>',2200)}catch(e){}return}
   const nb=dfrBombN(),edu=dfrEdu();const el=document.createElement('div');el.id='dfrPick';el.className='dfr-pick';el.innerHTML=`<b>🛸 드론 띄우기</b>
-    <button data-g3="dfrgo" data-v="recon"${DFR.cool>0?' disabled':''}><i>🛰</i><span>정찰 드론<small>${DFR.cool>0?`배터리 교체 중 · ${Math.ceil(DFR.cool)}초`:'기본기 · 90초 · 적대·난투·순찰대·숨은 물자 표시'}</small></span></button>
+    <button data-g3="dfrgo" data-v="recon"${DFR.cool>0?' disabled':''}><i>🛰</i><span>정찰 드론<small>${DFR.cool>0?`배터리 교체 중 · ${Math.ceil(DFR.cool)}초`:'기본기 · 110초 · 적대·난투·순찰대·숨은 물자 표시'}</small></span></button>
     <button data-g3="dfrgo" data-v="bomb"${nb>0&&!edu?'':' disabled'}><i>💣</i><span>폭탄 투하 드론<small>${edu?'교육용 모드에서는 쓸 수 없다':nb>0?`공방 재고 ${nb}대 · 투하탄 ${typeof dfS==='function'&&dfS().lv>=3?4:3}발`:'드론 공방에서 만들면 쓸 수 있다'}</small></span></button>
     <button class="x" data-g3="dfrpx">닫기</button>`;SV3.el.appendChild(el)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-g3=dfrbtn],[data-g3=dfrgo],[data-g3=dfrpx],[data-g3=dfrret],[data-g3=dfrdrop],[data-g3=dfrup],[data-g3=dfrdn]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
@@ -21890,13 +21909,13 @@ function dfrStart(type){dfrPickClose();if(DFR.B||!dfrCan())return false;type=typ
   if(type==='recon'){if(DFR.cool>0){outNote(`<b>배터리 교체 중</b><div>${Math.ceil(DFR.cool)}초 뒤에 다시 띄울 수 있다.</div>`,1800);return false}}
   else{if(dfrEdu()||dfrBombN()<=0)return false;it=dfTake('bomb',true);if(!it)return false}
   let q=null;try{q=dfQuad(type);q.scale.setScalar(type==='bomb'?2.6:2.2);dfQuadShow(q,5);OUT.scene.add(q)}catch(e){q=null}if(!q){if(it)try{dfS().inv.push(it)}catch(e){}return false}
-  const c=SV3.cam;const gk=it?(it.g==='S'?1.15:1):1;const B={type,pos:new T.Vector3(FP3.pos.x,1.4,FP3.pos.z),yaw:FP3.yaw,vx:0,vz:0,t:0,alt:type==='bomb'?22:28,batt:(type==='bomb'?60:90)*gk,batt0:(type==='bomb'?60:90)*gk,q,g:it?it.g:'',bombs:type==='bomb'?(dfS().lv>=3?4:3):0,drops:[],end:0,uiT:0,scanT:.8,msgT:0,kills:0,fov0:c.fov,ord0:c.rotation.order,seen:new Map(),found:{en:0,brw:0,ml:0,cache:0},sc:OUT.scene,ring:null,dot:null};
+  const c=SV3.cam;const gk=it?(it.g==='S'?1.15:1):1;const B={type,pos:new T.Vector3(FP3.pos.x,1.4,FP3.pos.z),yaw:FP3.yaw,vx:0,vz:0,t:0,alt:type==='bomb'?22:28,batt:(type==='bomb'?70:110)*gk,batt0:(type==='bomb'?70:110)*gk,q,g:it?it.g:'',bombs:type==='bomb'?(dfS().lv>=3?4:3):0,drops:[],end:0,uiT:0,scanT:.8,msgT:0,kills:0,fov0:c.fov,ord0:c.rotation.order,seen:new Map(),found:{en:0,brw:0,ml:0,cache:0},sc:OUT.scene,ring:null,dot:null};
   if(type==='bomb'){const rg=new T.Mesh(new T.RingGeometry(4.1,4.7,40),new T.MeshBasicMaterial({color:'#ff3b30',transparent:true,opacity:.75,depthWrite:false,depthTest:false,side:T.DoubleSide,fog:false}));rg.rotation.x=-Math.PI/2;rg.renderOrder=6;OUT.scene.add(rg);const dot=new T.Mesh(new T.CircleGeometry(.5,16),new T.MeshBasicMaterial({color:'#ff3b30',transparent:true,opacity:.85,depthWrite:false,depthTest:false,fog:false}));dot.rotation.x=-Math.PI/2;dot.renderOrder=6;OUT.scene.add(dot);B.ring=rg;B.dot=dot}
   const ov=document.createElement('div');ov.id='dfrOv';ov.className='b-fpv-ov owd dwb dfr';ov.innerHTML=`<div class="fs"></div><div class="osd tl"><b>${type==='bomb'?'💣 폭탄 투하 드론'+(B.g?' · '+B.g+'급':''):'🛰 정찰 드론'}</b><span id="dfrBat">BAT 100%</span><span id="dfrAlt">ALT 0m</span><span id="dfrDst">DST 0m</span><span id="dfrInf">${type==='bomb'?'투하탄 '+B.bombs:'표적 0'}</span></div>
     <div class="fpv-msg" id="dfrMsg" hidden></div>${type==='bomb'?'<button class="fpv-x dw-drop" data-g3="dfrdrop">투하</button>':'<button class="dfr-alt up" data-g3="dfrup">▲<small>고도</small></button><button class="dfr-alt dn" data-g3="dfrdn">▼<small>고도</small></button>'}<button class="fpv-q${type==='bomb'?'':' solo'}" data-g3="dfrret">복귀</button>
     <div class="fpv-tip">${type==='bomb'?'왼쪽 막대: 앞뒤·선회 · 오른쪽 끌기: 방향 · 붉은 원 = 떨어질 곳 · 주민·군인 근처 금지':'왼쪽 막대: 앞뒤·선회 · 오른쪽 끌기: 방향 · ▲▼ 고도 · 붉은 표시 = 적대'}</div>`;
   if(SV3.el){SV3.el.appendChild(ov);SV3.el.classList.add('dfr-on')}try{if(OUT.me){OUT.me.root.visible=true;OUT.me.setPose('check')}}catch(e){}try{fpvSound(true)}catch(e){}vib(20);FP3.mv.x=FP3.mv.y=0;DFR.B=B;DFR.n++;
-  try{outNote(type==='bomb'?'<b>💣 폭탄 드론을 올렸다</b><div>붉은 원이 떨어질 곳이다. 주민·군인이 가까우면 떨어뜨리지 않는다.</div>':'<b>🛰 정찰 드론을 올렸다</b><div>75m 안의 적대·난투·순찰대를 가려 표시한다. 숨은 물자 상자도 찾는다.</div>',3000)}catch(e){}return true}
+  try{outNote(type==='bomb'?'<b>💣 폭탄 드론을 올렸다</b><div>붉은 원이 떨어질 곳이다. 주민·군인이 가까우면 떨어뜨리지 않는다.</div>':'<b>🛰 정찰 드론을 올렸다</b><div>90m 안의 적대·난투·순찰대를 가려 표시한다. 숨은 물자 상자도 찾는다.</div>',3000)}catch(e){}return true}
 function dfrMsg(t,sec){const m=$('#dfrMsg');if(!m)return;m.hidden=false;m.textContent=t;clearTimeout(dfrMsg._t);dfrMsg._t=setTimeout(()=>{const x=$('#dfrMsg');if(x)x.hidden=true},(sec||1.4)*1000)}
 function dfrAlt(d){const B=DFR.B;if(!B||B.end||B.type!=='recon')return;B.alt=Math.max(10,Math.min(70,B.alt+d));dfrMsg(`고도 ${B.alt}m`,.8)}
 function dfrReturn(){const B=DFR.B;if(!B||B.end)return;dfrMsg('복귀',1);B.end=.01}
@@ -21911,7 +21930,7 @@ function dfrCam(B){const c=SV3.cam;const fx=-Math.sin(B.yaw),fz=-Math.cos(B.yaw)
 function dfrClass(a){if(!a||!a.h||a.dead||a.h.dead||!a.h.root.visible||!a.h.root.parent)return null;if(a.brw)return a.brw.out||a.brw.kdSt?null:'brw';if(a.ml)return 'ml';let host=null;try{host=gunHostile({a,kind:a.kind})}catch(e){}return host?'en':null}
 function dfrMkTex(col){const k='dfrMk'+col;if(TEX[k])return TEX[k];const c=cvs(64,64),x=c.getContext('2d');x.fillStyle=col;x.strokeStyle='rgba(0,0,0,.85)';x.lineWidth=5;x.lineJoin='round';x.beginPath();x.moveTo(10,12);x.lineTo(54,12);x.lineTo(32,54);x.closePath();x.stroke();x.fill();const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return TEX[k]=t}
 function dfrMark(a,cls){let M=DFR.marks.find(k=>k.a===a);const col=cls==='en'?'#ff3b30':cls==='brw'?'#ff9a2e':'#3aa0ff';if(M){M.t=45;return false}const m=new T.Sprite(new T.SpriteMaterial({map:dfrMkTex(col),transparent:true,depthWrite:false,depthTest:false,fog:false}));m.scale.set(.5,.5,1);m.position.y=2.42;m.renderOrder=9;a.h.root.add(m);DFR.marks.push({a,m,t:45,cls});return true}
-function dfrScan(B){const R=75;for(const a of OUT.npcs||[]){const cls=dfrClass(a);if(!cls)continue;const q=a.h.root.position;if(Math.hypot(q.x-B.pos.x,q.z-B.pos.z)>R)continue;if(dfrMark(a,cls)||!B.seen.has(a)){if(!B.seen.has(a)){B.seen.set(a,cls);B.found[cls]++;if(cls==='en')try{SND.tone(1250,.07,'square',.03)}catch(e){}}}}
+function dfrScan(B){const R=90;for(const a of OUT.npcs||[]){const cls=dfrClass(a);if(!cls)continue;const q=a.h.root.position;if(Math.hypot(q.x-B.pos.x,q.z-B.pos.z)>R)continue;if(dfrMark(a,cls)||!B.seen.has(a)){if(!B.seen.has(a)){B.seen.set(a,cls);B.found[cls]++;if(cls==='en')try{SND.tone(1250,.07,'square',.03)}catch(e){}}}}
   try{if(typeof MIS!=='undefined'&&MIS.cache)for(const c of MIS.cache){if(c.found||c.dfrT>0)continue;if(Math.hypot(c.x-B.pos.x,c.z-B.pos.z)>R)continue;c.dfrT=60;B.found.cache++;if(!c.dfrB&&c.g){const sp=PK.sprite(glowTex(),'#7fe0ff',1,c.g,{add:1,op:.75});sp.scale.set(1.3,26,1);sp.position.set(0,13,0);sp.material.fog=false;c.dfrB=sp}if(c.dfrB)c.dfrB.visible=true;DFR.caches.push(c);try{SND.tone(1800,.1,'sine',.03)}catch(e){}}}catch(e){}
   const el=$('#dfrInf');if(el){const f=B.found;const t=`표적 ${f.en}${f.brw?` · 난투 ${f.brw}`:''}${f.ml?` · 순찰 ${f.ml}`:''}${f.cache?` · 물자 ${f.cache}`:''}`;if(el.textContent!==t)el.textContent=t}}
 function dfrMarksStep(dt){if(DFR.marks.length){DFR.marks=DFR.marks.filter(k=>{if(!DFR.B)k.t-=dt;const a=k.a;const gone=k.t<=0||!a.h||!a.h.root.parent||a.dead||a.h.dead||(a.brw&&(a.brw.out||a.brw.gone));if(gone){try{k.m.removeFromParent();k.m.material.dispose()}catch(e){}return false}k.m.material.opacity=k.t<4?k.t/4:1;return true})}
@@ -21921,9 +21940,9 @@ function dfrStep(dt,mv){const B=DFR.B;if(!B)return;if(B.sc!==OUT.scene||!OUT.on)
   B.drops=B.drops.filter(d=>{d.vy-=9.8*dt;d.p.x+=d.vx*dt;d.p.z+=d.vz*dt;d.p.y+=d.vy*dt;d.m.position.copy(d.p);d.m.rotation.x+=dt*.6;const hg=dfrGroundH(d.p.x,d.p.z);if(d.p.y<=hg+.15){try{dfrBlast(new T.Vector3(d.p.x,Math.max(.3,hg),d.p.z))}catch(e){console.error(e)}if(d.m.parent)d.m.parent.remove(d.m);return false}return true});
   if(B.end){B.end+=dt;B.pos.y+=dt*2;B.q.position.copy(B.pos);dfrCam(B);if(B.end>1&&!B.drops.length)dfrEnd();return}
   /* 교전·카드·건물·운전이 시작되면 돌아온다 */if((typeof OWC!=='undefined'&&OWC.on)||OUT.enc||(typeof APT!=='undefined'&&APT.on)||OUT.drv||OUT.ending){dfrEnd(true);return}
-  B.batt-=dt;B.pos.y+=(B.alt-B.pos.y)*Math.min(1,dt*1.3);const live=B.t>1&&B.batt>0;
-  if(live){B.yaw-=mv.x*1.3*dt;const th=clamp(mv.y,-1,1);const sp=th>=0?th*(B.type==='bomb'?11:14):th*6;const fx=-Math.sin(B.yaw),fz=-Math.cos(B.yaw);const k=Math.min(1,dt*1.6);B.vx+=(fx*sp-B.vx)*k;B.vz+=(fz*sp-B.vz)*k}else{B.vx*=.97;B.vz*=.97}
-  B.pos.x+=B.vx*dt;B.pos.z+=B.vz*dt;const dist=Math.hypot(B.pos.x-FP3.pos.x,B.pos.z-FP3.pos.z);if(dist>220){const k=220/dist;B.pos.x=FP3.pos.x+(B.pos.x-FP3.pos.x)*k;B.pos.z=FP3.pos.z+(B.pos.z-FP3.pos.z)*k;B.vx*=.5;B.vz*=.5;if(B.msgT<=0){B.msgT=2;dfrMsg('220m — 신호 한계',1)}}
+  B.batt-=dt*(B.boost?1.5:1);B.pos.y+=(B.alt-B.pos.y)*Math.min(1,dt*1.8);const live=B.t>1&&B.batt>0;
+  if(live){B.yaw-=mv.x*1.3*dt;const th=clamp(mv.y,-1,1);const sp=(th>=0?th*(B.type==='bomb'?22:30):th*10)*dfrBoostK(B);const fx=-Math.sin(B.yaw),fz=-Math.cos(B.yaw);const k=Math.min(1,dt*2.2);B.vx+=(fx*sp-B.vx)*k;B.vz+=(fz*sp-B.vz)*k}else{B.vx*=.97;B.vz*=.97}
+  B.pos.x+=B.vx*dt;B.pos.z+=B.vz*dt;const dist=Math.hypot(B.pos.x-FP3.pos.x,B.pos.z-FP3.pos.z);const SIG=dfrSig(B);if(dist>SIG){const k=SIG/dist;B.pos.x=FP3.pos.x+(B.pos.x-FP3.pos.x)*k;B.pos.z=FP3.pos.z+(B.pos.z-FP3.pos.z)*k;B.vx*=.5;B.vz*=.5;if(B.msgT<=0){B.msgT=2;dfrMsg(SIG+'m — 신호 한계',1)}}
   /* 건물보다 낮으면 넘어간다 */const gh=dfrGroundH(B.pos.x,B.pos.z);if(B.pos.y<gh+4)B.pos.y+=(gh+4-B.pos.y)*Math.min(1,dt*4);
   B.q.position.copy(B.pos);{const fw=B.vx*-Math.sin(B.yaw)+B.vz*-Math.cos(B.yaw);B.q.rotation.set(clamp(fw*.025,-.3,.3),B.yaw+Math.PI,0,'YXZ')}(B.q.userData.props||[]).forEach((p,i)=>{p.rotation.y+=dt*70*(i%2?1:-1)});
   if(B.ring){const tf=Math.sqrt(2*Math.max(1,B.pos.y)/9.8);const ix=B.pos.x+B.vx*tf,iz=B.pos.z+B.vz*tf;const ih=dfrGroundH(ix,iz);B.ring.position.set(ix,ih+.08,iz);B.dot.position.set(ix,ih+.09,iz);B.ring.material.opacity=.55+Math.sin(B.t*6)*.2}
@@ -21941,7 +21960,7 @@ function dfrEnd(quiet){const B=DFR.B;if(!B)return;DFR.B=null;DFR.last=B;[B.q,B.r
 ['tjCull','tjSunFollow'].forEach(n=>{const b=window[n];if(typeof b!=='function')return;window[n]=function(p){return b.call(this,DFR.B&&!DFR.B.end?DFR.B.pos:p)}});
 (function(){const b=window.outReturn;window.outReturn=function(){try{dfrPickClose();if(DFR.B)dfrEnd(true);DFR.marks.forEach(k=>{try{k.m.removeFromParent();k.m.material.dispose()}catch(e){}});DFR.marks=[];DFR.caches=[];DFR.cool=0}catch(e){}return b.apply(this,arguments)}})();
 (function(){const b=window.owcStart;if(typeof b!=='function')return;window.owcStart=function(){try{dfrPickClose();if(DFR.B)dfrEnd(true)}catch(e){}return b.apply(this,arguments)}})();
-if(typeof HELP84!=='undefined')HELP84.push(['🛸 평시 드론(v12.0)','밖에서 위쪽 띠 \'🛸 드론\'을 누르면 교전이 아니어도 드론을 띄운다. 🛰 정찰 드론은 기본기(90초 · 내린 뒤 20초 충전) — 75m 안의 적대(붉은색)·난투(주황)·순찰대(파랑)를 머리 위에 표시하고 숨은 물자 상자를 빛기둥으로 보여 준다. 💣 폭탄 투하 드론은 드론 공방 재고가 있을 때 — 붉은 원에 투하, 주민·군인 근처에 떨어뜨리면 밖 발사기와 같은 벌점. 왼쪽 막대 앞뒤·선회, 오른쪽 끌기 방향, ▲▼ 고도. PC: Space 투하 · Q 복귀 · R/F 고도.']);
+if(typeof HELP84!=='undefined')HELP84.push(['🛸 평시 드론(v12.0)','밖에서 위쪽 띠 \'🛸 드론\'을 누르면 교전이 아니어도 드론을 띄운다. 🛰 정찰 드론은 기본기(110초 · 내린 뒤 20초 충전) — 90m 안의 적대(붉은색)·난투(주황)·순찰대(파랑)를 머리 위에 표시하고 숨은 물자 상자를 빛기둥으로 보여 준다. 💣 폭탄 투하 드론은 드론 공방 재고가 있을 때 — 붉은 원에 투하, 주민·군인 근처에 떨어뜨리면 밖 발사기와 같은 벌점. 왼쪽 막대 앞뒤·선회, 오른쪽 끌기 방향, ▲▼ 고도. PC: Space 투하 · Q 복귀 · R/F 고도.']);
 
 /* ===================== 106 · v12.0 총기 효과 — 탄피 배출 · 🌙 야간 투시경 · 야간 조준경 ===================== */
 /* 사용자 요청(2026-11-14): "총쏘면 탄피가 떨어지는 것도 구현해 주세요 … 야간 조준경?투시경?도 만들어주세요"
@@ -23715,13 +23734,13 @@ if(typeof HELP84!=='undefined')HELP84.push(['🛸 진지 교전 → 제자리 2�
    · 🛸 드론 고르기(105)에 💥 자폭 드론 — 1인칭 영상으로 날아가 부딪히면 터진다(반경 4.5m). 판정은 폭탄 드론과 같다:
      적대만 쓰러지고, 주민이면 '주민 사격', 군인이면 연행. 아이·가족은 대상에서 빠진다(116 isKidOrFam). 내 발밑 6m 안이면 나도 다친다
    · 조종: 왼쪽 막대 = 속도·선회 · 오른쪽 끌기 = 기수(위·아래·좌우) · [기폭](PC Space) · [복귀](PC Q — 터뜨리지 않은 기체는 재고로 돌아온다)
-     띄우고 1.5초 뒤 안전장치가 풀린다(그 전엔 부딪혀도 안 터진다). 배터리 45초 · 신호 260m — 신호가 끊기거나 배터리가 다 되면 안전장치가 다시 걸린 채 떨어진다(터지지 않고 기체만 잃는다)
+     띄우고 1.5초 뒤 안전장치가 풀린다(그 전엔 부딪혀도 안 터진다). 배터리 50초 · 신호 420m — 신호가 끊기거나 배터리가 다 되면 안전장치가 다시 걸린 채 떨어진다(터지지 않고 기체만 잃는다)
    · 제자리 교전(116·123·124) 중에도 띄울 수 있다 — 조종하는 동안 내 몸은 그 자리에 서 있다(맞을 수 있다). 적 자폭 드론에 부딪혀도 터진다
    · 시작 장비: 새 게임을 시작할 때마다 💥 자폭 드론 50 · 💣 폭탄 투하 드론 10 · AK-47 소총 1정(2배율 조준경 장착, 탄창 장전) · 7.62mm 100발(v16.5 200발) → v16.7부터 K2 소총(4배율 조준경) · 5.56mm 300발.
      하던 저장 게임에도 한 번 넣는다(G.flags.kit139). 쓰러져 실려 돌아오는 것은 리스폰이 아니다 — 다시 주지 않는다. 교육용 모드에서는 넣지 않는다
    · 시작 장비 드론은 공방을 차리지 않아도 쓴다(dfS().kit) — 공방 교전 아이템 줄(94)에도 잡힌다
    · 게임 속 연출일 뿐 실제 장비의 사양·운용법이 아니다 */
-const DFK={spd0:12,spd1:30,batt:45,sigNear:180,sigLost:260,r:4.5,arm:1.5,n:0};
+const DFK={spd0:16,spd1:42,batt:50,sigNear:300,sigLost:420,r:4.5,arm:1.5,n:0};
 function dfkErr(e){try{console.error(e)}catch(x){}}
 function dfkN(){try{return typeof dfCount==='function'?dfCount('fpv'):0}catch(e){return 0}}
 /* 폭탄 드론 재고: 공방을 차렸거나 시작 장비가 있으면 */
@@ -23800,7 +23819,7 @@ document.addEventListener('keydown',e=>{const B=DFR.B;if(!B||B.type!=='fpv'||e.r
 /* 적 자폭 드론(124)이 폭발 범위에 들면 — 폭발 판정이 사람처럼 다루지 않게 */
 (function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t){if(t&&t.kind==='d2drone'){try{if(t.a&&t.a.d2)d2Kill(t.a.d2,'me')}catch(e){dfkErr(e)}return}return b.apply(this,arguments)}})();
 (function(){const b=window.gunCivShot;if(typeof b!=='function')return;window.gunCivShot=function(t){if(t&&t.kind==='d2drone')return;return b.apply(this,arguments)}})();
-if(typeof HELP84!=='undefined')HELP84.push(['💥 자폭 드론 · 시작 장비(v13.9)','위쪽 띠 <b>🛸 드론</b> → <b>💥 자폭 드론</b>: 1인칭 영상으로 날아가 부딪히면 터진다(반경 4.5m). 왼쪽 막대 속도·선회 · 오른쪽 끌기 기수 · [기폭](PC Space) · [복귀](PC Q, 안 터진 기체는 재고로). 띄우고 1.5초 뒤 안전장치가 풀린다. 배터리 45초 · 신호 260m — 끊기면 터지지 않고 떨어진다. 적대만 쓰러지고 주민·군인에게 쓰면 폭탄 드론과 같은 벌. 제자리 교전 중에도 쓴다(조종하는 동안 내 몸은 그 자리에 서 있다). <b>시작 장비</b>: 새 게임마다 자폭 드론 50 · 폭탄 투하 드론 10 · AK-47(2배율 조준경) · 7.62mm 100발 — 하던 게임에도 한 번 넣었다.']);
+if(typeof HELP84!=='undefined')HELP84.push(['💥 자폭 드론 · 시작 장비(v13.9)','위쪽 띠 <b>🛸 드론</b> → <b>💥 자폭 드론</b>: 1인칭 영상으로 날아가 부딪히면 터진다(반경 4.5m). 왼쪽 막대 속도·선회 · 오른쪽 끌기 기수 · [기폭](PC Space) · [복귀](PC Q, 안 터진 기체는 재고로). 띄우고 1.5초 뒤 안전장치가 풀린다. 배터리 50초 · 신호 420m — 끊기면 터지지 않고 떨어진다. 적대만 쓰러지고 주민·군인에게 쓰면 폭탄 드론과 같은 벌. 제자리 교전 중에도 쓴다(조종하는 동안 내 몸은 그 자리에 서 있다). <b>시작 장비</b>: 새 게임마다 자폭 드론 50 · 폭탄 투하 드론 10 · AK-47(2배율 조준경) · 7.62mm 100발 — 하던 게임에도 한 번 넣었다.']);
 
 /* ===================== 126 · v14.0 총 화면 손질 — 탄약 표시를 사격 버튼 옆 아래로 · 자동사격(제자리 교전) · 드론 조종 중 총 숨김 ===================== */
 /* 사용자 요청(2026-11-15 20:58, 캡처 두 장): "총알및총기종류 위치를 2번 동그라미 표기로 옮겨주세요. 손가락으로 화면 카메라 좌.우 이동 시 해당 동그라미 1번 부문이
@@ -25053,7 +25072,7 @@ function dvHud(B){const ov=document.getElementById('dfrOv');if(!ov)return;if(!ov
 (function(){const b=window.dfrAlt;if(typeof b!=='function')return;window.dfrAlt=function(d){const B=DFR.B;if(B&&!B.end&&B.type==='bomb'){B.alt=Math.max(15,Math.min(70,B.alt+d));dfrMsg(`고도 ${B.alt}m`,.8);return}return b.apply(this,arguments)}})();
 /* 조작: 내려다볼 때 왼쪽 막대 좌우 = 옆으로(기수는 오른쪽 끌기) */
 (function(){const b=window.dfrStep;if(typeof b!=='function')return;window.dfrStep=function(dt,mv){const B=DFR.B;if(!B||!dvTop()||B.end||!(B.t>1&&B.batt>0))return b.apply(this,arguments);
-  const sx=mv?clamp(mv.x,-1,1):0;const m2={x:0,y:mv?mv.y:0};const r=b.call(this,dt,m2);try{const B2=DFR.B;if(B2&&!B2.end){const rx=Math.cos(B2.yaw),rz=-Math.sin(B2.yaw);const sp=sx*(B2.type==='bomb'?8:10);B2.vx+=rx*sp*Math.min(1,dt*1.6);B2.vz+=rz*sp*Math.min(1,dt*1.6);/* 기수는 오른쪽 끌기(105가 이미 B.yaw로 넘긴다) */
+  const sx=mv?clamp(mv.x,-1,1):0;const m2={x:0,y:mv?mv.y:0};const r=b.call(this,dt,m2);try{const B2=DFR.B;if(B2&&!B2.end){const rx=Math.cos(B2.yaw),rz=-Math.sin(B2.yaw);const sp=sx*(B2.type==='bomb'?16:20)*dfrBoostK(B2);B2.vx+=rx*sp*Math.min(1,dt*2.2);B2.vz+=rz*sp*Math.min(1,dt*2.2);/* 기수는 오른쪽 끌기(105가 이미 B.yaw로 넘긴다) */
     if(B2.type==='bomb'){DV.fireT-=dt;if(DV.fire&&DV.fireT<=0){DV.fireT=.1;dvShoot(B2)}}}}catch(e){dvErr(e)}return r}})();
 /* ---------- 🔫 기관총 ---------- */
 function dvShoot(B){if(!B||B.end||B.type!=='bomb'||B.t<1.2)return false;if((B.mg|0)<=0){DV.fire=false;dfrMsg('기관총 탄을 다 썼다',1);return false}B.mg--;DV.shots++;const a=dvAim(B);const g=Math.random()*6.283,rr=Math.random()*1.1;const pt=new T.Vector3(a.x+Math.cos(g)*rr,a.y+.05,a.z+Math.sin(g)*rr);
@@ -25981,6 +26000,152 @@ function dirTick(dt){if(!OUT.on||!OUT.scene)return;const E=DIR.cur;if(E){if(E.sc
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="director"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const m=dirMode();const add=s4Seg('director','전장 감독','저절로 벌어지는 전시 상황 — 포격·정전·수송 행렬·헬기·드론 떼·저격수·구호 배급',[['norm','보통'],['often','잦음'],['off','끔']],m);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){dirErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='director')return;try{store.set('sg.director',b.dataset.v)}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🎬 전장 감독(v17.1)','밖에 있으면 누르지 않아도 1~2분마다 전시 상황이 저절로 벌어진다(모두 가상): 💥 포격(재난 문자 → 포탄 → 불·연기 → 구급차와 구급대원) · 🌑 정전(저녁·밤 — 손전등 행렬) · 🚛 군 수송 행렬(큰길로 트럭·전차) · 🚁 헬기 강습(로프로 병력 강하) · 🛸 정찰 드론 떼 · 🎯 저격수(옥상의 저격수를 쏘면 멈춘다) · 📦 구호 배급(줄 앞 몸싸움). 같은 것이 잇달아 나오지 않고 교전·실내·카드 중에는 쉰다. 설정 \'전장 감독\'(보통/잦음/끔).']);
+
+/* ===================== 153 · v17.2 드론 미니맵 — 나는 동안 미니맵이 기체를 따라가고, 찾은 표적이 미니맵에 바로 올라간다 · ⏩ 가속 ===================== */
+/* 사용자 요청(2026-11-22 07:52): "드론 하늘을 날 때, 미니맵에서 반영해 주시고, 드론이 표적을 감지했을 때, 미니맵에 UPDATE 해 주세요. 그리고 드론 나는 속도가 넘 느립니다"
+   · 띄운 동안(정찰·폭탄·자폭 드론 모두): 미니맵 가운데 = 기체(북쪽 위 그대로) · 보이는 범위 230m → 360m
+     기체 표시(프로펠러 4개 · 기수 방향) · 카메라가 보는 땅(내려다보기면 사각형, 뒤따라 보기·자폭은 부채꼴) · 정찰 반경 90m 원 · 내 자리(주황 화살표)까지 점선 · 신호 한계 원(정찰 450 · 폭탄 350 · 자폭 420m)
+     미니맵 아래에 '드론 · 표적 N'
+   · 표적 감지(105 dfrMark가 새로 표시한 사람): 그 자리에 미니맵 핑(1.2초 퍼지는 고리) + 미니맵 테두리가 붉게 한 번 깜박 + 짧은 알림음 · 적대 붉음 · 난투 주황 · 순찰대 파랑 · 숨은 물자 푸른 마름모
+     표적 표시는 내린 뒤에도 105의 45초 동안 미니맵·큰 지도에 남는다(사람이 움직이면 표시도 따라 움직임)
+   · ⏩ 가속(PC Shift): 누르는 동안 ×1.6(105 · 배터리 1.5배로 닳음) — 속도는 105·141·125에서 올렸다(앞 30m/s · 옆 20 · 자폭 최고 42) */
+const DMM={err:0,ping:[],flash:0,span:360,n:{draw:0,ping:0,boost:0},bt:null};
+function dmmErr(e){if(DMM.err<6){DMM.err++;try{console.error(e)}catch(x){}}}
+function dmmB(){try{return typeof DFR!=='undefined'&&DFR.B&&!DFR.B.end&&DFR.B.pos?DFR.B:null}catch(e){return null}}
+const DMM_COL={en:'#ff3b30',brw:'#ff9a2e',ml:'#3aa0ff'};
+function dmmSig(B){if(B.type==='fpv')return typeof DFK!=='undefined'?DFK.sigLost:420;return typeof dfrSig==='function'?dfrSig(B):220}
+/* ---------- 미니맵: 기체 중심 ---------- */
+function dmmDraw(dt,B){TJ.miniT-=dt||0;if(TJ.miniT>0)return;TJ.miniT=.066;const cv=$('#tjMiniC');if(!cv)return;const x=cv.getContext('2d');const W=cv.width;const span=DMM.span;const mc=tjMapCanvas(false);const R=TJ_DATA.R;const k=mc.width/(2*R);const p=B.pos;
+  x.clearRect(0,0,W,W);x.save();x.beginPath();x.arc(W/2,W/2,W/2-1.5,0,7);x.clip();x.fillStyle='#14181d';x.fillRect(0,0,W,W);
+  x.drawImage(mc,(p.x+R-span/2)*k,(p.z+R-span/2)*k,span*k,span*k,0,0,W,W);const s=W/span;const toS=(lx,lz)=>[(lx-p.x)*s+W/2,(lz-p.z)*s+W/2];const q=W/116;
+  /* 신호 한계 원 · 내 자리까지 점선 */const me=FP3.pos;const [mx,my]=toS(me.x,me.z);x.setLineDash([5*q,4*q]);x.strokeStyle='rgba(120,200,255,.55)';x.lineWidth=1.3*q;x.beginPath();x.arc(mx,my,dmmSig(B)*s,0,7);x.stroke();
+  x.strokeStyle='rgba(255,178,36,.75)';x.beginPath();x.moveTo(mx,my);x.lineTo(W/2,W/2);x.stroke();x.setLineDash([]);
+  tjLabelDraw(x,toS,.86*q,W);tjMarkers(x,toS,.95*q);
+  /* 정찰 반경 */if(B.type==='recon'){x.strokeStyle='rgba(120,220,255,.35)';x.fillStyle='rgba(120,220,255,.07)';x.lineWidth=1.2*q;x.beginPath();x.arc(W/2,W/2,90*s,0,7);x.fill();x.stroke()}
+  /* 카메라가 보는 땅 */x.save();x.translate(W/2,W/2);x.rotate(-B.yaw);x.fillStyle='rgba(255,255,255,.12)';x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=1*q;
+  const top=B.type!=='fpv'&&typeof dvTop==='function'&&dvTop();if(top){const h=Math.max(8,B.pos.y)*Math.tan(36*Math.PI/180);const a=(SV3.vw&&SV3.vh?SV3.vw/SV3.vh:2);x.beginPath();x.rect(-h*a*s,-h*s,2*h*a*s,2*h*s);x.fill();x.stroke()}
+  else{x.beginPath();x.moveTo(0,0);x.arc(0,0,60*s,-Math.PI/2-.6,-Math.PI/2+.6);x.closePath();x.fill();x.stroke()}
+  /* 기체: 프로펠러 4개 + 기수 */x.strokeStyle='#0a0c10';x.fillStyle='#e8f6ff';x.lineWidth=2*q;const a2=4.6*q;x.beginPath();x.moveTo(-a2,-a2);x.lineTo(a2,a2);x.moveTo(a2,-a2);x.lineTo(-a2,a2);x.stroke();x.strokeStyle='#e8f6ff';x.lineWidth=1.3*q;x.beginPath();x.moveTo(-a2,-a2);x.lineTo(a2,a2);x.moveTo(a2,-a2);x.lineTo(-a2,a2);x.stroke();
+  for(const [ux,uy] of [[-1,-1],[1,-1],[1,1],[-1,1]]){x.beginPath();x.arc(ux*a2,uy*a2,2.3*q,0,7);x.fillStyle='#e8f6ff';x.fill();x.strokeStyle='#0a0c10';x.lineWidth=1*q;x.stroke()}
+  x.fillStyle='#ff3b30';x.beginPath();x.moveTo(0,-a2-4.5*q);x.lineTo(2.6*q,-a2-.6*q);x.lineTo(-2.6*q,-a2-.6*q);x.closePath();x.fill();x.restore();
+  dmmPings(x,toS,q,s);x.restore();
+  /* 테두리 · N · 아래 글자 */const fl=DMM.flash>0;x.strokeStyle=fl?`rgba(255,59,48,${.5+.5*Math.sin(DMM.flash*18)})`:'rgba(120,220,255,.75)';x.lineWidth=(fl?3.2:2.2)*q;x.beginPath();x.arc(W/2,W/2,W/2-1.5*q,0,7);x.stroke();
+  x.fillStyle='#e8edf1';x.font=`800 ${Math.round(10*q)}px system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('N',W/2,9*q);
+  const f=B.found||{};const nT=B.type==='recon'?(f.en|0):(DFR.marks||[]).filter(M=>M.cls==='en').length;const lab=`드론 · 표적 ${nT}`;x.font=`800 ${Math.round(8.5*q)}px system-ui,sans-serif`;const tw=x.measureText(lab).width+8*q;x.fillStyle='rgba(10,12,16,.78)';x.fillRect(W/2-tw/2,W-27*q,tw,12*q);x.fillStyle=nT?'#ffb3ad':'#cfe9ff';x.fillText(lab,W/2,W-21*q);DMM.n.draw++}
+/* 표적 표시(띄운 동안·내린 뒤 45초) — 모든 미니맵·큰 지도에 */
+function dmmMarks(x,toS,scale){const L=(typeof DFR!=='undefined'&&DFR.marks)||[];for(const M of L){const a=M.a;if(!a||!a.h||!a.h.root)continue;const p=a.h.root.position;const [sx,sy]=toS(p.x,p.z);const col=DMM_COL[M.cls]||'#ff3b30';const al=M.t<4?Math.max(.15,M.t/4):1;
+    x.globalAlpha=al;x.fillStyle=col;x.strokeStyle='#0a0c10';x.lineWidth=1.6*scale;x.beginPath();x.arc(sx,sy,3.6*scale,0,7);x.fill();x.stroke();if(M.cls==='en'){x.strokeStyle=col;x.lineWidth=1.2*scale;x.beginPath();x.arc(sx,sy,6.4*scale,0,7);x.stroke()}x.globalAlpha=1}
+  try{if(typeof MIS!=='undefined'&&MIS.cache)for(const c of MIS.cache){if(c.found||!(c.dfrT>0))continue;const [sx,sy]=toS(c.x,c.z);x.fillStyle='#6fd3ff';x.strokeStyle='#0a0c10';x.lineWidth=1.4*scale;x.beginPath();x.moveTo(sx,sy-5*scale);x.lineTo(sx+4*scale,sy);x.lineTo(sx,sy+5*scale);x.lineTo(sx-4*scale,sy);x.closePath();x.fill();x.stroke()}}catch(e){}}
+function dmmPings(x,toS,q,s){for(const P of DMM.ping){const [sx,sy]=toS(P.x,P.z);const u=P.t/1.2;x.strokeStyle=P.col;x.globalAlpha=Math.max(0,1-u);x.lineWidth=2.2*q;x.beginPath();x.arc(sx,sy,(4+u*20)*q,0,7);x.stroke();x.globalAlpha=1}}
+function dmmPing(a,cls){try{const p=a.h.root.position;DMM.ping.push({x:p.x,z:p.z,t:0,col:DMM_COL[cls]||'#ff3b30'});if(DMM.ping.length>12)DMM.ping.shift();DMM.flash=Math.max(DMM.flash,.5);DMM.n.ping++;if(cls==='en'){try{vib(12)}catch(e){}}
+  const B=dmmB();const now=performance.now();if(B&&typeof dfrMsg==='function'&&now-(DMM.msgAt||0)>800){DMM.msgAt=now;const c={en:0,brw:0,ml:0};(DFR.marks||[]).forEach(M=>{c[M.cls]=(c[M.cls]|0)+1});dfrMsg(`표적 감지 — 미니맵에 표시 · 적대 ${c.en} · 난투 ${c.brw} · 순찰 ${c.ml}`,1.4)}}catch(e){dmmErr(e)}}
+function dmmStep(dt){if(DMM.flash>0)DMM.flash=Math.max(0,DMM.flash-dt);if(DMM.ping.length){for(const P of DMM.ping)P.t+=dt;DMM.ping=DMM.ping.filter(P=>P.t<1.2)}const B=dmmB();if(B)dmmBoostUI(B);else if(DMM.bt){try{DMM.bt.remove()}catch(e){}DMM.bt=null}}
+/* ---------- ⏩ 가속 ---------- */
+function dmmBoostUI(B){if(B.type==='fpv')return;const ov=document.getElementById('dfrOv');if(!ov)return;if(DMM.bt&&DMM.bt.parentNode===ov)return;const b=document.createElement('button');b.className='dmm-boost';b.id='dmmBoost';b.innerHTML='⏩<small>가속</small>';b.setAttribute('aria-label','가속(누르는 동안)');
+  const on=v=>e=>{e.preventDefault();e.stopPropagation();const B2=dmmB();if(!B2)return;B2.boost=v;b.classList.toggle('on',v);if(v){DMM.n.boost++;try{b.setPointerCapture(e.pointerId)}catch(x){}}};b.addEventListener('pointerdown',on(true));['pointerup','pointercancel','lostpointercapture'].forEach(k=>b.addEventListener(k,on(false)));ov.appendChild(b);DMM.bt=b}
+document.addEventListener('keydown',e=>{if((e.code==='ShiftLeft'||e.code==='ShiftRight')){const B=dmmB();if(B&&B.type!=='fpv'){B.boost=true;if(DMM.bt)DMM.bt.classList.add('on')}}});
+document.addEventListener('keyup',e=>{if((e.code==='ShiftLeft'||e.code==='ShiftRight')){const B=dmmB();if(B){B.boost=false;if(DMM.bt)DMM.bt.classList.remove('on')}}});
+/* ---------- 감싸기 ---------- */
+(function(){const b=window.tjMini;if(typeof b!=='function')return;window.tjMini=function(dt){const B=dmmB();if(!B)return b.apply(this,arguments);try{dmmDraw(dt,B)}catch(e){dmmErr(e);return b.apply(this,arguments)}}})();
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){const r=b.apply(this,arguments);try{dmmMarks(x,toS,scale)}catch(e){dmmErr(e)}return r}})();
+(function(){const b=window.dfrMark;if(typeof b!=='function')return;window.dfrMark=function(a,cls){const r=b.apply(this,arguments);try{if(r)dmmPing(a,cls)}catch(e){dmmErr(e)}return r}})();
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{dmmStep(dt||0)}catch(e){dmmErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🛸 드론 미니맵 · 가속(v17.2)','드론을 띄우면 미니맵이 기체를 가운데에 두고 따라간다(360m) — 기체 방향·카메라가 보는 땅·정찰 반경·내 자리까지 점선·신호 한계 원. 정찰 드론이 사람을 찾으면 그 자리에 미니맵 핑이 퍼지고 테두리가 붉게 깜박인다(적대 붉음·난투 주황·순찰대 파랑·숨은 물자 푸른 마름모). 표시는 내린 뒤에도 45초 동안 미니맵과 큰 지도에 남는다. 속도: 앞 30m/s(폭탄 22) · ⏩ 가속(PC Shift)을 누르는 동안 ×1.6 · 신호 한계 정찰 450m · 폭탄 350m · 자폭 420m.']);
+
+/* ===================== 154 · v17.2 창밖 전투 손질 — 조준경이 실제로 확대된다 · 조준경 버튼은 지금 총 그대로(연사 유지) · 창가 조준 보정·자동사격 · 화면 정리 · 적 반응(제압·저격수 번쩍임·증원 트럭) · 유리 금 · 사살 표시 ===================== */
+/* 사용자 요청(2026-11-22 00:19): "창밖에서 경계하고 싸울 때, 조준경도 부자연스럽고, 자동사격도 제대로 되지 않고, 플레이하기 불편함이 많은데 창밖에서 실감나고 스릴있게 플레이 하게 해 주세요"
+   원인(재현함 · t3/probe-aw·aw2):
+   ① 조준경이 확대되지 않았다 — 97(v10.8)이 '장착 조준경에 따라 배율이 바뀌는' 게터를 그때 있던 총에만 달았고, 뒤에 들어온 118(v16.7 총 100종 — 시작 총 K2 포함)에는 없었다.
+      그래서 K2에 4배율을 달아도 버튼은 '4배 조준'인데 화면은 1배(46°)였다 → 28층 창에서 140m 밖 적이 3~5px
+   ② '🎯 조준경' 버튼(142)이 조준경 총을 못 찾으면 K2 지정사수소총(단발)을 쥐여 줬다 → 누르고 있어도 한 발씩
+   ③ 자동사격(126)은 조준점이 사람 위에 정확히 0.18초 머물러야 했다 — 3~5px 표적에서는 사실상 안 됨
+   ④ 버튼이 겹쳤다(아파트 전투 4 + 총 화면 6: 점프·넣기·조준이 중복) · '현관으로 나가기'·안내 글이 조준경 위를 덮었다 · 예광탄이 총구에서 시작해 화면을 가로지르는 흰 띠로 보였다
+   고침:
+   · ① 모든 총에 조준경 배율·퍼짐 게터를 단다(총 100종 · 밖·교전에서도 고쳐진다)
+   · ② 조준경 버튼: 지금 총에 조준경이 있으면 그대로 확대 / 없고 배낭에 맞는 조준경이 있으면 바로 달아서 확대(4배 우선) / 둘 다 없으면 창가 비치 4배 조준경을 한 번 지급해 지금 총에 단다 — 연사 총은 연사 그대로
+   · ③ 창가 조준 보정: 조준점 가까이(확대 시 약 0.6°)의 적에게 조준이 부드럽게 끌려가고, 정확히 올라가면 0.15초 뒤 자동사격(설정 '자동사격'을 끄면 둘 다 끔) · 주민·팀원·투항자에게는 끌리지 않는다
+   · ④ 창가 전투 중에는 점프·넣기·겹친 조준 버튼·현관 나가기·사용법 글을 숨긴다 · 조준경을 들면 유탄 버튼·안내 글·알림도 숨긴다 · 내 예광탄은 7m 앞에서 시작
+   · 스릴: 내 탄이 4.5m 안에 떨어지면 적이 몸을 낮추고 1.2~2.5초 못 움직인다(제압) · 5층 이상에서는 맞은편 옥상·차 뒤의 적 저격수 1명 — 쏘기 1.3초 전 조준경이 번쩍인다(⚠ 저격수) → 숙이면 피한다 · 70초 뒤 물러남
+     밖에 2명 이하가 남으면 군용 트럭이 와서 4명이 내린다(한 판 한 번) · 적 탄이 창에 맞으면 화면 유리에 금이 간다 · 사살할 때마다 '사살'과 연속 표시
+   모든 적·조직은 가상(행동·장비로 정의) · 피 없음 */
+const WF={err:0,n:{opt:0,sw:0,assist:0,af:0,sup:0,crack:0,glint:0,snShot:0,rf:0,kill:0},sn:null,rf:null,k0:0,kT:0,streak:0,cr:[],uiT:0};
+function wfErr(e){if(WF.err<6){WF.err++;try{console.error(e)}catch(x){}}}
+function wfWin(){try{return typeof AW!=='undefined'&&AW.on&&AW.ph!=='end'&&((typeof APTW!=='undefined'&&APTW.on)||!!(typeof GUN!=='undefined'&&GUN.ow))}catch(e){return false}}
+function wfOut(){return wfWin()&&AW.ph==='out'}
+/* ---------- ① 모든 총에 조준경 게터 ---------- */
+(function(){try{if(typeof OPTX==='undefined'||typeof optOn!=='function'||typeof OPT==='undefined')return;for(const id in ARMS){const W=ARMS[id];if(!W||W.cat==='mel')continue;const d=Object.getOwnPropertyDescriptor(W,'zoom');if(d&&typeof d.get==='function')continue;
+  const b={zoom:W.zoom||0,spA:W.spA};OPTX.base[id]=b;Object.defineProperty(W,'zoom',{configurable:true,enumerable:true,get(){const o=optOn(id);return o?OPT[o].z:b.zoom},set(v){b.zoom=v}});
+  if(b.spA!=null)Object.defineProperty(W,'spA',{configurable:true,enumerable:true,get(){const o=optOn(id);return o?+(b.spA/optBuiltAcc(id)*OPT[o].acc).toFixed(4):b.spA},set(v){b.spA=v}});WF.n.opt++}}catch(e){wfErr(e)}})();
+/* ---------- ② 조준경 버튼 ---------- */
+function wfLooseOpt(id){const pref=['x4','x6','x2','x8'];for(const k of pref){if(((G.inv||{})['opt_'+k]||0)>0&&(typeof optFits!=='function'||optFits(id,k)))return k}return null}
+function wfScope(){const id=GUN.eq;const W=id&&ARMS[id];const gunOk=W&&W.cat!=='mel'&&W.mag&&!W.rocket&&!W.nade;
+  const refresh=()=>{try{if(typeof gunUI==='function')gunUI()}catch(e){}try{PIP.d=0}catch(e){}};
+  if(gunOk&&W.zoom>1){GUN.ads=!GUN.ads;AW.uiT=0;return true}
+  if(gunOk&&typeof optAttach==='function'){let k=wfLooseOpt(id);if(!k&&!G.flags.wfOpt&&(typeof optFits!=='function'||optFits(id,'x4'))){G.flags.wfOpt=1;G.inv=G.inv||{};G.inv.opt_x4=(G.inv.opt_x4||0)+1;k='x4';try{outNote('<b>🎯 창가 비치 — 4배율 전투 조준경</b><div>지금 총에 달았다. 연사 총은 연사 그대로 — 누르고 있으면 계속 나간다.</div>',3200)}catch(e){}}
+    if(k&&optAttach(id,k,true)){WF.n.sw++;refresh();GUN.ads=true;AW.uiT=0;try{toast(`🎯 ${OPT[k].n} — ${W.n}에 달았다`,2200)}catch(e){}return true}}
+  /* 마지막: 조준경 달린 다른 총 — 연사 총 먼저 */const L=gunArms().map(a=>a.id).filter(i=>ARMS[i]&&ARMS[i].zoom>1&&ARMS[i].cat!=='mel').sort((a,b)=>(ARMS[b].auto?1:0)-(ARMS[a].auto?1:0));
+  if(L[0]){try{gunEquip(L[0],true)}catch(e){wfErr(e)}GUN.ads=true;AW.uiT=0;return true}
+  /* 총이 아예 없으면 예전처럼 */try{gunAdd('k2',{force:true,ammo:120});G.inv=G.inv||{};G.inv.opt_x4=(G.inv.opt_x4||0)+1;optAttach('k2','x4',true);gunEquip('k2',true);GUN.ads=true;outNote('<b>🎯 창가 지급 — K2 소총 + 4배율 조준경</b><div>5.56mm 120발 · 연사.</div>',3000)}catch(e){wfErr(e)}return true}
+(function(){if(typeof kbSniper!=='function')return;window.kbSniper=function(){if(typeof AW==='undefined'||!AW.on)return false;try{return wfScope()}catch(e){wfErr(e);return false}}})();
+/* ---------- ③ 창가 조준 보정 · 자동사격 ---------- */
+const _wfV=new T.Vector3(),_wfT=new T.Vector3();
+function wfTgtY(a){return (a.st==='kneel'||a.st==='aim'||a.st==='fire'||a.wfHold>0)?.95:1.3}
+function wfPick(A,tol){let best=null;for(const a of AW.en){if(!a||a.dead||!a.h||a.h.dead||a.gone)continue;const P=a.h.root.position;_wfT.set(P.x,P.y+wfTgtY(a),P.z).sub(A.o);const L=_wfT.length();if(L<3||L>320)continue;_wfT.divideScalar(L);const ang=Math.acos(clamp(_wfT.dot(A.d),-1,1));if(ang>tol*2.6)continue;if(best&&ang>=best.ang)continue;
+    if(!a.wfSn&&!awLosWin(a))continue;best={a,v:_wfT.clone(),ang,L}}return best}
+function wfAfStep(dt){const W=gunW();if(!afOn()||!W||!afWeaponOk(W)||!GUN.on||!GUN.fp||afBusy()||GUN.reload>0){AF.on=null;AF.t=0;return}
+  const A=awAim();const ads=GUN.adsK>.5;const z=ads?Math.max(1,gunZoom()):1;const tol=ads?Math.max(.0045,.024/z):.022;const b=wfPick(A,tol);
+  if(b){/* 부드럽게 끌림(손으로 끄는 동안에도 조금) */const dL=APTW.on?b.v.clone().applyQuaternion(AW.qi):b.v;const ty=Math.atan2(-dL.x,-dL.z),tp=Math.asin(clamp(dL.y,-1,1));let dy=ty-FP3.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const k=Math.min(1,dt*(ads?2.4:1.5))*(GUN.fire?.45:.6);FP3.yaw+=dy*k;FP3.pitch+=(tp-FP3.pitch)*k;WF.n.assist++}
+  if(GUN.fire){AF.on=null;AF.t=0;return}const key=b&&b.ang<tol?b.a.h:null;if(key!==AF.on){AF.on=key;AF.t=0}else if(key)AF.t+=dt;if(!key||AF.t<.15)return;
+  const rate=W.auto?W.rate:Math.max(W.rate,.3);if(GUN.mag>0&&GUN.t-GUN.lastShot>=rate){if(gunShoot()){AF.shots++;WF.n.af++;try{afFlash()}catch(e){}}}else if(GUN.mag<=0&&gunAmmoOf(W.am)>0&&GUN.t-GUN.lastShot>.3){try{gunReload()}catch(e){}}}
+(function(){const b=window.afStep;if(typeof b!=='function')return;window.afStep=function(dt){if(wfOut()){try{wfAfStep(dt||0)}catch(e){wfErr(e)}return}return b.apply(this,arguments)}})();
+/* ---------- 제압: 내 탄이 가까이 떨어지면 몸을 낮춘다 ---------- */
+function wfSuppress(pt,hitA){for(const a of AW.en){if(!a||a===hitA||a.dead||a.h.dead||a.wfSn)continue;const P=a.h.root.position;if(Math.hypot(P.x-pt.x,P.z-pt.z)>4.5)continue;a.wfHold=1.2+Math.random()*1.3;a.flinch=1;a.supp=(a.supp||0)+1;if(a.st==='run'||a.st==='aim'){a.st='kneel';a.t=a.wfHold+.2}try{a.h.setPose('crouch')}catch(e){}WF.n.sup++}}
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){const r=b.apply(this,arguments);try{if(r&&wfOut()&&typeof ROE!=='undefined'&&ROE.cast&&ROE.cast.pt){const c=ROE.cast;const pt=APTW.on?aptwToWorld(c.pt):c.pt.clone();wfSuppress(pt,c.tgt&&c.tgt.a)}}catch(e){wfErr(e)}return r}})();
+(function(){const b=window.awOutStep;if(typeof b!=='function')return;window.awOutStep=function(a,dt,upd){try{if(a&&a.wfSn){wfSnStep(a,dt,upd);return}if(a&&a.wfHold>0&&!a.dead&&!(a.h&&a.h.dead)){a.wfHold-=dt;if(upd)try{a.h.update(dt)}catch(e){}if(a.h.pose!=='crouch')try{a.h.setPose('crouch')}catch(e){}if(a.wfHold<=0){a.st='kneel';a.t=.3}return}}catch(e){wfErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 적 저격수(5층 이상 · 한 판 한 명) ---------- */
+function wfGlintTex(){if(WF.gt)return WF.gt;const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,250,220,.6)');g.addColorStop(1,'rgba(255,240,200,0)');x.fillStyle=g;x.fillRect(0,0,64,64);x.strokeStyle='rgba(255,255,255,.9)';x.lineWidth=2;x.beginPath();x.moveTo(2,32);x.lineTo(62,32);x.moveTo(32,6);x.lineTo(32,58);x.stroke();const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return WF.gt=t}
+function wfSnSpawn(){if(WF.sn||!AW.door||(AW.fl||0)<5)return null;const D=AW.door;const w=AW.win||awWin();const base=Math.atan2(D.nx,D.nz);let q=null;
+  for(let k=0;k<70&&!q;k++){const a=base+(Math.random()-.5)*1.5,d=140+Math.random()*55;const x=D.gx+Math.sin(a)*d,z=D.gz+Math.cos(a)*d;if(!owcFree(x,z,.7))continue;if(owcLos(x,1.1,z,w.x,w.y,w.z))q={x,z}}if(!q)return null;
+  let h=null;try{h=makeHuman(owcLook('elite',977))}catch(e){h=null}if(!h)return null;try{if(typeof lkEnemy==='function'){h._lk=0;const A=lkA(h);if(A)lkEnemy(h,()=>.9,A)}}catch(e){}h.root.position.set(q.x,0,q.z);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose('kneel',true)}catch(e){}owcFace(h,w.x,w.z,1,99);
+  const gl=new T.Sprite(new T.SpriteMaterial({map:wfGlintTex(),color:'#fff6d8',transparent:true,opacity:0,depthWrite:false,blending:T.AdditiveBlending,fog:false}));gl.scale.set(2.6,2.6,1);gl.position.set(0,1.05,0);gl.renderOrder=7;h.root.add(gl);
+  const ag={h,kind:'en',side:'en',aw:1,hp:2,nm:'적 저격수',st:'snipe',t:3.5+Math.random()*2,wfSn:1,gl,ph:'wait',life:0,goT:0,burst:0,shotT:0,aimP:0};OUT.npcs.push(ag);AW.en.push(ag);WF.sn=ag;return ag}
+function wfSnStep(a,dt,upd){const h=a.h;if(upd)try{h.update(dt)}catch(e){}if(a.dead||h.dead){if(!a.cnt){a.cnt=1;AW.kills++;AW.uiT=0;try{trust(1)}catch(e){}try{outNote('<b>🎯 적 저격수 제압</b><div>맞은편 번쩍임이 멈췄다.</div>',2400)}catch(e){}}if(a.gl)a.gl.visible=false;return}
+  a.life+=dt;a.t-=dt;const w=AW.win;if(w)owcFace(h,w.x,w.z,dt,6);if(a.life>70){/* 물러남 */try{h.root.removeFromParent()}catch(e){}a.gone=1;a.dead=1;OUT.npcs=OUT.npcs.filter(x=>x!==a);AW.en=AW.en.filter(x=>x!==a);try{outNote('<b>적 저격수가 물러났다</b>',2000)}catch(e){}return}
+  if(a.ph==='wait'){if(a.gl)a.gl.material.opacity=0;if(a.t<=0){a.ph='glint';a.t=1.3;WF.n.glint++;try{SND.tone(2600,.05,'sine',.05);SND.tone(3100,.05,'sine',.04,.08)}catch(e){}wfWarn(true)}return}
+  if(a.ph==='glint'){const u=1-a.t/1.3;if(a.gl){a.gl.material.opacity=.35+.65*Math.abs(Math.sin(u*9));a.gl.scale.setScalar(2.2+u*1.6)}if(a.t<=0){a.ph='wait';a.t=5.5+Math.random()*3;if(a.gl)a.gl.material.opacity=0;wfWarn(false);wfSnShot(a)}}}
+function wfSnShot(a){WF.n.snShot++;const h=a.h;let mz;try{mz=owcMuz(h,new T.Vector3()).clone()}catch(e){mz=h.root.position.clone().add(new T.Vector3(0,1.1,0))}try{owcNpcFlash(mz)}catch(e){}const me=awMe();try{SFX.shot('rifle',{d:Math.hypot(me.x-mz.x,me.z-mz.z),az:0})}catch(e){}
+  const ex=awExposed();const hit=ex>.3&&AW.crK<.6&&Math.random()<.78;const end=hit?me.clone().add(new T.Vector3(0,-.2,0)):(AW.win||me).clone().add(new T.Vector3((Math.random()-.5)*1.6,(Math.random()-.3)*1.2,(Math.random()-.5)*1.6));awTr(mz,end,1);
+  if(hit){awHurt(20*(G&&G.diff==='train'?.7:G&&G.diff==='hard'?1.15:1),null);wfCrack(.9)}else{try{bSnap()}catch(e){}wfCrack(.45)}}
+function wfWarn(on){try{let el=document.getElementById('wfWarn');if(!el&&SV3.el&&on){el=document.createElement('div');el.id='wfWarn';el.className='wf-warn';el.innerHTML='⚠ 저격수 — 번쩍임! 숙여라';SV3.el.appendChild(el)}if(el){el.classList.toggle('on',!!on)}if(on)try{vib([30,40,30])}catch(e){}}catch(e){}}
+/* ---------- 증원 트럭(한 판 한 번) ---------- */
+function wfRfStart(){if(WF.rf||typeof mvMesh!=='function'||!AW.F)return false;const D=AW.door;const w=AW.win||awWin();const base=Math.atan2(D.nx,D.nz);let s=null;
+  for(let k=0;k<60&&!s;k++){const a=base+(Math.random()-.5)*1.2,d=150+Math.random()*25;const x=D.gx+Math.sin(a)*d,z=D.gz+Math.cos(a)*d;if(!owcFree(x,z,1.4)||owcFD(AW.F,x,z)>=60000)continue;s={x,z}}if(!s)return false;
+  let g=null;try{g=mvMesh('truck')}catch(e){g=null}if(!g)return false;g.position.set(s.x,0,s.z);OUT.scene.add(g);WF.rf={g,t:0,st:'drive',n:0};WF.n.rf++;try{outNote('<b>🚛 증원 — 군용 트럭이 온다</b><div>트럭이 서면 병력이 내린다. 내리는 순간이 기회다.</div>',3400)}catch(e){}try{SND.tone(90,.6,'sawtooth',.05)}catch(e){}return true}
+function wfRfStep(dt){const R=WF.rf;if(!R||!R.g)return;R.t+=dt;const g=R.g,P=g.position;const D=AW.door;const dd=Math.hypot(P.x-D.gx,P.z-D.gz);
+  if(R.st==='drive'){const q=owcFStep(AW.F,P.x,P.z,8);if(!q||dd<100||R.t>14){R.st='drop';R.t=0;return}const dx=q.x-P.x,dz=q.z-P.z,L=Math.hypot(dx,dz)||1;const s=Math.min(L,9*dt);P.x+=dx/L*s;P.z+=dz/L*s;const ty=Math.atan2(dx,dz);let dy=ty-g.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));g.rotation.y+=dy*Math.min(1,dt*3);return}
+  if(R.st==='drop'){if(R.t>.7*(R.n+1)&&R.n<4){const back=-3.4;const x=P.x+Math.sin(g.rotation.y)*back+(R.n%2?1:-1)*.8,z=P.z+Math.cos(g.rotation.y)*back;let h=null;try{h=makeHuman(owcLook(R.n===0?'elite':'rifle',930+R.n))}catch(e){h=null}
+      let fx=x,fz=z;if(h&&!owcFree(x,z,.4)){/* 트럭 뒤가 막혔으면 가까운 빈칸으로 */let q=null;try{q=owcNearFree(x,z,5)}catch(e){}if(q){fx=q.x;fz=q.z}}if(h&&owcFree(fx,fz,.4)){h.root.position.set(fx,0,fz);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose('run',true)}catch(e){}const ag={h,kind:'en',side:'en',aw:1,hp:R.n===0?3:2,nm:'증원 병력',st:'run',t:.6+R.n*.5,goT:0,burst:0,shotT:0,aimP:0};OUT.npcs.push(ag);AW.en.push(ag)}R.n++}if(R.n>=4&&R.t>3.5)R.st='park'}}
+function wfRfEnd(){const R=WF.rf;if(R&&R.g){try{R.g.removeFromParent()}catch(e){}}WF.rf=null}
+/* ---------- 유리 금 ---------- */
+function wfCrack(p){if(Math.random()>p||!SV3.el)return;try{const x=12+Math.random()*76,y=14+Math.random()*60,r=Math.random()*360,s=.7+Math.random()*.6;const el=document.createElement('div');el.className='wf-crack';el.style.left=x+'%';el.style.top=y+'%';el.style.transform=`translate(-50%,-50%) rotate(${r}deg) scale(${s})`;
+  el.innerHTML='<svg viewBox="-60 -60 120 120" aria-hidden="true"><g fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.3" stroke-linecap="round"><path d="M0 0L-38 -22L-55 -20M0 0L-8 -46L-2 -58M0 0L30 -30L44 -48M0 0L48 4L58 -2M0 0L26 38L30 55M0 0L-22 40L-34 52M0 0L-46 14"/><path d="M-14 -8L-10 -18L2 -16L12 -12L16 0L10 14L-4 16L-16 8Z" stroke-width=".9"/></g><circle r="3" fill="rgba(255,255,255,.85)"/></svg>';
+  const host=SV3.el.querySelector(':scope>#sv3Wrap');if(host&&host.nextSibling)SV3.el.insertBefore(el,host.nextSibling);else SV3.el.appendChild(el);WF.cr.push({el,t:0});WF.n.crack++;if(WF.cr.length>3){const o=WF.cr.shift();try{o.el.remove()}catch(e){}}}catch(e){wfErr(e)}}
+(function(){const b=window.awOutShot;if(typeof b!=='function')return;window.awOutShot=function(a){const hp0=AW.hp;const r=b.apply(this,arguments);try{if(wfWin()){const hit=AW.hp<hp0;const ex=awExposed();if(hit)wfCrack(.55);else if(ex>0)wfCrack(.22)}}catch(e){wfErr(e)}return r}})();
+/* ---------- 내 예광탄: 7m 앞에서(화면을 가로지르는 흰 띠 없앰) ---------- */
+(function(){const b=window.owcTracer;if(typeof b!=='function')return;window.owcTracer=function(a,c,en){try{if(!en&&wfWin()&&a&&c){const d=c.clone().sub(a);const L=d.length();if(L>2){const s=Math.min(7,L*.3);return b.call(this,a.clone().addScaledVector(d.divideScalar(L),s),c,en)}}}catch(e){wfErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 사살 표시 ---------- */
+function wfKillUI(){if(AW.kills===WF.k0)return;const n=AW.kills-WF.k0;WF.k0=AW.kills;const now=performance.now();WF.streak=now-WF.kT<4500?WF.streak+n:n;WF.kT=now;WF.n.kill+=n;try{let el=document.getElementById('wfKill');if(!el&&SV3.el){el=document.createElement('div');el.id='wfKill';el.className='wf-kill';SV3.el.appendChild(el)}if(el){el.innerHTML=`<b>☠ 사살</b>${WF.streak>1?`<span>${WF.streak}연속</span>`:''}<i>${AW.kills}</i>`;el.classList.remove('on');void el.offsetWidth;el.classList.add('on')}}catch(e){}try{SND.tone(1320,.05,'square',.035);SND.tone(990,.07,'square',.03,.06)}catch(e){}}
+/* ---------- 매 프레임(아파트 전투 단계) ---------- */
+function wfStep(dt){const on=wfWin();try{if(SV3.el){SV3.el.classList.toggle('wf-on',on);SV3.el.classList.toggle('wf-ads',on&&GUN.adsK>.5)}}catch(e){}
+  for(let i=WF.cr.length-1;i>=0;i--){const c=WF.cr[i];c.t+=dt;if(c.t>7){try{c.el.remove()}catch(e){}WF.cr.splice(i,1)}else if(c.t>5)c.el.style.opacity=String(Math.max(0,(7-c.t)/2))}
+  if(!on){if(WF.sn&&(!AW.on||AW.ph!=='out')){WF.sn=null}if(!AW.on&&WF.rf)wfRfEnd();return}
+  wfKillUI();if(AW.ph!=='out')return;if(!WF.sn&&!AW.wfSnTried&&AW.t>8){AW.wfSnTried=1;try{wfSnSpawn()}catch(e){wfErr(e)}}
+  const live=AW.en.filter(a=>!a.dead&&!a.h.dead&&!a.wfSn).length;if(!AW.wfRfTried&&AW.t>20&&live<=2){AW.wfRfTried=1;try{wfRfStart()}catch(e){wfErr(e)}}if(WF.rf)try{wfRfStep(dt)}catch(e){wfErr(e)}}
+(function(){const b=window.awStep;if(typeof b!=='function')return;window.awStep=function(dt,ow){const r=b.apply(this,arguments);try{wfStep(dt||0)}catch(e){wfErr(e)}return r}})();
+(function(){const b=window.awStart;if(typeof b!=='function')return;window.awStart=function(o){const r=b.apply(this,arguments);try{if(r){WF.sn=null;wfRfEnd();WF.k0=AW.kills||0;WF.streak=0;WF.cr.forEach(c=>{try{c.el.remove()}catch(e){}});WF.cr=[];
+  /* 총을 쥐지 않은 채 시작하면 가장 좋은 총을 바로 든다(조준경 달린 연사 총 먼저) */if(!GUN.eq||!ARMS[GUN.eq]||ARMS[GUN.eq].cat==='mel'){const L=gunArms().map(a=>a.id).filter(i=>ARMS[i]&&ARMS[i].cat!=='mel'&&ARMS[i].mag&&!ARMS[i].rocket&&!ARMS[i].nade).sort((a,b)=>((ARMS[b].zoom>1?2:0)+(ARMS[b].auto?1:0))-((ARMS[a].zoom>1?2:0)+(ARMS[a].auto?1:0)));if(L[0])try{gunEquip(L[0],true)}catch(e){wfErr(e)}}}}catch(e){wfErr(e)}return r}})();
+(function(){const b=window.awEnd;if(typeof b!=='function')return;window.awEnd=function(){try{wfWarn(false);wfRfEnd();if(WF.sn&&WF.sn.h&&!WF.sn.dead){try{WF.sn.h.root.removeFromParent()}catch(e){}}WF.sn=null;WF.cr.forEach(c=>{try{c.el.remove()}catch(e){}});WF.cr=[];if(SV3.el)SV3.el.classList.remove('wf-on','wf-ads')}catch(e){wfErr(e)}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🔭 창밖 전투 손질(v17.2)','조준경이 이제 실제로 확대된다(총 100종 모두 · 시작 K2의 4배율 포함). 🎯 조준경 버튼은 지금 총을 그대로 확대한다 — 조준경이 없으면 배낭의 조준경을 달고, 그것도 없으면 창가 비치 4배율을 한 번 준다(연사 총은 연사 그대로). 창가에서는 조준점 가까이의 적에게 조준이 부드럽게 끌리고, 정확히 올라가면 자동으로 쏜다(설정 자동사격). 내 탄이 가까이 떨어지면 적이 몸을 낮춘다. 5층 이상에서는 맞은편에 적 저격수가 숨어 있다 — 조준경이 번쩍이면 1.3초 안에 숙인다. 밖에 2명 이하가 남으면 트럭으로 4명이 더 온다. 적 탄이 창에 맞으면 유리에 금이 간다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
