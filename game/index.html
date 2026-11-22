@@ -14026,7 +14026,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.5';
+const APP_VER='17.6';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -26584,6 +26584,70 @@ function prnSync(){const me=OUT.me;const want=prnMeOn();if(me&&me.rbx&&me.prOn!=
 (function(){const b=window.rcStep;if(typeof b!=='function')return;window.rcStep=function(){const r=b.apply(this,arguments);try{prnSync()}catch(e){prnErr(e)}return r}})();
 (function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{PRN.live.forEach(h=>{h.prOn=false;h.prK=0;h.prLock=null;prnReset(h)});PRN.live.clear()}catch(e){prnErr(e)}return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🙇 공습 엎드리기(v17.5)','공습경보 중 숨을 곳이 멀면 \'엎드리기\' — 0.7초에 걸쳐 앞으로 몸을 던져 배를 땅에 붙이고, 두 손으로 뒤통수를 감싸고, 다리는 곧게 편다. 근처에 멈춰 있는 가족·팀원도 같이 엎드린다. \'일어나기\'·숨을 곳 도착·경보 해제 때는 거꾸로 일어선다. 그래도 건물·지하가 더 안전하다.']);
+
+/* ===================== 158 · v17.6 지도에 탕정역 =====================
+   사용자 지적(2026-11-22 13:38): "미니맵에 탕정역 안보이던데 이 부문도 업데이트 되었나요?"
+   · 원인: v17.4·17.5는 구역 화면과 열차만 만들었다 — 시내 미니맵에는 입구가 이름 없는 주황 점(115m 안에서만), 큰 지도엔 아무것도 없고, 구역 미니맵엔 철길 선만 있었다
+   · 시내 미니맵: 입구가 화면 밖이면 테두리에 파란 '역' 표식 + 거리 · 가까우면 파란 역 표식 + '탕정역 방면'
+   · 큰 지도: 입구 → 탕정역 걷는 길(점선 · 20분) · 장항선 철길(구역 A·B) · 고속철도 · 탕정역 · 아산역(열차 10분) · 화면 밖이면 가장자리 표식
+   · 구역 미니맵: 역 이름 · 대합실 · 승강장 2 · 달리는 열차(피란 청록 · 화물 올리브) · 고속철도 · 역이 화면 밖이면 테두리 표식
+   · 지도 그림은 실제 철길 좌표(00d · OSM 파생) 그대로 — 우리 단지 위치와 무관 */
+const SMAP={err:0,n:{rim:0,mini:0,big:0,zone:0,train:0}};
+function smapErr(e){SMAP.err++;if(SMAP.err<4)console.error('[158]',e)}
+const SMAP_F='system-ui,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';
+function smapOn(){try{return typeof anxOn==='function'&&anxOn()&&typeof ANX_DATA!=='undefined'}catch(e){return false}}
+function smapEntry(){return (OUT.spots||[]).find(q=>q.k==='anx')||null}
+function smapBadge(x,cx,cy,r,txt,col){x.fillStyle=col||'#2f7cf6';x.strokeStyle='#0a0c10';x.lineWidth=Math.max(1.5,r*.3);x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.stroke();x.fillStyle='#fff';x.font=`900 ${Math.max(7,Math.round(r*1.1))}px ${SMAP_F}`;x.textAlign='center';x.textBaseline='middle';x.fillText(txt||'역',cx,cy+r*.06)}
+function smapLabel(x,t,cx,cy,fs,col){x.font=`800 ${Math.max(7,Math.round(fs))}px ${SMAP_F}`;x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';x.strokeStyle='rgba(10,12,16,.92)';x.lineWidth=Math.max(2,fs*.32);x.strokeText(t,cx,cy);x.fillStyle=col||'#cfe1ff';x.fillText(t,cx,cy)}
+function smapKm(d){return d<950?`${Math.max(10,Math.round(d/10)*10)}m`:`${(d/1000).toFixed(1)}km`}
+/* 철길 가운데 선(구역 데이터 rc/kc: x,z 교대) → 점 목록 · s 위치의 점 */
+function smapChain(r){const C=[];let s=0;for(let i=0;i+1<r.length;i+=2){const x=r[i],z=r[i+1];if(C.length){const p=C[C.length-1];s+=Math.hypot(x-p.x,z-p.z)}C.push({x,z,s})}return C}
+const SMAP_C={};function smapZC(k){if(SMAP_C[k])return SMAP_C[k];const Z=ANX_DATA.zones[k];return SMAP_C[k]={rc:smapChain(Z.rc||[]),kc:Z.kc?smapChain(Z.kc):null}}
+function smapAt(C,s){s=Math.max(0,Math.min(C[C.length-1].s,s));let i=1;while(i<C.length-1&&C[i].s<s)i++;const a=C[i-1],b=C[i];const L=Math.max(1e-6,b.s-a.s),t=(s-a.s)/L;const tx=(b.x-a.x)/L,tz=(b.z-a.z)/L;return{x:a.x+(b.x-a.x)*t,z:a.z+(b.z-a.z)*t,tx,tz,nx:-tz,nz:tx}}
+function smapStation(k){const Z=ANX_DATA.zones[k];const C=smapZC(k).rc;if(!C.length)return null;const a=smapAt(C,Z.rs);return{x:a.x,z:a.z,a,nm:(typeof ANX_NM!=='undefined'&&ANX_NM[k]?ANX_NM[k][2]:k)}}
+/* 둥근 미니맵 테두리 표식: 중심에서 (dx,dy) 방향 */
+function smapRim(x,W,q,dx,dy,dist,lbl){const L=Math.hypot(dx,dy)||1;const ux=dx/L,uy=dy/L;const R=W/2-10*q;const cx=W/2+ux*R,cy=W/2+uy*R;const r=6.2*q;
+  x.fillStyle='rgba(47,124,246,.35)';x.beginPath();x.moveTo(W/2+ux*(R+7.5*q),W/2+uy*(R+7.5*q));x.lineTo(cx-uy*5*q,cy+ux*5*q);x.lineTo(cx+uy*5*q,cy-ux*5*q);x.closePath();x.fill();
+  /* 이름·거리는 표식 위/아래에(표식을 덮지 않게) */const t=(lbl?lbl+' ':'')+smapKm(dist),fs=7.4*q;x.font=`800 ${Math.round(fs)}px ${SMAP_F}`;const tw=x.measureText(t).width;const lx=Math.max(tw/2+3,Math.min(W-tw/2-3,cx));let ly=uy>.55?cy-r-6.5*q:cy+r+6.5*q;ly=Math.max(fs*.7,Math.min(W-fs*.7,ly));smapLabel(x,t,lx,ly,fs,'#d6e6ff');smapBadge(x,cx,cy,r,'역')}
+/* ---------- 시내 미니맵 · 드론 미니맵 · 큰 지도 공통: 입구 표식 ---------- */
+(function(){const b=window.anxSpot;if(typeof b!=='function')return;window.anxSpot=function(){const r=b.apply(this,arguments);try{const e=smapEntry();if(e)e.nomap=1}catch(e){smapErr(e)}return r}})();
+(function(){const b=window.tjMarkers;if(typeof b!=='function')return;window.tjMarkers=function(x,toS,scale){try{if(OUT.on&&smapOn()&&!TJ.goal){const e=smapEntry();if(e){const [sx,sy]=toS(e.x,e.z);smapBadge(x,sx,sy,5.4*scale,'역');smapLabel(x,'탕정역 방면',sx,sy+11*scale,9.5*scale,'#d6e6ff')}}}catch(e){smapErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.tjMini;if(typeof b!=='function')return;window.tjMini=function(dt){const r=b.apply(this,arguments);try{if(TJ.miniT===.066&&OUT.on&&smapOn()&&!(typeof DFR!=='undefined'&&DFR.B)){const e=smapEntry();const cv=$('#tjMiniC');if(e&&cv){SMAP.n.mini++;const W=cv.width,span=230,s=W/span,q=W/116;const p=FP3.pos;const dx=(e.x-p.x)*s,dy=(e.z-p.z)*s;if(Math.hypot(dx,dy)>W/2-12*q){const x=cv.getContext('2d');smapRim(x,W,q,dx,dy,Math.hypot(e.x-p.x,e.z-p.z),'탕정역');SMAP.n.rim++}}}}catch(e){smapErr(e)}return r}})();
+/* ---------- 큰 지도: 철길 · 역 · 걷는 길 ---------- */
+function smapPoly(x,C,toS){x.beginPath();C.forEach((c,i)=>{const [a,b]=toS(c.x,c.z);if(i)x.lineTo(a,b);else x.moveTo(a,b)})}
+function smapRail(x,C,toS,w,dash){smapPoly(x,C,toS);x.strokeStyle='rgba(20,22,26,.95)';x.lineWidth=w+2.5;x.setLineDash([]);x.stroke();x.strokeStyle=dash?'#b8c3cf':'#dfe6ee';x.lineWidth=w;x.setLineDash(dash||[7,5]);x.stroke();x.setLineDash([])}
+function smapBigBox(cv,w,h){const B={x0:26,y0:26,x1:w-26,y1:h-26};try{if(SV3.rot)return B;const rc=cv.getBoundingClientRect();const t=document.querySelector('#tjBig .tjb-tools');if(t){const r=t.getBoundingClientRect();if(r.width>0&&r.left>rc.left+w/2)B.x1=Math.min(B.x1,r.left-rc.left-22)}const hd=document.querySelector('#tjBig .tjb-head');if(hd){const r=hd.getBoundingClientRect();if(r.height>0&&r.bottom<rc.top+h/2)B.y0=Math.max(B.y0,r.bottom-rc.top+20)}const lg=document.querySelector('#tjBig .tjb-leg');if(lg){const r=lg.getBoundingClientRect();if(r.height>0&&r.top>rc.top+h/2)B.y1=Math.min(B.y1,r.top-rc.top-16)}}catch(e){}return B}
+function smapBig(){if(!TJB.on||!OUT.on||!smapOn())return;const S=tjBigSize();if(!S)return;const {cv,w,h}=S;const x=cv.getContext('2d');const pr=Math.min(2,window.devicePixelRatio||1);x.setTransform(pr,0,0,pr,0,0);const mpp=TJB.mpp;const toS=(lx,lz)=>[(lx-TJB.cx)/mpp+w/2,(lz-TJB.cz)/mpp+h/2];
+  const A=smapZC('A').rc,B=smapZC('B').rc,K=smapZC('B').kc;
+  if(K&&K.length>1)smapRail(x,K,toS,2,[2,4]);
+  if(A.length>1)smapRail(x,A,toS,3.2);if(B.length>1)smapRail(x,B,toS,3.2);
+  /* 두 구역 사이(실제 선로 모양은 구역 밖이라 곧은 점선으로) */if(A.length&&B.length){const a=A[A.length-1],b0=B[0];x.strokeStyle='rgba(223,230,238,.55)';x.lineWidth=2;x.setLineDash([3,6]);x.beginPath();const [p1,q1]=toS(a.x,a.z),[p2,q2]=toS(b0.x,b0.z);x.moveTo(p1,q1);x.lineTo(p2,q2);x.stroke();x.setLineDash([]);smapLabel(x,'장항선 · 피란 열차 10분',(p1+p2)/2,(q1+q2)/2-10,11,'#e8edf1')}
+  const e=smapEntry();const sa=smapStation('A'),sb=smapStation('B');
+  if(e&&sa){const [ex,ey]=toS(e.x,e.z),[ax,ay]=toS(sa.x,sa.z);x.strokeStyle='rgba(120,180,255,.85)';x.lineWidth=2.4;x.setLineDash([2,5]);x.lineCap='round';x.beginPath();x.moveTo(ex,ey);x.lineTo(ax,ay);x.stroke();x.setLineDash([]);x.lineCap='butt';smapLabel(x,'걸어서 20분',(ex+ax)/2,(ey+ay)/2+12,10.5,'#a8ccff')}
+  for(const [st,sub] of [[sa,'동쪽 확장 구역'],[sb,'열차로 · 고속철도 고가']]){if(!st)continue;const [sx,sy]=toS(st.x,st.z);const inV=sx>-20&&sy>-20&&sx<w+20&&sy<h+20;
+    if(inV){smapBadge(x,sx,sy,8,'역');smapLabel(x,st.nm,sx,sy-17,13,'#ffffff');smapLabel(x,sub,sx,sy+17,10,'#a8ccff')}
+    else{/* 가장자리 표식(오른쪽 단추·위 제목·아래 범례를 피해서) */const B=smapBigBox(cv,w,h);const ox=w/2,oy=h/2,dx=sx-ox,dy=sy-oy;let k=1e9;if(dx>0)k=Math.min(k,(B.x1-ox)/dx);if(dx<0)k=Math.min(k,(B.x0-ox)/dx);if(dy>0)k=Math.min(k,(B.y1-oy)/dy);if(dy<0)k=Math.min(k,(B.y0-oy)/dy);k=Math.max(0,Math.min(1,k));const cx=ox+dx*k,cy=oy+dy*k;const d=Math.hypot(st.x-TJB.cx,st.z-TJB.cz);
+      x.save();x.translate(cx,cy);x.rotate(Math.atan2(dy,dx));x.fillStyle='rgba(47,124,246,.9)';x.beginPath();x.moveTo(17,0);x.lineTo(7,-6);x.lineTo(7,6);x.closePath();x.fill();x.restore();smapBadge(x,cx,cy,7,'역');const t=`${st.nm} ${smapKm(d)}`;x.font=`800 11px ${SMAP_F}`;const tw=x.measureText(t).width;smapLabel(x,t,cx-(dx>0?1:-1)*(tw/2+13),cy,11,'#d6e6ff')}}
+  SMAP.n.big++}
+(function(){const b=window.tjBigDraw;if(typeof b!=='function')return;window.tjBigDraw=function(){const r=b.apply(this,arguments);try{smapBig()}catch(e){smapErr(e)}return r}})();
+/* ---------- 구역 미니맵: 역 · 승강장 · 대합실 · 열차 ---------- */
+function smapZone(){const cv=$('#anxMini');if(!cv||!ANX.on||!ANX.mapC)return;const x=cv.getContext('2d');const W=cv.width,span=230,s=W/span,q=W/116;const p=FP3.pos;const toS=(lx,lz)=>[(lx-p.x)*s+W/2,(lz-p.z)*s+W/2];const Z=anxZ();const G=(Z.gap||4)/2;const st=anxAt(Z.rs);
+  x.save();x.beginPath();x.arc(W/2,W/2,W/2-1.5,0,7);x.clip();
+  /* 고속철도(구역 B) */const zk=ANX.zk||'A';const K=smapZC(zk).kc;if(K&&K.length>1)smapRail(x,K,toS,2*q,[2*q,3*q]);
+  /* 대합실(고가 아래 90 × 23m) */const cx=st.x,cz=st.z;x.fillStyle='rgba(96,108,124,.92)';x.strokeStyle='rgba(10,12,16,.9)';x.lineWidth=1.2*q;x.beginPath();[[-45,-11.5],[45,-11.5],[45,11.5],[-45,11.5]].forEach(([u,v],i)=>{const [a,b]=toS(cx+st.tx*u+st.nx*v,cz+st.tz*u+st.nz*v);if(i)x.lineTo(a,b);else x.moveTo(a,b)});x.closePath();x.fill();x.stroke();
+  /* 대합실 위로 철길을 다시(고가는 대합실 위) */{const C=anxC();const L=[];for(const c of C){if(Math.abs(c.s-Z.rs)<70)L.push(c)}if(L.length>1){smapPoly(x,L,toS);x.strokeStyle='rgba(60,64,70,.95)';x.lineWidth=5*q;x.stroke();x.strokeStyle='rgba(230,230,230,.7)';x.lineWidth=1*q;x.setLineDash([3*q,3*q]);x.stroke();x.setLineDash([])}}
+  /* 승강장 2(역 중심 ±75m · 선로 바깥 1.7~6.2m) */x.strokeStyle='rgba(214,206,186,.95)';x.lineWidth=Math.max(2,4.5*s);x.lineCap='butt';for(const sg of [-1,1]){const o=sg*(G+3.95);x.beginPath();for(let u=-75;u<=75;u+=15){const a=anxAt(Z.rs+u);const [m,n]=toS(a.x+a.nx*o,a.z+a.nz*o);if(u>-75)x.lineTo(m,n);else x.moveTo(m,n)}x.stroke();
+    x.strokeStyle='rgba(255,210,60,.9)';x.lineWidth=Math.max(1,.8*s);x.beginPath();const oi=sg*(G+1.9);for(let u=-75;u<=75;u+=15){const a=anxAt(Z.rs+u);const [m,n]=toS(a.x+a.nx*oi,a.z+a.nz*oi);if(u>-75)x.lineTo(m,n);else x.moveTo(m,n)}x.stroke();x.strokeStyle='rgba(214,206,186,.95)';x.lineWidth=Math.max(2,4.5*s)}
+  /* 열차 */let nt=0;if(typeof TRN!=='undefined'&&TRN.list&&typeof trnAt==='function')for(const T0 of TRN.list){const col=T0.kind==='frt'?'#8d9447':'#3ec7c0';for(const c of T0.cars){const sc=T0.s-T0.dir*c.off;const a=trnAt(sc-9.4),b=trnAt(sc+9.4);const [m1,n1]=toS(a.x+a.nx*T0.o,a.z+a.nz*T0.o),[m2,n2]=toS(b.x+b.nx*T0.o,b.z+b.nz*T0.o);if(Math.max(m1,m2)<-8||Math.min(m1,m2)>W+8||Math.max(n1,n2)<-8||Math.min(n1,n2)>W+8)continue;
+      x.strokeStyle='rgba(10,12,16,.95)';x.lineWidth=Math.max(3.4,3.6*s)+1.6*q;x.lineCap='round';x.beginPath();x.moveTo(m1,n1);x.lineTo(m2,n2);x.stroke();x.strokeStyle=col;x.lineWidth=Math.max(3.4,3.6*s);x.beginPath();x.moveTo(m1,n1);x.lineTo(m2,n2);x.stroke();x.lineCap='butt';nt++}
+    const h=trnAt(T0.s);const [hx,hy]=toS(h.x+h.nx*T0.o,h.z+h.nz*T0.o);if(hx>-6&&hy>-6&&hx<W+6&&hy<W+6){x.fillStyle='#fff';x.beginPath();x.arc(hx,hy,1.9*q,0,7);x.fill()}}
+  SMAP.n.train=nt;
+  /* 역 이름(선로를 가리지 않게 승강장 바깥쪽에) */const bo=G+17;const [sx,sy]=toS(cx+st.nx*bo,cz+st.nz*bo);const inV=Math.hypot(sx-W/2,sy-W/2)<W/2-12*q;if(inV){/* 이름은 선로 반대쪽으로 */const nl=Math.hypot(st.nx,st.nz)||1;const ux=st.nx/nl,uy=st.nz/nl;const t=anxNm()[2],fs=9*q;x.font=`800 ${Math.round(fs)}px ${SMAP_F}`;const tw=x.measureText(t).width;const r=6*q;const lx=sx+ux*(r+4*q+tw/2*Math.abs(ux)),ly=sy+uy*(r+4*q+fs*.6*Math.abs(uy))+(Math.abs(uy)<.35?0:0);smapLabel(x,t,lx,ly,fs,'#ffffff');smapBadge(x,sx,sy,r,'역')}
+  /* 나(위에 다시) */x.save();x.translate(W/2,W/2);x.rotate(-FP3.yaw);x.fillStyle='#ffb224';x.strokeStyle='#0a0c10';x.lineWidth=2*q;x.beginPath();x.moveTo(0,-9*q);x.lineTo(6.5*q,7*q);x.lineTo(0,3.5*q);x.lineTo(-6.5*q,7*q);x.closePath();x.fill();x.stroke();x.restore();
+  x.restore();if(!inV){smapRim(x,W,q,sx-W/2,sy-W/2,Math.hypot(cx-p.x,cz-p.z),anxNm()[2]);SMAP.n.rim++}
+  SMAP.n.zone++}
+(function(){const b=window.anxMini;if(typeof b!=='function')return;window.anxMini=function(){const r=b.apply(this,arguments);try{smapZone()}catch(e){smapErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🗺 지도에 탕정역(v17.6)','시내 미니맵: 탕정역 방면 입구가 화면 밖이면 테두리에 파란 \'역\' 표식과 거리, 가까우면 파란 역 표식. 큰 지도: 입구 → 탕정역 걷는 길(20분) · 장항선 철길 · 탕정역 · 아산역(피란 열차 10분) · 고속철도. 탕정역·아산역 구역 미니맵: 역 · 대합실 · 승강장 · 달리는 열차(피란 열차 청록 · 화물 열차 올리브). 철길·역 위치는 지도 데이터(© OpenStreetMap 기여자) 그대로.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
