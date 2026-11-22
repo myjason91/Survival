@@ -14063,7 +14063,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='17.8';
+const APP_VER='17.8.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -27026,6 +27026,58 @@ function anxrOpen(){if(!OUT.on||OUT.enc||OUT.busy||(typeof ANX!=='undefined'&&AN
 (function(){const b=window.outUI;if(typeof b!=='function')return;window.outUI=function(){const r=b.apply(this,arguments);try{if(!OUT.on||(typeof ANX!=='undefined'&&ANX.on))return r;const e=anxrSpot();if(!e)return r;const p=FP3.pos;const d=Math.hypot(e.x-p.x,e.z-p.z);const now=performance.now();
     if(ANXR.go){if(now-ANXR.go.t>6*60000)ANXR.go=null;else if(d<12&&!OUT.enc&&!OUT.busy){const mv=(typeof ADRV!=='undefined'&&ADRV.on)||(typeof ARUN!=='undefined'&&ARUN.on);if(d<6||!mv){ANXR.go=null;ANXR.n.arrive++;anxrOpen()}}}
     if(!ANXR.go&&d<45&&now-ANXR.hintT>90000&&!OUT.enc&&!OUT.busy){ANXR.hintT=now;ANXR.n.hint++;outNote(`<b>🚉 여기가 지도 동쪽 끝</b><div>탕정역은 이 큰길 너머(동쪽 확장 구역). 표지판 자리에서 '탕정역 방면'${OUT.ride||OUT.drv?' — 탈것을 탔으면 \'🚉 탕정역으로\'':''}을 누르면 간다.</div>`,4200)}}catch(x){anxrErr(x)}return r}})();
+
+/* v17.8.1 응급처치 대원 지혈 + 긴급 수정(2026-11-22 21:44 사용자 제보: "출혈 치료 뒤 노란 단추가 안 눌리고 조준경 조준도 안 된다")
+   ① 고침: 내가 '🩹 지혈·붕대'(2.5초)를 하는 사이에 팀원 '지혈 달인'·구급대가 먼저 지혈하면(wndClear) '치료 중'(OUT.busy) 잠금이 풀리지 않았다
+      → 행동 단추가 사라지고 사격·조준이 막혔다. wndClear가 치료 중이었으면 잠금을 푼다 + 내 지혈이 끝났는데 잠금이 남아 있으면 다음 틱에 푼다
+   ② 응급처치 대원: 내가 출혈하면(63) 응급 담당 팀원이 뛰어와 무릎 꿇고 지혈대·압박붕대로 지혈한다(대원 구급낭 · 레벨이 높을수록 빠름)
+      응급 담당이 없으면 가장 가까운 팀원이 내 구급상자·의약품으로 조금 더 느리게 · 내가 직접 지혈하면 물러난다 · 나를 붙잡지 않는다(멀어지면 따라온다) */
+const MED={m:null,ph:'',t:0,need:0,wait:0,cool:0,kit:false,n:{call:0,done:0,kit:0,abort:0},err:0};
+function medErr(e){if(MED.err<6){MED.err++;try{console.error(e)}catch(x){}}}
+/* ① 잠금 고침 */
+(function(){const b=window.wndClear;if(typeof b!=='function')return;window.wndClear=function(){const was=WND.treat>0||!!WND.bz;const r=b.apply(this,arguments);try{if(was){WND.bz=0;OUT.busy=false;try{OUT.me&&OUT.me.setPose('idle')}catch(e){}}}catch(e){medErr(e)}return r}})();
+(function(){const b=window.wndTreat;if(typeof b!=='function')return;window.wndTreat=function(){const r=b.apply(this,arguments);try{if(r){WND.bz=1;medRelease('self')}}catch(e){medErr(e)}return r}})();
+function medGuard(){try{if(WND.bz&&!(WND.treat>0)){WND.bz=0;if(OUT.busy&&!OUT.enc)OUT.busy=false}}catch(e){medErr(e)}}
+/* ② 응급처치 대원 */
+function medHidden(){try{return !!(OUT.drv||OUT.ride||(typeof APT!=='undefined'&&APT.on)||(typeof OWC!=='undefined'&&OWC.on)||(typeof TEAM!=='undefined'&&TEAM.hid))}catch(e){return true}}
+function medOk(m){try{return !!(m&&m.h&&m.h.root.visible&&(m.d.st==='ok'||m.d.st==='hurt')&&!m.vault&&!m.carry&&!m.carried&&!m.farm&&!m.amb)}catch(e){return false}}
+function medDist(m){const P=m.h.root.position;return Math.hypot(P.x-FP3.pos.x,P.z-FP3.pos.z)}
+function medPick(){let L=[];try{L=tmLive().filter(medOk)}catch(e){return null}if(!L.length)return null;
+  const med=L.filter(m=>m.d.role==='응급'&&medDist(m)<45).sort((a,b)=>(tlvLv(b.d)-tlvLv(a.d))||(medDist(a)-medDist(b)))[0];if(med)return {m:med,kit:false};
+  const kit=(G.inv&&G.inv.firstaid||0)>0||(G.res&&G.res.meds||0)>=1;if(!kit)return null;const near=L.filter(m=>medDist(m)<30).sort((a,b)=>medDist(a)-medDist(b))[0];return near?{m:near,kit:true}:null}
+function medNeed(m,kit){if(kit)return 6;let lv=1;try{lv=tlvLv(m.d)}catch(e){}return Math.max(2.2,4.6-.4*lv)*((typeof IS!=='undefined'&&IS.on)?1.4:1)}
+function medSay(m,t){try{if(typeof tlvSay==='function')tlvSay(m,t);else if(typeof bubSay==='function')bubSay(m.h,t,2.4,'ok')}catch(e){}}
+function medPose(m,n){try{if(m.h.pose!==n)m.h.setPose(n)}catch(e){}}
+function medRelease(why){const m=MED.m;if(!m)return;MED.m=null;MED.ph='';MED.t=0;if(why&&why!=='done')MED.n.abort++;try{m.medic=0;medPose(m,'idle')}catch(e){}MED.cool=why==='done'?4:2}
+function medCall(){const P=medPick();if(!P)return false;MED.m=P.m;MED.kit=P.kit;MED.ph='go';MED.t=0;MED.need=medNeed(P.m,P.kit);P.m.medic=1;MED.n.call++;
+  medSay(P.m,P.kit?'잠깐요, 구급상자 줘요 — 제가 지혈할게요!':'피 나요! 제가 지혈할게요!');
+  try{outNote(`<b>⛑ ${clean(P.m.d.nm,12)} — ${P.kit?'구급상자로':'지혈대·압박붕대 들고'} 달려온다</b><div>${P.kit?'응급 담당이 없어 가까운 팀원이 내 구급상자로 지혈한다(6초).':'응급처치 대원이 지혈한다('+MED.need.toFixed(1)+'초).'} 직접 하려면 \'🩹 지혈·붕대\'.</div>`,3200)}catch(e){}return true}
+function medDone(){const m=MED.m;if(!m)return;if(MED.kit){try{if((G.inv.firstaid||0)>0){G.inv.firstaid--;MED.n.kit++}else if((G.res.meds||0)>=1){FX=[];res('meds',-1);OUT.fx.push(...FX);MED.n.kit++}}catch(e){medErr(e)}}
+  try{wndClear()}catch(e){medErr(e)}MED.n.done++;try{outStat()}catch(e){}
+  medSay(m,'지혈했어요. 천천히 움직여요.');try{outNote(`<b>⛑ ${clean(m.d.nm,12)} — 지혈했다</b><div>${MED.kit?'내 구급상자로 상처를 누르고 붕대를 감았다':'지혈대와 압박붕대로 출혈을 멈췄다'}. 흐림이 걷히고 걸음이 돌아온다 — 부상 자체는 대피소 응급처치로.</div>`,3400)}catch(e){}
+  try{FX=[];logDecision({id:'wnd-medic',title:'팀원이 내 출혈을 지혈했다',lesson:'출혈은 상처를 세게 누르는 것이 먼저다. 팔다리의 심한 출혈은 상처보다 몸 쪽에 지혈대를 감고 감은 시각을 적어 둔다. 응급처치를 배운 사람이 있으면 맡기고, 나는 눕거나 앉아 움직임을 줄인다.',src:(typeof SRC!=='undefined'&&SRC.bleed)||'',guide:'now',choices:[{t:'팀원에게 지혈을 맡겼다',ok:true}]},{t:'팀원에게 지혈을 맡겼다'},true)}catch(e){}
+  medRelease('done')}
+function medStep(dt){MED.cool=Math.max(0,MED.cool-dt);
+  if(!OUT.on||!WND.on||!(typeof wndActive==='function'&&wndActive())||WND.treat>0||medHidden()){if(MED.m)medRelease('stop');MED.wait=0;return}
+  if(!MED.m){if(MED.cool>0)return;MED.wait+=dt;if(MED.wait<((typeof IS!=='undefined'&&IS.on)?3.5:1.6))return;MED.wait=0;if(!medCall())MED.cool=5;return}
+  const m=MED.m;if(!medOk(m)){medRelease('lost');return}
+  const h=m.h,P=h.root.position,p=FP3.pos;const yaw=(OUT.me&&OUT.me.root)?OUT.me.root.rotation.y:FP3.yaw;const sx=Math.cos(yaw)*.85,sz=-Math.sin(yaw)*.85;
+  let tx=p.x+sx,tz=p.z+sz;try{if(typeof pedFree==='function'&&!pedFree(tx,tz)){tx=p.x-sx;tz=p.z-sz}}catch(e){}
+  const dx=tx-P.x,dz=tz-P.z,L=Math.hypot(dx,dz);
+  if(MED.ph==='go'||L>2.4){MED.ph='go';if(L>60){medRelease('far');return}
+    if(L>.35){const sp=L>6?4.6:L>2?3.2:1.6;const s=Math.min(L,sp*dt);let nx=P.x+dx/L*s,nz=P.z+dz/L*s;let free=true;try{free=typeof pedFree!=='function'||pedFree(nx,nz)||L<3}catch(e){}
+      if(!free){const a=Math.atan2(dx,dz);for(const da of [.6,-.6,1.2,-1.2]){const qx=P.x+Math.sin(a+da)*s,qz=P.z+Math.cos(a+da)*s;try{if(pedFree(qx,qz)){nx=qx;nz=qz;free=true;break}}catch(e){}}}
+      if(free){P.x=nx;P.z=nz}try{tmTurn(m,Math.atan2(dx,dz),dt,8)}catch(e){}medPose(m,L>2?'run':'walk')}
+    if(L<=.6){MED.ph='treat';MED.t=0;medPose(m,'kneel');medSay(m,'꽉 누를게요 — 조금 아파요.')}return}
+  /* 지혈 중: 나를 보고 무릎 꿇은 채 — 내가 2.4m 넘게 멀어지면 다시 따라온다 */
+  try{tmTurn(m,Math.atan2(p.x-P.x,p.z-P.z),dt,8)}catch(e){}medPose(m,'kneel');MED.t+=dt;if(MED.t>=MED.need)medDone()}
+/* 대원의 대열 이동은 그동안 멈춘다 */
+(function(){const b=window.tmMove;if(typeof b!=='function')return;window.tmMove=function(m){if(m&&m.medic&&MED.m===m)return;return b.apply(this,arguments)}})();
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{medGuard();if(typeof WND!=='undefined'&&typeof TEAM!=='undefined')medStep(dt||0)}catch(e){medErr(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{if(MED.m)medRelease('stop');WND.bz=0}catch(e){}return b.apply(this,arguments)}})();
+/* 출혈 표시줄에 대원 상태 */
+(function(){const b=window.wndHud;if(typeof b!=='function')return;window.wndHud=function(){const r=b.apply(this,arguments);try{const h=document.getElementById('wndHud');if(h){let s=h.querySelector('.wnd-med');const m=MED.m;if(!m||!(WND.on&&!(WND.treat>0))){if(s)s.remove()}else{if(!s){s=document.createElement('small');s.className='wnd-med';h.appendChild(s)}const t=MED.ph==='treat'?`⛑ ${clean(m.d.nm,10)} 지혈 중 ${Math.max(0,MED.need-MED.t).toFixed(1)}s`:`⛑ ${clean(m.d.nm,10)} 오는 중 ${Math.round(medDist(m))}m`;if(s.textContent!==t)s.textContent=t}}}catch(e){medErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['⛑ 응급처치 대원 지혈(v17.8.1)','밖에서 내가 출혈하면 응급 담당 팀원이 뛰어와 무릎 꿇고 지혈대·압박붕대로 지혈한다(대원 구급낭 · 레벨 1은 4.2초 → 레벨이 오를수록 빨라져 최소 2.2초 · 교전 중엔 1.4배). 응급 담당이 없으면 가장 가까운 팀원이 내 구급상자(없으면 의약품 1)로 6초. 나를 붙잡지 않는다 — 멀어지면 따라온다. 직접 하려면 위쪽 \'🩹 지혈·붕대\'. 부상 자체는 대피소 응급처치로.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
