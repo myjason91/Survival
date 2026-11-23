@@ -2082,6 +2082,35 @@ body.trn-on .apl-tag{visibility:hidden}
 .rk-ban-h{font:800 13px var(--sans);opacity:.85}.rk-ban-ins{font-size:34px;letter-spacing:2px;color:#eef2f6;margin:4px 0 0}.rk-ban-n{font:900 28px var(--sans);color:#ffe08a}.rk-ban.bad .rk-ban-n{color:#ff9a7a}.rk-ban-p{font:600 12px/1.4 var(--sans);opacity:.85;max-width:320px;margin:6px auto 0}
 @keyframes rkIn{from{opacity:0;transform:translate(-50%,10px) scale(.94)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
 .sv3.owc-on .rk-chip{display:none}
+/* v18.6 새벽별 아지트 */
+.hq-panel{width:min(640px,calc(100% - 24px));background:linear-gradient(180deg,rgba(16,19,22,.97),rgba(8,10,13,.97));border-color:rgba(244,197,66,.3)}
+.hq-panel .mis-head small{font-size:11px;color:#9aa3ad;font-weight:700;margin-left:4px}
+.hq-res{display:flex;flex-wrap:wrap;gap:3px 12px;font:700 12px var(--sans);color:#dfe8f2;margin:0 0 6px}
+.hq-res b{color:#ffd27a}.hq-res em{font-style:normal;color:#ff9b7a;font-size:11px}
+.hq-rooms{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:2px 0 6px}
+.hq-room{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px 5px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#cfd8e2;font:800 11px var(--sans);cursor:pointer}
+.hq-room i{font-style:normal;font-size:17px;line-height:1.15}
+.hq-room.on{background:rgba(244,197,66,.16);border-color:#f4c542;color:#fff}
+.hq-room em{position:absolute;top:2px;right:4px;font-style:normal;font-size:10px;background:#c0392b;color:#fff;border-radius:8px;padding:0 5px;line-height:15px}
+.hq-lore{font-size:12px;line-height:1.55;color:#d6dde5;background:rgba(244,197,66,.07);border:1px solid rgba(244,197,66,.22);border-radius:10px;padding:8px 10px;margin:4px 0}
+.hq-lore b{color:#ffd27a}
+.hq-map{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(127,208,255,.25);margin-top:6px}
+.hq-cap{display:block;font-size:10.5px;color:#7d8790;margin:2px 0}
+.hq-log{margin-top:6px;font-size:11.5px;color:#aab3bc;border-top:1px solid var(--line2);padding-top:6px}.hq-log small{display:block;color:#7d8790;margin-bottom:2px}.hq-log div{padding:1px 0}
+.hq-btns{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.hq-btns .btn{padding:5px 8px;font-size:11.5px}
+.hq-tr{grid-template-columns:auto 1fr auto}
+.hq-pr{border-top:1px solid var(--line2);padding:8px 4px}
+.hq-pr-h{display:flex;justify-content:space-between;gap:8px;font:800 13px var(--sans);color:#f0f3f6;margin-bottom:5px}
+.hq-pr-h small{color:#9aa3ad;font-weight:700}
+.hq-pr-r{font-size:11.5px;color:#cfe3f5;margin:4px 0}
+.hq-pr-r.bad{color:#ffb39a}
+.hq-tag{display:inline-block;font:800 10px var(--sans);padding:1px 6px;border-radius:8px;background:#6b4bd6;color:#fff;margin-left:4px}
+.hq-uc{display:inline-block;width:56px;height:5px;border-radius:3px;background:rgba(255,255,255,.12);vertical-align:middle;margin:0 2px}.hq-uc i{display:block;height:100%;border-radius:3px;background:#b78cff}
+.btn.hq-arm{background:#a33;border-color:#f77;color:#fff}
+.hq-fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .34s;z-index:60}.hq-fade.on{opacity:1}
+.hq-brief{width:min(520px,calc(100% - 24px))}
+@media (max-width:560px){.hq-rooms{grid-template-columns:repeat(3,1fr)}}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14178,7 +14207,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.5';
+const APP_VER='18.6';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -28089,6 +28118,315 @@ function agwRank(){const r=agwRankNow();for(const h of AGW.list){try{if(h.agwR==
 /* 설정 '내 모습': 새벽별 장교 · 챔피언 · 보통 */
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{const i=h.indexOf('data-k="melook"');if(i>=0&&h.indexOf('data-v="agent"')<0){const s=h.lastIndexOf('<div class="seg"',i);const e=h.indexOf('</div></div>',i);if(s>=0&&e>s){const seg=s4Seg('melook','내 모습 (밖 3인칭·대피소)','새벽별 장교: 숯빛 전투복·플레이트 캐리어·계급장·부대 패치·헤드셋 — 다음 장면부터',[['agent','새벽별 장교'],['champ','챔피언'],['std','보통']],agwLook());h=h.slice(0,s)+seg+h.slice(e+12)}}}catch(e){agwErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='melook'||b.dataset.v!=='agent')return;e.preventDefault();e.stopPropagation();try{store.set('sg.meLook','agent');toast('새벽별 장교 제복 — 다음에 밖에 나갈 때부터',2200);if(typeof s4Render==='function')s4Render()}catch(x){agwErr(x)}},true);
+
+/* v18.5.1 길거리 자동사격 대상 확대 · 조준 보정(선택) (사용자 문의 2026-11-23 20:39 "자동조준 및 사격 기능이 왜 안돼요?" · 20:46 "자동조준은 아니고 수동조준인데 에임을 대상에 가져다 대면 사격하게 해 주세요")
+   원인: ① 자동사격(126)은 '교전의 무장 적'(side en)만 쏘고 불량배·약탈자·수배자·도주 간첩은 수동 사격으로 묶었다 — 밖에서 가장 자주 만나는 상대가 이쪽이라 "안 된다"로 느껴졌다
+         ② 조준이 적에게 끌려가는 보정은 창밖 전투(154)·전투 모드(13)에만 있고 길거리 총 화면에는 처음부터 없었다
+   · 조준은 손으로(수동) — 조준점을 상대 몸 위(몸통 폭 약 ±0.35m 안)에 0.18초 대면 쏜다 · 조준 보정(설정 기본 끔): 켜면 조준점 가까이의 쏠 수 있는 상대에게 시점이 부드럽게 끌려간다
+   · 자동사격 대상(설정): '적법 대상 전체'(기본) = 교전의 적 + 교전 규칙상 적법한 상대(폭력배 · 약탈 현행범 · 수배자 · 도주 간첩 · 사살 허가 대상) / '교전 적만' = 예전 그대로
+   · 절대 끌리지도 쏘지도 않는다: 주민 · 투항자 · 인질 · 아이 · 가족 · 팀원 · 동행 · 군·경 · 아군 · 정체가 드러나지 않은 간첩 · 쓰러진 사람
+   · 사이에 사람·벽이 있으면 쏘지 않는다(조준선의 첫 대상이 그 상대일 때만) · 창밖 전투는 154가 그대로 맡는다
+   · 자동 점검(webdriver)은 __afTest일 때만(126과 같다) */
+const FA={err:0,n:{pull:0,shot:0,law:0},last:null};
+const _faV=new T.Vector3(),_faO=new T.Vector3(),_faD=new T.Vector3();
+function faErr(e){if(FA.err<5){FA.err++;try{console.error(e)}catch(x){}}}
+function faAimOn(){try{return store.get('sg.aima',false)===true}catch(e){return false}}
+function faScope(){try{return store.get('sg.afScope','law')==='en'?'en':'law'}catch(e){return 'law'}}
+/* 조준 보정·자동사격이 붙어도 되는 상대 */
+function faOk(t){if(!t||!t.h||t.h.dead||t.h.pose==='dead')return false;const a=t.a||{};if(a.dead||a.surr||a.isAl||a.host||a.gone||a.lying||a.cap)return false;
+  try{if(typeof isKidOrFam==='function'&&isKidOrFam(t))return false}catch(e){}if(t.kind==='team'||t.kind==='fam'||t.kind==='follow'||t.kind==='rok'||t.kind==='gsrok'||t.kind==='gspol'||t.kind==='police'||t.kind==='ally')return false;
+  if(afOk(t))return true;if(faScope()!=='law')return false;let R=null;try{R=typeof roeOf==='function'?roeOf(t):null}catch(e){}return !!(R&&R.law===true&&R.cat!=='prot'&&R.cat!=='surr'&&R.cat!=='civ')}
+function faAimY(t){const h=t.h;const p=h.pose||'';return (p==='crouch'||p==='kneel'||(t.a&&(t.a.st==='kneel'||t.a.st==='aim')))?.85:1.25}
+function faFireTol(L){return Math.max(.012,Math.atan(.35/L))}
+function faPick(o,d,maxD,tol,pull){const seen=new Set();let best=null;try{gunHitList()}catch(e){}
+  GUN.hitMap.forEach(t=>{if(!t||seen.has(t.h))return;seen.add(t.h);if(!faOk(t))return;const P=t.h.root.position;_faV.set(P.x,P.y+faAimY(t),P.z).sub(o);const L=_faV.length();if(L<1.2||L>maxD)return;_faV.divideScalar(L);
+    const ang=Math.acos(clamp(_faV.dot(d),-1,1));const tl=faFireTol(L);const cone=pull?Math.max(tol,Math.atan(.55/L))*2.2:tl;if(ang>cone)return;if(best&&ang>=best.ang)return;best={t,v:_faV.clone(),ang,L,tl}});
+  if(!best)return null;/* 가리는 것 없이 조준선의 첫 대상이 그 상대인가 */try{const c=gunCast(o.clone(),best.v.clone(),best.L+1.5);if(!c||!c.tgt||c.tgt.h!==best.t.h)return null}catch(e){return null}return best}
+function faStep(dt){const W=gunW();if(!afOn()||!W||!afWeaponOk(W)||!GUN.on||!GUN.fp||afBusy()){AF.on=null;AF.t=0;return}
+  const cam=SV3.cam;cam.updateMatrixWorld(true);cam.getWorldPosition(_faO);cam.getWorldDirection(_faD);const ads=GUN.adsK>.5;const z=ads?Math.max(1,gunZoom()):1;const tol=ads?Math.max(.006,.045/z):.045;
+  const maxD=Math.min(300,W.range?W.range:W.cat==='sr'?300:W.cat==='sg'?40:W.cat==='pst'?70:220);const pull=faAimOn();const b=faPick(_faO,_faD,maxD,tol,pull);
+  if(b&&pull&&b.ang>.004){const ty=Math.atan2(-b.v.x,-b.v.z),tp=Math.asin(clamp(b.v.y,-1,1));let dy=ty-FP3.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const k=Math.min(1,dt*(ads?2.6:1.8))*(GUN.fire?.4:.62);FP3.yaw+=dy*k;FP3.pitch=clamp(FP3.pitch+(tp-FP3.pitch)*k,-1.3,1.3);FA.n.pull++}
+  if(GUN.fire){AF.on=null;AF.t=0;return}const key=b&&b.ang<b.tl?b.t.h:null;if(key!==AF.on){AF.on=key;AF.t=0}else if(key)AF.t+=dt;if(!key||AF.t<.18)return;
+  const rate=W.auto?W.rate:Math.max(W.rate,.3);if(GUN.mag>0&&GUN.reload<=0&&GUN.t-GUN.lastShot>=rate){if(gunShoot()){AF.shots++;FA.n.shot++;if(!afOk(b.t))FA.n.law++;AF.last=FA.last={k:b.t.kind,n:(b.t.a&&b.t.a.nm)||''};afFlash()}}
+  else if(GUN.mag<=0&&GUN.reload<=0&&gunAmmoOf(W.am)>0&&GUN.t-GUN.lastShot>.3){try{gunReload()}catch(e){faErr(e)}}}
+/* 길거리 총 화면의 자동사격을 이 판으로 바꾼다(창밖 전투 154는 먼저 가로챈다 — 154가 이 함수를 감싼 바깥쪽이 아니라서, 창밖이면 원래 사슬로 넘긴다) */
+(function(){const b=window.afStep;if(typeof b!=='function')return;window.afStep=function(dt){try{if(typeof wfOut==='function'&&wfOut())return b.apply(this,arguments);faStep(dt||0)}catch(e){faErr(e)}}})();
+/* 설정 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{const i=h.indexOf('data-k="autof"');if(i>=0&&h.indexOf('data-k="aima"')<0){const j=h.indexOf('<div class="seg">',i);const add=s4Seg('aima','조준 보정','켜면 조준점 가까이 있는 쏠 수 있는 상대에게 시점이 끌려간다(기본 끔 — 조준은 손으로, 대면 쏜다)',[[1,'켬'],[0,'끔']],faAimOn()?1:0)+s4Seg('afscope','자동사격 대상','적법 대상 전체 = 교전의 적 + 폭력배·약탈 현행범·수배자·도주 간첩 · 교전 적만 = 예전처럼',[['law','적법 대상 전체'],['en','교전 적만']],faScope());
+    h=j>i?h.slice(0,j)+add+h.slice(j):h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){faErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||(b.dataset.k!=='aima'&&b.dataset.k!=='afscope'))return;try{if(b.dataset.k==='aima'){store.set('sg.aima',b.dataset.v==='1');toast(b.dataset.v==='1'?'조준 보정을 켰다 — 가까운 상대에게 시점이 끌려간다':'조준 보정을 껐다 — 조준은 손으로',1600)}else{store.set('sg.afScope',b.dataset.v==='en'?'en':'law');toast(b.dataset.v==='en'?'자동사격 — 교전의 적만':'자동사격 — 적법 대상 전체(폭력배·약탈 현행범·수배자·도주 간첩 포함)',2200)}}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🎯 대면 쏜다 — 자동사격(v18.5.1)','총을 꺼내 조준점을 손으로 상대 몸 위에 가져다 대면 0.18초 뒤 쏜다(자동사격 — 사격 버튼을 누르지 않아도 된다). 대상은 교전의 적과 교전 규칙상 적법한 상대 — 폭력배 · 약탈 현행범 · 수배자 · 도주 간첩 · 사살 허가 대상. 주민·투항자·인질·아이·가족·팀원·군경·아군에게는 끌리지도 쏘지도 않고, 사이에 사람이나 벽이 있으면 쏘지 않는다. 설정: \'조준 보정\'(기본 끔 — 켜면 가까운 상대에게 시점이 끌려간다) · \'자동사격 대상\' 적법 대상 전체/교전 적만 · \'자동사격\' 끔.']);
+
+/* v18.5.2 쓰러지는 동작 · 출혈 (사용자 요청 2026-11-23 20:49 "적·아군 등 사람이 사망하면 쓰러지는 모션 필요하고 실감있게 출혈도 구현바랍니다")
+   원인: 실사 인물(12f)이 죽으면 '서 있는 숨쉬기 자세'를 그대로 멈추고(dead = still) — 군인(12g)만 발을 축으로 0.7초 만에 통나무처럼 1.5rad 기울었다. 출혈은 맞은 자리의 0.35초 붉은 연기 하나뿐
+   · 쓰러짐(클립 자산 추가 없음 — 157 엎드리기처럼 클립을 뽑은 뒤 덮어쓴다): ① 맞는 순간 총알 방향으로 몸이 젖혀지고 ② 무릎이 꺾이며 주저앉고(발은 땅에 그대로)
+     ③ 몸이 총알 방향으로 무너진다(중력처럼 점점 빨리 · 0.75~1.3초 · 머리에 맞으면 더 빨리) ④ 땅에 닿으면 살짝 튀었다 멈추고 팔다리가 늘어진 채 눕는다
+     — 앞에서 맞으면 뒤로(하늘을 보고), 뒤에서 맞으면 앞으로(엎어져) · 쓰러지는 쪽으로 몸이 돈다 · 자세 3가지씩(팔 위치·고개·무릎) · 군인의 통나무 기울기는 끈다
+   · 출혈(설정 '출혈 표현' 실감·보통·끔): 맞는 순간 총알 방향으로 피가 튄다(방울 · 안개) · 뒤쪽 바닥에 핏자국 · 쓰러진 몸 아래로 피 웅덩이가 9초에 걸쳐 번진다
+     · 맞고 살아서 움직이는 사람은 25초 동안 핏방울을 떨어뜨린다 · 바닥 자국은 장면마다 70개까지(오래된 것부터 지운다) · 보통 = 튐·핏자국만 · 끔 = 붉은 연기도 없음
+   · 아이·가족은 출혈 묘사에서 뺀다(가족은 죽지 않는다) · 신체 훼손 없음 · 교육용 모드는 끔 · 자동 점검(webdriver)은 __dthTest일 때만 */
+const DTH={err:0,n:{die:0,pool:0,splat:0,spray:0,drip:0,skip:0},live:new Set(),dec:[],geo:null,mats:null,splatP:.75};
+function dthErr(e){if(DTH.err<6){DTH.err++;try{console.error('[177]',e)}catch(x){}}}
+function dthOn(){try{return !(navigator.webdriver&&!window.__dthTest)}catch(e){return true}}
+function dthLv(){try{if(!dthOn())return 'off';if(typeof eduOn==='function'&&eduOn())return 'off';const v=store.get('sg.blood','real');return v==='off'||v==='low'?v:'real'}catch(e){return 'real'}}
+function dthKidFam(h,t){try{if(!h)return true;if(h.kind==='kid'||h.fam||/^(mc|fc)_/.test(h.key||''))return true;if(t&&typeof isKidOrFam==='function'&&isKidOrFam(t))return true;if(typeof FAM!=='undefined'&&FAM.list&&FAM.list.some(f=>f&&f.h===h))return true}catch(e){}return false}
+const dthS=(a,b,x)=>{const u=Math.max(0,Math.min(1,(x-a)/(b-a)));return u*u*(3-2*u)};
+/* ---------- 쓰러지는 동작 ---------- */
+/* 몸 기준 방향(서 있을 때: 위 +y · 앞 +z · 왼쪽 +x). 눕힌 몸에서 엎어짐이면 +z가 땅, 바로 누움이면 +z가 하늘 */
+const DTH_CR=[['hipL','kneeL',[.14,-.5,.86],'leg'],['kneeL','footL',[.04,-1,-.42],'leg'],['hipR','kneeR',[-.14,-.5,.86],'leg'],['kneeR','footR',[-.04,-1,-.42],'leg'],
+  ['shL','elL',[.28,-1,0],'arm'],['elL','handL',[.12,-1,.25],'arm'],['shR','elR',[-.28,-1,0],'arm'],['elR','handR',[-.12,-1,.25],'arm']];
+const DTH_LIE={
+  back:[[['spine','chest',[0,1,.03]],['chest','neck',[0,1,.04]],['neck','head',[.42,1,.12]],['shL','elL',[.88,.38,-.08]],['elL','handL',[.72,.6,-.06]],['shR','elR',[-.7,-.3,-.08]],['elR','handR',[-.5,-.68,-.05]],['hipL','kneeL',[.16,-1,-.02]],['kneeL','footL',[.13,-1,-.06]],['hipR','kneeR',[-.14,-.78,.42]],['kneeR','footR',[-.06,-.86,-.48]]],
+        [['spine','chest',[0,1,.02]],['chest','neck',[0,1,.05]],['neck','head',[-.4,1,.1]],['shL','elL',[.45,-.85,-.08]],['elL','handL',[.2,-.95,.15]],['shR','elR',[-.9,.3,-.08]],['elR','handR',[-.6,.75,-.06]],['hipL','kneeL',[.22,-1,-.02]],['kneeL','footL',[.18,-1,-.05]],['hipR','kneeR',[-.2,-1,-.02]],['kneeR','footR',[-.15,-1,-.06]]],
+        [['spine','chest',[.05,1,.03]],['chest','neck',[0,1,.03]],['neck','head',[.15,1,.2]],['shL','elL',[.95,.1,-.08]],['elL','handL',[.9,.25,-.06]],['shR','elR',[-.95,.15,-.08]],['elR','handR',[-.85,.45,-.06]],['hipL','kneeL',[.3,-1,-.02]],['kneeL','footL',[.24,-1,-.06]],['hipR','kneeR',[-.08,-1,-.02]],['kneeR','footR',[-.05,-1,-.06]]]],
+  front:[[['spine','chest',[0,1,-.02]],['chest','neck',[0,1,-.04]],['neck','head',[.5,1,-.12]],['shL','elL',[.78,.45,-.12]],['elL','handL',[.15,.95,-.1]],['shR','elR',[-.25,-1,-.1]],['elR','handR',[-.08,-1,-.12]],['hipL','kneeL',[.18,-1,-.03]],['kneeL','footL',[.1,-1,-.1]],['hipR','kneeR',[-.42,-.86,-.03]],['kneeR','footR',[-.55,-.78,-.12]]],
+         [['spine','chest',[0,1,-.02]],['chest','neck',[0,1,-.04]],['neck','head',[-.5,1,-.12]],['shL','elL',[.3,-1,-.1]],['elL','handL',[.1,-1,-.12]],['shR','elR',[-.8,.42,-.12]],['elR','handR',[-.2,.95,-.1]],['hipL','kneeL',[.4,-.88,-.03]],['kneeL','footL',[.52,-.8,-.12]],['hipR','kneeR',[-.16,-1,-.03]],['kneeR','footR',[-.1,-1,-.1]]],
+         [['spine','chest',[0,1,-.02]],['chest','neck',[0,1,-.03]],['neck','head',[.45,1,-.14]],['shL','elL',[.85,.3,-.12]],['elL','handL',[.6,.75,-.1]],['shR','elR',[-.85,.3,-.12]],['elR','handR',[-.6,.75,-.1]],['hipL','kneeL',[.2,-1,-.03]],['kneeL','footL',[.15,-1,-.1]],['hipR','kneeR',[-.2,-1,-.03]],['kneeR','footR',[-.15,-1,-.1]]]]};
+const _dX=new T.Vector3(1,0,0),_dRx=new T.Quaternion(),_dB=new T.Quaternion(),_dT=new T.Vector3();
+function dthStart(h,dir){if(!h||!h.rbx||!h.mesh||h.dth)return;if(dthKidFam(h))return;if(h.prOn||(h.prK||0)>.05){DTH.n.skip++;return}
+  const yaw=h.root.rotation.y;let F=h.dthD?{x:h.dthD.x,z:h.dthD.z}:dir?{x:dir.x||0,z:dir.z||0}:null;let L=F?Math.hypot(F.x,F.z):0;if(L<1e-3){const a=Math.random()*6.283;F={x:Math.sin(a),z:Math.cos(a)};L=1}F.x/=L;F.z/=L;
+  const dot=F.x*Math.sin(yaw)+F.z*Math.cos(yaw);const fwd=Math.abs(dot)<.25?Math.random()<.5:dot>0;const tg=fwd?Math.atan2(F.x,F.z):Math.atan2(-F.x,-F.z);let dy=tg-yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));
+  const head=!!h.dthHead;h.dth={t:0,fwd,yaw0:yaw,dy:Math.max(-.9,Math.min(.9,dy)),dur:head?.78:1.02+Math.random()*.28,head,v:Math.floor(Math.random()*3),q0:h.mesh.quaternion.clone(),y0:h.floor?-.42:0,sold:!!h.soldier,pool:null,cache:null,F};
+  if(h.soldier){h.deadDir={x:0,z:0}}DTH.live.add(h);DTH.n.die++;h.dthD=null}
+function dthAim(h,B,list,w){if(w<=.001)return;for(const [a,b,d] of list){_dT.set(d[0],d[1],d[2]).normalize().applyQuaternion(B);try{prnAim(h.b[a],h.b[b],_dT,w)}catch(e){}}}
+function dthPost(h,dt){const D=h.dth;if(!D)return;if(!h.dead){/* 되살아남(재사용) — 원래대로 */h.mesh.quaternion.copy(D.q0);h.mesh.position.set(0,D.y0,0);h.dth=null;DTH.live.delete(h);return}
+  D.t+=dt;const T0=D.dur,u=Math.min(1.6,D.t/T0);const s=D.fwd?1:-1;
+  if(D.cache&&D.t>T0+.7){/* 다 누운 뒤: 저장한 자세를 그대로 */h.mesh.quaternion.copy(D.cache.mq);h.mesh.position.copy(D.cache.mp);for(const [bn,q] of D.cache.b)bn.quaternion.copy(q);if(D.pool)dthPoolGrow(D);return}
+  const c=dthS(0,.36,u)*(1-.75*dthS(.55,.95,u));const g=Math.max(0,Math.min(1,(u-.2)/.64));const land=Math.max(0,Math.min(1,(D.t-T0*.84)/.26));
+  const th=Math.PI/2*g*g+(g>=1?.07*Math.sin(land*Math.PI)*(1-land*.3):0);
+  h.root.rotation.y=D.yaw0+D.dy*dthS(0,.55,u);if(D.sold){h.root.rotation.x=0;h.root.rotation.z=0}
+  _dRx.setFromAxisAngle(_dX,s*th);h.mesh.quaternion.copy(_dRx).multiply(D.q0);
+  const sold=D.sold?.15*dthS(0,1,Math.min(1,D.t/.7)):0;const yy=D.y0-.3*c*(1-g)+.13*dthS(.65,1,g)+sold;h.mesh.position.set(0,yy,-s*.32*g);
+  h.root.updateMatrixWorld(true);h.root.getWorldQuaternion(_dB);_dB.multiply(_dRx);
+  /* 맞은 순간 젖혀짐 → 주저앉음(무릎) → 늘어짐 */const rec=(1-dthS(0,.22,u))*dthS(0,.06,D.t);if(rec>.01)dthAim(h,_dB,[['spine','chest',[0,1,-s*.45]],['chest','neck',[0,1,-s*.35]]],rec*.8);
+  dthAim(h,_dB,DTH_CR,c*(1-dthS(.6,.95,u)));const wf=dthS(.5,1,u);dthAim(h,_dB,DTH_LIE[D.fwd?'front':'back'][D.v],wf);
+  if(D.t>=T0&&!D.pool)dthPoolStart(h,D);if(D.pool)dthPoolGrow(D);
+  if(D.t>T0+.7&&!D.cache){const b=[];for(const k of ['spine','chest','neck','head','shL','elL','handL','shR','elR','handR','hipL','kneeL','footL','hipR','kneeR','footR']){const bn=h.b[k];if(bn)b.push([bn,bn.quaternion.clone()])}D.cache={mq:h.mesh.quaternion.clone(),mp:h.mesh.position.clone(),b}}}
+(function(){const b=window.rbxUpdate;if(typeof b!=='function')return;window.rbxUpdate=function(h,dt,snap){const r=b.apply(this,arguments);try{if(h){if(h.dth)dthPost(h,snap?0:(dt||0));else if(h.bldT>0&&!h.dead)dthDrip(h,dt||0)}}catch(e){dthErr(e)}return r}})();
+(function(){const b=window.humanDie;if(typeof b!=='function')return;window.humanDie=function(h,dir){const was=!!(h&&h.dead);const r=b.apply(this,arguments);try{if(h&&!was&&h.dead&&dthOn())dthStart(h,dir)}catch(e){dthErr(e)}return r}})();
+/* 총알 방향·머리 맞음을 정확히 넘긴다 + 맞는 순간의 피 */
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){try{if(t&&t.h&&d){t.h.dthD=d.clone?d.clone():{x:d.x,y:d.y,z:d.z};t.h.dthHead=t.part==='head'}}catch(e){}
+  const alive=!!(t&&t.h&&!t.h.dead);const r=b.apply(this,arguments);try{if(t&&t.h&&alive&&!(W&&W.nonlethal))dthHit(t,pt,d);if(t&&t.h&&!t.h.dead&&alive)t.h.dthD=null}catch(e){dthErr(e)}return r}})();
+/* ---------- 출혈 ---------- */
+function dthSplatTex(seed,pool){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');let r=seed*9301+49297;const R=()=>{r=(r*9301+49297)%233280;return r/233280};
+  const blob=(cx,cy,rad,col)=>{x.fillStyle=col;x.beginPath();const n=18;for(let i=0;i<=n;i++){const a=i/n*Math.PI*2;const rr=rad*(pool?(.82+R()*.3):(.7+R()*.5));const px=cx+Math.cos(a)*rr,py=cy+Math.sin(a)*rr;i?x.lineTo(px,py):x.moveTo(px,py)}x.closePath();x.fill()};
+  if(pool){blob(128,128,96,'rgba(70,6,8,.92)');blob(122,134,74,'rgba(92,10,12,.95)');blob(136,120,40,'rgba(110,16,18,.85)');for(let i=0;i<6;i++){const a=R()*6.28,d=86+R()*20;blob(128+Math.cos(a)*d,128+Math.sin(a)*d,10+R()*12,'rgba(70,6,8,.9)')}}
+  else{blob(128,128,40+R()*14,'rgba(96,10,12,.94)');for(let i=0;i<22;i++){const a=R()*6.28,d=30+R()*90,s=2+R()*9*(1-d/140);blob(128+Math.cos(a)*d,128+Math.sin(a)*d*.8,s,'rgba(104,12,14,.92)')}
+    for(let i=0;i<5;i++){const a=R()*6.28;x.strokeStyle='rgba(96,10,12,.85)';x.lineWidth=2+R()*4;x.beginPath();x.moveTo(128,128);x.lineTo(128+Math.cos(a)*(60+R()*50),128+Math.sin(a)*(60+R()*50));x.stroke()}}
+  const t=new T.CanvasTexture(c);try{t.colorSpace=T.SRGBColorSpace}catch(e){}t.anisotropy=4;return t}
+function dthInit(){if(DTH.geo)return;DTH.geo=new T.PlaneGeometry(1,1);DTH.geo.rotateX(-Math.PI/2);DTH.mats={};
+  const mk=tex=>new T.MeshStandardMaterial({map:tex,transparent:true,depthWrite:false,roughness:.22,metalness:0,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+  DTH.mats.s=[0,1,2].map(i=>mk(dthSplatTex(i+3,false)));DTH.mats.p=[0,1].map(i=>mk(dthSplatTex(i+11,true)))}
+function dthDecal(sc,x,y,z,size,kind){if(!sc)return null;dthInit();const L=DTH.mats[kind];const m=new T.Mesh(DTH.geo,L[Math.floor(Math.random()*L.length)]);m.position.set(x,y+.012+Math.random()*.004,z);m.rotation.y=Math.random()*6.283;m.scale.set(size,1,size*(.8+Math.random()*.3));m.renderOrder=1;m.castShadow=m.receiveShadow=false;m.name='blood';sc.add(m);
+  DTH.dec.push(m);DTH.dec=DTH.dec.filter(q=>q.parent);while(DTH.dec.length>70){const o=DTH.dec.shift();try{o.removeFromParent()}catch(e){}}return m}
+function dthSceneOf(h){let o=h&&h.root;while(o&&o.parent)o=o.parent;return o&&o.isScene?o:(OUT.scene||null)}
+function dthHit(t,pt,d){const lv=dthLv();if(lv==='off'||!pt)return;const h=t.h;if(dthKidFam(h,t))return;const sc=dthSceneOf(h);if(!sc)return;DTH.n.spray++;
+  const dir=d?new T.Vector3(d.x,d.y||0,d.z).normalize():new T.Vector3(Math.random()-.5,0,Math.random()-.5).normalize();const N=lv==='real'?(t.part==='head'?14:10):5;
+  try{for(let i=0;i<N;i++){const sp=PK.sprite(puffTex(),i%3?'#7a0f10':'#5e0a0b',.05+Math.random()*.06,sc,{op:.95,fog:1});sp.position.copy(pt);const v=dir.clone().multiplyScalar(1.4+Math.random()*3.2).add(new T.Vector3((Math.random()-.5)*1.6,.3+Math.random()*1.2,(Math.random()-.5)*1.6));OWC.fxL=OWC.fxL||[];OWC.fxL.push({el:sp,t:0,life:.3+Math.random()*.35,v,s0:sp.scale.x,op:.95,grow:.1})}
+    if(lv==='real'){const mist=PK.sprite(puffTex(),'#8a1414',.32,sc,{op:.55,fog:1});mist.position.copy(pt).addScaledVector(dir,.15);OWC.fxL.push({el:mist,t:0,life:.22,v:dir.clone().multiplyScalar(.8),s0:.32,op:.55,grow:.9})}}catch(e){dthErr(e)}
+  /* 뒤쪽 바닥 핏자국 */if(Math.random()<DTH.splatP){const gy=h.root.position.y;const k=.4+Math.random()*1.1;dthDecal(sc,pt.x+dir.x*k,gy,pt.z+dir.z*k,lv==='real'?.34+Math.random()*.32:.24+Math.random()*.16,'s');DTH.n.splat++}
+  if(!h.dead)h.bldT=25}
+function dthPoolStart(h,D){const lv=dthLv();D.pool=lv==='real'?{m:null,t:0,s1:.9+Math.random()*.45}:{none:1};if(D.pool.none)return;const sc=dthSceneOf(h);const B=h.b&&(h.b.chest||h.b.spine);if(!sc||!B)return;const p=B.getWorldPosition(new T.Vector3());
+  D.pool.m=dthDecal(sc,p.x,h.root.position.y,p.z,.05,'p');if(D.pool.m)DTH.n.pool++}
+function dthPoolGrow(D){const P=D.pool;if(!P||!P.m)return;P.t=D.t-D.dur;const k=Math.min(1,P.t/9);const e=1-Math.pow(1-k,2.2);const s=.05+(P.s1-.05)*e;P.m.scale.set(s,1,s*.86)}
+function dthDrip(h,dt){h.bldT-=dt;if(dthLv()==='off')return;const p=h.root.position;if(!h.bldP){h.bldP={x:p.x,z:p.z};return}const d=Math.hypot(p.x-h.bldP.x,p.z-h.bldP.z);if(d<.75)return;h.bldP={x:p.x,z:p.z};if(dthLv()!=='real'&&Math.random()<.5)return;
+  dthDecal(dthSceneOf(h),p.x+(Math.random()-.5)*.3,p.y,p.z+(Math.random()-.5)*.3,.08+Math.random()*.09,'s');DTH.n.drip++}
+/* 붉은 연기(예전 출혈): 끔이면 그것도 없다 · 교전에서 아군·적끼리 맞을 때는 방울을 조금 */
+(function(){const b=window.owcBlood;if(typeof b!=='function')return;window.owcBlood=function(p){if(dthOn()&&dthLv()==='off')return;return b.apply(this,arguments)}})();
+/* 바닥 자국 재질은 장면을 만들 때 미리 데운다(첫 피에 화면이 멈칫하지 않게) */
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(sc){const r=b.apply(this,arguments);try{DTH.dec=[];if(dthOn()&&dthLv()!=='off'){dthInit();const g=new T.Group();g.name='bloodWarm';for(const m of [...DTH.mats.s,...DTH.mats.p]){const q=new T.Mesh(DTH.geo,m);q.scale.setScalar(.001);q.position.set(0,-30,0);g.add(q)}sc.add(g)}}catch(e){dthErr(e)}return r}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="blood"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('blood','출혈 표현','맞으면 피가 튀고 바닥에 핏자국 · 쓰러진 몸 아래 피 웅덩이(실감) · 보통 = 튐·핏자국만 · 끔 = 없음 — 아이·가족은 늘 제외',[['real','실감'],['low','보통'],['off','끔']],store.get('sg.blood','real'));h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){dthErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='blood')return;try{store.set('sg.blood',['real','low','off'].includes(b.dataset.v)?b.dataset.v:'real')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🩸 쓰러짐 · 출혈(v18.5.2)','사람이 죽으면 맞은 방향으로 몸이 젖혀졌다가 무릎이 꺾이며 주저앉고, 총알 방향으로 무너져 팔다리가 늘어진 채 눕는다(앞에서 맞으면 뒤로, 뒤에서 맞으면 앞으로 · 머리에 맞으면 더 빨리). 맞는 순간 피가 총알 방향으로 튀고 뒤쪽 바닥에 핏자국이 남으며, 쓰러진 몸 아래로 피 웅덩이가 번진다. 맞고 살아서 움직이는 사람은 핏방울을 떨어뜨린다. 설정 \'출혈 표현\': 실감 · 보통(튐·핏자국만) · 끔. 아이·가족은 출혈 묘사가 없다(가족은 죽지 않는다).']);
+
+/* v18.6 새벽별 아지트 Ⅰ + 세계관 (사용자 요청 2026-11-23 19:38 "특정 위치에 우리 특수부대의 위장 아지트를 만들어서 거기서 총기조립·드론조립·비밀요원 양성·…·감청·…·감옥 … 여기서 뭔가를 구성하는 기능"
+   · 20:01 "게임 내 탕정이라는 도시가 매우 전략적 요충지로 되었음을 배경으로")
+   세계관(가상): 탕정 = 고속철 역 · 국도 두 갈래 · 첨단 산업단지가 한 점에 겹치는 전략 요충지. 적은 정면 대신 사람 속으로 — 침투조 · 매수된 범죄 조직 · 국적을 밝히지 않는 용병(예고)
+     국군이 정면을 막는 동안 새벽별은 골목·지하·사람 속을 맡는다 · 실존 기업·기관·정당과 무관 · 개념도는 실제 지형과 다르다
+   · 위장 아지트: 출발점 가까운 폐업 코인 빨래방(가상 상호) — 반쯤 내린 셔터 아래 지하 계단 · 지도 🏚 · 처음 들르면 '아지트 개설'(세탁기 모터·배선 회수 → 부품 +8)
+   · 방 6: 🗺 상황실(세계관 · 전략 개념도 · 첩보 상신 · 작전 일지) · 🔧 총기 조립(부품 → K5·K1A·K2C1·K14·K3, 계급별 · 탄약 조립 · 배낭 분해)
+     · 🛸 드론 작업대(부품 +1 → B급, 미니게임 없이 — 정밀 조립·납품은 드론 공방) · 🎯 요원 훈련(사격·은밀·위장 — 위장 60 이상 = 언더커버 후보, v18.7에서 쓴다)
+     · 🎧 감청실(적 무전·범죄 조직 채널만 — 첩보 + 단서: 내통자 · 수배 대상 · 수상한 사람 위치 · 턴마다 2번 · 미확인 첩보 교차 검증)
+     · 🔒 심문실·구치소(생포한 적 3명까지 · 3턴 안에 헌병 인계 · 증거·거래·회유 = 정확한 첩보 / 강압 = 규정 위반: 기강 −25, 진술은 미확인(대부분 거짓))
+   · 첩보(공용 화폐): 검증 3건 상신 → 공적 +18 · 미확인 첩보를 그대로 올리면 맞으면 +6, 거짓이면 기강 −8씩
+   · 아지트 일은 외출 시간을 쓴다(조립 30분 · 탄약 10분 · 감청·검증 1시간 · 훈련·심문 30분)
+   · 고문은 기능이 아니다 — 강압은 추상적인 선택지로만 있고 규정 위반·거짓 진술로 돌아온다(묘사 없음) · 교육용 모드에서는 꺼진다
+   · 설정 '새벽별 아지트' · 자동 점검(webdriver)은 __ajtTest일 때만 */
+const AJT={err:0,grp:null,sc:null,site:null,door:null,cells:null,box:null,tab:'sit',open:false,arm:'',n:{found:0,enter:0,gun:0,ammo:0,salv:0,drone:0,train:0,sig:0,xc:0,intg:0,coer:0,xfer:0,rep:0,cap:0,brief:0}};
+const AJT_GUN=[['k5',6,0],['k1a',10,0],['k2c1',14,1],['k14',22,2],['k3',30,3]];
+const AJT_SALV={laptop:3,radio:2,tools:2,charger:1};
+const AJT_AMN={'556':30,'9mm':30,'762':20,'545':30,'12ga':12,'38':24,'40mm':2,'bolt':6};
+const AJT_ROOM=[['sit','🗺','상황실'],['gun','🔧','총기 조립'],['drn','🛸','드론 작업대'],['trn','🎯','요원 훈련'],['sig','🎧','감청실'],['jail','🔒','심문·구치소']];
+const AJT_TRN={fire:{n:'사격',ic:'🎯',xp:20,uc:0},stl:{n:'은밀',ic:'🔭',xp:16,uc:5},cov:{n:'위장',ic:'🎭',xp:6,uc:20}};
+const AJT_RUMOR=['🌊 적 침투조가 하천 배수로로 드나든다는 교신','🏭 범죄 조직이 약탈품을 산업단지 빈 창고로 옮긴다는 통화','🚐 검은 승합차 두 대가 밤마다 정수장 둘레를 돈다','📡 암호 무전 — 장비가 좋은 무장 집단이 국도로 들어왔다(국적 불명)','🚉 고속철 역 화물칸을 노리는 약탈 계획이 돈다','⚡ 변전소 울타리가 잘려 있다는 순찰 보고'];
+const AJT_LORE=`<b>왜 탕정인가</b> — 고속철 역 · 국도 두 갈래 · 첨단 산업단지가 한 점에 겹친다. 남쪽으로 가는 병력과 보급이 이곳을 지나고, 산업단지가 멈추면 나라의 생산망이 흔들린다. 적은 정면 대신 사람 속으로 들어온다 — 침투조, 매수된 범죄 조직, 국적을 밝히지 않는 용병까지. <b>국군이 정면을 막는 동안, 새벽별은 골목·지하·사람 속을 맡는다.</b>`;
+function ajtErr(e){if(AJT.err<6){AJT.err++;try{console.error(e)}catch(x){}}}
+function ajtOn(){try{if(navigator.webdriver&&!window.__ajtTest)return false;if(typeof eduOn==='function'&&eduOn())return false;return store.get('sg.ajt',true)!==false}catch(e){return false}}
+function ajtS(){if(!G)return null;let S=G.hq;if(!S||typeof S!=='object'||S.v!==1)S=G.hq={v:1,on:0,iv:0,uq:[],pr:[],inf:0,seq:0,log:[],sig:{},sigL:[],brief:0,rep:0,coer:0};return S}
+function ajtLog(S,s){S.log.push({t:G.turn|0,s});if(S.log.length>16)S.log.splice(0,S.log.length-16)}
+function ajtParts(){try{return dfS().parts|0}catch(e){return 0}}
+function ajtPartsAdd(n){try{const D=dfS();D.parts=Math.max(0,(D.parts|0)+n)}catch(e){ajtErr(e)}}
+function ajtRank(){try{return typeof rkS==='function'&&rkOn()?(rkS().r|0):0}catch(e){return 0}}
+function ajtTimeOk(h){return !OUT.timed||OUT.h>=h-.01}
+function ajtTime(h){if(!ajtTimeOk(h)){try{toast('남은 외출 시간이 모자란다',1800)}catch(e){}return false}if(OUT.timed)OUT.h=Math.max(0,OUT.h-h);return true}
+function ajtMerit(n,why){try{if(typeof rkGain==='function')rkGain(n,why)}catch(e){ajtErr(e)}}
+function ajtDisc(n,why){try{if(typeof rkDisc==='function')rkDisc(n,why)}catch(e){ajtErr(e)}}
+function ajtIntel(n,ok,why){const S=ajtS();if(ok)S.iv+=n;else for(let i=0;i<n;i++)S.uq.push(Math.random()<.35?1:0);if(why)ajtLog(S,`📁 첩보 +${n}${ok?'':'(미확인)'} — ${why}`);return n}
+/* 단서: 내통자 → 수배 대상 → 수상한 사람 → 소문 */
+function ajtLead(src,spy){const P=FP3.pos;
+  try{if(typeof moleLive==='function'&&moleLive()&&(spy||Math.random()<.5)){const l=moleReveal(moleS(),src);if(l)return `🕵 내통자 단서 — ${l}`}}catch(e){ajtErr(e)}
+  try{if(typeof ROE!=='undefined'&&ROE.tg&&OUT.on){const T0=ROE.tg.find(q=>q&&!q.done&&!q.ajtI);if(T0){T0.ajtI=1;return `🎯 ${T0.def.n}의 ${T0.def.boss} ${T0.nm} — ${roeDir(T0.x-P.x,T0.z-P.z)}쪽 ${Math.round(Math.hypot(T0.x-P.x,T0.z-P.z))}m`}}}catch(e){ajtErr(e)}
+  try{const s=(OUT.npcs||[]).find(n=>n&&n.kind==='spy'&&!n.dead&&n.h&&!n.h.dead&&!n.ajtI);if(s){s.ajtI=1;const q=s.h.root.position;return `🕵 수상한 사람 — ${roeDir(q.x-P.x,q.z-P.z)}쪽 ${Math.round(Math.hypot(q.x-P.x,q.z-P.z))}m`}}catch(e){ajtErr(e)}
+  return AJT_RUMOR[Math.floor(Math.random()*AJT_RUMOR.length)]}
+/* ---------- 위장 아지트: 폐업 코인 빨래방 ---------- */
+function ajtSite(){let A=null;try{A=tjStartPt()}catch(e){}if(!A||typeof TJ==='undefined'||!TJ.occ||typeof dfRectOK!=='function')return null;const avoid=[{x:A.x,z:A.z,hx:4.5,hz:4.5},{x:A.bx,z:A.bz,hx:4,hz:4}];
+  try{const Ss=DF.sites;if(Ss){if(Ss.gs)avoid.push({x:Ss.gs.x,z:Ss.gs.z,hx:6,hz:6});if(Ss.df)avoid.push({x:Ss.df.x,z:Ss.df.z,hx:7.5,hz:7.5})}}catch(e){}
+  try{const ob=HOFF.box;if(ob)avoid.push({x:(ob.min.x+ob.max.x)/2,z:(ob.min.z+ob.max.z)/2,hx:(ob.max.x-ob.min.x)/2+2,hz:(ob.max.z-ob.min.z)/2+2})}catch(e){}
+  for(let r=12;r<=56;r+=1.5)for(let a=0;a<360;a+=10){const an=a*Math.PI/180;const cx=A.x+Math.sin(an)*r,cz=A.z+Math.cos(an)*r;const yaw=Math.round(Math.atan2(A.x-cx,A.z-cz)/(Math.PI/2))*(Math.PI/2);
+    if(!dfRectOK(cx,cz,yaw,3.8,3.2,4,avoid))continue;if(dfRoadD(cx,cz)<3.8)continue;return {x:cx,z:cz,yaw,r}}return null}
+function ajtShutterTex(){const c=document.createElement('canvas');c.width=512;c.height=256;const x=c.getContext('2d');x.fillStyle='#8f969d';x.fillRect(0,0,512,256);for(let y=0;y<256;y+=10){x.fillStyle='#6d747b';x.fillRect(0,y,512,2);x.fillStyle='#b3b9bf';x.fillRect(0,y+3,512,1)}
+  x.fillStyle='rgba(60,40,20,.25)';for(let i=0;i<14;i++){x.fillRect(Math.random()*512,Math.random()*256,2+Math.random()*30,1+Math.random()*3)}
+  x.save();x.translate(256,120);x.rotate(-.03);x.fillStyle='#f4f1e8';x.fillRect(-70,-52,140,104);x.fillStyle='#222';x.font='900 30px system-ui,"Noto Sans KR",sans-serif';x.textAlign='center';x.fillText('임시 휴업',0,-8);x.font='700 15px system-ui,"Noto Sans KR",sans-serif';x.fillText('사정상 당분간 쉽니다',0,22);x.fillStyle='#c0392b';x.fillRect(-70,-52,140,6);x.restore();return mkTex(c)}
+function ajtBuild(sc){try{dfUnmark(AJT.cells)}catch(e){}AJT.cells=null;AJT.grp=null;AJT.door=null;AJT.sc=null;try{if(AJT.box&&typeof TOWN!=='undefined'&&TOWN.solids){const i=TOWN.solids.indexOf(AJT.box);if(i>=0)TOWN.solids.splice(i,1)}}catch(e){}AJT.box=null;
+  if(!ajtOn())return;const L=ajtSite();AJT.site=L;if(!L)return;AJT.sc=sc;const g=new T.Group();g.position.set(L.x,0,L.z);g.rotation.y=L.yaw;g.name='ajtLaundry';sc.add(g);AJT.grp=g;const W=5.6,D=4.4,H=3.6,OH=2.5;
+  const wall=mat('#cfc6b8',{r:.9}),trim=mat('#3a4d63',{r:.6,m:.1}),dark=mat('#15181b',{r:.95}),white=mat('#eef1f3',{r:.45,m:.1}),glass=mat('#1d262e',{r:.15,m:.3});
+  MM(GG.box(W,H,.25),wall,0,H/2,-D/2+.12,{p:g});for(const s of [-1,1])MM(GG.box(.25,H,D),wall,s*(W/2-.12),H/2,0,{p:g});MM(GG.box(W+.3,.3,D+.3),trim,0,H+.15,0,{p:g});
+  for(const s of [-1,1])MM(GG.box(.6,H,.25),wall,s*(W/2-.3),H/2,D/2-.12,{p:g});MM(GG.box(W-1.2,H-OH,.25),wall,0,OH+(H-OH)/2,D/2-.12,{p:g});MM(GG.box(W,.06,D),mat('#5d6166',{r:.95}),0,.03,0,{p:g,cast:false});
+  MM(GG.box(W-1.4,.1,D-.6),dark,0,OH+.02,0,{p:g,cast:false});
+  MM(GG.pl(4.9,.92),mat('#ffffff',{map:dfSignTex('뽀송 코인 빨래방','셀프 세탁 · 건조 · 24시','#1f3b57','#9fd8ff'),e:'#ffffff',ei:.25,r:.5}),0,OH+.55,D/2+.02,{p:g,cast:false});
+  /* 반쯤 내린 셔터 + 아래로 새는 불빛 */const sh=MM(GG.pl(W-1.2,1.5),mat('#ffffff',{map:ajtShutterTex(),r:.55,m:.35}),0,OH-.75,D/2-.2,{p:g,cast:false});sh.userData.hq='shutter';
+  MM(GG.box(W-1.2,.1,.18),mat('#5a6168',{r:.4,m:.6}),0,OH-1.52,D/2-.2,{p:g,cast:false});MM(GG.pl(W-1.3,.05),mat('#ffb45e',{e:'#ffb45e',ei:1.1,r:.5}),0,.03,D/2-.25,{p:g,cast:false}).rotation.x=-Math.PI/2;
+  /* 안: 세탁기 · 건조기 · 지하 계단 */for(let k=0;k<3;k++){const x0=-1.6+k*1.0;MM(GG.box(.78,.92,.66),white,x0,.46,-D/2+.55,{p:g});const dr=MM(GG.cyl(.24,.24,.04,18),glass,x0,.5,-D/2+.9,{p:g,cast:false});dr.rotation.x=Math.PI/2;MM(GG.box(.78,.7,.66),white,x0,1.3,-D/2+.55,{p:g})}
+  MM(GG.box(1.1,.05,1.6),dark,1.85,.06,-.2,{p:g,cast:false});for(let k=0;k<4;k++)MM(GG.box(1.0,.04,.26),mat('#3b3f44',{r:.9}),1.85,.08-.0,-.8+k*.38,{p:g,cast:false});
+  /* 오른쪽 기둥: 작은 번호 자물쇠(초록 불) · 기둥 전단지 */MM(GG.box(.14,.2,.05),mat('#22262b',{r:.5,m:.4}),W/2-.3,1.25,D/2+.02,{p:g,cast:false});MM(GG.box(.03,.03,.02),mat('#39ff88',{e:'#39ff88',ei:1.6}),W/2-.3,1.31,D/2+.05,{p:g,cast:false});
+  MM(GG.pl(.42,.58),mat('#f0eadc',{r:.9}),-(W/2-.3),1.45,D/2+.01,{p:g,cast:false});
+  g.updateMatrixWorld(true);const fx=Math.sin(L.yaw),fz=Math.cos(L.yaw);const toW=(u,v)=>({x:L.x+Math.cos(L.yaw)*u+fx*v,z:L.z-Math.sin(L.yaw)*u+fz*v});AJT.door=toW(0,D/2+1.3);AJT.front=toW(0,D/2+5.5);
+  const c=Math.abs(Math.cos(L.yaw)),s=Math.abs(Math.sin(L.yaw));const bx=new T.Box3().setFromCenterAndSize(new T.Vector3(L.x,H/2,L.z),new T.Vector3(W*c+D*s,H,W*s+D*c));if(typeof TOWN!=='undefined'&&TOWN.solids)TOWN.solids.push(bx);AJT.box=bx;AJT.cells=[];dfMark(bx,AJT.cells)}
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(sc){const r=b.apply(this,arguments);try{ajtBuild(sc)}catch(e){ajtErr(e)}return r}})();
+(function(){const b=window.outCands;if(typeof b!=='function')return;window.outCands=function(){const L=b.apply(this,arguments);try{if(Array.isArray(L)&&ajtOn()&&OUT.on&&AJT.door&&AJT.sc===OUT.scene&&!OUT.drv&&!OUT.ride&&!AJT.open){const S=ajtS();
+  L.push({id:'hq',k:'hq',x:AJT.door.x,z:AJT.door.z,r:3.2,g:'🏚',n:S.on?'새벽별 아지트 (빨래방 지하)':'폐업한 코인 빨래방',s:S.on?`부품 ${ajtParts()} · 첩보 ${S.iv} · 구치소 ${S.pr.length}/3`:'셔터가 반쯤 내려진 빈 가게 — 지하를 아지트로 쓸 수 있다',h:0,nomap:0})}}catch(e){ajtErr(e)}return L}})();
+(function(){const b=window.outDo;if(typeof b!=='function')return;window.outDo=function(c){if(c&&c.k==='hq'&&!OUT.busy&&!OUT.enc){ajtEnter();return}return b.apply(this,arguments)}})();
+function ajtFade(fn){let f=document.getElementById('ajtFade');if(!f){f=document.createElement('div');f.id='ajtFade';f.className='hq-fade';document.body.appendChild(f)}f.classList.add('on');setTimeout(()=>{try{fn()}catch(e){ajtErr(e)}setTimeout(()=>{try{f.classList.remove('on')}catch(e){}},80)},360)}
+function ajtEnter(){if(!OUT.on||AJT.open)return;FP3.lock=true;FP3.mv.x=FP3.mv.y=0;AJT.n.enter++;try{SND.tone(180,.12,'sine',.05)}catch(e){}ajtFade(()=>ajtPanel(true))}
+function ajtExit(){ajtFade(()=>{ajtPanel(false);FP3.lock=false})}
+/* ---------- 방별 일 ---------- */
+function ajtFound(){const S=ajtS();if(S.on)return false;S.on=1;S.onT=G.turn|0;ajtPartsAdd(8);AJT.n.found++;ajtLog(S,'🏚 아지트 개설 — 세탁기 모터·배선 회수(부품 +8)');ajtMerit(10,'위장 아지트 개설');AJT.tab='sit';return true}
+function ajtGun(id){const G0=AJT_GUN.find(q=>q[0]===id);const W=ARMS[id];if(!G0||!W)return false;if(gunArms().some(a=>a.id===id))return false;if(G0[2]>ajtRank()||ajtParts()<G0[1]||!ajtTimeOk(.5))return false;
+  const r=gunAdd(id,{ammo:W.mag?W.mag*2:0});if(!r||r==='dup'){try{toast('배낭에 자리가 없다',1800)}catch(e){}return false}ajtTime(.5);ajtPartsAdd(-G0[1]);AJT.n.gun++;ajtLog(ajtS(),`🔧 ${W.n} 조립`);try{toast(`🔧 ${W.n} 조립 — 탄 ${W.mag*2}발`,2200)}catch(e){}return true}
+function ajtAmmoAm(){try{const id=GUN.eq||G.eq;const W=id&&ARMS[id];if(W&&W.am)return W.am}catch(e){}return '556'}
+function ajtAmmo(){if(ajtParts()<1||!ajtTime(1/6))return 0;const am=ajtAmmoAm();const n=AJT_AMN[am]||20;ajtPartsAdd(-1);gunAmmoAdd(am,n);AJT.n.ammo++;try{gunAmmoUI()}catch(e){}return n}
+function ajtSalvV(k){return AJT_SALV[k]||(typeof DF_SALV!=='undefined'&&DF_SALV[k])||0}
+function ajtSalv(k){const v=ajtSalvV(k);if(!v||(G.inv[k]|0)<1)return 0;give(k,-1);ajtPartsAdd(v);AJT.n.salv++;return v}
+function ajtDroneLv(){try{return Math.max(1,dfS().lv|0)}catch(e){return 1}}
+function ajtDrone(t){const T0=DF_T[t];if(!T0||T0.lv>ajtDroneLv())return false;const c=T0.p+1;if(ajtParts()<c||!ajtTime(.5))return false;ajtPartsAdd(-c);dfS().inv.push({t,g:'B',turn:G.turn|0});AJT.n.drone++;ajtLog(ajtS(),`🛸 ${T0.s} 드론 조립(B급)`);return true}
+function ajtMembers(){try{return (tmData()||[]).filter(d=>d&&d.st!=='kia')}catch(e){return []}}
+function ajtTrain(nm,kind){const K=AJT_TRN[kind];const d=ajtMembers().find(x=>x.nm===nm);if(!K||!d||d.ajtT===(G.turn|0)||!ajtTime(.5))return null;d.ajtT=G.turn|0;let xp=K.xp,dry=0;if(kind==='fire'){if(gunAmmoOf('556')>=10)gunAmmoAdd('556',-10);else{xp=12;dry=1}}
+  const lv0=tlvLv(d);d.xp=(d.xp|0)+xp;let lv=lv0;while(lv<6&&d.xp>=TLV.xp[lv])lv++;if(lv!==lv0){d.lv=lv;try{const m=TEAM.list.find(q=>q.d===d);if(m)tmTag(m)}catch(e){}try{toast(`⬆ ${d.nm} Lv.${lv}`,1800)}catch(e){}}
+  d.uc=Math.min(100,(d.uc|0)+K.uc);AJT.n.train++;ajtLog(ajtS(),`${K.ic} ${d.nm} ${K.n} 훈련${dry?'(건식 — 5.56mm 탄 없음)':''}`);ajtMerit(3,'요원 훈련');return {xp,lv,uc:d.uc,dry}}
+function ajtSigLeft(S){return Math.max(0,2-(S.sig[String(G.turn|0)]|0))}
+function ajtSig(){const S=ajtS();if(!ajtSigLeft(S)||!ajtTime(1))return null;const k=String(G.turn|0);S.sig={[k]:(S.sig[k]|0)+1};let n=1;if((G.inv.radio|0)>0)n++;if((G.inv.laptop|0)>0)n++;ajtIntel(n,true,'감청');const L=ajtLead('감청',false);S.sigL=(S.sigL||[]).concat([{t:G.turn|0,s:L}]).slice(-4);AJT.n.sig++;ajtMerit(4,'감청 분석');return {n,L}}
+function ajtCross(){const S=ajtS();if(!S.uq.length||!ajtTime(1))return null;const ok=S.uq.filter(x=>x).length,bad=S.uq.length-ok;S.uq=[];S.iv+=ok;AJT.n.xc++;ajtLog(S,`🔍 교차 검증 — ${ok}건 확인 · ${bad}건 거짓(버림)`);return {ok,bad}}
+function ajtReport(){const S=ajtS();if(S.iv<3)return 0;S.iv-=3;S.rep++;AJT.n.rep++;ajtLog(S,'📤 검증 첩보 3건 상신');ajtMerit(18,'첩보 상신');return 18}
+function ajtReportU(){const S=ajtS();if(!S.uq.length)return null;const ok=S.uq.filter(x=>x).length,bad=S.uq.length-ok;S.uq=[];if(ok)ajtMerit(6*ok,'미확인 첩보 상신 — 맞음');if(bad)ajtDisc(-8*bad,`허위 첩보 상신 ${bad}건`);ajtLog(S,`⚠ 미확인 첩보 상신 — 맞음 ${ok} · 거짓 ${bad}`);return {ok,bad}}
+/* 생포 → 구치소(인계 전) */
+function ajtCapture(a){if(!ajtOn()||!G)return null;const S=ajtS();if(!S.on)return null;if(typeof IS!=='undefined'&&IS.k==='law')return null;AJT.n.cap++;
+  if(S.pr.length>=3)return {jail:0,t:'<div>🔒 아지트 구치소가 가득 찼다 — 이번 포로는 곧바로 넘겼다.</div>'};
+  const id=++S.seq;let k='en',src=(typeof IS!=='undefined'&&IS.o&&IS.o.nm)||'무장 괴한';if(a&&a.spyCap){k='spy';src='간첩'}else if(a&&a.roeT){k='tgt';try{const T0=ROE.tg.find(q=>q.boss===a);if(T0)src=`${T0.def.n} ${T0.def.boss}`}catch(e){}}
+  let nm='미상';try{nm=npcName('hqp'+(G.seed||0)+'_'+id,'m')}catch(e){}S.pr.push({id,nm,k,src:String(src).replace(/<[^>]+>/g,'').slice(0,24),t:G.turn|0,st:'new',res:''});ajtLog(S,`🔒 ${nm} 구금 — ${src}`);
+  return {jail:1,t:`<div>🔒 헌병 인계 전에 새벽별 아지트 구치소로 — 심문한 뒤 넘긴다(${S.pr.length}/3 · 3턴 안).</div>`}}
+(function(){if(typeof IS==='undefined')return;const b=IS.onCapture;IS.onCapture=function(a){let t='';try{t=typeof b==='function'?(b(a)||''):''}catch(e){}try{const add=ajtCapture(a);if(add){if(add.jail)t=t.replace('계엄군에 넘겼다','아지트 구치소로 데려갔다').replace('검문소 국군에 넘겼다','아지트 구치소로 데려갔다');t+=add.t}}catch(e){ajtErr(e)}return t}})();
+function ajtInt(pid,how){const S=ajtS();const P0=S.pr.find(q=>q.id===+pid);if(!P0||P0.st!=='new')return null;const spy=P0.k==='spy';
+  if(how==='coer'){if(AJT.arm!=='c'+P0.id){AJT.arm='c'+P0.id;return 'arm'}AJT.arm='';if(!ajtTime(.5))return null;S.coer++;AJT.n.coer++;ajtDisc(-25,'불법 강압 심문 — 규정 위반');ajtIntel(3,false,`${P0.nm} 강압 심문`);
+    P0.st='coer';P0.res='규정을 어긴 심문 — 기록에 남았다. 겁에 질린 사람은 듣고 싶은 말을 한다: 진술 3건은 믿기 어렵다(미확인).';return P0.res}
+  AJT.arm='';
+  if(how==='ev'){if(S.iv<1||!ajtTime(.5))return null;S.iv-=1;const good=Math.random()<.85;ajtIntel(good?3:1,true,`${P0.nm} 심문(증거)`);P0.res=good?`증거 앞에서 입을 열었다 — ${ajtLead('심문',spy)}`:'증거 앞에서도 말을 아꼈다 — 조각 정보뿐'}
+  else if(how==='deal'){if((G.inv.cash|0)<1||!ajtTime(.5))return null;give('cash',-1);ajtIntel(2,true,`${P0.nm} 심문(거래)`);P0.res=`감형 건의를 약속받고 진술했다 — ${ajtLead('심문',spy)}`}
+  else if(how==='pers'){if(!ajtTime(.5))return null;const p=Math.min(.85,.4+.05*ajtRank()+Math.max(0,G.trust|0)*.01);if(Math.random()<p){ajtIntel(2,true,`${P0.nm} 심문(회유)`);S.inf++;P0.res=`마음을 돌렸다 — 정보원이 되기로 했다 · ${ajtLead('심문',spy)}`}else P0.res='입을 굳게 닫았다 — 얻은 것이 없다'}
+  else return null;P0.st='done';AJT.n.intg++;ajtMerit(6,'적법 심문');return P0.res}
+function ajtXfer(pid,late){const S=ajtS();const i=S.pr.findIndex(q=>q.id===+pid);if(i<0)return false;const P0=S.pr[i];S.pr.splice(i,1);AJT.n.xfer++;if(AJT.arm==='c'+P0.id)AJT.arm='';
+  if(late)ajtDisc(-5,'구금 기한 초과(3턴)');else ajtMerit(8,'포로 헌병 인계');ajtLog(S,`🚐 ${P0.nm} 헌병 인계${late?' — 기한 초과':''}`);return true}
+/* 턴이 끝날 때: 구금 기한 3턴 */
+(function(){const b=window.processDelayed;if(typeof b!=='function')return;window.processDelayed=function(notes){const r=b.apply(this,arguments);try{if(ajtOn()&&G&&!G.over&&G.hq&&G.hq.pr&&G.hq.pr.length){for(const P0 of G.hq.pr.slice())if((G.turn|0)-P0.t>=3){ajtXfer(P0.id,true);if(Array.isArray(notes))notes.push(`🔒 구금 기한(3턴)을 넘긴 포로 ${josa(P0.nm,'을를')} 헌병이 데려갔다 — 기강 −5.`)}}}catch(e){ajtErr(e)}return r}})();
+/* ---------- 상황실 전략 개념도 ---------- */
+function ajtMapDraw(cv){const W=560,H=230;cv.width=W*2;cv.height=H*2;const x=cv.getContext('2d');x.scale(2,2);const F='system-ui,"Noto Sans KR",sans-serif';
+  x.fillStyle='#0b141d';x.fillRect(0,0,W,H);x.strokeStyle='rgba(120,170,220,.07)';x.lineWidth=1;for(let i=0;i<=W;i+=20){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke()}for(let j=0;j<=H;j+=20){x.beginPath();x.moveTo(0,j);x.lineTo(W,j);x.stroke()}
+  const lab=(t,px,py,c,al,f)=>{x.font=f||`700 10.5px ${F}`;x.textAlign=al||'left';x.lineWidth=3;x.strokeStyle='#0b141d';x.strokeText(t,px,py);x.fillStyle=c||'#cfe3f5';x.fillText(t,px,py)};
+  x.lineCap='round';x.strokeStyle='#2d6aa0';x.lineWidth=9;x.beginPath();x.moveTo(0,42);x.bezierCurveTo(90,30,140,92,230,72);x.bezierCurveTo(300,56,330,22,392,0);x.stroke();lab('하천',96,30,'#7fb6e6');
+  x.strokeStyle='#d98a2b';x.lineWidth=5;x.beginPath();x.moveTo(30,H);x.lineTo(300,112);x.lineTo(W,92);x.stroke();x.beginPath();x.moveTo(262,0);x.lineTo(300,112);x.lineTo(330,H);x.stroke();
+  x.fillStyle='#f0b25a';x.beginPath();x.arc(300,112,6,0,7);x.fill();lab('국도 교차로',310,108,'#f6c47a');lab('국도',60,214,'#d9a35a');lab('국도',512,86,'#d9a35a');
+  x.setLineDash([10,6]);x.strokeStyle='#e6edf3';x.lineWidth=3;x.beginPath();x.moveTo(0,176);x.lineTo(W,140);x.stroke();x.setLineDash([]);x.fillStyle='#e6edf3';x.fillRect(128,156,46,18);lab('고속철 역',151,193,'#ffffff','center');
+  x.save();x.beginPath();x.rect(392,124,150,78);x.clip();x.fillStyle='rgba(110,190,160,.18)';x.fillRect(392,124,150,78);x.strokeStyle='rgba(110,190,160,.55)';x.lineWidth=1.5;for(let i=-80;i<240;i+=10){x.beginPath();x.moveTo(392+i,124);x.lineTo(392+i+78,202);x.stroke()}x.restore();x.strokeStyle='#6ebea0';x.lineWidth=2;x.strokeRect(392,124,150,78);lab('첨단 산업단지',467,168,'#bff0dc','center',`800 12px ${F}`);
+  x.fillStyle='#4aa3df';x.beginPath();x.arc(70,102,11,0,7);x.fill();lab('정수장',70,126,'#9fd2f5','center');
+  x.fillStyle='#e8c547';x.fillRect(466,30,20,20);lab('⚡',476,45,'#1b1b1b','center',`900 13px ${F}`);lab('변전소',476,64,'#f2dc85','center');
+  x.fillStyle='#b9c4cf';x.beginPath();x.moveTo(206,14);x.lineTo(216,40);x.lineTo(196,40);x.closePath();x.fill();lab('통신 중계탑',206,54,'#c9d4de','center');
+  const star=(cx,cy,R)=>{x.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5;const r=i%2?R*.45:R;x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}x.closePath();x.fill()};x.fillStyle='#ffd27a';star(236,146,11);lab('새벽별 아지트 · 우리 단지 앞',252,150,'#ffd27a','left',`800 11px ${F}`);
+  const arrow=(x0,y0,x1,y1,dash)=>{x.strokeStyle='#ff6b5b';x.fillStyle='#ff6b5b';x.lineWidth=2.5;if(dash)x.setLineDash([6,5]);x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();x.setLineDash([]);const a=Math.atan2(y1-y0,x1-x0);x.beginPath();x.moveTo(x1,y1);x.lineTo(x1-Math.cos(a-.45)*9,y1-Math.sin(a-.45)*9);x.lineTo(x1-Math.cos(a+.45)*9,y1-Math.sin(a+.45)*9);x.closePath();x.fill()};
+  arrow(16,74,120,96);lab('적 침투조 — 하천 배수로',10,90,'#ff8f80');arrow(214,228,230,168);lab('범죄 조직 — 남쪽 뒷골목',150,222,'#ff8f80');arrow(556,58,474,104,true);lab('용병(국적 불명) — 예고',552,52,'#ff8f80','right');
+  lab('전략 개념도 · 가상',W-8,H-8,'rgba(200,215,230,.5)','right',`700 9px ${F}`)}
+/* ---------- 패널 ---------- */
+function ajtBadge(k,S){let n='';if(k==='jail'&&S.pr.length)n=S.pr.length;else if(k==='sig'&&ajtSigLeft(S))n=ajtSigLeft(S);else if(k==='sit'&&S.iv>=3)n='!';return n!==''?`<em>${n}</em>`:''}
+const ajtBtn=(k,v,label,can,cls,w)=>`<button class="btn sm${can?(cls===''?'':' pri'):' dis'}${cls&&cls!==''?' '+cls:''}" data-hq="${k}"${v!=null?` data-v="${v}"`:''}${w!=null?` data-w="${w}"`:''}${can?'':' disabled'}>${label}</button>`;
+function ajtRoom(k,S){const P=ajtParts();let h='';
+  if(k==='sit'){h+=`<div class="hq-lore">${AJT_LORE}</div><canvas class="hq-map" width="560" height="230"></canvas><small class="hq-cap">전략 개념도 — 실제 지형·시설과 다르다(가상)</small>`;
+    h+=`<div class="mis-row"><span class="mis-ico">📤</span><div><b>검증 첩보 상신</b><small>3건 → 공적 +18 · 사령부가 작전에 쓴다 (검증 ${S.iv}건)</small></div>${ajtBtn('rep',null,'상신',S.iv>=3)}</div>`;
+    if(S.uq.length)h+=`<div class="mis-row"><span class="mis-ico">⚠</span><div><b>미확인 첩보 그대로 상신</b><small>${S.uq.length}건 — 맞으면 공적 +6씩, 거짓이면 기강 −8씩. 감청실에서 먼저 교차 검증할 수 있다</small></div>${ajtBtn('repu',null,'상신',true,'')}</div>`;
+    h+=`<div class="hq-log"><small>작전 일지</small>${S.log.slice(-6).reverse().map(l=>`<div>${l.t}턴 · ${l.s}</div>`).join('')}</div>`}
+  else if(k==='gun'){const r=ajtRank();h+=`<p class="mis-note">부품으로 국군 제식 총기를 조립한다(30분). 계급이 오를수록 무거운 화기를 맡긴다 — 게임 속 연출, 실제 제작법이 아니다.</p>`;
+    for(const [id,p,rq] of AJT_GUN){const W=ARMS[id];if(!W)continue;const own=gunArms().some(a=>a.id===id);const lock=rq>r;const can=!own&&!lock&&P>=p&&ajtTimeOk(.5);
+      h+=`<div class="mis-row"><span class="mis-ico">🔧</span><div><b>${W.n}</b><small>${W.d}</small><em>부품 ${p}${lock&&typeof RK_R!=='undefined'?` · ${RK_R[rq].n} 이상`:''}${own?' · 보유 중':''}</em></div>${ajtBtn('gun',id,own?'보유':'조립',can)}</div>`}
+    const am=ajtAmmoAm();const an=(typeof AMMO!=='undefined'&&AMMO[am]&&AMMO[am].n)||am;h+=`<div class="mis-row"><span class="mis-ico">🧰</span><div><b>탄약 조립</b><small>부품 1 → ${an} ${AJT_AMN[am]||20}발 (쥔 총 기준 · 10분)</small></div>${ajtBtn('ammo',null,'조립',P>=1&&ajtTimeOk(1/6))}</div>`;
+    const ks=[...new Set([...Object.keys(AJT_SALV),...Object.keys(typeof DF_SALV!=='undefined'?DF_SALV:{})])].filter(q=>(G.inv[q]|0)>0);
+    h+=ks.length?ks.map(q=>`<div class="mis-row"><span class="mis-ico">🪛</span><div><b>${bagName(q)} 분해</b><small>가진 것 ${G.inv[q]|0}개 · 하나에 부품 ${ajtSalvV(q)}${q==='radio'||q==='laptop'?' (감청실에서 쓰면 첩보 +1)':''}</small></div>${ajtBtn('salv',q,'분해',true,'')}</div>`).join(''):`<p class="mis-note">분해할 배낭 물건이 없다 — 노트북 3 · 라디오 2 · 멀티툴 2 · 충전기 1 · 건전지 2 …</p>`}
+  else if(k==='drn'){const lv=ajtDroneLv();h+=`<p class="mis-note">작업대에서 미니게임 없이 B급으로 조립한다(부품 +1 · 30분). 정밀 조립(S·A급)과 국군·경찰 납품은 탕정 드론 공방에서.</p>`;
+    for(const t of Object.keys(DF_T)){const T0=DF_T[t];const lock=T0.lv>lv;const c=T0.p+1;let have=0;try{have=dfCount(t)}catch(e){}h+=`<div class="mis-row"><span class="mis-ico">${T0.ico}</span><div><b>${T0.n} <small>재고 ${have}</small></b><small>${T0.d}</small><em>부품 ${c}${lock?` · 드론 공방 ${T0.lv}단계 필요`:''}</em></div>${ajtBtn('drn',t,'조립',!lock&&P>=c&&ajtTimeOk(.5))}</div>`}}
+  else if(k==='trn'){const L=ajtMembers();h+=`<p class="mis-note">민간 요원을 기른다(한 사람에 하루 한 번 · 30분). 🎯사격 경험치 +20(5.56mm 탄 10) · 🔭은밀 +16·위장 +5 · 🎭위장 +20 — 위장 60 이상이면 <b>언더커버 후보</b>(다음 판에서 적 조직에 심는다).</p>`;
+    if(!L.length)h+=`<p class="mis-note">아직 팀원이 없다 — 밖에서 주민에게 말을 걸어 팀에 들인다.</p>`;
+    for(const d of L){const done=d.ajtT===(G.turn|0);const can=!done&&ajtTimeOk(.5)&&d.st!=='away';const uc=d.uc|0;const R=(typeof RK_ROLE!=='undefined'&&RK_ROLE[d.role])||d.role;
+      h+=`<div class="mis-row hq-tr"><span class="mis-ico">👤</span><div><b>${d.nm} <small>${R} · Lv.${(d.lv|0)||1}</small>${uc>=60?'<span class="hq-tag">언더커버 후보</span>':''}</b><small>경험치 ${d.xp|0} · 위장 <i class="hq-uc"><i style="width:${uc}%"></i></i> ${uc}${done?' · 오늘 훈련함':''}</small></div><div class="hq-btns">${Object.keys(AJT_TRN).map(q=>ajtBtn('trn',d.nm,AJT_TRN[q].ic+' '+AJT_TRN[q].n,can,'',q)).join('')}</div></div>`}}
+  else if(k==='sig'){const left=ajtSigLeft(S);const n=1+((G.inv.radio|0)>0?1:0)+((G.inv.laptop|0)>0?1:0);h+=`<p class="mis-note">적 무전과 범죄 조직 채널만 듣는다 — 시민의 통신은 감청하지 않는다(영장 원칙). 1시간 · 턴마다 2번.</p>`;
+    h+=`<div class="mis-row"><span class="mis-ico">🎧</span><div><b>감청</b><small>첩보 +${n} (기본 1 · 라디오 +1 · 노트북 +1) + 단서 하나 — 남은 횟수 ${left}</small></div>${ajtBtn('sig',null,'감청',left>0&&ajtTimeOk(1))}</div>`;
+    h+=`<div class="mis-row"><span class="mis-ico">🔍</span><div><b>교차 검증</b><small>미확인 첩보 ${S.uq.length}건 — 맞는 것만 남기고 거짓은 버린다(1시간)</small></div>${ajtBtn('xc',null,'검증',S.uq.length>0&&ajtTimeOk(1))}</div>`;
+    h+=`<div class="hq-log"><small>최근 감청 단서</small>${(S.sigL||[]).slice().reverse().map(l=>`<div>${l.t}턴 · ${l.s}</div>`).join('')||'<div>아직 없다</div>'}</div>`}
+  else if(k==='jail'){h+=`<p class="mis-note">생포한 적은 헌병에 넘기기 전 이곳에 둔다(3명 · 3턴 안에 인계). 적법한 심문(증거·거래·회유)은 정확한 첩보로, 강압은 규정 위반과 거짓 진술로 돌아온다.</p>`;
+    if(!S.pr.length)h+=`<p class="mis-note">비어 있다 — 교전에서 손을 든 적을 묶으면(생포) 이리 데려온다.</p>`;
+    for(const P0 of S.pr){const age=(G.turn|0)-P0.t;h+=`<div class="hq-pr"><div class="hq-pr-h"><span>🔗 ${P0.nm} <small>${P0.src}</small></span><small>구금 ${age+1}턴째 · 기한 3턴</small></div>`;
+      if(P0.st==='new'){const armed=AJT.arm==='c'+P0.id;h+=`<div class="hq-btns">${ajtBtn('int',P0.id,'📑 증거(첩보 1)',S.iv>=1&&ajtTimeOk(.5),'','ev')}${ajtBtn('int',P0.id,'🤝 거래(현금 1)',(G.inv.cash|0)>=1&&ajtTimeOk(.5),'','deal')}${ajtBtn('int',P0.id,'🗣 회유',ajtTimeOk(.5),'','pers')}${ajtBtn('int',P0.id,armed?'⛓ 정말? 기강 −25':'⛓ 강압(불법)',ajtTimeOk(.5),armed?'hq-arm':'','coer')}${ajtBtn('xf',P0.id,'🚐 인계',true,'')}</div>`}
+      else h+=`<div class="hq-pr-r${P0.st==='coer'?' bad':''}">${P0.res}</div><div class="hq-btns">${ajtBtn('xf',P0.id,'🚐 헌병 인계 (공적 +8)',true)}</div>`;h+=`</div>`}}
+  return h}
+function ajtPanel(open){const el=SV3.el;let p=document.getElementById('ajtPanel');if(!open){if(p)p.remove();AJT.open=false;AJT.arm='';return}const S=ajtS();if(!el||!S)return;AJT.open=true;if(!p){p=document.createElement('div');p.id='ajtPanel';p.className='mis-panel hq-panel';el.appendChild(p)}
+  let h=`<div class="mis-head"><b>🏚 새벽별 아지트 <small>빨래방 지하</small></b><button class="btn sm" data-hq="x">나가기</button></div>`;
+  if(!S.on){h+=`<div class="hq-lore">${AJT_LORE}</div><p class="mis-note">셔터 아래로 지하 계단이 이어진다. 세탁 기계실·창고·보일러실·작은 방 둘이 비어 있다 — 밖에서는 그냥 문 닫은 빨래방이다.</p><div class="df-found">${ajtBtn('found',null,'🏚 아지트 개설 (세탁기 모터·배선 회수 → 부품 +8)',true)}</div>`;p.innerHTML=h;return}
+  const tl=OUT.timed?`${Math.max(0,OUT.h).toFixed(1)}시간`:'자유';
+  h+=`<div class="hq-res"><span>🔩 부품 <b>${ajtParts()}</b></span><span>📁 첩보 <b>${S.iv}</b>${S.uq.length?` <em>미확인 ${S.uq.length}</em>`:''}</span><span>🔒 구치소 <b>${S.pr.length}/3</b></span><span>🤝 정보원 <b>${S.inf}</b></span><span>⏱ 남은 시간 <b>${tl}</b></span></div>`;
+  h+=`<div class="hq-rooms">${AJT_ROOM.map(([k,ic,n])=>`<button class="hq-room${AJT.tab===k?' on':''}" data-hq="tab" data-v="${k}"><i>${ic}</i><span>${n}</span>${ajtBadge(k,S)}</button>`).join('')}</div><div class="hq-body">${ajtRoom(AJT.tab,S)}</div>`;
+  p.innerHTML=h;const cv=p.querySelector('canvas.hq-map');if(cv)try{ajtMapDraw(cv)}catch(e){ajtErr(e)}}
+function ajtClick(k,v,w){let msg='';
+  if(k==='x'){ajtExit();return}if(k==='bx'){ajtBrief(false);return}
+  if(k==='found'){if(ajtFound())msg='🏚 아지트 개설 — 부품 +8 · 공적 +10'}
+  else if(k==='tab')AJT.tab=v;
+  else if(k==='gun')ajtGun(v);else if(k==='ammo'){const n=ajtAmmo();if(n)msg=`🧰 탄 ${n}발`}else if(k==='salv'){const n=ajtSalv(v);if(n)msg=`🪛 부품 +${n}`}
+  else if(k==='drn'){if(ajtDrone(v))msg=`🛸 ${DF_T[v].s} 드론 B급 조립`}
+  else if(k==='trn'){const r=ajtTrain(v,w);if(r)msg=`${AJT_TRN[w].ic} ${v} — 경험치 +${r.xp}${r.uc?` · 위장 ${r.uc}`:''}`}
+  else if(k==='sig'){const r=ajtSig();if(r)try{outNote(`<b>🎧 감청 — 첩보 +${r.n}</b><div>${r.L}</div>`,4200)}catch(e){}}
+  else if(k==='xc'){const r=ajtCross();if(r)msg=`🔍 ${r.ok}건 확인 · ${r.bad}건 거짓`}
+  else if(k==='rep'){if(ajtReport())msg='📤 첩보 상신 — 공적 +18'}else if(k==='repu'){const r=ajtReportU();if(r)msg=`⚠ 맞음 ${r.ok} · 거짓 ${r.bad}`}
+  else if(k==='int'){const r=ajtInt(v,w);if(r&&r!=='arm')try{outNote(`<b>🔒 심문</b><div>${r}</div>`,4600)}catch(e){}}
+  else if(k==='xf'){if(ajtXfer(v,false))msg='🚐 헌병 인계 — 공적 +8'}
+  if(msg)try{toast(msg,1800)}catch(e){}if(AJT.open)ajtPanel(true)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-hq]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.disabled)return;try{ajtClick(b.dataset.hq,b.dataset.v,b.dataset.w)}catch(x){ajtErr(x)}},true);
+/* ---------- 처음 나갈 때: 작전 브리핑(왜 탕정인가 · 아지트 위치) ---------- */
+function ajtBrief(open){const el=SV3.el;let p=document.getElementById('ajtBrief');if(!open){if(p)p.remove();return}if(!el)return;if(!p){p=document.createElement('div');p.id='ajtBrief';p.className='mis-panel hq-brief';el.appendChild(p)}AJT.n.brief++;
+  let where='';try{if(AJT.door){const P=FP3.pos;where=` — 지금 자리에서 ${roeDir(AJT.door.x-P.x,AJT.door.z-P.z)}쪽 ${Math.round(Math.hypot(AJT.door.x-P.x,AJT.door.z-P.z))}m`}}catch(e){}
+  p.innerHTML=`<div class="mis-head"><b>📻 작전 브리핑</b><button class="btn sm" data-hq="bx">알겠다</button></div><div class="hq-lore">${AJT_LORE}</div><p class="mis-note">거점: 출발점 가까운 <b>폐업한 코인 빨래방 지하</b>(지도 🏚)${where}. 총기·드론 조립 · 요원 훈련 · 감청 · 심문실·구치소 — 모은 <b>첩보</b>는 사령부에 올려 공적이 된다.</p>`}
+function ajtBriefTry(k){try{if(!ajtOn()||!G||!OUT.on||SV3.kind!=='outside')return;const S=ajtS();if(S.brief)return;if((typeof RK!=='undefined'&&RK.open)||AJT.open||document.getElementById('dfPanel')){if(k<60)setTimeout(()=>ajtBriefTry(k+1),1000);return}S.brief=1;ajtBrief(true)}catch(e){ajtErr(e)}}
+(function(){const b=window.startOutside;if(typeof b!=='function')return;window.startOutside=function(){const r=b.apply(this,arguments);try{if(ajtOn()&&G&&!ajtS().brief)setTimeout(()=>ajtBriefTry(0),1600)}catch(e){ajtErr(e)}return r}})();
+(function(){const b=window.sv3Unmount;if(typeof b!=='function')return;window.sv3Unmount=function(){try{ajtPanel(false);ajtBrief(false);FP3.lock=false}catch(e){}return b.apply(this,arguments)}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="ajt"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('ajt','새벽별 아지트','빨래방 지하 아지트 — 총기·드론 조립 · 요원 훈련 · 감청 · 심문실·구치소 · 첩보 상신(끄면 입구가 사라진다 · 저장은 남는다)',[[1,'켬'],[0,'끔']],store.get('sg.ajt',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){ajtErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='ajt')return;try{store.set('sg.ajt',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined'){HELP84.push(['🏚 새벽별 아지트(v18.6)','출발점 가까운 폐업한 코인 빨래방(지도 🏚) 지하가 새벽별의 위장 아지트다. 처음 들르면 \'아지트 개설\'(부품 +8). 방 6개 — 🗺상황실(왜 탕정인가 · 전략 개념도 · 첩보 상신 · 작전 일지) · 🔧총기 조립(부품 → K5·K1A·K2C1·K14·K3, 계급이 오를수록 무거운 화기 · 탄약 조립 · 배낭 분해) · 🛸드론 작업대(B급 바로 조립) · 🎯요원 훈련(사격·은밀·위장 — 위장 60 이상은 언더커버 후보) · 🎧감청실(적 무전만 — 첩보 + 내통자·수배 대상·수상한 사람 단서, 턴마다 2번 · 미확인 첩보 교차 검증) · 🔒심문실·구치소. 아지트 일은 외출 시간을 쓴다.']);
+  HELP84.push(['🔒 심문실·구치소 · 첩보(v18.6)','교전에서 손을 든 적을 생포하면 헌병 인계 전에 아지트 구치소로 데려온다(3명 · 3턴 안에 인계, 넘기면 기강 −5). 적법한 심문 — 📑증거(첩보 1) · 🤝거래(현금 1) · 🗣회유(정보원이 될 수 있다) — 은 정확한 첩보를 준다. ⛓강압은 불법이다: 기강 −25, 진술은 미확인이고 대부분 거짓. 첩보는 공용 화폐 — 검증 3건 상신 = 공적 +18, 미확인을 그대로 올리면 거짓마다 기강 −8.'])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
