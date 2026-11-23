@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>생존of탕정</title>
+<title>작전In탕정</title>
 <style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
 <meta name="claude:viewport-fit-sides" content="cover">
-<!-- 생존of탕정 — 포함된 제3자 구성요소: three.js r187 (MIT License, Copyright © 2010-2026 three.js authors) · Microsoft Rocketbox Avatar Library (MIT License, Copyright (c) Microsoft Corporation) · 지도 데이터 © OpenStreetMap 기여자 (Open Database License 1.0, https://www.openstreetmap.org/copyright). 라이선스 전문은 게임의 '설정·정보 › 정보·라이선스'에 있다. -->
+<!-- 작전In탕정(구 생존of탕정) — 포함된 제3자 구성요소: three.js r187 (MIT License, Copyright © 2010-2026 three.js authors) · Microsoft Rocketbox Avatar Library (MIT License, Copyright (c) Microsoft Corporation) · 지도 데이터 © OpenStreetMap 기여자 (Open Database License 1.0, https://www.openstreetmap.org/copyright). 라이선스 전문은 게임의 '설정·정보 › 정보·라이선스'에 있다. -->
 <style>
 :root{
   /* Layout: 한 화면 모바일 게임 셸 — 상단 상황 HUD · 가운데 SVG 장면 · 하단 결정 시트. 화면은 제자리에서 교체된다.
@@ -2064,6 +2064,24 @@ body.trn-on .apl-tag{visibility:hidden}
 .apl-head b{font-weight:800;font-size:14px}.apl-head span{opacity:.75;flex:1}
 .apl-head button{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;border-radius:8px;padding:6px 12px;font:800 12px system-ui,sans-serif}
 #aplMapC{border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.5);cursor:crosshair;touch-action:manipulation}
+/* v18.5 새벽별 장교 — 계급 칩 · 계급표 · 진급 배너 */
+.rk-chip{position:absolute;z-index:31;left:10px;top:calc(env(safe-area-inset-top,0px) + 240px);display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:150px;border:1px solid rgba(201,165,74,.55);background:rgba(14,17,26,.84);color:#eef0f4;border-radius:10px;padding:4px 8px 5px;font:700 11.5px var(--sans);pointer-events:auto;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.rk-chip b{font-weight:800}.rk-chip span{opacity:.8}.rk-chip em{font-style:normal;color:#ff9a7a;font-weight:800;font-size:10.5px}
+.rk-ins{font-style:normal;color:#e6eaee;letter-spacing:-1px;text-shadow:0 0 6px rgba(255,255,255,.25)}.rk-ins.r6{color:#ffd86a}
+.rk-bar{display:block;position:relative;flex-basis:100%;height:4px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}.rk-bar>i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#c9a54a,#ffe08a);border-radius:3px}
+.rk-bar.disc>i{background:linear-gradient(90deg,#ff6a5a,#ffd24a 45%,#6ad38a)}
+.rk-panel .rk-lore{font:600 12px/1.5 var(--sans);opacity:.9;margin:4px 0 8px;padding:8px 10px;border-radius:10px;background:rgba(201,165,74,.08);border:1px solid rgba(201,165,74,.25)}.rk-lore em{font-style:normal;color:#ffe08a}
+.rk-stat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.rk-stat>div{padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.04);display:grid;gap:3px}.rk-stat small{font:600 10.5px var(--sans);opacity:.75}.rk-stat b{font:800 17px var(--sans)}.rk-stat b.low{color:#ff9a7a}
+.rk-next{font:700 12px/1.45 var(--sans);margin:0 0 8px;color:#ffe9b0}.rk-warn{font:800 12px var(--sans);color:#ff9a7a;margin:0 0 8px}
+.rk-rows{display:grid;gap:4px}.rk-row{display:grid;grid-template-columns:48px 34px 40px 1fr;gap:6px;align-items:center;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.03);font:600 11.5px/1.35 var(--sans);opacity:.6}
+.rk-row.done{opacity:.85}.rk-row.cur{opacity:1;background:rgba(201,165,74,.14);border:1px solid rgba(201,165,74,.45)}.rk-row b{font-weight:800}.rk-row small{opacity:.7}
+.rk-team{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font:700 11.5px var(--sans)}.rk-team small{flex-basis:100%;opacity:.7}.rk-team span{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.06)}
+.rk-log{margin-top:8px;font:600 11px/1.45 var(--sans);opacity:.8;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+.rk-ban{position:fixed;left:50%;top:22%;transform:translate(-50%,0);z-index:420;min-width:240px;text-align:center;padding:14px 22px 12px;border-radius:16px;background:rgba(12,14,24,.92);border:2px solid #c9a54a;color:#f4f1e6;box-shadow:0 8px 40px rgba(0,0,0,.6);animation:rkIn .45s ease;pointer-events:none}
+.rk-ban.bad{border-color:#d0574a}.rk-ban.out{opacity:0;transition:opacity .45s}
+.rk-ban-h{font:800 13px var(--sans);opacity:.85}.rk-ban-ins{font-size:34px;letter-spacing:2px;color:#eef2f6;margin:4px 0 0}.rk-ban-n{font:900 28px var(--sans);color:#ffe08a}.rk-ban.bad .rk-ban-n{color:#ff9a7a}.rk-ban-p{font:600 12px/1.4 var(--sans);opacity:.85;max-width:320px;margin:6px auto 0}
+@keyframes rkIn{from{opacity:0;transform:translate(-50%,10px) scale(.94)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+.sv3.owc-on .rk-chip{display:none}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -7999,8 +8017,8 @@ function vTitle(){
   return `<div class="title-art">${skyline('night')}</div>
   <div class="title-block">
     <div class="logo-row">${cdMark(44)}<div><div class="eyebrow">생존 수첩 실전 훈련</div><div class="small mut">어른용 · 한 판 10~15분</div></div><span style="flex:1"></span>${musBtn()}${sndBtn()}</div>
-    <h1 class="ttl-sot" aria-label="생존 of 탕정"><b>생존</b><i>of</i><span>탕정</span></h1>
-    <div class="ttl-sub"><b>72시간</b>, 그 후</div>
+    <h1 class="ttl-sot" aria-label="작전 In 탕정"><b>작전</b><i>In</i><span>탕정</span></h1>
+    <div class="ttl-sub"><b>새벽별</b> 작전 기록 · 72시간, 그 후</div>
     <p class="tagline">오늘 밤 11시, 경계경보가 울린다면?</p>
   </div>
   <div class="stack">
@@ -14160,7 +14178,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.4.1';
+const APP_VER='18.5';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -14198,7 +14216,7 @@ function s4Summary(){const my=store.get('sg.my',null),sv=store.get('sg.save',nul
 function s4Ymd(){const d=new Date();return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`}
 function s4Export(){const data={};s4Keys().forEach(k=>{try{data[k]=localStorage.getItem(k)}catch(e){}});
   const blob=new Blob([JSON.stringify({app:'saengjon-of-tangjeong',v:1,ver:APP_VER,at:new Date().toISOString(),data},null,1)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`생존of탕정-백업-${s4Ymd()}.json`;document.body.appendChild(a);a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`작전In탕정-백업-${s4Ymd()}.json`;document.body.appendChild(a);a.click();
   setTimeout(()=>{try{URL.revokeObjectURL(a.href)}catch(e){}a.remove()},2000);toast('백업 파일을 저장했다 — 가족 이름이 들어 있으니 다른 사람과 공유하지 말 것',3800);return Object.keys(data).length}
 /* 불러온 값은 문자열마다 꺾쇠·역따옴표를 없앤다(굵게·줄바꿈 등 게임이 쓰는 몇 가지 태그만 유지). 이름류(우리 가족·지도 이름)는 입력 때와 같은 clean() */
 function s4San(v,name,d){d=d||0;if(d>14)return null;if(typeof v==='string'){if(name)return clean(v,60);const keep=v.replace(/<(\/?)(b|i|em|small|br)\s*\/?>/g,'\u0001$1$2\u0002');return keep.replace(/[<>`]/g,'').replace(/\u0001(\/?)(b|i|em|small|br)\u0002/g,'<$1$2>').slice(0,6000)}
@@ -14242,7 +14260,7 @@ function s4Head(t,back){return `<div class="ov-head"><h2>${t}</h2>${back?`<butto
 function s4Html(){const a=A11Y.get();const v=S4.view;
   if(S4.conf){const c=S4.conf;return `${s4Head(c.title,0)}<p class="s4-p">${c.text}</p><div class="row"><button class="btn ${c.danger?'dngr':'pri'}" data-s4="yes">${c.yes}</button><button class="btn" data-s4="no">취소</button></div>`}
   if(v==='info')return `${s4Head('정보·라이선스',1)}<div class="s4-scroll">
-    <p class="s4-p"><b>생존of탕정 v${APP_VER}</b> — 72시간, 그 후. 생존 수첩에 실린 공식 수칙(행정안전부·소방청·질병관리청 등)으로 만든 훈련 게임이다. <b>실제 상황에서는 재난문자·KBS 재난방송·지자체 안내가 항상 우선이다.</b></p>
+    <p class="s4-p"><b>작전In탕정 v${APP_VER}</b>(구 생존of탕정) — 새벽별 작전 기록 · 72시간, 그 후. 생존 수첩에 실린 공식 수칙(행정안전부·소방청·질병관리청 등)으로 만든 훈련 게임이다. <b>실제 상황에서는 재난문자·KBS 재난방송·지자체 안내가 항상 우선이다.</b></p>
     <p class="s4-p">등장하는 인물·정치인·단체·방송은 모두 가상이다. 실존 인물이나 특정 국적·지역·집단을 겨냥하지 않는다. 지도는 실제 탕정면이지만 '우리 단지'·학교·지하보도는 게임용 가상 배치다.</p>
     <p class="s4-p">개인정보: 가족 이름·층·대피소·지도 이름 붙이기·기록은 이 기기 안에만 저장되고 어디로도 보내지 않는다. 설치판은 외부 연결을 막는 보안 정책으로 동작한다.</p>
     <p class="s4-p">섬광·폭발처럼 번쩍이는 장면이 있다. 빛에 민감하면 '번쩍임·흔들림 줄이기'를 켠다.</p>
@@ -14282,7 +14300,7 @@ function s4Html(){const a=A11Y.get();const v=S4.view;
       <button class="btn ghost" data-s4="v" data-v="data">${ic('group')} 이 기기에 저장된 정보</button><button class="btn ghost" data-s4="v" data-v="err">${ic('x')} 오류 기록 ${nErr}건</button>
       <button class="btn ghost" data-s4="v" data-v="info">${ic('dot')} 정보·라이선스</button></div>
     ${lb&&lb.at?`<p class="s4-p small">마지막 기기 점검 ${clean(lb.at,20)} · 종합 <b>${clean(lb.grade,8)}</b> <button class="btn sm" data-s4="benchShow">결과 보기</button></p>`:''}
-    <p class="s4-p small mut">생존of탕정 v${APP_VER} · 설정은 이 기기에만 저장된다</p>`}
+    <p class="s4-p small mut">작전In탕정 v${APP_VER} · 설정은 이 기기에만 저장된다</p>`}
 function s4Open(view){S4.view=view||'main';S4.conf=null;let o=$('#set84');if(!o){o=document.createElement('div');o.className='overlay s4-ov';o.id='set84';o.addEventListener('click',e=>{if(e.target===o)s4Close()});document.body.appendChild(o)}
   o.innerHTML=`<div class="sheet s84">${s4Html()}</div>`}
 function s4Close(){const o=$('#set84');if(o)o.remove();S4.conf=null;if(typeof UI!=='undefined'&&UI.screen==='title')render()}
@@ -14298,7 +14316,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-s4]');if(!
     else if(k==='pip'){store.set('sg.pip',v==='1');try{if(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)gunUI()}catch(e){}toast(v==='1'?'조준경 바깥: 평소 시야로 보인다 (조준경 안만 확대)':'조준경 바깥: 예전처럼 검게 가린다',2600)}
     else if(k==='otime'){store.set('sg.outTimed',v==='1');toast(v==='1'?'밖 탐색: 걷는 동안에도 시간이 흐른다 (다음 외출부터)':'밖 탐색: 걷기·둘러보기는 시간을 쓰지 않는다 (다음 외출부터)',3000)}
     else if(k==='edu'){store.set('sg.edu',v==='1');a11yApply();toast(v==='1'?'교육용 모드: 전투·격투·정치 선동·시신 장면을 뺀다 (다음 사건부터)':'교육용 모드를 껐다',3000)}s4Re();return}
-  if(a==='errcopy'){const L=ERRLOG.list();s4Copy(`[생존of탕정 오류 기록 v${APP_VER}] ${navigator.userAgent}\n`+L.map(x=>`${x.t}${x.n?' ×'+x.n:''} [${x.s}] ${x.m}${x.at?' @'+x.at:''}`).join('\n'));return}
+  if(a==='errcopy'){const L=ERRLOG.list();s4Copy(`[작전In탕정 오류 기록 v${APP_VER}] ${navigator.userAgent}\n`+L.map(x=>`${x.t}${x.n?' ×'+x.n:''} [${x.s}] ${x.m}${x.at?' @'+x.at:''}`).join('\n'));return}
   if(a==='errclear'){ERRLOG.clear();s4Re();return}
   if(a==='exp'){s4Export();return}
   if(a==='imp'){const f=$('#s4File');if(f){f.value='';f.onchange=()=>{const file=f.files&&f.files[0];if(!file)return;if(file.size>8e6){toast('파일이 너무 크다');return}const rd=new FileReader();rd.onload=()=>{try{const r=s4Parse(String(rd.result));S4.imp=r.out;S4.conf={title:'백업 불러오기',text:`백업(${clean(String(r.at).slice(0,10),12)||'날짜 없음'})의 ${Object.keys(r.out).length}개 항목으로 지금 이 기기의 정보를 바꾼다. 지금 정보는 사라진다.`,yes:'불러오기',act:'imp'};s4Re()}catch(err){toast('백업 파일을 읽지 못했다 — '+clean(err.message||'',30),3200)}};rd.readAsText(file)};f.click()}return}
@@ -14389,7 +14407,7 @@ async function benchRun(){if(BENCH.on)return;
   try{benchPut(snap2,localStorage.getItem('sg.errlog'));localStorage.setItem('sg.bench',JSON.stringify(out));localStorage.setItem('sg.benchShow','1');localStorage.removeItem('sg.benchSnap')}catch(e){}
   if(window.__benchNoReload){BENCH.on=false;const b=$('#bnBan');if(b)b.remove();return out}
   location.reload()}
-function benchText(r){const d=r.dev||{};const L=[`[생존of탕정 기기 점검 v${r.v}] ${r.at}`,`기기: ${d.ua}`,`코어 ${d.cores||'?'} · 메모리 ${d.mem?d.mem+'GB':'?'} · 화면 ${d.scr} ×${d.dpr} · GPU ${d.gpu||'?'} · 최대 텍스처 ${d.maxTex||'?'}`,
+function benchText(r){const d=r.dev||{};const L=[`[작전In탕정 기기 점검 v${r.v}] ${r.at}`,`기기: ${d.ua}`,`코어 ${d.cores||'?'} · 메모리 ${d.mem?d.mem+'GB':'?'} · 화면 ${d.scr} ×${d.dpr} · GPU ${d.gpu||'?'} · 최대 텍스처 ${d.maxTex||'?'}`,
   `시작: 첫 화면 ${r.start2&&r.start2.title?(r.start2.title/1000).toFixed(2)+'초':'?'} · 인물 자산 해석 ${r.start2&&r.start2.rbx?r.start2.rbx+'ms':'-'}`];
   (r.scenes||[]).forEach(s=>L.push(s.skip?`${s.n}: 건너뜀(${s.skip})`:`${s.n}: 평균 ${s.fps}fps · 하위1% ${s.low1}fps · 끊김(50ms+) ${s.long}회 · 호출 ${s.calls==null?'-':s.calls} · 삼각형 ${s.tris==null?'-':Math.round(s.tris/1000)+'k'} · 해상도 ×${s.pr}${s.mem?` · 메모리 ${s.mem}MB`:''}`));
   L.push(`화질 설정: ${d.qual}(${d.tier}) · 해상도 배율 ${r.drs} · 오류 ${r.err||0}건${r.fail?' · 중단: '+r.fail:''}${r.cancel?' · 사용자가 그만둠':''}`,`종합: ${r.grade} · 권장 화질 '${r.rec}'`);return L.join('\n')}
@@ -19695,7 +19713,7 @@ function campEnding(){const fam=G.fam.filter(m=>m.id!=='me');const famOK=fam.eve
     B:{t:'살아서, 함께',s:'우리 가족은 살아남았다.',p:['모든 걸 잘하진 못했다. 놓친 사람도, 늦게 닿은 곳도 있었다.','그래도 다음엔 더 잘할 수 있다는 걸 안다. 생존 수첩을 다시 펼쳐 본다.']},
     C:{t:'아물지 않은 상처',s:'가족 중 누군가는 아직 병원에 있다.',p:['휴전은 끝이 아니라 회복의 시작이다.','의사는 "곧 나아질 거예요"라고 했다. 오늘은 그 말을 믿기로 한다.']}}[k];
   const roeL=roe?`<p class="camp-roe">그날 잘못 쏜 총알을 잊지 못한다(교전규칙 위반 ${roe}회) — 규칙은 지키라고 있는 것이다.</p>`:'';const days=dayOf(G.turn);const done=Object.keys(G.camp.done).length;
-  const cred=['생존of탕정 — 캠페인 「전쟁의 시작과 끝」','','함께 버틴 사람들','우리 가족 · 대피소 이웃들 · 진료소 · 검문소 · 경찰 기동대 · 소방','','지도 데이터 © OpenStreetMap 기여자 (ODbL)','인물 모델 Microsoft Rocketbox (MIT)','3D 엔진 three.js (MIT)','행동 요령 출처 — 행정안전부 · 소방청 · 질병관리청 · 국가정보원(111)','','모든 인물 · 단체 · 사건은 가상입니다','실제 상황에서는 공식 안내를 따르십시오'].map(t=>t?`<div>${t}</div>`:'<div class="sp"></div>').join('');
+  const cred=['작전In탕정 — 캠페인 「전쟁의 시작과 끝」','','함께 버틴 사람들','우리 가족 · 대피소 이웃들 · 진료소 · 검문소 · 경찰 기동대 · 소방','','지도 데이터 © OpenStreetMap 기여자 (ODbL)','인물 모델 Microsoft Rocketbox (MIT)','3D 엔진 three.js (MIT)','행동 요령 출처 — 행정안전부 · 소방청 · 질병관리청 · 국가정보원(111)','','모든 인물 · 단체 · 사건은 가상입니다','실제 상황에서는 공식 안내를 따르십시오'].map(t=>t?`<div>${t}</div>`:'<div class="sp"></div>').join('');
   campOv(`<div class="camp-end e${k}"><div class="camp-sky"></div><div class="camp-end-in"><div class="eyebrow">📖 캠페인 완료 · 엔딩 ${k}</div><h1>${E.t}</h1><p class="lead">${E.s}</p>${E.p.map(t=>`<p>${t}</p>`).join('')}${roeL}
     <div class="camp-stat"><span>${days}일</span><span>목표 <b>${done}</b>개</span><span>이웃 신뢰 <b>${trust}</b></span><span>가족 ${famOK?'모두 무사':'회복 중'}</span></div>
     <div class="camp-cred"><div class="camp-roll">${cred}</div></div><div class="camp-row"><button class="btn pri" data-a="camphome">처음 화면으로</button></div><small class="camp-prog">본 엔딩 ${Object.keys(dv.ends).sort().join(' · ')} / A · B · C</small></div></div>`,'end');
@@ -22938,7 +22956,7 @@ function plogLine(D,k){const a=D&&D.sc&&D.sc[k];if(!a||a.t<5)return'';const fps=
 function plogPlayLine(D){const P=D.play||{};const bt=Object.keys(P.bt||{});let w=0,l=0,q=0;for(const k of bt){w+=P.bt[k].w;l+=P.bt[k].l;q+=P.bt[k].q}const FN={gift:'지원',trade:'거래',ally:'동맹',denounce:'배척',rumor:'소문',tip:'밀고',raid:'창고 털기',wedge:'이간질',bribe:'매수',betray:'배신'};const fc=Object.keys(P.fc||{}).map(k=>(FN[k]||k)+' '+P.fc[k]).join('·');
   return`플레이: 새 판 ${P.games||0}회 · 최고 ${P.dayMax||1}일차 · 교전 승 ${w}·패 ${l}·후퇴 ${q}${bt.length?' ('+bt.map(k=>k+' '+P.bt[k].w+'/'+(P.bt[k].w+P.bt[k].l+P.bt[k].q)).join(', ')+')':''} · 세력 행동 ${fc||'없음'} · 팀 최고 Lv ${P.lvMax||1}`}
 function plogText(){plogSave(true);const D=plogLoad();let d={};try{d=benchDev()}catch(e){}const tot=Object.keys(D.sc).reduce((s,k)=>s+D.sc[k].t,0);
-  const L=[`[생존of탕정 플레이 기록 v${D.v}] ${D.since}부터 · 플레이 ${Math.round(tot/60)}분`,`기기: ${d.ua||'?'}`,`코어 ${d.cores||'?'} · 메모리 ${d.mem||'?'}GB · 화면 ${d.scr||'?'} ×${d.dpr||'?'} · GPU ${d.gpu||'?'}`];
+  const L=[`[작전In탕정 플레이 기록 v${D.v}] ${D.since}부터 · 플레이 ${Math.round(tot/60)}분`,`기기: ${d.ua||'?'}`,`코어 ${d.cores||'?'} · 메모리 ${d.mem||'?'}GB · 화면 ${d.scr||'?'} ×${d.dpr||'?'} · GPU ${d.gpu||'?'}`];
   for(const k of ['out','owc','in','bat']){const s=plogLine(D,k);if(s)L.push(s)}L.push(plogPlayLine(D));if(D.prev&&D.prev.line)L.push(`이전 판(v${D.prev.v}) ${D.prev.line}`);
   try{L.push(`지금 설정: 화질 ${(cbGet('sel',{}).qual||'auto')}(${SV3.qt||'-'}) · 해상도 ×${(typeof DRS!=='undefined'&&DRS.s)||1} · 생략 ×${(typeof PX!=='undefined'&&PX.k)||1}`)}catch(e){}return L.join('\n')}
 function plogShow(){try{s4Open('main')}catch(e){}const o=document.getElementById('set84');if(!o)return;plogSave(true);const D=plogLoad();const tot=Object.keys(D.sc).reduce((s,k)=>s+D.sc[k].t,0);
@@ -27253,7 +27271,7 @@ function kcMake(){const S=KC.snap,C=KC.c;if(!S||!C)return null;const W=1080,H=13
   const gt=g.createLinearGradient(0,0,0,240);gt.addColorStop(0,'rgba(6,7,9,.8)');gt.addColorStop(1,'rgba(6,7,9,0)');g.fillStyle=gt;g.fillRect(0,0,W,240);
   const gb=g.createLinearGradient(0,H*.5,0,H);gb.addColorStop(0,'rgba(6,7,9,0)');gb.addColorStop(.55,'rgba(6,7,9,.78)');gb.addColorStop(1,'rgba(6,7,9,.95)');g.fillStyle=gb;g.fillRect(0,H*.5,W,H*.5);
   g.textBaseline='middle';g.font=`800 28px ${F}`;const tw=g.measureText('● 결정적 장면').width;g.fillStyle='rgba(200,40,30,.92)';kcRR(g,56,52,tw+48,58,29);g.fill();g.fillStyle='#fff';g.fillText('● 결정적 장면',80,82);
-  g.textAlign='right';g.fillStyle='rgba(255,255,255,.85)';g.font=`800 28px ${F}`;g.fillText('생존of탕정',W-56,82);g.textAlign='left';
+  g.textAlign='right';g.fillStyle='rgba(255,255,255,.85)';g.font=`800 28px ${F}`;g.fillText('작전In탕정',W-56,82);g.textAlign='left';
   g.textBaseline='alphabetic';g.fillStyle='#fff';kcFit(g,C.title,W-112,76,900,F);g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=12;g.fillText(C.title,56,H-268);g.shadowBlur=0;
   if(C.sub){g.fillStyle='#f2c45a';kcFit(g,C.sub,W-112,40,800,F);g.fillText(C.sub,56,H-200)}
   g.fillStyle='rgba(255,255,255,.22)';g.fillRect(56,H-166,W-112,2);
@@ -27275,7 +27293,7 @@ function kcBlobOf(it){if(it.blob)return it.blob;try{const u=it.url||'';const i=u
 function kcSave(id,fb){const it=kcFind(id);if(!it||!it.url)return false;KC.n.save++;kcSaveN();try{const a=document.createElement('a');a.href=it.url;a.download=it.fn;a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}catch(e){}
   try{toast(fb?'이 화면에선 공유를 쓸 수 없어 그림 파일로 저장했다 — 안 되면 그림을 길게 눌러 저장':'장면 카드를 그림 파일로 저장했다 — 안 되면 그림을 길게 눌러 저장',3200)}catch(e){}return true}
 function kcShare(id){const it=kcFind(id);if(!it)return false;const bl=kcBlobOf(it);
-  try{if(bl&&typeof File==='function'&&navigator.canShare&&navigator.share){const f=new File([bl],it.fn,{type:'image/jpeg'});if(navigator.canShare({files:[f]})){KC.n.share++;kcSaveN();navigator.share({files:[f],title:'생존of탕정 — 결정적 장면',text:`${it.title} — 가상의 상황 · 게임 화면`}).catch(()=>{});return true}}}catch(e){}
+  try{if(bl&&typeof File==='function'&&navigator.canShare&&navigator.share){const f=new File([bl],it.fn,{type:'image/jpeg'});if(navigator.canShare({files:[f]})){KC.n.share++;kcSaveN();navigator.share({files:[f],title:'작전In탕정 — 결정적 장면',text:`${it.title} — 가상의 상황 · 게임 화면`}).catch(()=>{});return true}}}catch(e){}
   return kcSave(id,true)}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-kc]');if(!b)return;const k=b.dataset.kc;e.stopPropagation();
   try{if(k==='view'){kcView(b.dataset.id);const c=document.getElementById('kcChip');if(c)c.remove()}else if(k==='share')kcShare(b.dataset.id);else if(k==='save')kcSave(b.dataset.id);else if(k==='close'){const v=document.getElementById('kcView');if(v)v.remove()}}catch(x){kcErr(x)}},true);
@@ -27882,6 +27900,195 @@ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;
   try{if(APL.map){APL.mt=(APL.mt||0)+dt;if(APL.mt>.25){APL.mt=0;aplMapDraw()}}}catch(e){}
   try{if(ALK.in&&!ALK.hid){const c=SV3.cam.position;for(const m of (typeof alkTeam==='function'?alkTeam():[]).concat(typeof alkFam==='function'?alkFam():[])){if(!aplInScene(m.h))continue;const q=m.h.root.position;const near=Math.hypot(q.x-c.x,q.z-c.z)<.9;if(near===!!m.aplHid)continue;m.aplHid=near;m.h.root.visible=!near&&m.d.st!=='away';if(near)APL.n.hide++}}}catch(e){aplErr(e)}
   return r}})();
+
+/* v18.5 비밀첩보부대 장교 — 계급·레벨·공적·기강 (사용자 요청 2026-11-23 19:23
+   "계급과 레벨을 만들어줘 계급은 소위부터 장교역할. 설정상 나는 육군 비밀첩보부대 장교다 … 국군이 cover하기 어려운 점을 별도의 민간요원들을 구성해서 첩보·저격·소탕
+    … 음지에 있지만 양지를 지향하는 비밀첩보부대 정예장교 컨셉")
+   설정(가상): 육군 특수첩보대 '새벽별' — 국군의 손이 다 닿지 못하는 곳을 맡는다. 정예 장교가 믿을 만한 주민을 '민간 요원'으로 꾸려 첩보·저격·소탕
+     표어 "어둠 속에서 일하고, 빛을 향해 간다"(사용자 컨셉을 풀어 씀 — 실존 기관 표어를 그대로 쓰지 않는다) · 실존 부대·기관·인물과 무관
+   · 레벨 1~30: 공적으로 오른다(미션 · 돌발 상황 · 교전 승리 · 적법한 사살·생포 · 부상자·길 잃은 아이 돕기 · 내통자 검거)
+   · 계급 7: 소위(Lv1) 중위(4) 대위(8) 소령(12) 중령(17) 대령(22) 준장(28) — 진급 심사 = 레벨 + 기강 60 이상('양지를 지향')
+   · 기강 0~100(처음 80): 위법 사살 −30 · 군인을 쏨 −40(충성 끊김 3턴) · 틀린 내통자 지목 −10 · 깨끗한 턴 +5 · 20 밑이면 강등 1계급
+   · 계급 혜택은 174(경례·검문 생략·귀띔·합류·보급) · 제복과 계급장은 175
+   · 위쪽 왼쪽(미니맵 아래) 계급 칩 → 계급표(부대 소개 · 계급·레벨·공적 · 기강 · 계급별 혜택 · 민간 요원 · 최근 공적)
+   · 설정 '계급·레벨' · 자동 점검(webdriver)은 __rkTest일 때만 */
+const RK={err:0,banT:0,n:{xp:0,promo:0,hold:0,demote:0,viol:0},open:false};
+const RK_R=[
+ {n:'소위',lv:1,ins:['d',1],perk:'길거리 군인이 경례한다 · 밤 순찰대 검문을 생략한다'},
+ {n:'중위',lv:4,ins:['d',2],perk:'경례한 군인이 근처 위협(돌발 상황·무장 괴한)의 방향·거리를 귀띔한다'},
+ {n:'대위',lv:8,ins:['d',3],perk:'교전이 붙으면 국군 지원조 2명이 합류한다(교전마다)'},
+ {n:'소령',lv:12,ins:['m',1],perk:'검문소에서 탄약 보급 — 외출마다 한 번(쥔 총 탄 60 · 의약품 1)'},
+ {n:'중령',lv:17,ins:['m',2],perk:'교전에 저격 지원 1명이 더 붙는다'},
+ {n:'대령',lv:22,ins:['m',3],perk:'분대 지휘 — 지원조 4명 + 저격 지원'},
+ {n:'준장',lv:28,ins:['s',1],perk:'새벽별 부대장 — 지원조 6명 + 저격 지원'}];
+const RK_MAXLV=30;
+const RK_ROLE={사격:'🎯 저격 요원',정찰:'🔭 첩보 요원',응급:'⛑ 의무 요원',체력:'💪 소탕 요원'};
+function rkErr(e){if(RK.err<6){RK.err++;try{console.error(e)}catch(x){}}}
+function rkOn(){try{if(navigator.webdriver&&!window.__rkTest)return false;return store.get('sg.rank',true)!==false}catch(e){return false}}
+function rkXpAt(n){return n<=1?0:Math.round(10*Math.pow(n-1,1.7))}
+function rkS(){if(!G)return null;let S=G.rk;if(!S||typeof S!=='object'||S.v!==1)S=G.rk={v:1,xp:0,lv:1,r:0,disc:80,hold:0,brk:-1,log:[],brief:0,clean:1,lastT:G.turn|0,promoT:[]};return S}
+function rkName(S){S=S||rkS();return S?RK_R[S.r].n:'소위'}
+function rkInsTxt(r){const I=RK_R[r].ins;const ch=I[0]==='d'?'◆':I[0]==='m'?'✿':'★';return ch.repeat(I[1])}
+function rkHon(S){S=S||rkS();return S&&S.r>=6?'장군님':rkName(S)+'님'}
+function rkLog(S,t){S.log.push({t:G.turn|0,s:t});if(S.log.length>14)S.log.splice(0,S.log.length-14)}
+/* 공적 */
+function rkGain(n,why){if(!rkOn()||!G||!(n>0))return 0;const S=rkS();S.xp+=n;RK.n.xp+=n;rkLog(S,`+${n} ${why}`);let up=0;while(S.lv<RK_MAXLV&&S.xp>=rkXpAt(S.lv+1)){S.lv++;up=1}
+  if(up){try{toast(`🎖 레벨 ${S.lv} — 공적 ${S.xp}`,1800)}catch(e){}}rkPromoCheck(S);try{rkChip()}catch(e){}return n}
+function rkPromoCheck(S){S=S||rkS();if(!S)return;let want=S.r;while(want+1<RK_R.length&&S.lv>=RK_R[want+1].lv)want++;if(want<=S.r){S.hold=0;return}
+  if(S.disc<60){if(!S.hold){S.hold=1;RK.n.hold++;rkLog(S,`진급 보류 — 기강 ${S.disc}(60 필요)`);try{toast(`🎖 진급 심사 보류 — 기강 ${S.disc} · 60 이상이어야 ${RK_R[S.r+1].n}로 진급`,3200)}catch(e){}}return}
+  S.hold=0;const from=S.r;S.r=S.r+1;S.promoT.push(G.turn|0);RK.n.promo++;rkLog(S,`진급 — ${RK_R[S.r].n}`);rkBanner(`🎖 진급`,RK_R[S.r].n,RK_R[S.r].perk,S.r);try{if(typeof agwRank==='function')agwRank()}catch(e){}if(S.r<want)setTimeout(()=>{try{rkPromoCheck(S)}catch(e){}},3600);return from}
+/* 기강 */
+function rkDisc(d,why){if(!rkOn()||!G)return;const S=rkS();const before=S.disc;S.disc=Math.max(0,Math.min(100,S.disc+d));if(d<0){S.clean=0;RK.n.viol++;rkLog(S,`기강 ${d} ${why}`);try{toast(`⚖ 기강 ${d} — ${why} (기강 ${S.disc})`,2600)}catch(e){}
+    if(S.disc<20&&S.r>0&&before>=20){S.r--;S.disc=40;RK.n.demote++;rkLog(S,`강등 — ${RK_R[S.r].n}`);rkBanner('⚖ 강등',RK_R[S.r].n,'위법이 쌓여 계급이 떨어졌다 — 기강을 다시 쌓으면 레벨에 맞춰 진급 심사를 받는다',S.r,true);try{if(typeof agwRank==='function')agwRank()}catch(e){}}}
+  else if(d>0)rkPromoCheck(S);try{rkChip()}catch(e){}}
+function rkBanner(h,rn,perk,r,bad){const el=document.body;let b=document.getElementById('rkBan');if(b)b.remove();b=document.createElement('div');b.id='rkBan';b.className='rk-ban'+(bad?' bad':'');
+  b.innerHTML=`<div class="rk-ban-h">${h}</div><div class="rk-ban-ins">${rkInsTxt(r)}</div><div class="rk-ban-n">${rn}</div><div class="rk-ban-p">${perk}</div>`;el.appendChild(b);clearTimeout(RK.banT);RK.banT=setTimeout(()=>{try{b.classList.add('out');setTimeout(()=>b.remove(),500)}catch(e){}},3600);try{SND.tone(660,.12,'triangle',.05,0);SND.tone(880,.18,'triangle',.05,.14)}catch(e){}}
+/* 턴이 끝날 때: 깨끗했으면 기강 +5 */
+(function(){const b=window.processDelayed;if(typeof b!=='function')return;window.processDelayed=function(notes){const r=b.apply(this,arguments);try{if(rkOn()&&G&&!G.over){const S=rkS();if(S.lastT!==(G.turn|0)){if(S.clean&&S.disc<100){S.disc=Math.min(100,S.disc+5);rkPromoCheck(S)}S.clean=1;S.lastT=G.turn|0}}}catch(e){rkErr(e)}return r}})();
+/* ---------- 공적 연결 ---------- */
+(function(){const w=(n,f)=>{const b=window[n];if(typeof b!=='function')return;window[n]=function(){let pre;try{pre=f.pre?f.pre(arguments):null}catch(e){}const r=b.apply(this,arguments);try{f.post(arguments,pre,r)}catch(e){rkErr(e)}return r}};
+  w('misDone',{post:a=>{if(a[0])rkGain(25,'미션 완수')}});
+  w('mxClear',{pre:()=>typeof MX!=='undefined'&&!!MX.cur,post:(a,had)=>{if(a[0]&&had)rkGain(30,'미션 완수')}});
+  w('evEnd',{pre:()=>typeof EVD!=='undefined'&&EVD.cur?EVD.cur.k:null,post:(a,k)=>{if(k&&a[0]&&a[0].ok)rkGain(k==='sneak'?30:20,k==='sneak'?'정전 잠입 성공':'돌발 상황 해결')}});
+  w('owcEnd',{pre:()=>typeof OWC!=='undefined'&&OWC.on&&!OWC.done?OWC.k:null,post:(a,k)=>{if(k&&a[0])rkGain(k==='fort'?50:30,'교전 승리')}});
+  w('isEnd',{pre:()=>typeof IS!=='undefined'&&IS.on,post:(a,on)=>{if(on&&(a[0]==='win'||a[0]==='fled'))rkGain(20,'제자리 교전 승리')}});
+  w('moleAccuse',{pre:a=>{const S=G&&G.mole;return S?{m:S.m,w:S.wrong|0}:null},post:(a,p)=>{if(!p)return;const S=G.mole;if(+a[0]===p.m&&S.st==='caught')rkGain(40,'내통자 검거');else if((S.wrong|0)>p.w)rkDisc(-10,'증거 없이 이웃을 지목')}});
+  w('roeCredit',{post:(a,p,r)=>{const PT={en:6,ins:6,spy:8,want:10,crim:4,tgt:14,cap:16};const c=a[0];if(PT[c])rkGain(PT[c],c==='cap'?'생포':'적법 사살')}})})();
+(function(){const b=window.outDo;if(typeof b!=='function')return;window.outDo=function(c){const k=c&&c.k;const r=b.apply(this,arguments);try{if(k==='inj')rkGain(8,'부상자 구조');else if(k==='kid')rkGain(10,'길 잃은 아이 보호')}catch(e){rkErr(e)}return r}})();
+/* 위법: 비무장 주민·투항자·아군을 쏨 · 군인을 쏨 → 충성 끊김 */
+function rkKill(t,R){if(!rkOn()||!t)return;const k=t.kind;if(k==='rok'||k==='gsrok'||k==='gspol'||k==='police'){const S=rkS();S.brk=(G.turn|0)+3;rkDisc(-40,'국군·경찰을 쐈다 — 군인들의 충성이 끊겼다(3턴)');return}
+  if(R&&R.law===false)rkDisc(-30,'위법 사살 — '+(R.n||'비무장 주민'))}
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t){let R=null;try{R=typeof roeOf==='function'?roeOf(t):null}catch(e){}const was=!!(t&&(t.dead||(t.a&&t.a.dead)));const r=b.apply(this,arguments);try{if(!was)rkKill(t,R)}catch(e){rkErr(e)}return r}})();
+/* ---------- 칩 · 계급표 ---------- */
+function rkChip(){const el=SV3.el;let c=document.getElementById('rkChip');const S=G&&G.rk;const kind=SV3.kind;const show=!!(el&&rkOn()&&S&&OUT.on&&(kind==='outside'||kind==='anx')&&!(typeof OWC!=='undefined'&&OWC.on));
+  if(!show){if(c)c.remove();return}if(!c||c.parentNode!==el){if(c)c.remove();c=document.createElement('button');c.id='rkChip';c.className='rk-chip';c.type='button';c.dataset.rk='open';el.appendChild(c)}
+  const a=rkXpAt(S.lv),b=rkXpAt(Math.min(RK_MAXLV,S.lv+1));const pc=S.lv>=RK_MAXLV?100:Math.round((S.xp-a)/Math.max(1,b-a)*100);const brk=S.brk>(G.turn|0);
+  const h=`<i class="rk-ins r${S.r}">${rkInsTxt(S.r)}</i><b>${rkName(S)}</b><span>Lv.${S.lv}</span>${S.hold?'<em>보류</em>':''}${brk?'<em>충성✕</em>':''}<i class="rk-bar"><i style="width:${pc}%"></i></i>`;if(c._h!==h){c._h=h;c.innerHTML=h}}
+function rkPanel(open){const el=SV3.el;let p=document.getElementById('rkPanel');if(!open){if(p)p.remove();RK.open=false;return}const S=rkS();if(!el||!S)return;RK.open=true;if(!p){p=document.createElement('div');p.id='rkPanel';p.className='mis-panel rk-panel';el.appendChild(p)}
+  const a=rkXpAt(S.lv),b=rkXpAt(Math.min(RK_MAXLV,S.lv+1));const nx=RK_R[S.r+1];const brk=S.brk>(G.turn|0);
+  const rows=RK_R.map((R,i)=>`<div class="rk-row${i===S.r?' cur':i<S.r?' done':''}"><i class="rk-ins r${i}">${rkInsTxt(i)}</i><b>${R.n}</b><small>Lv.${R.lv}</small><span>${R.perk}</span></div>`).join('');
+  let team='';try{const L=typeof tmData==='function'?tmData():[];team=L.filter(d=>d&&d.st!=='kia').map(d=>`<span>${RK_ROLE[d.role]||'요원'} ${d.nm}${d.lv>1?' · Lv'+d.lv:''}</span>`).join('')}catch(e){}
+  p.innerHTML=`<div class="mis-head"><b>🎖 새벽별 — ${rkName(S)} · Lv.${S.lv}</b><button class="mis-x" data-rk="close">닫기</button></div>
+   <div class="rk-lore"><b>육군 특수첩보대 '새벽별'</b> — 국군의 손이 다 닿지 못하는 곳을 맡는 비밀 부대. 정예 장교가 믿을 만한 주민을 민간 요원으로 꾸려 첩보·저격·소탕으로 동네를 지킨다. <em>"어둠 속에서 일하고, 빛을 향해 간다."</em> 그래서 위법은 곧 진급 보류다.</div>
+   <div class="rk-stat"><div><small>공적</small><b>${S.xp}</b><i class="rk-bar"><i style="width:${S.lv>=RK_MAXLV?100:Math.round((S.xp-a)/Math.max(1,b-a)*100)}%"></i></i><small>${S.lv>=RK_MAXLV?'최고 레벨':`다음 레벨까지 ${b-S.xp}`}</small></div>
+     <div><small>기강</small><b class="${S.disc<60?'low':''}">${S.disc}</b><i class="rk-bar disc"><i style="width:${S.disc}%"></i></i><small>${S.hold?'진급 보류 — 60 이상 필요':S.disc<60?'60 밑이면 진급 심사 보류 · 20 밑이면 강등':'깨끗한 턴마다 +5'}</small></div></div>
+   ${nx?`<div class="rk-next">다음 계급 <b>${nx.n}</b> — Lv.${nx.lv}${S.lv>=nx.lv?(S.disc<60?' 도달 · 기강 60 이상이면 진급':' 도달'):` (${rkXpAt(nx.lv)-S.xp} 공적 남음)`} · ${nx.perk}</div>`:'<div class="rk-next">최고 계급 — 새벽별 부대장</div>'}
+   ${brk?`<div class="rk-warn">⚠ 군인의 충성이 끊겼다 — ${S.brk-(G.turn|0)}턴 뒤 회복(국군·경찰을 쐈다)</div>`:''}
+   <div class="rk-rows">${rows}</div>${team?`<div class="rk-team"><small>민간 요원</small>${team}</div>`:''}
+   <div class="rk-log">${S.log.slice(-5).reverse().map(l=>`<div>${l.s}</div>`).join('')||'<div>아직 공적이 없다 — 미션·돌발 상황·교전으로 쌓는다.</div>'}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rk]');if(!b)return;e.preventDefault();e.stopPropagation();try{const k=b.dataset.rk;if(k==='open')rkPanel(!RK.open);else if(k==='close')rkPanel(false)}catch(x){rkErr(x)}},true);
+/* 처음 나갈 때 한 번: 부대 소개 */
+(function(){const b=window.startOutside;if(typeof b!=='function')return;window.startOutside=function(){const r=b.apply(this,arguments);try{if(rkOn()&&G){const S=rkS();setTimeout(()=>{try{rkChip();if(!S.brief){S.brief=1;rkPanel(true)}}catch(e){}},700)}}catch(e){rkErr(e)}return r}})();
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{RK.uiT=(RK.uiT||0)-dt;if(RK.uiT<=0){RK.uiT=.5;rkChip()}}catch(e){rkErr(e)}return r}})();
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){const r=b.apply(this,arguments);try{RK.uiT=(RK.uiT||0)-dt;if(RK.uiT<=0){RK.uiT=.5;rkChip()}}catch(e){rkErr(e)}return r}})();
+(function(){const b=window.sv3Unmount;if(typeof b!=='function')return;window.sv3Unmount=function(){try{rkPanel(false)}catch(e){}return b.apply(this,arguments)}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="rank"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('rank','계급·레벨','새벽별 장교 — 공적으로 레벨·계급이 오르고 군인이 경례·합류한다(끄면 멈춤 · 계급은 남는다)',[[1,'켬'],[0,'끔']],store.get('sg.rank',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){rkErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='rank')return;try{store.set('sg.rank',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined'){HELP84.push(['🎖 새벽별 장교 — 계급·레벨(v18.5)','나는 육군 특수첩보대 \'새벽별\'(가상)의 장교다. 국군의 손이 다 닿지 못하는 곳에서 민간 요원(팀원 — 🎯저격·🔭첩보·⛑의무·💪소탕)을 이끌고 첩보·저격·소탕을 맡는다. 표어 "어둠 속에서 일하고, 빛을 향해 간다". 공적: 미션 25~30 · 돌발 상황 20(정전 잠입 30) · 교전 승리 20~50 · 적법한 사살 4~14 · 생포 16 · 부상자 8 · 길 잃은 아이 10 · 내통자 검거 40. 레벨 1~30. 계급: 소위(Lv1) 중위(4) 대위(8) 소령(12) 중령(17) 대령(22) 준장(28) — 레벨이 차도 기강 60 이상이어야 진급한다. 기강(처음 80): 위법 사살 −30 · 국군·경찰을 쏨 −40(군인 충성 3턴 끊김) · 틀린 내통자 지목 −10 · 깨끗한 턴 +5 · 20 밑이면 강등. 미니맵 아래 계급 칩 → 계급표.']);
+  HELP84.push(['🫡 군인의 충성(v18.5)','소위: 길거리·검문소 군인이 경례하고, 밤 순찰대가 검문하지 않고 길을 비킨다. 중위: 경례한 군인이 근처 위협의 방향·거리를 귀띔. 대위: 교전마다 국군 지원조 2명 합류. 소령: 검문소에서 탄약 보급(외출마다 한 번). 중령: 저격 지원 1명 추가. 대령: 지원조 4명. 준장: 지원조 6명. 국군·경찰을 쏘거나 무법 수배(별)가 붙으면 충성이 끊긴다.'])}
+
+/* v18.5 군인의 충성 — 길거리·검문소·순찰대 군인이 새벽별 장교에게 경례하고 따른다(사용자 요청 2026-11-23 19:23 "길거리 군인도 내게 충성을 하게 만들어 주세요")
+   · 거수경례: 9m 안으로 다가가면 돌아서서 경례(오른팔을 뼈 단위로 들어 올림 — 애니메이션 위에 덧씌움) + "충성! ○위님!" — 외출마다 한 사람에 한 번
+   · 소위: 밤 순찰대(103)가 검문하지 않고 경례 후 길을 비킨다 · 중위: 경례한 군인이 근처 위협의 방향·거리를 귀띔(45초마다)
+   · 대위: 제자리 교전(116)이 붙으면 국군 지원조 2명 합류(교전마다) · 중령: 저격 지원 1명 추가 · 대령 4명 · 준장 6명
+   · 소령: 검문소에서 탄약 보급(외출마다 한 번 · 쥔 총 탄 60 · 의약품 1)
+   · 충성이 끊기는 때: 국군·경찰을 쏨(3턴) · 무법 수배(별)가 붙어 있는 동안 · 치안대 교전(law) — 모든 인물 가상 · 자동 점검(webdriver)은 __rkTest일 때만 */
+const LOY={err:0,t:0,tipT:-99,n:{sal:0,tip:0,al:0,sn:0,sup:0,curfew:0}};
+const _ly=[new T.Vector3(),new T.Vector3(),new T.Vector3(),new T.Vector3(),new T.Vector3(),new T.Vector3()],_lq=[new T.Quaternion(),new T.Quaternion(),new T.Quaternion(),new T.Quaternion()];
+function loyErr(e){if(LOY.err<6){LOY.err++;try{console.error(e)}catch(x){}}}
+function rkLoyal(){try{if(!rkOn()||!G)return false;const S=rkS();if(S.brk>(G.turn|0))return false;if(typeof OL!=='undefined'&&OL.star>0)return false;if(typeof IS!=='undefined'&&IS.on&&IS.k==='law')return false;return true}catch(e){return false}}
+function rkR(){try{return rkS().r|0}catch(e){return 0}}
+/* ---------- 거수경례(뼈 덧씌우기) ---------- */
+function loyAim(bone,child,tgt,w){bone.updateWorldMatrix(true,false);child.updateWorldMatrix(false,false);const bp=bone.getWorldPosition(_ly[0]),cp=child.getWorldPosition(_ly[1]);const cur=_ly[2].copy(cp).sub(bp).normalize(),des=_ly[3].copy(tgt).sub(bp).normalize();
+  const dq=_lq[0].setFromUnitVectors(cur,des);const wq=bone.getWorldQuaternion(_lq[1]);const nw=_lq[2].copy(dq).multiply(wq);const pq=bone.parent.getWorldQuaternion(_lq[3]).invert();nw.premultiply(pq);bone.quaternion.slerp(nw,w);bone.updateMatrixWorld(true)}
+function loySalute(h,w){const B=h.b;if(!B||!B.shR||!B.elR||!B.handR||!B.shL||!B.head)return;h.root.updateMatrixWorld(true);const sR=B.shR.getWorldPosition(new T.Vector3()),sL=B.shL.getWorldPosition(new T.Vector3()),hd=B.head.getWorldPosition(new T.Vector3());
+  const U=new T.Vector3(0,1,0);const Rt=sR.clone().sub(sL);Rt.y=0;if(Rt.lengthSq()<1e-6)return;Rt.normalize();const F=new T.Vector3().crossVectors(U,Rt);
+  const elbow=sR.clone().addScaledVector(Rt,.24).addScaledVector(F,.1).addScaledVector(U,.02);loyAim(B.shR,B.elR,elbow,w);
+  const brow=hd.clone().addScaledVector(U,.1).addScaledVector(F,.1).addScaledVector(Rt,.07);loyAim(B.elR,B.handR,brow,w)}
+(function(){const b=window.rbxUpdate;if(typeof b!=='function')return;window.rbxUpdate=function(h,dt,snap){const r=b.apply(this,arguments);try{if(h&&h.salT>0){h.salT-=dt||0;if(!h.skipped){const T0=h.salD||1.8,t=T0-Math.max(0,h.salT);const w=Math.min(1,t/.28,Math.max(0,h.salT)/.3);if(w>0)loySalute(h,w)}}}catch(e){loyErr(e)}return r}})();
+function loySal(h,P,txt){if(!h)return;try{lifeFace(h,P.x,P.z)}catch(e){}h.salT=h.salD=1.8;try{if(h.pose!=='idle'&&h.pose!=='look')h.setPose('idle')}catch(e){}if(txt)try{bubSay(h,txt,2.4,'ok')}catch(e){}LOY.n.sal++}
+/* ---------- 다가가면 경례 · 귀띔 ---------- */
+function loyHost(n){return !!(n&&n.h&&!n.dead&&!(n.h.dead)&&n.h.root.visible&&(n.kind==='thug'||n.kind==='loot'||n.kind==='en'||n.kind==='wanted'||(n.kind==='spy'&&n.fleeing)))}
+function loyTip(a){const P=FP3.pos;let best=null,bd=260;for(const n of OUT.npcs||[]){if(!loyHost(n))continue;const q=n.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;best={x:q.x,z:q.z,w:n.kind==='en'?'적 전투원':n.kind==='spy'?'수상한 사람':n.kind==='loot'?'약탈자':'무장 괴한'}}}
+  try{if(!best&&typeof EVD!=='undefined'&&EVD.cur&&EVD.cur.site){const s=EVD.cur.site;best={x:s.x,z:s.z,w:(EVD.cur.D&&EVD.cur.D.n)||'돌발 상황'};bd=Math.hypot(s.x-P.x,s.z-P.z)}}catch(e){}
+  if(!best)return '';const dir=typeof roeDir==='function'?roeDir(best.x-P.x,best.z-P.z):'';return `${dir}쪽 ${Math.round(bd)}m에 ${best.w}`}
+function loyStep(dt){LOY.t-=dt;if(LOY.t>0)return;LOY.t=.2;if(!OUT.on||!rkLoyal()||OUT.enc||OUT.drv||(typeof IS!=='undefined'&&IS.on)||(typeof OWC!=='undefined'&&OWC.on))return;const P=FP3.pos;const hon=rkHon();
+  for(const a of OUT.npcs||[]){if(!a||!a.h||a.rkSal||a.dead||a.h.dead||!a.h.root.visible)continue;if(a.kind!=='rok'&&a.kind!=='gsrok')continue;if(a.ml&&a.ml.st==='fight')continue;const q=a.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d>9)continue;
+    a.rkSal=1;let txt=`충성! ${hon}!`;if(rkR()>=1&&LOY.t>=0&&(typeof TJ==='undefined'||true)){const now=performance.now()/1000;if(now-LOY.tipT>45){const t=loyTip(a);if(t){LOY.tipT=now;LOY.n.tip++;txt=`충성! ${hon}, ${t} — 조심하십시오!`;try{outNote(`<b>🫡 군인의 귀띔</b><div>"${t}"</div>`,3200)}catch(e){}}}}
+    loySal(a.h,P,txt);break}}
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{loyStep(dt)}catch(e){loyErr(e)}return r}})();
+/* 외출이 바뀌면 다시 경례할 수 있게 */
+(function(){const b=window.startOutside;if(typeof b!=='function')return;window.startOutside=function(){try{for(const a of OUT.npcs||[])a.rkSal=0;OUT.rkSup=0}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 밤 순찰대: 검문 대신 경례 ---------- */
+(function(){const b=window.mlCheck;if(typeof b!=='function')return;window.mlCheck=function(sq){try{if(rkLoyal()&&sq&&sq.mem&&sq.mem.length){const P=FP3.pos;const hon=rkHon();sq.mem.forEach((m,i)=>{if(m.npc)m.npc.rkSal=1;loySal(m.h,P,i?null:`충성! ${hon} — 확인했습니다, 이상 없습니다!`)});LOY.n.curfew++;
+      try{outNote(`<b>🫡 순찰대가 경례하고 길을 비켰다</b><div>새벽별 ${rkName()} — 통행금지 검문을 생략했다.</div>`,2800)}catch(e){}return}}catch(e){loyErr(e)}return b.apply(this,arguments)}})();
+/* ---------- 교전: 국군 지원조 ---------- */
+function loyAllies(){const r=rkR();return {n:[0,0,2,2,2,4,6][r]||0,sn:r>=4}}
+(function(){const b=window.isStart;if(typeof b!=='function')return;window.isStart=function(o){const r=b.apply(this,arguments);try{if(r&&rkLoyal()&&typeof IS!=='undefined'&&IS.on&&IS.alQ&&IS.k!=='law'){const A=loyAllies();if(A.n>0){const hon=rkHon();LOY.n.al+=A.n;
+      for(let i=0;i<A.n;i++)IS.alQ.push({A:{n:'국군 지원조',r:`${rkName()} 지원 요청`,acc:.36,rok:true,id:'rkal'+i,gun:i%3===2?'k1a':'k2',say:i?null:`<b>🫡 국군 지원조 합류</b><div>"${hon}, 지원 왔습니다!" — ${A.n}명${A.sn?' + 저격 지원':''}</div>`},t:2.4+i*.5});
+      if(A.sn){LOY.n.sn++;IS.alQ.push({A:{n:'저격 지원',r:'새벽별 저격조',acc:.6,rok:true,id:'rksn',gun:'k14'},t:3.6})}}}}catch(e){loyErr(e)}return r}})();
+/* ---------- 소령: 검문소 탄약 보급 ---------- */
+function loySupSpot(){const sp=(OUT.spots||[]).find(q=>q.k==='ask');if(sp)return sp;let best=null;for(const a of OUT.npcs||[]){if(a&&a.kind==='rok'&&a.home&&!a.ml){best={x:a.home.x,z:a.home.z};break}}return best}
+(function(){const b=window.outCands;if(typeof b!=='function')return;window.outCands=function(){const L=b.apply(this,arguments);try{if(Array.isArray(L)&&rkLoyal()&&rkR()>=3&&!OUT.rkSup&&!OUT.drv&&!OUT.ride){const sp=loySupSpot();const p=FP3.pos;if(sp&&Math.hypot(sp.x-p.x,sp.z-p.z)<9)L.push({id:'rkSup',k:'rkSup',x:p.x,z:p.z,r:9,g:'🎖',n:'탄약 보급 받기',s:`${rkName()} 이상 · 외출마다 한 번 · 쥔 총 탄 60 · 의약품 1`,h:0})}}catch(e){loyErr(e)}return L}})();
+(function(){const b=window.outDo;if(typeof b!=='function')return;window.outDo=function(c){if(c&&c.k==='rkSup'){try{if(!OUT.rkSup&&rkLoyal()&&rkR()>=3){OUT.rkSup=1;LOY.n.sup++;let am=null;try{const id=GUN.eq||G.eq;am=id&&ARMS[id]&&ARMS[id].am}catch(e){}FX=[];if(am)gunAmmoAdd(am,60);res('meds',1);try{OUT.fx.push(...FX);outStat();gunAmmoUI()}catch(e){}
+      const sp=loySupSpot();for(const a of OUT.npcs||[]){if(a&&a.kind==='rok'&&a.h&&!a.ml&&sp&&Math.hypot(a.h.root.position.x-sp.x,a.h.root.position.z-sp.z)<10){loySal(a.h,FP3.pos,`${rkHon()}, 보급입니다!`);break}}
+      outNote(`<b>🎖 검문소 보급</b><div>${am?'쥔 총 탄 60발 · ':''}의약품 1 — "새벽별 ${rkName()}님께 우선 보급합니다."</div>`,3000)}}catch(e){loyErr(e)}return}return b.apply(this,arguments)}})();
+
+/* v18.5 새벽별 장교 제복 — 사용자 요청(2026-11-23 19:23 "내 옷도 그에 걸맞게 재구성 바란다")
+   · 바탕: 같은 얼굴의 군복 아바타(military_m_2 = 내 아바타 m_10과 같은 사람) — 전투복을 검은 숯빛으로 물들인다(무늬·주름은 남는다)
+   · 플레이트 캐리어(앞·뒤판 · 어깨끈 · 탄창 주머니 3 · 무전기 주머니) · 가슴 가운데 계급장 패치 · 오른가슴 '새벽별' 이름띠 · 왼가슴 부대 패치(새벽별 휘장 — 우리 디자인)
+   · 모자 앞 계급장 · 헤드셋(귀덮개 둘 + 머리띠 + 마이크) · 오른허벅지 권총집 · 전술 장갑
+   · 계급장: 위관 다이아몬드(소위 1·중위 2·대위 3) · 영관 무궁화(소령 1·중령 2·대령 3) · 장관 별(준장 1) — 진급·강등하면 그 자리에서 바뀐다
+   · 설정 '내 모습': 새벽별 장교(기본) · 챔피언(예전 망토) · 보통 — 한 번만 기본을 새벽별로 옮긴다 */
+const AGW={err:0,tex:{},list:new Set()};
+function agwErr(e){if(AGW.err<6){AGW.err++;try{console.error(e)}catch(x){}}}
+function agwLook(){try{const v=store.get('sg.meLook',null);return v==null?'agent':v}catch(e){return 'agent'}}
+try{if(!store.get('sg.meLook185',false)){store.set('sg.meLook185',true);const v=store.get('sg.meLook',null);if(v==null||v==='champ')store.set('sg.meLook','agent')}}catch(e){}
+window.heroChampOn=function(){return agwLook()==='champ'};
+/* ---------- 계급장 · 패치 그림 ---------- */
+function agwDiamond(x,cx,cy,r){x.beginPath();x.moveTo(cx,cy-r);x.lineTo(cx+r*.72,cy);x.lineTo(cx,cy+r);x.lineTo(cx-r*.72,cy);x.closePath();x.fill();x.save();x.globalAlpha=.35;x.fillStyle='#fff';x.beginPath();x.moveTo(cx,cy-r);x.lineTo(cx+r*.72,cy);x.lineTo(cx,cy);x.closePath();x.fill();x.restore();x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=1;x.beginPath();x.moveTo(cx-r*.72,cy);x.lineTo(cx+r*.72,cy);x.moveTo(cx,cy-r);x.lineTo(cx,cy+r);x.stroke()}
+function agwFlower(x,cx,cy,r){for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*2/5;x.beginPath();x.ellipse(cx+Math.cos(a)*r*.5,cy+Math.sin(a)*r*.5,r*.45,r*.3,a,0,7);x.fill()}x.save();x.fillStyle='#8a8f96';x.beginPath();x.arc(cx,cy,r*.22,0,7);x.fill();x.restore()}
+function agwStar(x,cx,cy,r){x.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.42:r;x[i?'lineTo':'moveTo'](cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)}x.closePath();x.fill()}
+function agwRankTex(r){const k='rk'+r;if(AGW.tex[k])return AGW.tex[k];const c=document.createElement('canvas');c.width=192;c.height=128;const x=c.getContext('2d');x.fillStyle='#2e3328';x.fillRect(0,0,192,128);x.strokeStyle='#4a5040';x.lineWidth=6;x.strokeRect(3,3,186,122);x.setLineDash([6,5]);x.strokeStyle='#5c6450';x.lineWidth=2;x.strokeRect(10,10,172,108);x.setLineDash([]);
+  const I=RK_R[Math.max(0,Math.min(RK_R.length-1,r|0))].ins;const n=I[1];const sp=n===1?0:n===2?46:44;const g=x.createLinearGradient(0,20,0,108);g.addColorStop(0,'#f4f6f8');g.addColorStop(1,'#a9b0b8');x.fillStyle=g;
+  for(let i=0;i<n;i++){const cx=96+(i-(n-1)/2)*sp,cy=64;if(I[0]==='d')agwDiamond(x,cx,cy,34);else if(I[0]==='m')agwFlower(x,cx,cy,30);else agwStar(x,cx,cy,40)}
+  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=4;AGW.tex[k]=t;return t}
+function agwUnitTex(){if(AGW.tex.unit)return AGW.tex.unit;const c=document.createElement('canvas');c.width=c.height=192;const x=c.getContext('2d');x.fillStyle='#14182a';x.beginPath();x.arc(96,96,92,0,7);x.fill();x.strokeStyle='#c9a54a';x.lineWidth=7;x.stroke();
+  /* 어둠 위로 떠오르는 별(새벽) — 우리 디자인 */const g=x.createLinearGradient(0,60,0,150);g.addColorStop(0,'#1c2440');g.addColorStop(1,'#4a3a6a');x.fillStyle=g;x.beginPath();x.arc(96,96,80,0,7);x.fill();
+  x.fillStyle='#e8a84a';x.fillRect(22,118,148,5);x.fillStyle='#ffd88a';x.save();x.translate(96,82);x.beginPath();for(let i=0;i<8;i++){const a=-Math.PI/2+i*Math.PI/4,rr=i%2?12:42;x[i?'lineTo':'moveTo'](Math.cos(a)*rr,Math.sin(a)*rr)}x.closePath();x.fill();x.restore();
+  x.fillStyle='#f2e2b8';x.font='800 26px system-ui,sans-serif';x.textAlign='center';x.fillText('새벽별',96,156);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;AGW.tex.unit=t;return t}
+function agwTapeTex(){if(AGW.tex.tape)return AGW.tex.tape;const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.fillStyle='#2e3328';x.fillRect(0,0,256,64);x.fillStyle='#cfd6c4';x.font='800 38px system-ui,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('새 벽 별',128,34);
+  const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;AGW.tex.tape=t;return t}
+function agwCamo(){if(AGW.tex.camo)return AGW.tex.camo;const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle='#262927';x.fillRect(0,0,256,256);const cols=['#1a1c1b','#323730','#212428','#3a3f35'];let sd=7;const R=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
+  for(let i=0;i<1100;i++){x.fillStyle=cols[i%4];const w=4+Math.floor(R()*4)*3,h=4+Math.floor(R()*3)*3;x.fillRect(Math.floor(R()*64)*4,Math.floor(R()*64)*4,w,h)}const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(3,3);t.anisotropy=4;AGW.tex.camo=t;return t}
+function agwHeadMap(){if(AGW.head!==undefined)return AGW.head;AGW.head=null;try{const I=RBX.make(RBX_LOOK.me||'m_10');const mats=Array.isArray(I.mesh.material)?I.mesh.material:[I.mesh.material];const m=mats.find(q=>/head/i.test(q.name||''));AGW.head=m&&m.map||null}catch(e){agwErr(e)}return AGW.head}
+/* ---------- 입히기 ---------- */
+function agwFrame(h,bone){/* 뼈에 붙이되 축은 몸(루트) 기준 */const qb=new T.Quaternion(),qr=new T.Quaternion();h.root.updateMatrixWorld(true);bone.getWorldQuaternion(qb);h.root.getWorldQuaternion(qr);const off=qb.invert().multiply(qr);return (x,y,z)=>{const g=new T.Group();g.quaternion.copy(off);g.position.set(x,y,z).applyQuaternion(off);bone.add(g);return g}}
+function agwSuit(h){if(!h||!h.mesh||!h.b||h.agw)return;h.agw=1;const mesh=h.mesh;const mats=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+  /* 몸: 검은 디지털 위장(우리 그림 — 원래 무늬·표식은 지운다) · 머리: 내 얼굴(m_10과 같은 UV) → 모자는 검은 순찰모가 된다 */const hm=agwHeadMap();
+  mesh.material=mats.map(m=>{const nm=m.name||'';if(/opacity|hair/i.test(nm))return m;const s=m.clone();if(/head/i.test(nm)){if(hm)s.map=hm;s.name=nm+'_agw';return s}s.map=agwCamo();s.color=new T.Color('#b4bab2');s.roughness=.9;s.name=nm+'_agw';return s});
+  const mV=mat('#23271f',{r:.9}),mP=mat('#2b3024',{r:.88}),mK=mat('#141618',{r:.7}),mS=mat('#3a3f37',{r:.9}),mG=mat('#1a1c1e',{r:.8});
+  const C=agwFrame(h,h.b.chest);
+  /* 플레이트 캐리어: 앞판 · 뒤판 · 어깨끈 · 옆 */const fr=C(.02,.0,.155);MM(GG.box(.33,.3,.06,.015),mV,0,0,0,{p:fr,cast:true});const bk=C(.02,.02,-.13);MM(GG.box(.33,.32,.05,.015),mV,0,0,0,{p:bk,cast:true});
+  for(const sx of [-1,1]){const st=C(sx*.11,.16,.01);MM(GG.box(.06,.025,.3),mV,0,0,0,{p:st,cast:false});const sd=C(sx*.19,-.06,.01);MM(GG.box(.025,.13,.26),mV,0,0,0,{p:sd,cast:false})}
+  /* 탄창 주머니 3 · 무전기 주머니 */const pf=C(.02,-.1,.195);for(let i=0;i<3;i++)MM(GG.box(.075,.11,.045,.01),mP,(i-1)*.085,0,0,{p:pf,cast:false});const rd=C(-.15,.05,.17);MM(GG.box(.05,.11,.04,.01),mK,0,0,0,{p:rd,cast:false});MM(GG.cyl(.005,.005,.12,6),mK,0,.1,0,{p:rd,cast:false});
+  /* 계급장 패치(가슴 가운데 위) · 이름띠(오른가슴) · 부대 패치(왼가슴) */const pt=C(.02,.075,.187);const rkM=new T.MeshStandardMaterial({map:agwRankTex(agwRankNow()),roughness:.8});const rp=MM(GG.pl(.075,.05),rkM,0,0,0,{p:pt,cast:false});h.agwRk=rkM;
+  const tp=C(-.085,.075,.187);MM(GG.pl(.1,.025),new T.MeshStandardMaterial({map:agwTapeTex(),roughness:.85}),0,0,0,{p:tp,cast:false});
+  const up=C(.12,.07,.187);MM(GG.circ?GG.circ(.032,20):new T.CircleGeometry(.032,20),new T.MeshStandardMaterial({map:agwUnitTex(),roughness:.7}),0,0,0,{p:up,cast:false});
+  /* 머리: 모자 앞 계급장 · 헤드셋 */try{const H=agwFrame(h,h.b.head);const cf=H(0,.152,.118);const ck=new T.MeshStandardMaterial({map:agwRankTex(agwRankNow()),roughness:.8});MM(GG.pl(.05,.034),ck,0,0,0,{p:cf,cast:false,rx:-.18});h.agwRk2=ck;
+    for(const sx of [-1,1]){const e=H(sx*.088,.045,.0);MM(GG.cyl(.042,.042,.035,14),mK,0,0,0,{p:e,cast:false,rz:Math.PI/2});MM(GG.cyl(.03,.03,.04,12),mS,sx*.006,0,0,{p:e,cast:false,rz:Math.PI/2})}
+    const band=H(0,.045,.0);MM(new T.TorusGeometry(.092,.009,6,18,Math.PI),mK,0,0,0,{p:band,cast:false});const mic=H(-.09,.03,.03);const mb=MM(GG.box(.008,.008,.11),mK,0,-.02,.05,{p:mic,cast:false});mb.rotation.x=.35;MM(GG.sph(.013,8),mK,0,-.05,.105,{p:mic,cast:false})}catch(e){agwErr(e)}
+  /* 오른허벅지 권총집 · 장갑 */try{const R=agwFrame(h,h.b.hipR);const hs=R(-.06,-.18,.02);MM(GG.box(.06,.16,.1,.01),mK,0,0,0,{p:hs,cast:false});MM(GG.box(.07,.035,.11),mV,0,.09,0,{p:hs,cast:false})}catch(e){agwErr(e)}
+  /* 장갑: 손까지 위장 무늬가 덮어 검은 전술 장갑이 된다 */
+  h.agwR=agwRankNow();AGW.list.add(h)}
+function agwRankNow(){try{return typeof rkS==='function'&&G&&G.rk?G.rk.r|0:0}catch(e){return 0}}
+function agwRank(){const r=agwRankNow();for(const h of AGW.list){try{if(h.agwR===r)continue;h.agwR=r;const t=agwRankTex(r);for(const m of [h.agwRk,h.agwRk2])if(m){m.map=t;m.needsUpdate=true}}catch(e){agwErr(e)}}}
+(function(){const b=window.civHuman;if(typeof b!=='function')return;window.civHuman=function(i,pose,kind){if(kind!=='me'||agwLook()!=='agent'||typeof RBX==='undefined'||!RBX.ok||!RBX_DATA||!RBX_DATA.avatars||!RBX_DATA.avatars['military_m_2'])return b.apply(this,arguments);
+  const k0=RBX_LOOK.me;RBX_LOOK.me='military_m_2';let h;try{h=b.apply(this,arguments)}finally{RBX_LOOK.me=k0}try{if(h&&h.rbx)agwSuit(h)}catch(e){agwErr(e)}return h}})();
+/* 설정 '내 모습': 새벽별 장교 · 챔피언 · 보통 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{const i=h.indexOf('data-k="melook"');if(i>=0&&h.indexOf('data-v="agent"')<0){const s=h.lastIndexOf('<div class="seg"',i);const e=h.indexOf('</div></div>',i);if(s>=0&&e>s){const seg=s4Seg('melook','내 모습 (밖 3인칭·대피소)','새벽별 장교: 숯빛 전투복·플레이트 캐리어·계급장·부대 패치·헤드셋 — 다음 장면부터',[['agent','새벽별 장교'],['champ','챔피언'],['std','보통']],agwLook());h=h.slice(0,s)+seg+h.slice(e+12)}}}catch(e){agwErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='melook'||b.dataset.v!=='agent')return;e.preventDefault();e.stopPropagation();try{store.set('sg.meLook','agent');toast('새벽별 장교 제복 — 다음에 밖에 나갈 때부터',2200);if(typeof s4Render==='function')s4Render()}catch(x){agwErr(x)}},true);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
