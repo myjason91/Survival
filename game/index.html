@@ -2180,6 +2180,18 @@ canvas.im-shk{animation:im-shk .18s linear}
 .sv3 .zb-hud b{display:block;font-size:12.5px;font-weight:800;color:#ffd7b8}.sv3 .zb-hud span{display:block;color:#f3efe8}.sv3 .zb-hud small{display:block;color:#ffcf9a;font-size:10px;margin-top:1px}
 .sv3 .zb-hud .zb-bar{display:block;height:5px;margin-top:4px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}.sv3 .zb-hud .zb-bar i{display:block;height:100%;border-radius:3px}
 .sv3:has(.mis-panel) .zb-hud{visibility:hidden}
+/* v19.3 · 땅굴 기갑 침공 — 띠(창가 저지 띠 아래) · 창가 드론 단추(유탄 왼쪽) · 기갑 내구 막대 */
+.sv3 .ta-ui{position:absolute;inset:0;pointer-events:none;z-index:9}
+.sv3 .ta-top{position:absolute;left:10px;top:128px;max-width:300px;padding:5px 10px 6px;border-radius:10px;background:rgba(20,14,8,.72);border:1px solid rgba(255,150,80,.45);color:#fff;font:600 11px/1.35 system-ui,sans-serif}
+.sv3 .ta-top b{display:block;font-size:12.5px;color:#ffcf9a}.sv3 .ta-top span{display:block}
+.sv3 .ta-dr{position:absolute;right:132px;top:112px;display:flex;gap:6px;pointer-events:auto}
+.sv3 .ta-b{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;padding:0;border:2px solid rgba(255,170,90,.6);background:rgba(36,22,10,.66);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.sv3 .ta-b b{font-size:18px;line-height:1;margin-top:5px}.sv3 .ta-b small{font:700 9px/1 system-ui,sans-serif;margin-bottom:6px}
+.sv3 .ta-lab{position:absolute;transform:translate(-50%,-100%);pointer-events:none;z-index:8;text-align:center;font:800 10px/1.1 system-ui,sans-serif;color:#fff;text-shadow:0 1px 2px #000}
+.sv3 .ta-lab i{display:block;width:44px;height:4px;margin:2px auto 0;border-radius:2px;background:rgba(0,0,0,.55);overflow:hidden}.sv3 .ta-lab i i{display:block;height:100%;margin:0;width:100%}
+.sv3 .ta-lab.hit b{color:#ffd27a}
+#aBar .ta-go{background:rgba(120,40,10,.78);border-color:rgba(255,150,80,.6)}
+.ev-board .ta-row{border-left:3px solid #ff9a3a;background:rgba(255,140,50,.07)}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14276,7 +14288,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='19.2';
+const APP_VER='19.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -29527,6 +29539,143 @@ function zbEnterZone(){const W=ANX.W;if(!W)return;zbClear();ZB.D=null;const on=z
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="zombie"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0&&typeof s4Seg==='function'){const add=s4Seg('zombie','좀비(청정지역 경계)','탕정역 방어선 · 아산역 좀비 점령지',[['1','켬'],['0','끔']],store.get('sg.zombie',true)===false?'0':'1');h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){zbErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='zombie')return;try{store.set('sg.zombie',b.dataset.v==='1');toast(b.dataset.v==='1'?'좀비: 탕정역 방어선 · 아산역 점령지(권역에 다시 들어가면)':'좀비를 껐다',2600)}catch(x){}});
 if(typeof HELP84!=='undefined')HELP84.push(['🛡 탕정역 방어선 · 🧟 아산역 점령지(v19.2)','세계관: 대한민국에서 탕정 시내~탕정역까지만 청정지역(가상). 탕정역 동쪽 광장에 경계 방벽이 서 있고, 방벽 앞 \'🧟 방어선 지휘소\'에서 방어를 시작한다 — 10파 · 1,000마리가 아산 쪽 철길·도로로 몰려와 방벽(내구 1,000)을 두드린다. 무너지면 광장으로 쏟아진다. 높이 10m 승강장은 저격 망루(좀비가 못 올라온다). 국군 수비대 4명 · 팀원(부팀장 포함)이 함께 쏘고, 3·6·9파 뒤 보급 상자(탄 240 · 의약품 2 · 방벽 수리). 방어 중엔 시간이 멈춘다. 쓰러지면 역 뒤로 끌려 나오고 그 파부터 다시. 아산역 권역은 좀비 점령지 — 사람이 없고 감염된 시민·군인·새벽별 대원이 배회한다(22m 안이면 달려든다 · 승강장 위만 안전). 머리 ×3. 누계는 두 권역 합.']);
+
+/* ===================== 193 · v19.3 🕳 땅굴 기갑 침공 — 아파트 창가 방어전(저격 · 유탄 · 창가 드론) → 계단·실내 근접전 ===================== */
+/* 사용자 요청(2026-11-24 01:16): "땅굴에서 기갑부대가 대량으로 출몰하는데 이를 아파트에서 디펜스하는 재미도 필요하구요(저격.유탄.드론 활용)"
+   ① 시작: 아파트 세대(로비 제외) 위쪽 띠 '🕳 땅굴 침공' · 상황판 줄(세대 안에서) — 101 창가 저지(AW)를 그대로 쓰고 그 위에 기갑·땅굴을 얹는다
+   ② 땅굴: 내 창에서 보이는 건물 앞 빈 땅(90~145m)이 꺼지며 땅굴 입구가 열린다(흙더미 · 깨진 포장 · 먼지 · 폭음) — 거기서 3파가 올라온다
+      1파 장갑차 2 + 보병 6 · 2파 전차 2 + 장갑차 1 + 보병 8 · 3파 전차 2 + 장갑차 1 + 보병 10 (장갑차는 멈추면 뒷문으로 3명씩 더 내린다) — 기갑 8 · 보병 36 안팎
+   ③ 기갑(가상 · 실제 차종·표식 아님 — 짙은 모래·회색 도장): 땅굴 경사로로 올라와 건물 쪽으로 온다
+      · 전차(내구 14): 52~78m에서 멈추고 포탑을 내 창으로 돌려 6~9초마다 주포 — 내 창 둘레 벽에 터진다(화면 크게 흔들림 · 창 앞이면 18~28 · 숙여도 2.2m 안이면 충격 8)
+      · 장갑차(내구 7): 38~52m에서 멈추고 기관포 연사(창 앞이면 맞는다) + 보병 하차
+      · 피해: 💥 자폭 드론 8 · 💣 투하탄 5 · 로켓 7 · 유탄(창가 💣) 장갑차 3/전차 1.5 · 저격 소총 장갑차 0.5/전차 0.08(소총은 튕긴다 '팅') — 0이면 폭발 · 포탑이 튀고 · 불타는 잔해(검은 연기)
+   ④ 🛸 창가 드론: 오른쪽 위 '💥 자폭' · '💣 폭탄' — 창가 저격 자리(창밖으로 내밀기)에서 창 밖으로 띄운다(105·125 조종 그대로). 자폭 드론은 기갑에 부딪히면 터진다(위에서 치면 약하다)
+      · 드론이 모자라면 창가 드론 상자(자폭 4 · 폭탄 2)를 준다(한 판 한 번) · 조준경 총이 없으면 창가 지급(142)
+   ⑤ 기갑이 남아 있거나 파가 남았으면 계단 돌입으로 넘어가지 않는다 · 끝나면 현관으로 들어간 보병 + 땅굴 잔당(3~8)이 계단으로 → 실내 근접전(101) → 이기면 신뢰 +4 · 사기 +4
+   ⑥ 화면: 왼쪽 위 '🕳 땅굴 기갑 침공 · N/3파 · 전차 · 장갑차 · 보병' 띠 · 기갑 위 체력 막대 · 격파 띠(188 타격감)
+   적·차량·부대는 모두 가상이다(실제 국가·단체를 가리키지 않는다) · 피·사망 묘사는 기존 수준 그대로 */
+const TKA={on:false,err:0,n:{start:0,veh:0,kill:0,shell:0,mg:0,drop:0,dr:0,drHit:0,rifle:0,boom:0,box:0,win:0},hole:null,veh:[],wave:-1,t:0,waveT:0,q:[],spT:0,inShot:0,hit:null,lab:new Map(),uiT:0,wr:[]};
+const TA_V={apc:{n:'장갑차',hp:7,sp:5.0,stand:[38,52]},tank:{n:'전차',hp:14,sp:3.6,stand:[52,78]}};
+const TA_W=[{v:['apc','apc'],inf:6},{v:['tank','apc','tank'],inf:8},{v:['tank','apc','tank'],inf:10}];
+const _ta=[new T.Vector3(),new T.Vector3(),new T.Vector3()];
+function taErr(e){if(TKA.err<6){TKA.err++;try{console.error('[193]',e)}catch(x){}}}
+function taOn(){try{if(navigator.webdriver&&!window.__taTest)return false;return !(typeof eduOn==='function'&&eduOn())}catch(e){return false}}
+function taLive(){return TKA.veh.filter(v=>!v.dead)}
+function taCan(){try{return taOn()&&typeof awCan==='function'&&awCan()&&!OUT.enc&&!OUT.busy}catch(e){return false}}
+/* ---------- 땅굴 자리: 내 창에서 보이는 건물 앞 빈 땅 ---------- */
+function taHoleSpot(){const D=AW.door;const base=Math.atan2(D.nx,D.nz);const w=AW.win||(typeof awWin==='function'?awWin():null);let best=null;
+  for(const da of [0,.2,-.2,.4,-.4,.6,-.6,.85,-.85])for(const d of [125,115,135,105,145,95]){const a=base+da;const x=D.gx+Math.sin(a)*d,z=D.gz+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,4.5)&&owcFD(AW.F,x,z)<60000}catch(e){}if(!ok)continue;let los=true;try{if(w)los=owcLos(x,1.2,z,w.x,w.y,w.z)}catch(e){}if(!los)continue;best={x,z,a};break}
+  if(!best)for(const da of [0,.3,-.3,.6,-.6])for(const d of [110,90,130,75]){const a=base+da;const x=D.gx+Math.sin(a)*d,z=D.gz+Math.cos(a)*d;let ok=false;try{ok=owcFree(x,z,3.5)}catch(e){}if(ok){best={x,z,a};break}if(best)break}
+  return best}
+function taHoleMesh(p){const g=new T.Group();g.position.set(p.x,0,p.z);const yaw=Math.atan2(AW.door.gx-p.x,AW.door.gz-p.z);g.rotation.y=yaw;
+  const blk=new T.MeshBasicMaterial({color:'#050505'});const dirt=new T.MeshStandardMaterial({color:'#5b4a36',roughness:1}),asph=new T.MeshStandardMaterial({color:'#3d3d3b',roughness:.95}),con=new T.MeshStandardMaterial({color:'#8d8a82',roughness:.9});
+  const hole=new T.Mesh(new T.CircleGeometry(4.2,28),blk);hole.rotation.x=-Math.PI/2;hole.position.y=.04;hole.scale.set(1,1.35,1);g.add(hole);
+  const ring=new T.Mesh(new T.TorusGeometry(4.8,1.15,6,26),dirt);ring.rotation.x=-Math.PI/2;ring.scale.set(1,1.3,.55);ring.position.y=.15;g.add(ring);
+  /* 경사로(건물 쪽으로 올라오는 흙길) */const ramp=new T.Mesh(new T.BoxGeometry(4.6,.2,7),dirt);ramp.position.set(0,-.9,1.6);ramp.rotation.x=-.32;g.add(ramp);
+  for(let i=0;i<9;i++){const a=i/9*6.283+Math.random()*.3;const r=5.6+Math.random()*1.8;const s=new T.Mesh(new T.BoxGeometry(1.4+Math.random()*1.4,.22,1+Math.random()*1.2),i%3?asph:con);s.position.set(Math.cos(a)*r,.25+Math.random()*.3,Math.sin(a)*r*1.25);s.rotation.set((Math.random()-.5)*.9,Math.random()*3,(Math.random()-.5)*.9);s.castShadow=true;g.add(s)}
+  OUT.scene.add(g);return g}
+/* ---------- 기갑 모양: 144 전차를 다시 칠하고 · 장갑차는 바퀴 8개 차체 + 작은 포탑 ---------- */
+function taPaint(g,col){const m=new T.MeshStandardMaterial({color:col,roughness:.85});g.traverse(o=>{if(o.isMesh&&o.material&&o.material.color){const c=o.material.color;if(c.r+c.g+c.b>.45)o.material=m}})}
+function taMesh(kind){let g=null;if(kind==='tank'){try{g=mvMesh('tank')}catch(e){g=null}if(g)taPaint(g,'#6c6656');return g}
+  g=new T.Group();const body=new T.MeshStandardMaterial({color:'#66604f',roughness:.85}),dk=new T.MeshStandardMaterial({color:'#24251f',roughness:.9}),rub=new T.MeshStandardMaterial({color:'#161616',roughness:.95});
+  const B=(w,h,d,x,y,z,m,rx,p)=>{const e=new T.Mesh(new T.BoxGeometry(w,h,d),m);e.position.set(x,y,z);if(rx)e.rotation.x=rx;e.castShadow=true;(p||g).add(e);return e};
+  B(2.8,1.25,6.6,0,1.35,0,body);B(2.8,.7,1.2,0,1.25,3.5,body,-.6);B(2.6,.6,.9,0,1.6,-3.3,body,.2);for(const s of [-1,1])for(let i=0;i<4;i++){const w=new T.Mesh(new T.CylinderGeometry(.55,.55,.45,14),rub);w.rotation.z=Math.PI/2;w.position.set(s*1.45,.55,-2.4+i*1.6);g.add(w)}
+  const tur=new T.Group();tur.position.set(0,2.05,.4);g.add(tur);B(1.5,.55,1.7,0,.27,0,body,0,tur);const gun=new T.Group();gun.position.set(0,.32,.85);tur.add(gun);const br=new T.Mesh(new T.CylinderGeometry(.06,.06,2.2,10),dk);br.rotation.x=Math.PI/2;br.position.set(0,0,1.1);gun.add(br);const mz=new T.Object3D();mz.position.set(0,0,2.25);gun.add(mz);
+  g.userData.tur=tur;g.userData.gun=gun;g.userData.mz=mz;g.userData.hl=3.3;g.userData.hw=1.5;return g}
+function taMk(kind){const H=TKA.hole;if(!H)return null;const g=taMesh(kind);if(!g)return null;const K=TA_V[kind];const yaw=H.yaw;g.position.set(H.x-Math.sin(yaw)*1.5,-3.6,H.z-Math.cos(yaw)*1.5);g.rotation.y=yaw;OUT.scene.add(g);
+  const v={kind,g,hp:K.hp,max:K.hp,st:'rise',t:0,yaw,sp:K.sp*(.9+Math.random()*.2),stand:K.stand[0]+Math.random()*(K.stand[1]-K.stand[0]),fireT:kind==='tank'?4+Math.random()*2:2.5+Math.random()*1.5,mgN:0,dropped:0,hl:g.userData.hl||3.7,hw:g.userData.hw||1.75,h:kind==='tank'?2.6:2.4,nm:K.n};
+  TKA.veh.push(v);TKA.n.veh++;try{SND.boom(false,.5);sv3Shake(.25)}catch(e){}return v}
+/* 보병(101 창가 저지 규칙 그대로 — 달려와 무릎 쏴 · 3점사 · 현관에 닿으면 건물로) */
+function taInf(x,z,i){let h=null;try{h=makeHuman(owcLook(i%5===0?'elite':i%4===3?'mg':'rifle',1300+TKA.n.drop*7+i))}catch(e){h=null}if(!h)return null;let q={x,z};try{if(!owcFree(x,z,.5)){const r=owcNearFree(x,z,6);if(r)q=r}}catch(e){}h.root.position.set(q.x,0,q.z);h.lookKeep=true;OUT.scene.add(h.root);try{h.setPose('run',true)}catch(e){}
+  const ag={h,kind:'en',side:'en',aw:1,hp:i%5===0?3:2,nm:'땅굴 침투조',st:'run',t:.6+Math.random()*1.4,goT:0,burst:0,shotT:0,aimP:0,ta:1};OUT.npcs.push(ag);AW.en.push(ag);TKA.n.drop++;try{GUN.hits=[]}catch(e){}return ag}
+/* ---------- 시작 ---------- */
+function taStart(){if(!taCan())return false;if(!awStart({}))return false;
+  /* 101이 깔아 둔 정찰대는 걷고, 땅굴에서 올라오게 한다 */for(const a of AW.en){try{a.h.root.removeFromParent();RBX.live.delete(a.h)}catch(e){}OUT.npcs=OUT.npcs.filter(x=>x!==a)}AW.en=[];
+  const sp=taHoleSpot();if(!sp){awEnd('left');outNote('<b>땅굴 입구를 열 자리가 없다</b><div>다른 동·다른 층에서 다시 한다.</div>',2600);return false}
+  Object.assign(TKA,{on:true,veh:[],wave:-1,t:0,waveT:0,q:[],spT:0,wr:[],hole:{x:sp.x,z:sp.z,yaw:Math.atan2(AW.door.gx-sp.x,AW.door.gz-sp.z),open:0}});TKA.n.start++;
+  try{if(typeof kbSniper==='function'&&!(typeof kbScoped==='function'&&kbScoped()))kbSniper()}catch(e){}
+  /* 창가 드론 상자(한 판 한 번) */try{const S=dfS();if(!G.flags.taBox&&(dfCount('fpv')<4||dfCount('bomb')<2)){G.flags.taBox=1;S.kit=1;const tn=G.turn|0;for(let i=dfCount('fpv');i<4;i++)S.inv.push({t:'fpv',g:'B',turn:tn,kit:1});for(let i=dfCount('bomb');i<2;i++)S.inv.push({t:'bomb',g:'B',turn:tn,kit:1});TKA.n.box++}}catch(e){taErr(e)}
+  outNote(`<b>🕳 땅굴 기갑 침공 — 건물 앞 땅이 꺼진다</b><div>약 ${Math.round(Math.hypot(sp.x-AW.door.gx,sp.z-AW.door.gz))}m 앞에 땅굴 입구가 열린다. 기갑 3파 — 저격으로 보병을, 💣 유탄·🛸 드론으로 장갑차·전차를. 전차 주포가 창을 노리면 숙인다.</div>`,6400);
+  try{vib([80,40,80,40,120])}catch(e){}taUI();return true}
+function taOpen(){const H=TKA.hole;if(!H||H.open)return;H.open=1;try{H.g=taHoleMesh(H)}catch(e){taErr(e)}try{FX3.explode(new T.Vector3(H.x,.5,H.z),{r:7,kind:'ground'})}catch(e){}try{SND.boom(true,.9);sv3Shake(.55)}catch(e){}try{if(typeof dvSmoke==='function')dvSmoke(new T.Vector3(H.x,1,H.z),8)}catch(e){}}
+function taWave(i){const W=TA_W[i];if(!W)return;TKA.wave=i;TKA.waveT=0;TKA.q=[];W.v.forEach((k,j)=>TKA.q.push({k,t:j*5.5}));for(let j=0;j<W.inf;j++)TKA.q.push({k:'inf',t:1.5+j*1.1});
+  outNote(`<b>🕳 ${i+1}파 — ${W.v.map(k=>TA_V[k].n).join('·')} + 보병 ${W.inf}</b><div>${i===0?'장갑차가 땅굴 경사로로 올라온다.':'전차가 올라온다 — 주포가 창을 노린다.'}</div>`,3400);try{SND.tone(220,.5,'sawtooth',.05,0,110)}catch(e){}}
+function taHold(){return TKA.on&&(TKA.wave<TA_W.length-1||TKA.q.length>0||taLive().length>0)}
+/* ---------- 매 걸음 ---------- */
+function taVehStep(v,dt){const g=v.g,P=g.position;v.t+=dt;if(v.dead){if(v.burnT!=null){v.burnT-=dt;if(v.burnT<=0){v.burnT=1.6+Math.random();try{if(typeof dvSmoke==='function')dvSmoke(new T.Vector3(P.x,2.2,P.z),2)}catch(e){}}}return}
+  const D=AW.door;const dDoor=Math.hypot(P.x-D.gx,P.z-D.gz);
+  if(v.st==='rise'){const k=Math.min(1,v.t/3);P.y=-3.6+3.6*k;g.rotation.x=-.32*(1-k);const s=1.6*dt;P.x+=Math.sin(v.yaw)*s;P.z+=Math.cos(v.yaw)*s;if(k>=1){v.st='drive';P.y=0;g.rotation.x=0}return}
+  if(v.st==='drive'){if(dDoor<=v.stand){v.st='hold';return}let q=null;try{q=owcFStep(AW.F,P.x,P.z,6)}catch(e){}if(!q)q={x:D.gx,z:D.gz};const dx=q.x-P.x,dz=q.z-P.z,L=Math.hypot(dx,dz)||1;const want=Math.atan2(dx,dz);let dy=want-v.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));v.yaw+=clamp(dy,-1.2*dt,1.2*dt);g.rotation.y=v.yaw;
+    const s=v.sp*dt*(Math.abs(dy)>.8?.4:1);const nx=P.x+Math.sin(v.yaw)*s,nz=P.z+Math.cos(v.yaw)*s;let ok=true;try{ok=owcFree(nx,nz,1.4)}catch(e){}if(ok){P.x=nx;P.z=nz}else{v.stk=(v.stk||0)+dt;if(v.stk>2.5)v.st='hold'}
+    /* 다른 기갑과 겹치지 않게 */for(const o of TKA.veh){if(o===v||o.dead)continue;const ox=P.x-o.g.position.x,oz=P.z-o.g.position.z,od=Math.hypot(ox,oz);if(od<6&&od>.01){P.x+=ox/od*(6-od)*.5;P.z+=oz/od*(6-od)*.5}}return}
+  /* hold: 포탑을 창으로 · 사격 */const w=AW.win||awWin();const U=g.userData;if(U.tur){const want=Math.atan2(w.x-P.x,w.z-P.z)-v.yaw;let cur=U.tur.rotation.y;let dy=want-cur;dy=Math.atan2(Math.sin(dy),Math.cos(dy));U.tur.rotation.y=cur+clamp(dy,-.9*dt,.9*dt);if(U.gun){const L=Math.hypot(w.x-P.x,w.z-P.z);U.gun.rotation.x=-Math.atan2(w.y-2.2,L)}}
+  if(v.kind==='apc'&&!v.dropped&&v.t>1.2){v.dropped=1;const bx=P.x-Math.sin(v.yaw)*4.4,bz=P.z-Math.cos(v.yaw)*4.4;for(let i=0;i<3;i++)taInf(bx+(i-1)*1.3,bz,i+v.mgN);try{outNote('<b>🚪 장갑차 뒷문이 열린다 — 보병 3명</b>',1800)}catch(e){}}
+  v.fireT-=dt;if(v.fireT>0)return;if(v.kind==='tank'){v.fireT=6+Math.random()*3;taShell(v)}else{v.fireT=3+Math.random()*1.2;taMg(v)}}
+function taMz(v){const U=v.g.userData;try{if(U.mz){v.g.updateMatrixWorld(true);return U.mz.getWorldPosition(new T.Vector3())}}catch(e){}const P=v.g.position;return new T.Vector3(P.x,2.2,P.z)}
+function taShell(v){TKA.n.shell++;const mz=taMz(v);const w=AW.win||awWin();const R=new T.Vector3(-AW.door.nz,0,AW.door.nx);const pt=w.clone().addScaledVector(R,(Math.random()-.5)*5).add(_ta[0].set(0,(Math.random()-.45)*4.2,0)).addScaledVector(new T.Vector3(AW.door.nx,0,AW.door.nz),.3);
+  try{owcNpcFlash(mz)}catch(e){}try{SND.boom(false,.6)}catch(e){}try{awTr(mz,pt,1)}catch(e){}
+  setTimeout(()=>{if(!TKA.on||!AW.on)return;try{FX3.explode(pt.clone(),{r:2.8,kind:'he'})}catch(e){}try{SND.boom(true,1);sv3Shake(.75);vib([90,40,120])}catch(e){}const me=awMe();const dm=me.distanceTo(pt);const ex=awExposed();
+    if(dm<4.5&&ex>.3)awHurt((18+Math.random()*10)*ex*(G&&G.diff==='train'?.72:G&&G.diff==='hard'?1.15:1),null);else if(dm<2.6)awHurt(8,null);try{if(typeof sv3Flash==='function')sv3Flash(.25)}catch(e){}},Math.max(120,v.g.position.distanceTo(pt)*4))}
+function taMg(v){TKA.n.mg++;const mz=taMz(v);const w=AW.win||awWin();const me=awMe();const ex=awExposed();for(let i=0;i<5;i++){setTimeout(()=>{if(!TKA.on||!AW.on)return;const R=new T.Vector3(-AW.door.nz,0,AW.door.nx);const end=w.clone().addScaledVector(R,(Math.random()-.5)*3.6).add(_ta[1].set(0,(Math.random()-.4)*2,0));try{awTr(mz,end,1);SFX.shot('mg',{d:mz.distanceTo(me),az:0})}catch(e){}
+    if(ex>0&&Math.random()<.13*ex)awHurt((6+Math.random()*3)*(G&&G.diff==='train'?.72:1),null);else if(Math.random()<.4)try{awImp(end,'#c9c2b2')}catch(e){}},i*110)}}
+function taStep(dt){if(!TKA.on)return;if(!AW.on){taEnd('gone');return}TKA.t+=dt;
+  if(AW.ph==='out'){if(!TKA.hole.open&&TKA.t>1.2)taOpen();if(TKA.hole.open){if(TKA.wave<0&&TKA.t>2.6)taWave(0);TKA.waveT+=dt;
+      for(let i=TKA.q.length-1;i>=0;i--){const q=TKA.q[i];q.t-=dt;if(q.t>0)continue;TKA.q.splice(i,1);if(q.k==='inf'){const H=TKA.hole;taInf(H.x+Math.sin(H.yaw)*5+(Math.random()-.5)*4,H.z+Math.cos(H.yaw)*5+(Math.random()-.5)*4,i)}else taMk(q.k)}
+      /* 다음 파: 기갑이 다 부서지고 큐가 비었거나 70초 */if(TKA.wave>=0&&TKA.wave<TA_W.length-1&&!TKA.q.length&&(!taLive().length||TKA.waveT>70))taWave(TKA.wave+1)}}
+  for(const v of TKA.veh)try{taVehStep(v,dt)}catch(e){taErr(e)}
+  /* 기갑이 남았으면 계단 돌입으로 넘어가지 않는다 */
+  TKA.uiT-=dt;if(TKA.uiT<=0){TKA.uiT=.25;taUI()}taLabels()}
+/* ---------- 피해 ---------- */
+function taDmg(v,n,src){if(v.dead||n<=0)return;v.hp-=n;v.hitT=.4;if(v.hp<=0)taKill(v,src)}
+function taKill(v,src){v.dead=1;v.hp=0;TKA.n.kill++;const g=v.g,P=g.position;try{FX3.explode(new T.Vector3(P.x,1.4,P.z),{r:6,kind:'fuel'})}catch(e){try{FX3.explode(new T.Vector3(P.x,1.4,P.z),{r:6})}catch(x){}}try{SND.boom(true,1);sv3Shake(.6);vib([120,40,160])}catch(e){}
+  g.traverse(o=>{if(o.isMesh&&o.material&&o.material.color){const m=o.material.clone();m.color.multiplyScalar(.2);if(m.emissive)m.emissive.setRGB(0,0,0);o.material=m}});const U=g.userData;if(U.tur){U.tur.position.y+=.5;U.tur.rotation.z=.35;U.tur.rotation.x=-.2}
+  try{if(typeof mslFlame==='function')mslFlame(P.x,2,P.z,3.2,60)}catch(e){}try{if(typeof dvSmoke==='function')dvSmoke(new T.Vector3(P.x,2,P.z),6)}catch(e){}v.burnT=1;
+  /* 둘레 보병 */for(const a of AW.en){if(a.dead||a.h.dead)continue;const q=a.h.root.position;if(Math.hypot(q.x-P.x,q.z-P.z)<6.5){try{humanDie(a.h,null)}catch(e){}a.dead=1}}try{GUN.hits=[]}catch(e){}
+  AW.stat.veh=(AW.stat.veh||0)+1;try{if(typeof imOn==='function'&&imOn()){imBanner('💥',`${v.nm} 격파`,src==='fpv'?'자폭 드론':src==='bomb'?'투하탄':src==='gl'?'유탄':src==='rocket'?'로켓':'',v.kind==='tank'?'big':'');imSnd('streak')}else SFX.mech('head')}catch(e){}
+  outNote(`<b>💥 ${v.nm} 격파</b><div>불타는 잔해가 남았다 — 남은 기갑 ${taLive().length}.</div>`,2400)}
+function taNear(p,r){const L=[];for(const v of TKA.veh){if(v.dead)continue;const P=v.g.position;const d=Math.hypot(P.x-p.x,P.z-p.z);if(d<r+v.hl*.6)L.push({v,d})}return L}
+/* 유탄(101 창가) · 폭발(65 gunBoom: 자폭 드론 · 투하탄 · 로켓) */
+(function(){const b=window.awBoom;if(typeof b!=='function')return;window.awBoom=function(p){const r=b.apply(this,arguments);try{if(TKA.on)for(const q of taNear(p,4))taDmg(q.v,(q.v.kind==='tank'?1.5:3)*clamp(1.2-q.d/7,.4,1),'gl')}catch(e){taErr(e)}return r}})();
+(function(){const b=window.gunBoom;if(typeof b!=='function')return;window.gunBoom=function(pt,r,dmg,W){const out=b.apply(this,arguments);try{if(TKA.on){const n=W&&W.n||'';const src=/자폭/.test(n)?'fpv':/투하/.test(n)?'bomb':W&&W.rocket?'rocket':'boom';const base=src==='fpv'?8:src==='bomb'?5:src==='rocket'?7:3;for(const q of taNear(pt,(r||4)+1)){taDmg(q.v,base*clamp(1.25-q.d/((r||4)+3),.45,1),src);if(src==='fpv'||src==='bomb')TKA.n.drHit++}}}catch(e){taErr(e)}return out}})();
+/* 총알: 기갑에 막힌다(튕김) — 저격 소총만 장갑차에 조금 */
+function taRay(o,d,maxD){let best=null;for(const v of TKA.veh){const P=v.g.position;const c=Math.cos(v.yaw),s=Math.sin(v.yaw);const ox=o.x-P.x,oz=o.z-P.z;const lx=ox*c-oz*s,lz=ox*s+oz*c;const dx=d.x*c-d.z*s,dz=d.x*s+d.z*c;let t0=0,t1=maxD;
+    const sl=(o0,dd,mn,mx)=>{if(Math.abs(dd)<1e-6)return o0>=mn&&o0<=mx;let a=(mn-o0)/dd,b2=(mx-o0)/dd;if(a>b2){const t=a;a=b2;b2=t}t0=Math.max(t0,a);t1=Math.min(t1,b2);return t0<=t1};
+    if(!sl(lx,dx,-v.hw,v.hw))continue;if(!sl(lz,dz,-v.hl,v.hl))continue;if(!sl(o.y-P.y,d.y,0,v.h))continue;if(!best||t0<best.t)best={v,t:t0}}return best}
+(function(){const b=window.gunCast;if(typeof b!=='function')return;window.gunCast=function(o,d,maxD){const r=b.apply(this,arguments);if(!TKA.on||!TKA.inShot)return r;try{let rd=maxD;if(r){rd=r.d>=0?r.d:o.distanceTo(r.pt)}const h=taRay(o,d,rd);if(h){TKA.hit={v:h.v,pt:o.clone().addScaledVector(d,h.t)};return{pt:TKA.hit.pt.clone(),wall:1,d:h.t}}}catch(e){taErr(e)}return r}})();
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){if(!TKA.on)return b.apply(this,arguments);TKA.inShot=1;TKA.hit=null;let r;try{r=b.apply(this,arguments)}finally{TKA.inShot=0}try{const H=TKA.hit;TKA.hit=null;if(H){TKA.n.rifle++;const W=gunW();const sr=W&&W.cat==='sr';const n=H.v.kind==='tank'?(sr?.08:0):(sr?.5:.12);taDmg(H.v,n,'rifle');try{SND.tone(1900,.06,'triangle',.06);SND.tone(2600,.05,'sine',.03,.02)}catch(e){}try{owcImpact(H.pt,'#ffd27a',null)}catch(e){}}}catch(e){taErr(e)}return r}})();
+/* 자폭 드론: 기갑에 부딪히면 터진다 */
+(function(){const b=window.dfkStep;if(typeof b!=='function')return;window.dfkStep=function(dt,mv){const r=b.apply(this,arguments);try{const B=typeof DFR!=='undefined'&&DFR.B;if(TKA.on&&B&&B.type==='fpv'&&B.armed&&B.boom==null){for(const v of TKA.veh){if(v.dead)continue;const P=v.g.position;const c=Math.cos(v.yaw),s=Math.sin(v.yaw);const ox=B.pos.x-P.x,oz=B.pos.z-P.z;const lx=ox*c-oz*s,lz=ox*s+oz*c;if(Math.abs(lx)<v.hw+.5&&Math.abs(lz)<v.hl+.5&&B.pos.y<v.h+.6){dfkBoom(B.pos.clone());break}}}}catch(e){taErr(e)}return r}})();
+/* ---------- 🛸 창가 드론 ---------- */
+/* 드론 조종(105·125)은 아파트 안(APT.on)이면 바로 끝낸다 — 창가 저격 자리에서 띄운 드론은 그동안만 '밖'으로 본다 */
+(function(){const b=window.dfrStep;if(typeof b!=='function')return;window.dfrStep=function(){const on=TKA.on&&GUN.ow&&typeof APT!=='undefined'&&APT.on&&typeof DFR!=='undefined'&&!!DFR.B;if(!on)return b.apply(this,arguments);APT.on=false;try{return b.apply(this,arguments)}finally{APT.on=true}}})();
+(function(){const b=window.dfrCan;if(typeof b!=='function')return;window.dfrCan=function(){try{if(TKA.on&&AW.on&&AW.ph==='out'&&GUN.ow&&!OUT.enc&&!(typeof DFR!=='undefined'&&DFR.B))return true}catch(e){}return b.apply(this,arguments)}})();
+function taDrone(kind){if(!TKA.on||AW.ph!=='out')return false;try{if(!GUN.ow){if(typeof gunOwStart==='function')gunOwStart();if(!GUN.ow){outNote('<b>창가 저격 자리에서 띄운다</b><div>조준경 총을 들고 \'창밖으로 내밀기\'.</div>',2200);return false}}}catch(e){taErr(e);return false}
+  let ok=false;try{ok=kind==='bomb'?dfrStart('bomb'):dfkStart()}catch(e){taErr(e)}if(!ok){outNote(`<b>${kind==='bomb'?'💣 폭탄':'💥 자폭'} 드론이 없다</b>`,1800);return false}
+  try{const B=DFR.B;const O=GUN.ow;const nx=AW.door.nx,nz=AW.door.nz;B.pos.set(O.x+nx*1.6,O.y+.2,O.z+nz*1.6);B.home={x:B.pos.x,z:B.pos.z};B.yaw=FP3.yaw;B.pitch=-.08;if(OUT.me)OUT.me.root.visible=false}catch(e){taErr(e)}TKA.n.dr++;taUI();return true}
+/* ---------- 화면 ---------- */
+function taUI(){const el=SV3&&SV3.el;let u=document.getElementById('taUI');if(!TKA.on||!AW.on||!el){if(u)u.remove();taLabels(true);return}
+  if(!u||u.parentNode!==el){if(u)u.remove();u=document.createElement('div');u.id='taUI';u.className='ta-ui';u.innerHTML='<div class="ta-top" id="taTop"></div><div class="ta-dr" id="taDr"><button data-g3="tafpv" class="ta-b"><b>💥</b><small>자폭</small></button><button data-g3="tabomb" class="ta-b"><b>💣</b><small>폭탄</small></button></div>';el.appendChild(u)}
+  const L=taLive();const tk=L.filter(v=>v.kind==='tank').length,ap=L.filter(v=>v.kind==='apc').length;const inf=AW.en.filter(a=>!a.dead&&!a.h.dead).length;const t=`<b>🕳 땅굴 기갑 침공 · ${Math.max(1,TKA.wave+1)}/3파</b><span>전차 ${tk} · 장갑차 ${ap} · 보병 ${inf} · 격파 ${TKA.n.kill}</span>`;const top=document.getElementById('taTop');if(top&&top._h!==t){top._h=t;top.innerHTML=t}
+  const dr=document.getElementById('taDr');if(dr){const show=AW.ph==='out'&&!(typeof DFR!=='undefined'&&DFR.B);dr.hidden=!show;let nf=0,nb=0;try{nf=dfCount('fpv');nb=dfCount('bomb')}catch(e){}const a=dr.querySelector('[data-g3=tafpv] small'),c=dr.querySelector('[data-g3=tabomb] small');if(a)a.textContent=`자폭 ${nf}`;if(c)c.textContent=`폭탄 ${nb}`}}
+function taLabels(clear){const el=SV3&&SV3.el;if(clear||!TKA.on||!el||(typeof DFR!=='undefined'&&DFR.B&&false)){TKA.lab.forEach(e=>e.remove());TKA.lab.clear();return}const cam=SV3.cam;if(!cam)return;cam.updateMatrixWorld(true);const W=el.clientWidth,H=el.clientHeight;
+  for(const v of TKA.veh){let e=TKA.lab.get(v);if(v.dead||v.st==='rise'){if(e){e.remove();TKA.lab.delete(v)}continue}const P=v.g.position;let p=_ta[2].set(P.x,v.h+1.2,P.z);try{if(!GUN.ow&&APTW.on&&!(typeof DFR!=='undefined'&&DFR.B))p=awToL(p)}catch(x){}p=p.clone().project(cam);const vis=p.z<1&&p.x>-1.1&&p.x<1.1&&p.y>-1.1&&p.y<1.1;
+    if(!e){e=document.createElement('div');e.className='ta-lab';e.innerHTML='<b></b><i><i></i></i>';el.appendChild(e);TKA.lab.set(v,e)}e.hidden=!vis;if(!vis)continue;e.style.left=Math.round((p.x*.5+.5)*W)+'px';e.style.top=Math.round((-p.y*.5+.5)*H)+'px';const k=Math.max(0,v.hp/v.max);const t=v.kind==='tank'?'🛡 전차':'🚙 장갑차';const b=e.firstChild;if(b.textContent!==t)b.textContent=t;const bar=e.lastChild.firstChild;bar.style.width=Math.round(k*100)+'%';bar.style.background=k<.35?'#ff5a3a':k<.7?'#ffb43a':'#9be37a';e.classList.toggle('hit',(v.hitT||0)>0);v.hitT=Math.max(0,(v.hitT||0)-.016)}}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-g3=tago],[data-g3=tafpv],[data-g3=tabomb],[data-g3=taboard]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
+  if(k==='tago'||k==='taboard'){try{if(k==='taboard')evBoard(false)}catch(x){}if(!taStart())outNote('<b>🕳 땅굴 기갑 침공</b><div>아파트 세대(로비 말고) 안에서 시작한다.</div>',2400);return}if(k==='tafpv')taDrone('fpv');else taDrone('bomb')},true);
+/* ---------- 연결 ---------- */
+(function(){const b=window.awStep;if(typeof b!=='function')return;window.awStep=function(dt,ow){if(TKA.on&&AW.ph==='out'&&taHold())AW.t=Math.min(AW.t,2);const ph=AW.ph;const r=b.apply(this,arguments);try{if(TKA.on){if(ph==='out'&&AW.ph==='stairs'){AW.brN=clamp(3+AW.inN,3,8);AW.uiT=0;outNote(`<b>🚪 땅굴 잔당 ${AW.brN}명이 계단으로 올라온다</b><div>현관문이 보이는 모서리 뒤에 자리를 잡는다 — 부팀장이 앞을 맡는다.</div>`,4800)}taStep(dt||0)}}catch(e){taErr(e)}return r}})();
+(function(){const b=window.awEnd;if(typeof b!=='function')return;window.awEnd=function(why){const was=TKA.on&&AW.on&&AW.ph!=='end';const r=b.apply(this,arguments);try{if(was)taEnd(why)}catch(e){taErr(e)}return r}})();
+function taEnd(why){if(!TKA.on)return;TKA.on=false;const win=why==='win';if(win){TKA.n.win++;FX=[];try{trust(1);mor(2)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}
+    setTimeout(()=>{try{outNote(`<b>🕳 땅굴 기갑 침공을 막았다</b><div>기갑 ${TKA.n.kill}대 격파 · 보병 ${AW.kills}명 · 건물을 지켰다(이웃 신뢰 +4 · 사기 +4 합계).</div>`,6400)}catch(e){}},400)}
+  taUI();taLabels(true)}
+function taClear(){for(const v of TKA.veh)try{v.g.removeFromParent()}catch(e){}TKA.veh=[];if(TKA.hole&&TKA.hole.g)try{TKA.hole.g.removeFromParent()}catch(e){}TKA.hole=null;TKA.on=false;taLabels(true);const u=document.getElementById('taUI');if(u)u.remove()}
+(function(){const b=window.tjAptLeave;if(typeof b!=='function')return;window.tjAptLeave=function(){try{taClear()}catch(e){taErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{taClear()}catch(e){}return b.apply(this,arguments)}})();
+/* 아파트 위 띠 · 상황판 */
+(function(){const b=window.tjAptBar;if(typeof b!=='function')return;window.tjAptBar=function(){const r=b.apply(this,arguments);try{const bar=document.getElementById('aBar');if(bar){const has=bar.querySelector('[data-g3=tago]');const can=taOn()&&typeof awCan==='function'&&awCan();if(can&&!has){const x=bar.querySelector('[data-g3=aptx]');const bt=document.createElement('button');bt.dataset.g3='tago';bt.className='aw-go ta-go';bt.textContent='🕳 땅굴 침공';bar.insertBefore(bt,x)}else if(!can&&has)has.remove()}}catch(e){taErr(e)}return r}})();
+(function(){const b=window.evBoard;if(typeof b!=='function')return;window.evBoard=function(open){const r=b.apply(this,arguments);try{if(!open||!taOn())return r;const p=document.getElementById('misPanel');if(!p||p.querySelector('.ta-row'))return r;const can=typeof awCan==='function'&&awCan();const e=document.createElement('div');e.className='mis-row ta-row';
+  e.innerHTML=`<span class="mis-ico">🕳</span><div><b>땅굴 기갑 침공 — 아파트 창가 방어</b><small>전차·장갑차 3파 · 저격 · 💣 유탄 · 🛸 창가 드론 → 계단·실내 근접전</small>${can?'':'<em>아파트 세대(로비 말고)에 들어가서 시작</em>'}</div><button class="btn sm ${can?'pri':''}" data-g3="taboard"${can?'':' disabled'}>시작</button>`;const rows=p.querySelectorAll('.mis-row');const at=rows[1]||rows[0];if(at)at.after(e);else p.appendChild(e)}catch(e){taErr(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🕳 땅굴 기갑 침공(v19.3)','아파트 세대 위쪽 띠 \'🕳 땅굴 침공\'(또는 상황판) — 건물 앞 90~145m 땅이 꺼지며 땅굴이 열리고 가상의 기갑 3파(장갑차 2 → 전차 2·장갑차 1 → 전차 2·장갑차 1)와 보병이 올라온다. 전차는 52~78m에서 멈춰 6~9초마다 주포로 내 창 둘레를 친다(창 앞이면 크게 다친다 — ⤓ 숙이기). 장갑차는 기관포를 쏘고 뒷문으로 보병 3명을 내린다. 소총은 장갑에 튕긴다 — 💣 유탄(장갑차에 잘 듣는다)·🛸 창가 드론(오른쪽 위 💥 자폭 · 💣 폭탄 — 창밖으로 내밀어 띄운다 · 자폭 드론은 기갑에 부딪히면 터진다)이 답이다. 기갑 위 막대 = 내구. 다 부수면 땅굴 잔당이 계단으로 올라와 실내 근접전.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
