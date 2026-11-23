@@ -2117,6 +2117,12 @@ body.trn-on .apl-tag{visibility:hidden}
 .tri-chip b{color:#7fd0ff}
 .tri-bar .btn{width:auto;min-width:0;flex:0 0 auto;box-shadow:0 6px 18px -8px #000}
 .tri-fade{position:fixed;inset:0;background:#000;color:#cfd8e2;display:flex;align-items:center;justify-content:center;font:800 16px var(--sans);letter-spacing:.04em;opacity:0;pointer-events:none;transition:opacity .4s;z-index:61}.tri-fade.on{opacity:1}
+/* v18.8.2 · 방송 띠 닫기 · 자동사격 멈춤 표시 */
+.bcast.bc-has>div:not(.bc-acts){flex:1 1 auto}
+.bcast .bc-acts{display:flex;flex:0 0 auto;gap:6px;align-items:center;margin-left:auto;pointer-events:auto}
+.bcast .bc-b{pointer-events:auto;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;border-radius:9px;font:700 12px var(--sans);padding:6px 9px;min-height:32px;white-space:nowrap;cursor:pointer}
+.bcast .bc-x{min-width:34px;font-size:15px;padding:4px 8px}
+.fa-hold{position:absolute;left:50%;top:calc(50% - 64px);transform:translateX(-50%);z-index:32;pointer-events:none;background:rgba(120,20,20,.82);color:#fff;font:800 12px var(--sans);padding:4px 10px;border-radius:9px;border:1px solid rgba(255,150,150,.5);white-space:nowrap}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14213,7 +14219,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.8.1';
+const APP_VER='18.8.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -28721,6 +28727,117 @@ function hfxPlace(c,force){const el=SV3.el;if(!c||!el||c.parentNode!==el)return 
     c.innerHTML=`<span class="t${ti}">🤝 ${MOT_TT[ti][1]}</span><span class="m${mi}">🔥 ${MOT_MT[mi][1]}</span><span>📋 ${dn}/${T.length}</span>`;c.title=`신뢰 ${t} · 사기 ${Math.round(m)} — 눌러서 등급표`;c._hfxH=c._h;hfxPlace(c,true)}else if(!c.dataset.hfx)hfxPlace(c,true)}}catch(e){hfxErr(e)}return r}})();
 (function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{HFX.t=(HFX.t||0)-(dt||0);if(HFX.t<=0){HFX.t=.5;const c=document.getElementById('motChip');if(c)hfxPlace(c,false)}}catch(e){hfxErr(e)}return r}})();
 addEventListener('resize',()=>{setTimeout(()=>{try{const c=document.getElementById('motChip');if(c)hfxPlace(c,true)}catch(e){}},200)});
+
+/* v18.8.2 손질 다섯 가지 (사용자 제보 2026-11-23 22:49)
+   "정찰버튼도 계속 간섭이 발생합니다. 탕정라디오 나올 때 끄는 버튼도 만들어 주시고 불량배 자동 사격 시 민간인도 피해를 받아서 계엄군이 저를 공격하게되는 에러 조치바랍니다.
+    그리고 상황클릭 후 공수부대 소환하고싶은데 이미 진행 중인 상황이 있어서 중복되지 않는다고 에러가 발생하는 것도 조치해 주시고, 재래식공습 경우 너무 빈번해서 피로도가 있네요 이것도 어느 정도의 시간 말미로 좀 부탁드립니다"
+   ① 🔭 정찰 버튼(168): 오른쪽 46% 고정 자리 — 총을 들면 '점프' 단추와 겹쳤다 → 182의 빈자리 찾기를 이 버튼에도(오른쪽 가장자리 위아래 먼저 → 막히면 조금 안쪽 · 여유 8px · 0.5초마다 확인)
+   ② 📻 라디오: 방송 띠(#bcast)에 [✕ 닫기](목소리도 멈춤) · 탕정 생활 라디오에는 [📻 라디오 끄기](다음부터 안 나옴 — 설정 '탕정 생활 라디오'에서 다시 켬)
+   ③ 자동사격(176): 표적 곁(1.4m)이나 사선(퍼짐 원뿔 + 몸 폭 — 표적 너머까지)에 주민·팀원·군경·아이·투항자가 있으면 쏘지 않고 기다린다('⛔ 주민이 가까이 — 자동사격 멈춤')
+      · 그래도 자동사격 탄이 표적 아닌 사람에게 가면 맞히지 않는다(안전 장치 — 주민 사격 → 계엄군 추격으로 번지지 않게). 손으로 쏘는 탄은 예전 그대로
+   ④ 공수부대 부르기(57 evpara): '진행 중인 상황'으로 막히던 것 — 원인은 길에 미리 세워 둔 무리(IS.pre: 강도·호위·검문조 등)까지 '진행 중'으로 셌던 것
+      · 미리 세워 둔 무리는 막지 않는다 · 돌발 상황(가는 중)은 접어 둔다(벌점 없음) · 미션은 잠시 멈췄다가 강하가 끝나면 이어서 · 검문하던 무리는 물러간다
+      · 지금 교전 중이면 '예약' — 끝나는 대로 3초 뒤 강하 · 상황판에 상황이 있어도 '🪂 공수부대를 지금 부른다' 줄이 보인다 · 강하할 빈 땅을 못 찾으면 범위를 넓혀 다시
+   ⑤ 재래식 공습경보(24 · 108): 경보 사이 1.5~3분 → 설정 '공습경보 간격' 보통 5~8분(기본) · 드묾 10~15분 · 잦음(예전) · 밖에 나와 첫 경보도 보통이면 2.5~4분 뒤
+      · 전장 감독(151)의 💥 포격도 경보 앞뒤 90초 안에는 고르지 않고, 보통이면 덜 자주(×0.5) · 드묾이면 ×0.25 */
+const V882={err:0,n:{ping:0,bcx:0,radioOff:0,hold:0,spare:0,call:0,res:0,shelve:0,mxPause:0,mxBack:0,fire:0,widen:0,raid:0},t:0,want:0,wt:0,mx:null,since:1e9,holdT:0};
+function v882Err(e){if(V882.err<5){V882.err++;try{console.error('[183]',e)}catch(x){}}}
+
+/* ---------- ① 정찰 버튼 자리 ---------- */
+function v882Spot(c,pref,M){const el=SV3.el;if(!c||!el||c.parentNode!==el)return false;const{ER,L}=hfxRects(el,c);const w=c.offsetWidth,h=c.offsetHeight;if(!w||!h)return false;M=M==null?8:M;
+  const free=(x,y)=>{if(y<ER.top+44||y+h>ER.bottom-8||x<ER.left+4||x+w>ER.right-4)return false;for(const b of L)if(x<b.right+M&&x+w>b.left-M&&y<b.bottom+M&&y+h>b.top-M)return false;return true};
+  const R=c.getBoundingClientRect();if(c.dataset.hfx&&free(R.left,R.top))return false;
+  const px=ER.left+pref.x,py=ER.top+pref.y;const C=[];for(let dx=0;dx<=ER.width*.42;dx+=8)for(let dy=-ER.height*.36;dy<=ER.height*.3;dy+=6)C.push([px-dx,py+dy,Math.hypot(dx*1.6,dy)]);C.sort((a,b)=>a[2]-b[2]);
+  for(const [x,y] of C)if(free(x,y)){c.style.right='auto';c.style.left=Math.round(x-ER.left)+'px';c.style.top=Math.round(y-ER.top)+'px';c.dataset.hfx='p';V882.n.ping++;return true}return false}
+function v882PingPlace(force){const c=document.getElementById('motPing');if(!c||!SV3.el)return false;if(force)delete c.dataset.hfx;const E=SV3.el.getBoundingClientRect();return v882Spot(c,{x:E.width-14-(c.offsetWidth||58),y:E.height*.46},8)}
+(function(){const b=window.motPingBtn;if(typeof b!=='function')return;window.motPingBtn=function(){const r=b.apply(this,arguments);try{const c=document.getElementById('motPing');if(c&&!c.dataset.hfx)v882PingPlace(true)}catch(e){v882Err(e)}return r}})();
+addEventListener('resize',()=>{setTimeout(()=>{try{v882PingPlace(true)}catch(e){}},220)});
+
+/* ---------- ② 라디오 끄기 ---------- */
+function v882RadioOn(){try{return store.get('sg.radio',true)!==false}catch(e){return true}}
+(function(){const b=window.broadcast;if(typeof b!=='function')return;window.broadcast=function(label,text,opt){try{if(typeof STY_L!=='undefined'&&label===STY_L&&!v882RadioOn())return}catch(e){}const r=b.apply(this,arguments);
+  try{const el=document.getElementById('bcast');if(el&&!el.hidden){const radio=typeof STY_L!=='undefined'&&label===STY_L;el.classList.add('bc-has');el.insertAdjacentHTML('beforeend',`<div class="bc-acts">${radio?'<button type="button" class="bc-b" data-bcx="off">📻 라디오 끄기</button>':''}<button type="button" class="bc-b bc-x" data-bcx="x" aria-label="닫기">✕</button></div>`)}}catch(e){v882Err(e)}return r}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-bcx]');if(!b)return;e.preventDefault();e.stopPropagation();try{clearTimeout(broadcast._t)}catch(x){}try{hush()}catch(x){}V882.n.bcx++;
+  if(b.dataset.bcx==='off'){try{store.set('sg.radio',false)}catch(x){}V882.n.radioOff++;try{toast('📻 탕정 생활 라디오를 껐다 — 설정 \'탕정 생활 라디오\'에서 다시 켠다',2400)}catch(x){}}},true);
+
+/* ---------- ③ 자동사격: 주민이 가까우면 쏘지 않는다 ---------- */
+const _v8a=new T.Vector3(),_v8b=new T.Vector3(),_v8o=new T.Vector3(),_v8d=new T.Vector3();
+function v882Danger(tgtH){const W=gunW();if(!W)return null;const cam=SV3.cam;cam.updateMatrixWorld(true);cam.getWorldPosition(_v8o);cam.getWorldDirection(_v8d);
+  let tp=null;if(tgtH&&tgtH.root){tgtH.root.getWorldPosition(_v8a);tp=_v8a.clone();}const L=tp?Math.max(1,_v8b.set(tp.x,tp.y+1.1,tp.z).sub(_v8o).length()):60;
+  const sp=Math.max(.2,gunSpread(W))*DEG*(W.pel>1?1.25:1.15)+.004;const tn=Math.tan(sp);const seen=new Set();let bad=null;try{gunHitList()}catch(e){}
+  GUN.hitMap.forEach(t=>{if(bad||!t||!t.h||seen.has(t.h))return;seen.add(t.h);if(t.h===tgtH)return;const a=t.a||{};if(t.h.dead||a.dead||a.gone)return;const R=t.h.root;if(!R||!R.visible)return;
+    let ok=false;try{ok=faOk(t)}catch(e){}if(ok)return;/* 다른 적법 대상은 막지 않는다 */
+    R.getWorldPosition(_v8b);if(tp&&Math.hypot(_v8b.x-tp.x,_v8b.z-tp.z)<1.4){bad={why:'near',nm:a.nm||'',k:t.kind};return}
+    _v8b.y+=1.0;_v8b.sub(_v8o);const al=_v8b.dot(_v8d);if(al<.4||al>L+90)return;const lat=_v8b.clone().addScaledVector(_v8d,-al).length();const lim=al*tn+(al>L+30?.45:.6);if(lat<lim)bad={why:al<L?'front':'behind',nm:a.nm||'',k:t.kind}});return bad}
+function v882HoldUI(on){const el=SV3.el;if(!el)return;let d=document.getElementById('faHold');if(!on){if(d&&!d.hidden)d.hidden=true;return}if(!d||d.parentNode!==el){if(d)d.remove();d=document.createElement('div');d.id='faHold';d.className='fa-hold';d.textContent='⛔ 주민이 가까이 — 자동사격 멈춤';el.appendChild(d)}if(d.hidden)d.hidden=false}
+(function(){const b=window.faStep;if(typeof b!=='function')return;window.faStep=function(dt){V882.inAF=true;try{return b.apply(this,arguments)}finally{V882.inAF=false;V882.holdT=Math.max(0,V882.holdT-(dt||0));try{v882HoldUI(V882.holdT>0&&GUN.on&&GUN.fp)}catch(e){}}}})();
+(function(){const b=window.gunShoot;if(typeof b!=='function')return;window.gunShoot=function(){if(!V882.inAF)return b.apply(this,arguments);
+  try{const bad=v882Danger(AF.on);if(bad){V882.n.hold++;V882.holdT=.7;V882.last=bad;return false}}catch(e){v882Err(e)}V882.inShot=true;try{return b.apply(this,arguments)}finally{V882.inShot=false}}})();
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){if(V882.inShot&&t){let ok=true;try{ok=faOk(t)}catch(e){}if(!ok){V882.n.spare++;try{owcImpact(pt,'#c9c2b2',d)}catch(e){}return}}return b.apply(this,arguments)}})();
+
+/* ---------- ④ 공수부대 부르기 ---------- */
+function v882Hard(){try{return (typeof OWC!=='undefined'&&OWC.on)||(typeof PARA!=='undefined'&&PARA.on)||(typeof APT!=='undefined'&&APT.on)||!!OUT.enc||!!OUT.ending||(typeof SPY!=='undefined'&&!!SPY.chase)||(typeof INTEG!=='undefined'&&INTEG.on)||(typeof IS!=='undefined'&&IS.on)||(typeof D2!=='undefined'&&D2.on)||(typeof SG!=='undefined'&&SG.on)||(typeof US!=='undefined'&&US.cur&&US.cur.k==='bomb')||(typeof ANX!=='undefined'&&ANX.on)||(typeof TRI!=='undefined'&&TRI.on)||!!OUT.mapOpen||(EVD.cur&&EVD.cur.ph!=='go'&&!/^para/.test(EVD.cur.k))}catch(e){return true}}
+function v882HardWhy(){try{if(typeof ANX!=='undefined'&&ANX.on)return '역 안에 있다 — 밖으로 나오면';if(typeof SG!=='undefined'&&SG.on)return '열차 수색 중 — 끝나면';if(OUT.enc)return '대화가 끝나면';if(EVD.cur&&EVD.cur.ph!=='go')return `지금 상황(${EVK[EVD.cur.k].n})이 끝나면`}catch(e){}return '지금 교전이 끝나면'}
+/* 사용자가 부른 공수부대는 길에 세워 둔 무리(IS.pre)·멈춘 미션 때문에 시작이 막히지 않는다 */
+(function(){const b=window.evBlock;if(typeof b!=='function')return;window.evBlock=function(){const E=typeof EVD!=='undefined'&&EVD.cur;if(E&&E.pc&&typeof IS!=='undefined'&&IS.pre&&IS.pre.length){const sv=IS.pre;IS.pre=[];try{return b.apply(this,arguments)}finally{IS.pre=sv}}return b.apply(this,arguments)}})();
+function v882Fire(){const L=TJ.lobbies&&tjHomeLobby();const home=L&&Math.hypot(L[0]-FP3.pos.x,L[1]-FP3.pos.z)<350;let ok=false;try{ok=evFire(home?'para101':'para')||(home&&evFire('para'))}catch(e){v882Err(e)}
+  if(!ok&&EVK.para){/* 빈 땅을 못 찾으면 범위를 넓혀 다시 */const s0=EVK.para.site;try{EVK.para.site=()=>evPickSite(s=>s.open,60,1100)||evPickSite(null,70,700);V882.n.widen++;ok=evFire('para')}catch(e){v882Err(e)}finally{EVK.para.site=s0}}
+  if(ok&&EVD.cur){EVD.cur.pc=1;V882.n.fire++}else outNote('<b>🪂 강하할 빈 땅을 찾지 못했다</b><div>조금 움직인 뒤 다시 부른다.</div>',2400);return ok}
+function v882Call(){V882.n.call++;if(EVD.cur&&/^para/.test(EVD.cur.k)){outNote('<b>🪂 공수부대가 이미 오고 있다</b><div>붉은 기둥·미니맵 붉은 원 쪽.</div>',2200);return false}
+  if(v882Hard()){V882.want=1;V882.wt=0;V882.n.res++;outNote(`<b>🪂 공수부대 강하 — 예약했다</b><div>${v882HardWhy()} 3초 뒤 바로 강하한다. 상황판에서 취소할 수 있다.</div>`,3200);return false}
+  const sh=[];
+  if(EVD.cur){const E=EVD.cur,D=EVK[E.k];try{D.clear&&D.clear(E)}catch(e){v882Err(e)}try{evDrop()}catch(e){}EVD.cur=null;V882.n.shelve++;sh.push(`${D.ico} ${D.n} — 접어 뒀다(벌점 없음)`)}
+  if(typeof MX!=='undefined'&&MX.cur){V882.mx=MX.cur;MX.cur=null;try{mxHud(false)}catch(e){}V882.n.mxPause++;sh.push(`${MXT[V882.mx.D.ty].ico} ${V882.mx.D.n} — 잠시 멈춤, 강하가 끝나면 이어서`)}
+  if(typeof US!=='undefined'&&US.cur&&US.cur.k==='toll'){try{isHoldDrop(US.cur.ag)}catch(e){}US.cur=null;sh.push('길을 막던 검문조는 물러갔다')}
+  const ok=v882Fire();if(ok&&sh.length)setTimeout(()=>{try{outNote(`<b>🪂 공수부대를 불렀다</b><div>${sh.join(' · ')}</div>`,3800)}catch(e){}},3400);return ok}
+function v882MxBack(){if(!V882.mx||typeof MX==='undefined')return;if(MX.cur){V882.mx=null;return}MX.cur=V882.mx;V882.mx=null;MX.hudT=0;V882.n.mxBack++;try{outNote(`<b>${MXT[MX.cur.D.ty].ico} 미션을 이어서 한다 — ${MX.cur.D.n}</b><div>위쪽 띠의 할 일을 따라간다.</div>`,3000)}catch(e){}}
+window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-g3=evpara],[data-g3=v882x]');if(!b||!OUT.on)return;e.preventDefault();e.stopPropagation();try{evBoard(false)}catch(x){}
+  if(b.dataset.g3==='v882x'){V882.want=0;outNote('<b>🪂 공수부대 예약을 취소했다</b>',1800);return}try{v882Call()}catch(x){v882Err(x)}},true);
+/* 상황판: 상황이 있어도 부르는 줄 · 예약 표시 */
+(function(){const b=window.evBoard;if(typeof b!=='function')return;window.evBoard=function(open){const r=b.apply(this,arguments);try{if(!open)return r;const p=document.getElementById('misPanel');if(!p||typeof owcAvail!=='function'||!owcAvail()||!EVK.para)return r;
+  const row=(ico,t,d,st,btn)=>`<div class="mis-row v882-row"><span class="mis-ico">${ico}</span><div><b>${t}</b><small>${d}</small>${st?`<em>${st}</em>`:''}</div>${btn||''}</div>`;let h='';const E=EVD.cur;
+  if(V882.want)h=row('🪂','공수부대 강하 — 예약됨',v882HardWhy()+' 3초 뒤 강하','예약 중','<button class="btn sm" data-g3="v882x">취소</button>');
+  else if(E&&/^para/.test(E.k))h='';else if(v882Hard())h=row('🪂','공수부대를 부른다(예약)',v882HardWhy()+' 바로 강하','','<button class="btn sm" data-g3="evpara">예약</button>');
+  else if(E)h=row('🪂','공수부대를 지금 부른다',`지금 상황(${EVK[E.k].ico} ${EVK[E.k].n})은 접어 두고 부른다 — 벌점 없음`,'','<button class="btn sm" data-g3="evpara">부른다</button>');
+  else if(!p.querySelector('[data-g3=evpara]')&&typeof MX!=='undefined'&&MX.cur)h=row('🪂','공수부대를 지금 부른다','진행 중인 미션은 잠시 멈췄다가 강하가 끝나면 이어서','','<button class="btn sm" data-g3="evpara">부른다</button>');
+  if(h){const old=p.querySelector('[data-g3=evpara]');const oldRow=old&&old.closest('.mis-row');if(oldRow)oldRow.outerHTML=h;else{const now=p.querySelector('.ev-now')||p.querySelector('.mis-row');if(now)now.insertAdjacentHTML('afterend',h);else p.insertAdjacentHTML('beforeend',h)}}}catch(e){v882Err(e)}return r}})();
+
+/* ---------- ⑤ 공습경보 간격 ---------- */
+function v882Raid(){try{const v=store.get('sg.raidf','norm');return v==='often'||v==='rare'?v:'norm'}catch(e){return 'norm'}}
+function v882Gap(first){const m=v882Raid();const r=Math.random();if(m==='often')return first?60+r*50:95+r*70;if(m==='rare')return first?360+r*180:600+r*300;return first?150+r*90:300+r*180}
+(function(){const b=window.outSiren;if(typeof b!=='function')return;window.outSiren=function(dt){try{if(OUT.on&&OUT._v882!==OUT.saved){OUT._v882=OUT.saved;V882.since=1e9;if(!OUT.siren&&OUT.sirenT<1e8)OUT.sirenT=v882Gap(true)}}catch(e){v882Err(e)}
+  const was=OUT.siren;const r=b.apply(this,arguments);try{if(OUT.siren||was)V882.since=0;else V882.since+=dt||0;if(was&&!OUT.siren&&OUT.sirenT<1e8){OUT.sirenT=v882Gap(false);V882.n.raid++}}catch(e){v882Err(e)}return r}})();
+(function(){if(typeof DIR_EV==='undefined'||!DIR_EV.shell)return;const w0=DIR_EV.shell.w;DIR_EV.shell.w=function(){let w=w0.apply(this,arguments);try{if(OUT.siren||V882.since<90||(OUT.sirenT<90&&G.scen==='conv'))return 0;const m=v882Raid();if(m==='norm')w*=.5;else if(m==='rare')w*=.25}catch(e){}return w}})();
+
+/* ---------- ⑥ 드론(사용자 화면 2장 2026-11-23 23:00 "드론 버그가 있네요") ----------
+   · 🔭 정찰 버튼이 드론 조종 화면에 그대로 남아 정찰 드론의 '▲ 고도' 단추를 덮었다 → 드론을 띄운 동안(정찰·공격·자폭) 숨긴다
+   · 고도 70m인데 화면이 내 등 뒤(밖 3인칭) 시점: 105는 tjStep 사슬 안쪽이 끝난 뒤에 드론을 움직이고 카메라를 놓는다 — 안쪽 어딘가에서 오류가 나면 그 프레임엔 드론 걸음·카메라가 통째로 빠지고 밖 카메라가 남는다(추정 — 점검 환경에선 재현 안 됨)
+     → 안쪽 오류를 여기서 받아 두고, 드론 걸음이 빠졌으면 대신 돌린다 · 프레임 끝(그리기 직전)에 드론 카메라를 한 번 더 놓는다 */
+function v882Drone(){try{return (typeof DFR!=='undefined'&&!!DFR.B)||(typeof OWC!=='undefined'&&OWC.on&&!!(OWC.B||OWC.D))}catch(e){return false}}
+(function(){const b=window.motPingBtn;if(typeof b!=='function')return;window.motPingBtn=function(){const r=b.apply(this,arguments);try{const c=document.getElementById('motPing');if(c){const off=v882Drone();if(c.hidden!==off){c.hidden=off;V882.n.pingHide=(V882.n.pingHide|0)+(off?1:0)}}}catch(e){v882Err(e)}return r}})();
+(function(){const b=window.dfrStep;if(typeof b!=='function')return;window.dfrStep=function(){V882.dfrRan=1;return b.apply(this,arguments)}})();
+function v882DroneCam(){const B=typeof DFR!=='undefined'&&DFR.B;if(!B||B.end||!OUT.on||(typeof KC!=='undefined'&&KC.on))return false;if(B.type==='fpv'){if(typeof dfkCam==='function'){dfkCam(B);return true}return false}dfrCam(B);return true}
+(function(){const b=window.sv3Loop;if(typeof b!=='function')return;window.sv3Loop=function(now){if(!(typeof DFR!=='undefined'&&DFR.B)||typeof SV3.step!=='function')return b.apply(this,arguments);const f=SV3.step;
+  const w=function(dt){const r=f.apply(this,arguments);try{if(v882DroneCam())V882.n.camFix=(V882.n.camFix|0)+1}catch(e){v882Err(e)}return r};SV3.step=w;try{return b.apply(this,arguments)}finally{if(SV3.step===w)SV3.step=f}}})();
+
+/* ---------- 매 걸음: 정찰 버튼 확인 · 예약한 강하 · 멈춘 미션 이어서 · 드론 걸음 지키기 ---------- */
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){try{V882.t-=dt||0;if(V882.t<=0){V882.t=.5;v882PingPlace(false)}
+  if(V882.want&&OUT.on){if(v882Hard())V882.wt=0;else{V882.wt+=dt||0;if(V882.wt>=3){V882.want=0;V882.wt=0;v882Call()}}}
+  if(V882.mx&&OUT.on&&!EVD.cur&&!v882Hard()&&!V882.want)v882MxBack()}catch(e){v882Err(e)}
+  V882.dfrRan=0;let r;try{r=b.apply(this,arguments)}catch(e){V882.tjErr=(V882.tjErr|0)+1;if(V882.tjErr<=3)try{console.error('[183] tjStep 안쪽 오류',e)}catch(x){}}
+  try{if(typeof DFR!=='undefined'&&DFR.B&&!V882.dfrRan&&OUT.on){if(DFR.cool>0)DFR.cool=Math.max(0,DFR.cool-(dt||0));dfrStep(dt||0,DFR.mv||{x:0,y:0});V882.n.dfrSave=(V882.n.dfrSave|0)+1}}catch(e){v882Err(e)}return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{V882.want=0;if(V882.mx&&typeof MX!=='undefined'&&!MX.cur){MX.cur=V882.mx}V882.mx=null}catch(e){}return b.apply(this,arguments)}})();
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){V882.want=0;V882.mx=null;return b.apply(this,arguments)}})();
+
+/* ---------- 설정 · 도움말 ---------- */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="raidf"')<0){
+  const add=s4Seg('raidf','공습경보 간격','재래식 공습 — 경보와 다음 경보 사이(전장 감독의 포격도 덜 자주)',[['rare','드묾 10~15분'],['norm','보통 5~8분'],['often','잦음 1.5~3분']],v882Raid())+s4Seg('radio','탕정 생활 라디오','턴마다 나오는 가상 방송 — 방송 띠의 ✕로 그때그때 닫을 수도 있다',[[1,'켬'],[0,'끔']],v882RadioOn()?1:0);
+  const i=h.indexOf('data-k="story"');const j=i>=0?h.indexOf('<div class="seg">',i):-1;if(j>i)h=h.slice(0,j)+add+h.slice(j);else if(h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0)h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){v882Err(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||(b.dataset.k!=='raidf'&&b.dataset.k!=='radio'))return;try{if(b.dataset.k==='raidf'){const v=b.dataset.v;store.set('sg.raidf',v);if(typeof OUT!=='undefined'&&OUT.on&&!OUT.siren&&OUT.sirenT<1e8)OUT.sirenT=v882Gap(false);toast(v==='often'?'공습경보 — 잦음(1.5~3분)':v==='rare'?'공습경보 — 드묾(10~15분)':'공습경보 — 보통(5~8분)',1800)}
+  else{store.set('sg.radio',b.dataset.v==='1');toast(b.dataset.v==='1'?'📻 탕정 생활 라디오 켬':'📻 탕정 생활 라디오 끔',1600)}}catch(x){}},true);
+if(typeof HELP84!=='undefined'){try{const j=HELP84.findIndex(h=>/대면 쏜다/.test(h[0]));if(j>=0)HELP84[j]=[HELP84[j][0],HELP84[j][1]+' 주민·팀원·군경·아이가 표적 곁(1.4m)이나 사선(표적 너머까지)에 있으면 쏘지 않고 기다린다 — 조준점 위에 \'⛔ 주민이 가까이 — 자동사격 멈춤\'(v18.8.2). 손으로 쏘는 탄은 그대로 맞는다.'];
+  const k=HELP84.findIndex(h=>/공수부대 강하는 언제/.test(h[0]));if(k>=0)HELP84[k]=[HELP84[k][0],HELP84[k][1]+" v18.8.2: 길에 세워 둔 무리가 있어도 막히지 않는다 — 가는 중인 돌발 상황은 접어 두고(벌점 없음), 미션은 잠시 멈췄다가 이어서 하고, 교전 중이면 '예약'(끝나면 3초 뒤 강하)."]}catch(e){}
+  HELP84.push(['🚨 공습경보 간격 · 📻 라디오 끄기(v18.8.2)',"재래식 공습의 경보는 이제 보통 5~8분마다(밖에 나와 첫 경보는 2.5~4분 뒤) — 설정 '공습경보 간격'에서 드묾(10~15분)·잦음(예전 1.5~3분)을 고른다. 전장 감독의 💥 포격도 경보 앞뒤 90초 안에는 오지 않는다. 방송 띠의 ✕는 그 방송을 닫고 목소리도 멈춘다 · 탕정 생활 라디오에는 '📻 라디오 끄기'(설정 '탕정 생활 라디오'에서 다시 켠다). 🔭 정찰 버튼은 다른 단추와 겹치지 않는 자리로 스스로 옮기고, 드론을 띄운 동안에는 숨는다(▲ 고도 단추를 가리지 않게)."])}
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
