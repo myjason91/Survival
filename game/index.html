@@ -2111,6 +2111,12 @@ body.trn-on .apl-tag{visibility:hidden}
 .hq-fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .34s;z-index:60}.hq-fade.on{opacity:1}
 .hq-brief{width:min(520px,calc(100% - 24px))}
 @media (max-width:560px){.hq-rooms{grid-template-columns:repeat(3,1fr)}}
+/* v18.7 탕정역 Ⅰ — 열차 안 */
+.tri-bar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:14;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 200px)}
+.tri-chip{font:700 12px var(--sans);color:#e9eef3;background:rgba(10,14,18,.78);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.tri-chip b{color:#7fd0ff}
+.tri-bar .btn{width:auto;min-width:0;flex:0 0 auto;box-shadow:0 6px 18px -8px #000}
+.tri-fade{position:fixed;inset:0;background:#000;color:#cfd8e2;display:flex;align-items:center;justify-content:center;font:800 16px var(--sans);letter-spacing:.04em;opacity:0;pointer-events:none;transition:opacity .4s;z-index:61}.tri-fade.on{opacity:1}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14207,7 +14213,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.6';
+const APP_VER='18.7';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -26676,7 +26682,7 @@ function trnStep(dt){if(!ANX.on||!ANX.W||!trnOn())return;const zk=ANX.zk||'A';if
       else if(T0.st==='dwell'){if(T0.t<26)T0.door=Math.min(1,T0.door+dt*1.4);else T0.door=Math.max(0,T0.door-dt*1.4);if(T0.t>=28.5){T0.st='out';T0.t=0;trnSpotOff();trnBoarders(T0);TRN.n.dep++}}
       else if(T0.st==='out'){T0.v=Math.min(20,T0.v+(TRN.ride&&TRN.ride.T===T0?1.3:.9)*dt);T0.s+=T0.dir*T0.v*dt}}
     else{T0.s+=T0.dir*T0.v*dt;if(!T0.h1&&Math.abs(T0.s-anxZ().rs)<300){T0.h1=1;trnHorn(T0,false)}}
-    trnDoors(T0);trnPlace(T0);if((T0.dir>0&&T0.s-T0.len>L+420)||(T0.dir<0&&T0.s+T0.len<-420)){if(!(TRN.ride&&TRN.ride.T===T0)){try{T0.g.removeFromParent()}catch(e){}TRN.list=TRN.list.filter(q=>q!==T0)}}}
+    trnDoors(T0);trnPlace(T0);if((T0.dir>0&&T0.s-T0.len>L+420)||(T0.dir<0&&T0.s+T0.len<-420)){if(!(TRN.ride&&TRN.ride.T===T0)&&!T0.keep){try{T0.g.removeFromParent()}catch(e){}TRN.list=TRN.list.filter(q=>q!==T0)}}}
   if(TRN.ride)trnRideStep(dt)}
 function trnDoors(T0){if(T0.kind!=='evac')return;const k=T0.door;/* 승강장 쪽 = 차 왼쪽(+x) — 왼쪽 통행이라 어느 방향이든 바깥 승강장이 +x 쪽 */for(const c of T0.cars)for(const d of c.g.userData.doors){if(d.sd!==1)continue;d.a.position.z=d.z-.34-k*.62;d.b.position.z=d.z+.34+k*.62}}
 /* 승강장 사람 몇이 탄다 */function trnBoarders(T0){const W=ANX.W;const sg=trnSide(T0.dir);let n=0;for(const q of W.ppl){if(q.lv!=='p'||!q.h.root.visible)continue;const a=anxAt(anxZ().rs);const P=q.h.root.position;const side=Math.sign((P.x-a.x)*a.nx+(P.z-a.z)*a.nz);if(side!==sg||n>=3)continue;q.h.root.visible=false;q.gone=TRN.t;n++}T0.took=n;
@@ -28427,6 +28433,193 @@ function ajtBriefTry(k){try{if(!ajtOn()||!G||!OUT.on||SV3.kind!=='outside')retur
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='ajt')return;try{store.set('sg.ajt',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined'){HELP84.push(['🏚 새벽별 아지트(v18.6)','출발점 가까운 폐업한 코인 빨래방(지도 🏚) 지하가 새벽별의 위장 아지트다. 처음 들르면 \'아지트 개설\'(부품 +8). 방 6개 — 🗺상황실(왜 탕정인가 · 전략 개념도 · 첩보 상신 · 작전 일지) · 🔧총기 조립(부품 → K5·K1A·K2C1·K14·K3, 계급이 오를수록 무거운 화기 · 탄약 조립 · 배낭 분해) · 🛸드론 작업대(B급 바로 조립) · 🎯요원 훈련(사격·은밀·위장 — 위장 60 이상은 언더커버 후보) · 🎧감청실(적 무전만 — 첩보 + 내통자·수배 대상·수상한 사람 단서, 턴마다 2번 · 미확인 첩보 교차 검증) · 🔒심문실·구치소. 아지트 일은 외출 시간을 쓴다.']);
   HELP84.push(['🔒 심문실·구치소 · 첩보(v18.6)','교전에서 손을 든 적을 생포하면 헌병 인계 전에 아지트 구치소로 데려온다(3명 · 3턴 안에 인계, 넘기면 기강 −5). 적법한 심문 — 📑증거(첩보 1) · 🤝거래(현금 1) · 🗣회유(정보원이 될 수 있다) — 은 정확한 첩보를 준다. ⛓강압은 불법이다: 기강 −25, 진술은 미확인이고 대부분 거짓. 첩보는 공용 화폐 — 검증 3건 상신 = 공적 +18, 미확인을 그대로 올리면 거짓마다 기강 −8.'])}
+
+/* v18.7 탕정역 Ⅰ — 걸어서 타는 열차 · 좌석 · 실시간 주행 · 창밖 폭발 · 승강장 보행 · 선로 위 (사용자 요청 2026-11-23 20:42
+   "탕정역 등에서 게임플레이가 제한적인데.. 선로 이동도 안되고 기차를 타고 이동하는 모션도 실감나지 않구요 · 멈춘 기차 안에 탑승해서 좌석에 앉고 밖의 경치도 좀 보고싶구요.
+    밖에서 폭발하는 모습도 구경하고싶네요 … 탕정역 윗층에 위치한 사람들이 걸어다니는 모션 등 필요")
+   · 열차 안(156 피란 열차 4량): 문이 열린 동안 '🚪 열차 안으로 들어가기' → 1인칭으로 객차 안을 걷는다(통로 · 출입문 칸 · 연결부로 옆 칸) — 객차 안쪽 벽(창이 뚫린 벽 · 문 자리는 열린다) · 바닥 · 천장 조명 · 좌석 2+2(진행 방향) · 선반 · 손잡이 막대 · 앉아 있는 승객
+     · 💺 앉기: 창가 자리(남이 앉았으면 통로 쪽) — 창밖을 비스듬히 본다 · 둘러보기 그대로 · 일어서기
+     · 실시간 주행: 문이 닫히고 떠나면 그대로 타고 간다(가속 · 흔들림 · 창밖이 실제로 지나간다) — 떠난 뒤 5초·12초에 창밖 들판·먼 건물에 폭발(불덩이 · 섬광 · 연기 기둥 · 파편 · 거리만큼 늦게 오는 소리 · 가까우면 흔들림 — 게임 연출, 다친 사람 묘사 없음)
+     · 구역 끝을 지나면 어두워졌다가 다음 역(아산역 ↔ 탕정역)으로 들어오는 열차 안에서 이어진다 — 서서 문이 열리면 '🚪 내리기' · 종착이라 문이 닫히기 전에 내린다(남아 있으면 내려 준다)
+     · 예전 '피란 열차 타기'(창가 4초 → 뒤따라가는 장면)는 빠른 이동으로 남긴다 · 떠나는 동안 팀원·가족은 숨겼다가 도착하면 곁으로(170)
+   · 승강장·역 광장 보행: 승강장 양쪽 8명 · 광장 6명이 걸어 다닌다(끝에서 둘러보다 돌아선다) · 열차가 서면 그쪽 승강장 사람 몇이 문으로 걸어가 타고, 문에서 몇이 내려 걸어 나온다
+   · 선로 위: 승강장 끝 가장자리에서 '⚠ 선로로 내려가기' → 고가 위 자갈길을 따라 구역 끝까지 걷는다(역 구간은 승강장 벽 사이) · '승강장으로 올라가기'
+     · 열차가 같은 선로로 다가오면 경적 + '⚠ 열차 접근' · 닿으면 튕겨 나간다(체력 −35 · 옆으로 밀림) — 신체 훼손 묘사 없음
+   · 모두 가상(열차 도색 · 역 구조는 게임용 단순화) · 설정은 '열차'(156)를 따른다 · 자동 점검(webdriver)은 __triTest일 때만 */
+const TRI={on:false,T:null,ci:1,u:0,v:0,seat:null,ride:null,term:0,err:0,fx:[],pax:[],uiH:'',warnT:0,hornT:0,n:{in:0,out:0,sit:0,ride:0,arr:0,boom:0,trk:0,up:0,hit:0,warn:0,board:0,alight:0,term:0,cross:0}};
+const TRI_EYE=1.58,TRI_SIT=1.16,TRI_MAT={};
+function triErr(e){if(TRI.err<6){TRI.err++;try{console.error('[179]',e)}catch(x){}}}
+function triOn(){try{if(navigator.webdriver&&!window.__triTest)return false;return typeof trnOn==='function'&&trnOn()}catch(e){return false}}
+/* ---------- 객차 안 ---------- */
+function triDoorU(){return TRN_DOORS.map(d=>d*TRN_CL)}
+function triSegs(){const L=TRN_CL,h=L/2-.3;const D=triDoorU().sort((a,b)=>a-b);const S=[];let a=-h;for(const d of D){S.push([a,d-.72]);a=d+.72}S.push([a,h]);return S}
+function triRows(){const R=[];for(const [a,b] of triSegs()){const n=Math.max(1,Math.floor((b-a-.15)/.95));const w=(b-a)/n;for(let i=0;i<n;i++)R.push(a+w*(i+.62))}return R}
+function triWallTex(){if(TRI_MAT.wtex)return TRI_MAT.wtex;const L=TRN_CL,W=2048,H=256,kx=W/L,ky=H/2.35;const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#e3e6e8';x.fillRect(0,0,W,H);x.fillStyle='#6f7c88';x.fillRect(0,H-.86*ky,W,.86*ky);x.fillStyle='#9aa6b0';x.fillRect(0,H-.9*ky,W,.04*ky);x.fillStyle='#c9ced2';x.fillRect(0,H-2.0*ky,W,.03*ky);
+  const X=u=>(u+L/2)*kx;x.globalCompositeOperation='destination-out';for(const [a,b] of triSegs()){const n=Math.max(1,Math.round((b-a)/1.55));const w=(b-a)/n;for(let i=0;i<n;i++){const u0=a+w*i+.12,u1=a+w*(i+1)-.12;const y0=H-1.92*ky,y1=H-.96*ky;const r=10;x.beginPath();x.moveTo(X(u0)+r,y0);x.arcTo(X(u1),y0,X(u1),y1,r);x.arcTo(X(u1),y1,X(u0),y1,r);x.arcTo(X(u0),y1,X(u0),y0,r);x.arcTo(X(u0),y0,X(u1),y0,r);x.closePath();x.fill()}}
+  for(const d of triDoorU())x.fillRect(X(d-.68),H-2.04*ky,1.36*kx,2.04*ky);x.globalCompositeOperation='source-over';
+  for(const d of triDoorU()){x.fillStyle='#f2c230';x.fillRect(X(d-.74),H-2.1*ky,.06*kx,2.1*ky);x.fillRect(X(d+.68),H-2.1*ky,.06*kx,2.1*ky)}
+  const t=new T.CanvasTexture(c);try{t.colorSpace=T.SRGBColorSpace}catch(e){}t.anisotropy=4;return TRI_MAT.wtex=t}
+function triEndTex(){if(TRI_MAT.etex)return TRI_MAT.etex;const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');const kx=256/2.8,ky=256/2.35;x.fillStyle='#d7dbde';x.fillRect(0,0,256,256);x.fillStyle='#6f7c88';x.fillRect(0,256-.86*ky,256,.86*ky);
+  x.globalCompositeOperation='destination-out';x.fillRect(128-.45*kx,256-2.0*ky,.9*kx,2.0*ky);x.globalCompositeOperation='source-over';x.fillStyle='#1f2a33';x.fillRect(128-.85*kx,256-2.25*ky,.36*kx,.16*ky);x.fillStyle='#ffb33a';x.font='bold 13px sans-serif';x.fillText('←  →',128-.82*kx,256-2.13*ky);
+  const t=new T.CanvasTexture(c);try{t.colorSpace=T.SRGBColorSpace}catch(e){}return TRI_MAT.etex=t}
+function triMats(){if(TRI_MAT.m)return TRI_MAT.m;const S=(o)=>new T.MeshStandardMaterial(o);
+  TRI_MAT.m={wall:S({map:triWallTex(),alphaTest:.5,side:T.DoubleSide,roughness:.7,emissive:'#3a3d40',emissiveIntensity:.55}),end:S({map:triEndTex(),alphaTest:.5,side:T.DoubleSide,roughness:.7,emissive:'#3a3d40',emissiveIntensity:.5}),
+    floor:S({color:'#5b646c',roughness:.85,emissive:'#22262a',emissiveIntensity:.5}),aisle:S({color:'#7a848d',roughness:.8,emissive:'#2a2e32',emissiveIntensity:.5}),ceil:S({color:'#eef1f3',roughness:.8,side:T.DoubleSide,emissive:'#8d9296',emissiveIntensity:.55}),
+    lamp:S({color:'#fffbea',emissive:'#fff6d8',emissiveIntensity:1.6,roughness:.4}),seat:S({color:'#2e5f7e',roughness:.75,emissive:'#0f2230',emissiveIntensity:.45}),head:S({color:'#e9edf0',roughness:.7,emissive:'#4d5256',emissiveIntensity:.4}),
+    rack:S({color:'#aab6bf',roughness:.35,metalness:.5,transparent:true,opacity:.75}),pole:S({color:'#c8cfd5',roughness:.3,metalness:.8})};return TRI_MAT.m}
+function triBuildCar(c){if(c.g.userData.triIn)return;const M=triMats(),L=TRN_CL,FL=TRN_FL,H=2.35;const g=new T.Group();g.name='triIn';c.g.add(g);c.g.userData.triIn=g;
+  const pl=(w,h,mt,x,y,z,rx,ry)=>{const m=new T.Mesh(new T.PlaneGeometry(w,h),mt);m.position.set(x,y,z);m.rotation.set(rx||0,ry||0,0);m.castShadow=m.receiveShadow=false;g.add(m);return m};
+  pl(2.84,L-.3,M.floor,0,FL+.006,0,-Math.PI/2);pl(.82,L-.3,M.aisle,0,FL+.009,0,-Math.PI/2);pl(2.84,L-.3,M.ceil,0,FL+H,0,Math.PI/2);
+  for(const sd of [-1,1]){const w=pl(L,H,M.wall,sd*1.43,FL+H/2,0,0,-sd*Math.PI/2);w.userData.tri='wall';const e=pl(2.86,H,M.end,0,FL+H/2,sd*(L/2-.15),0,sd>0?Math.PI:0);e.userData.tri='end'}
+  for(const sd of [-1,1]){const lm=new T.Mesh(new T.BoxGeometry(.14,.025,L-1.2),M.lamp);lm.position.set(sd*.55,FL+H-.02,0);g.add(lm);const rl=new T.Mesh(new T.CylinderGeometry(.016,.016,L-1.4,6),M.pole);rl.rotation.x=Math.PI/2;rl.position.set(sd*.46,FL+2.0,0);g.add(rl)}
+  for(const [a,b] of triSegs())for(const sd of [-1,1]){const r=new T.Mesh(new T.BoxGeometry(.36,.03,b-a-.1),M.rack);r.position.set(sd*1.22,FL+1.98,(a+b)/2);g.add(r)}
+  for(const d of triDoorU())for(const sd of [-1,1]){const p=new T.Mesh(new T.CylinderGeometry(.02,.02,H,6),M.pole);p.position.set(sd*.62,FL+H/2,d+(d>0?-.9:.9));g.add(p)}
+  const rows=triRows();const n=rows.length*2;const cu=new T.InstancedMesh(new T.BoxGeometry(.9,.12,.5),M.seat,n),bk=new T.InstancedMesh(new T.BoxGeometry(.9,.66,.1),M.seat,n),hd=new T.InstancedMesh(new T.BoxGeometry(.86,.16,.11),M.head,n);const mx=new T.Matrix4();let i=0;
+  for(const u of rows)for(const sd of [-1,1]){const v=sd*.94;mx.makeTranslation(v,FL+.44,u);cu.setMatrixAt(i,mx);mx.makeTranslation(v,FL+.82,u-.25);bk.setMatrixAt(i,mx);mx.makeTranslation(v,FL+1.2,u-.25);hd.setMatrixAt(i,mx);i++}
+  for(const im of [cu,bk,hd]){im.instanceMatrix.needsUpdate=true;im.castShadow=im.receiveShadow=false;g.add(im)}c.g.userData.triRows=rows}
+function triClearCar(c){const g=c.g.userData.triIn;if(g){try{g.removeFromParent();g.traverse(o=>{if(o.geometry)o.geometry.dispose()})}catch(e){}}c.g.userData.triIn=null}
+function triPax(T0){triPaxClear();let k=0;T0.cars.forEach((c,ci)=>{const rows=c.g.userData.triRows||[];for(let j=0;j<3;j++){const u=rows[(j*5+ci*3+2)%rows.length];const sd=(j+ci)%2?1:-1;const v=sd*(j===1?.72:1.12);let h=null;try{h=civHuman(400+ci*7+j,'sit','civ')}catch(e){}if(!h)continue;h.root.position.set(v,TRN_FL-.02,u+.02);h.root.rotation.y=0;c.g.add(h.root);TRI.pax.push({h,ci,u,v,sd});k++}});return k}
+function triPaxClear(){for(const p of TRI.pax){try{p.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(p.h)}catch(e){}}TRI.pax=[]}
+function triSeatFree(ci,u,v){return !TRI.pax.some(p=>p.ci===ci&&Math.abs(p.u-u)<.3&&Math.abs(p.v-v)<.3)}
+/* ---------- 타고 내리기 ---------- */
+function triIn(T0,ci,du){if(TRI.on||!T0||!ANX.on)return false;if(T0.st!=='dwell'||T0.door<.5)return false;try{if(typeof GUN!=='undefined'&&GUN.on)gunHolster(true)}catch(e){}
+  TRI.on=true;TRI.T=T0;T0.keep=1;TRI.ci=ci==null?1:ci;TRI.u=du==null?triDoorU()[1]:du;TRI.v=1.05;TRI.seat=null;TRI.ride=null;TRI.term=0;for(const c of T0.cars)triBuildCar(c);triPax(T0);
+  FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;FP3.yaw=Math.PI/2;FP3.pitch=-.04;if(OUT.me)OUT.me.root.visible=false;TRI.n.in++;try{trnSpotOff()}catch(e){}try{if(typeof alkFade==='function')alkFade(320)}catch(e){}
+  try{outNote(`<b>🚆 ${TRI.ci+1}호차</b><div>통로를 걸어 좌석에 앉을 수 있다 · 문이 닫히면 그대로 떠난다</div>`,3000)}catch(e){}triBar();return true}
+function triOut(why){if(!TRI.on)return false;const T0=TRI.T;const c=T0&&T0.cars[TRI.ci];let P=null,yaw=FP3.yaw;
+  if(c){c.g.updateMatrixWorld(true);const D=triDoorU();let du=D[0];for(const d of D)if(Math.abs(d-TRI.u)<Math.abs(du-TRI.u))du=d;P=c.g.localToWorld(new T.Vector3(2.75,0,du));const Q=c.g.localToWorld(new T.Vector3(4,0,du));yaw=Math.atan2(-(Q.x-P.x),-(Q.z-P.z))}
+  if(T0){for(const cc of T0.cars)triClearCar(cc);T0.keep=0;if(T0.st==='dwell'&&T0.t<26&&why!=='term')try{trnBoardSpot(T0)}catch(e){}}triPaxClear();TRI.on=false;TRI.T=null;TRI.seat=null;TRI.ride=null;TRI.term=0;FP3.noWalk=false;FP3.mv.x=FP3.mv.y=0;
+  try{if(ANX.lvl!=='p')anxLevel('p',1,true)}catch(e){}if(P)FP3.pos.set(P.x,0,P.z);FP3.yaw=yaw;FP3.pitch=-.05;if(OUT.me){OUT.me.root.visible=true;OUT.me.root.position.set(FP3.pos.x,0,FP3.pos.z)}
+  try{if(typeof tmRegroup==='function'&&typeof ALK!=='undefined'&&ALK.in){tmRegroup();alkFamPlace()}}catch(e){}TRI.n.out++;if(why==='term')TRI.n.term++;try{if(typeof alkFade==='function')alkFade(280)}catch(e){}ANX.sig='';triBar();return true}
+function triSitCand(){if(!TRI.on||TRI.seat)return null;const c=TRI.T.cars[TRI.ci];const rows=c.g.userData.triRows||[];let best=null;for(const u of rows){const d=Math.abs(u-TRI.u);if(d<.75&&(!best||d<best.d))best={u,d}}if(!best)return null;
+  const lx=-Math.sin(FP3.yaw);const sd=Math.abs(lx)>.2?Math.sign(lx):(TRI.u%2>0?1:-1);for(const s of [sd,-sd])for(const v of [s*1.12,s*.72])if(triSeatFree(TRI.ci,best.u,v))return{u:best.u,v,sd:s};return null}
+function triSit(){const S=triSitCand();if(!S)return false;TRI.seat=S;TRI.u=S.u+.06;TRI.v=S.v;FP3.yaw=Math.PI+S.sd*1.0;FP3.pitch=-.06;TRI.n.sit++;triBar();return true}
+function triStand(){if(!TRI.seat)return false;TRI.v=0;TRI.seat=null;triBar();return true}
+function triCanExit(){if(!TRI.on||TRI.seat)return false;const T0=TRI.T;if(!T0||T0.st!=='dwell'||T0.door<.6)return false;return TRI.v>.75&&triDoorU().some(d=>Math.abs(d-TRI.u)<.7)}
+/* ---------- 걷기(차 기준 좌표: x = 옆, z = 앞) · 카메라 ---------- */
+function triOk(u,v){const h=TRN_CL/2-.35;if(Math.abs(v)>1.32)return false;const vest=triDoorU().some(d=>Math.abs(u-d)<.62);if(Math.abs(v)>.42&&!vest)return false;return u>=-h-1&&u<=h+1}
+function triMove(dv,du){let u=TRI.u+du,v=TRI.v+dv;const h=TRN_CL/2-.35;
+  if(!triOk(u,v)){if(triOk(TRI.u,v))u=TRI.u;else if(triOk(u,TRI.v))v=TRI.v;else return}
+  if(u>h||u<-h){const nx=TRI.ci+(u>h?-1:1);if(Math.abs(v)<=.42&&nx>=0&&nx<TRI.T.cars.length){TRI.ci=nx;u=u>h?-h+(u-h):h+(u+h);TRI.n.cross++}else u=clamp(u,-h,h)}
+  TRI.u=u;TRI.v=v}
+const _trV1=new T.Vector3(),_trV2=new T.Vector3();
+function triStep(dt){if(!TRI.on)return;const T0=TRI.T;if(!T0||!T0.g.parent||!ANX.on){triOut('lost');return}const c=T0.cars[TRI.ci];if(!c)return;
+  if(!TRI.seat&&!OUT.enc){const len=Math.min(1,Math.hypot(FP3.mv.x,FP3.mv.y));if(len>.05){const y=FP3.yaw;const sp=1.55;triMove((-Math.sin(y)*FP3.mv.y+Math.cos(y)*FP3.mv.x)*sp*dt,(-Math.cos(y)*FP3.mv.y-Math.sin(y)*FP3.mv.x)*sp*dt)}}
+  const mvk=Math.min(1,T0.v/14);TRI.t=(TRI.t||0)+dt;const sw=mvk*(Math.sin(TRI.t*6.3)*.006+Math.sin(TRI.t*2.1)*.004);const bob=!TRI.seat&&Math.hypot(FP3.mv.x,FP3.mv.y)>.1?Math.sin(TRI.t*9)*.018:0;
+  const eye=(TRI.seat?TRI_SIT:TRI_EYE)+sw+bob;c.g.updateMatrixWorld(true);_trV1.set(TRI.v+sw*.6,TRN_FL+eye,TRI.u);c.g.localToWorld(_trV1);const cp=Math.cos(FP3.pitch);_trV2.set(TRI.v-Math.sin(FP3.yaw)*cp+sw*.6,TRN_FL+eye+Math.sin(FP3.pitch),TRI.u-Math.cos(FP3.yaw)*cp);c.g.localToWorld(_trV2);
+  const cam=SV3.cam;cam.position.copy(_trV1);cam.up.set(0,1,0);cam.lookAt(_trV2);FP3.pos.set(_trV1.x,0,_trV1.z);if(OUT.me)OUT.me.root.visible=false;
+  /* 승객(가까운 칸만) */for(const p of TRI.pax){if(Math.abs(p.ci-TRI.ci)<=1)try{p.h.update(dt)}catch(e){}}
+  /* 떠남 → 실시간 주행 · 폭발 · 구역 끝 → 다음 역 */if(T0.st==='out'&&!TRI.ride){TRI.ride={t:0,b:[5+Math.random()*1.5,12+Math.random()*2]};TRI.n.ride++;try{outNote('<b>🚆 출발</b><div>창밖으로 '+(ANX.zk==='B'?'탕정':'아산')+' 방면 들판이 지나간다</div>',2600)}catch(e){}}
+  if(TRI.term&&T0.st==='dwell'&&T0.t>23){try{outNote('<b>🚉 종착</b><div>"이 열차는 여기까지 운행합니다." — 승객들과 함께 내렸다.</div>',3200)}catch(e){}triOut('term');return}
+  if(TRI.ride){const R=TRI.ride;R.t+=dt;if(R.b.length&&R.t>=R.b[0]){R.b.shift();try{triBoom(T0)}catch(e){triErr(e)}}const L=anxC()[anxC().length-1].s;if(!TRI.term&&((T0.dir>0&&T0.s>L+80)||(T0.dir<0&&T0.s<-80))&&!R.arr){R.arr=1;triArrive()}}
+  if((TRI.uiT=(TRI.uiT||0)-dt)<=0){TRI.uiT=.25;triBar()}}
+/* ---------- 다음 역: 어두워졌다가 들어오는 열차 안에서 ---------- */
+function triArrive(){const T0=TRI.T;const from=ANX.zk||'A',to=from==='A'?'B':'A';const keep={ci:TRI.ci,u:TRI.u,v:TRI.v,seat:TRI.seat,yaw:FP3.yaw,pitch:FP3.pitch};let el=document.getElementById('triFade');if(!el){el=document.createElement('div');el.id='triFade';el.className='tri-fade';document.body.appendChild(el)}el.classList.add('on');el.textContent=(to==='B'?'아산역':'탕정역')+' 접근 중';
+  for(const c of T0.cars)triClearCar(c);triPaxClear();if(OUT.timed)OUT.h=Math.max(0,OUT.h-1/6);try{T0.g.removeFromParent()}catch(e){}TRN.list=TRN.list.filter(q=>q!==T0);try{ANX.mk.forEach(s=>{if(s.parent)s.parent.remove(s)});ANX.mk.clear()}catch(e){}
+  try{if(OUT.me)(OUT.scene||ANX.me0).add(OUT.me.root)}catch(e){}const dir=to==='A'?-1:1;const sg=trnSide(dir);ANX.zk=to;ANX.arrive={sg,s:null};ANX.on=false;try{trnClear()}catch(e){}TRI.on=false;UI.screen='anx';render();TRN.zk=to;TRN.next=100;TRN.fnext=60+Math.random()*30;
+  let T1=null;try{T1=trnSpawn('evac',dir)}catch(e){triErr(e)}if(!T1){el.classList.remove('on');FP3.noWalk=false;if(OUT.me)OUT.me.root.visible=true;return}T1.s=T1.stop-dir*230;T1.v=16;T1.h1=1;T1.keep=1;trnPlace(T1);
+  TRI.on=true;TRI.T=T1;TRI.ci=keep.ci;TRI.u=keep.u;TRI.v=keep.v;TRI.seat=keep.seat;TRI.term=1;TRI.ride={t:0,b:[3.5+Math.random()]};for(const c of T1.cars)triBuildCar(c);triPax(T1);if(TRI.seat&&!triSeatFree(TRI.ci,TRI.seat.u,TRI.seat.v)){TRI.seat=null;TRI.v=0}
+  FP3.noWalk=true;FP3.yaw=keep.yaw;FP3.pitch=keep.pitch;try{anxLevel('p',sg,true)}catch(e){}if(OUT.me)OUT.me.root.visible=false;TRI.n.arr++;try{ANX.n.ride=(ANX.n.ride|0)+1}catch(e){}setTimeout(()=>{try{el.classList.remove('on')}catch(e){}},450);triStep(0)}
+/* ---------- 창밖 폭발(연출) ---------- */
+function triBoom(T0,o){const W=ANX.W;if(!W)return null;o=o||{};const sg=o.side||(Math.random()<.5?1:-1);const ahead=(T0?T0.s:anxZ().rs)+(T0?T0.dir:1)*(o.ahead||80+Math.random()*120);const a=trnAt(ahead);const off=sg*(o.off||70+Math.random()*150);const x=a.x+a.nx*off,z=a.z+a.nz*off;
+  const g=new T.Group();g.position.set(x,0,z);g.name='triBoom';W.R.add(g);const F={g,t:0,fire:[],smoke:[],deb:[],fl:null};
+  try{F.fl=PK.sprite(flashTex(),'#fff2c4',48,g,{add:1});F.fl.position.set(0,9,0);for(let i=0;i<8;i++){const s=PK.sprite(fireTex(),i%2?'#ff8a2a':'#ffd070',4,g,{add:1});s.material.fog=false;s.position.set((Math.random()-.5)*7,3+Math.random()*7,(Math.random()-.5)*7);s.userData.s0=6+Math.random()*5;F.fire.push(s)}
+    for(let i=0;i<12;i++){const s=PK.sprite(smokeTex(),i%3?'#2e2c2a':'#4a4744',6,g,{op:0,fog:1});s.position.set((Math.random()-.5)*8,4+i*2.2,(Math.random()-.5)*8);s.userData={s0:10+Math.random()*7,d:i*.12,vy:2.4+Math.random()*1.8};F.smoke.push(s)}
+    for(let i=0;i<14;i++){const s=PK.sprite(puffTex(),'#1d1a17',.7+Math.random()*.6,g,{op:.95,fog:1});s.position.set(0,3,0);s.userData.v=new T.Vector3((Math.random()-.5)*26,9+Math.random()*16,(Math.random()-.5)*26);F.deb.push(s)}}catch(e){triErr(e)}
+  TRI.fx.push(F);TRI.n.boom++;const cam=SV3.cam.position;const d=Math.hypot(cam.x-x,cam.z-z);F.d=d;const late=Math.min(1.2,d/340)*1000;setTimeout(()=>{try{if(SND&&SND.boom)SND.boom(d<170,clamp(1.5-d/360,.25,1));sv3Shake(d<150?.5:.18);vib&&vib(d<150?[60,40,90]:30)}catch(e){}},late);return F}
+function triFxStep(dt){if(!TRI.fx.length)return;TRI.fx=TRI.fx.filter(F=>{F.t+=dt;const t=F.t;if(t>16){try{F.g.removeFromParent();F.g.traverse(o=>{if(o.material)o.material.dispose()})}catch(e){}return false}
+  if(F.fl){const k=Math.max(0,1-t/.3);F.fl.material.opacity=k;F.fl.scale.setScalar(34+t*60);F.fl.visible=k>0}
+  for(const s of F.fire){const k=Math.min(1,t/1.5);s.scale.setScalar(s.userData.s0*(1+k*3.2));s.material.opacity=Math.max(0,1-t/2.1);s.position.y+=dt*2.2;s.visible=t<2.1}
+  for(const s of F.smoke){const u=t-s.userData.d;if(u<0)continue;s.material.opacity=Math.min(.82,u*1.6)*(t>9?Math.max(0,1-(t-9)/6):1);s.position.y+=s.userData.vy*dt;s.scale.setScalar(s.userData.s0*(1+u*.22))}
+  for(const s of F.deb){if(!s.visible)continue;const v=s.userData.v;s.position.addScaledVector(v,dt);v.y-=9.8*dt;if(s.position.y<0)s.visible=false}return true})}
+/* ---------- 승강장·광장 보행 ---------- */
+function triWalkers(Z,R,occG){const L=[];const rs=Z.rs,G=Z.gap/2;const r=rng3(913);let k=0;
+  for(const sg of [1,-1])for(let i=0;i<4;i++){const o=sg*(G+3.0+r()*2.0);const h=civHuman(320+k,'walk',k%9===4?'kid':'civ');k++;if(!h)continue;const s=rs-58+r()*116;const a=anxAt(s);h.root.position.set(a.x+a.nx*o,ANX_LV,a.z+a.nz*o);R.add(h.root);L.push({h,lv:'p',wk:{sg,o,o0:o,s,s0:rs-62,s1:rs+62,ds:r()<.5?1:-1,sp:1.0+r()*.45,pause:0}})}
+  for(let i=0;i<8&&L.length<14;i++){const sg=i%2?1:-1;let ok=null;for(let t=0;t<8&&!ok;t++){const o=sg*(14+r()*18);let free=true;for(let q=-45;q<=45;q+=9){const a=anxAt(rs+q);if(!anxFree(occG,a.x+a.nx*o,a.z+a.nz*o,.5)){free=false;break}}if(free)ok=o}if(ok==null)continue;
+    const h=civHuman(340+k,'walk','civ');k++;if(!h)continue;const s=rs-40+r()*80;const a=anxAt(s);h.root.position.set(a.x+a.nx*ok,0,a.z+a.nz*ok);R.add(h.root);L.push({h,lv:'g',wk:{sg,o:ok,o0:ok,s,s0:rs-45,s1:rs+45,ds:r()<.5?1:-1,sp:1.0+r()*.5,pause:0}})}return L}
+(function(){const b=window.anxPeople;if(typeof b!=='function')return;window.anxPeople=function(Z,R,occG){const L=b.apply(this,arguments);try{if(triOn()&&Array.isArray(L))L.push(...triWalkers(Z,R,occG))}catch(e){triErr(e)}return L}})();
+function triDoorS(T0){const L=[];for(const c of T0.cars)for(const d of triDoorU())L.push(T0.s-T0.dir*c.off+T0.dir*d);return L}
+function triWalkStep(dt){const W=ANX.W;if(!W||!W.ppl)return;const Z=anxZ(),G=Z.gap/2;const p=FP3.pos;const dwell=(TRN.list||[]).find(q=>q.kind==='evac'&&q.st==='dwell');
+  if(dwell&&!dwell.triA){dwell.triA=1;const sg=trnSide(dwell.dir);const D=triDoorS(dwell);let n=0;for(const q of W.ppl){if(!q.wk||q.lv!=='p'||q.wk.sg!==sg||n>=3)continue;if(q.h.root.visible&&!q.wk.gone)continue;const ds=D[Math.floor(Math.random()*D.length)];Object.assign(q.wk,{s:ds,o:sg*(G+2.2),gone:0,board:null,exit:1,pause:0,ds:Math.random()<.5?1:-1});q.h.root.visible=true;try{q.h.setPose('walk')}catch(e){}n++;TRI.n.alight++}
+    if(!n){/* 숨은 사람이 없으면 걷던 사람 하나를 문에서 나오게 */const q=W.ppl.find(q=>q.wk&&q.lv==='p'&&q.wk.sg===sg&&!q.wk.board);if(q){const ds=D[2];Object.assign(q.wk,{s:ds,o:sg*(G+2.2),exit:1,pause:0});TRI.n.alight++}}}
+  for(const q of W.ppl){const k=q.wk;if(!k)continue;const h=q.h;if(k.gone){if(TRN.t-k.gone>45&&!dwell){k.gone=0;h.root.visible=true;k.s=k.s0+Math.random()*(k.s1-k.s0);k.o=k.o0;try{h.setPose('walk')}catch(e){}}continue}
+    if(dwell&&q.lv==='p'&&k.sg===trnSide(dwell.dir)&&!k.board&&!k.exit&&dwell.t>3&&dwell.t<20&&Math.random()<dt*(TRI.bp||.06)){const D=triDoorS(dwell);let best=D[0];for(const d of D)if(Math.abs(d-k.s)<Math.abs(best-k.s))best=d;if(Math.abs(best-k.s)<30){k.board={s:best};TRI.n.board++}}
+    if(k.board){const ds=k.board.s-k.s;if(Math.abs(ds)>.3){k.ds=Math.sign(ds);k.s+=k.ds*k.sp*1.15*dt}else{const to=k.sg*(G+2.0);k.o+=(to-k.o)*Math.min(1,dt*1.8);if(Math.abs(to-k.o)<.12||!dwell||dwell.door<.4){h.root.visible=false;k.gone=TRN.t;k.board=null;continue}}}
+    else if(k.exit){k.o+=(k.o0-k.o)*Math.min(1,dt*1.2);k.s+=k.ds*k.sp*.6*dt;if(Math.abs(k.o0-k.o)<.15)k.exit=0}
+    else if(k.pause>0){k.pause-=dt;if(k.pause<=0){k.ds*=-1;try{h.setPose('walk')}catch(e){}}continue}
+    else{k.s+=k.ds*k.sp*dt;if(k.s>k.s1||k.s<k.s0){k.s=clamp(k.s,k.s0,k.s1);k.pause=1+Math.random()*2.5;try{h.setPose(Math.random()<.5?'look':'idle')}catch(e){}}}
+    const a=anxAt(k.s);const P=h.root.position;P.set(a.x+a.nx*k.o,q.lv==='p'?ANX_LV:0,a.z+a.nz*k.o);const d=Math.hypot(P.x-p.x,P.z-p.z);if(d>4||q.lv!==ANX.lvl)h.root.rotation.y=Math.atan2(a.tx*k.ds,a.tz*k.ds);if(h.pose!=='walk'&&!k.pause)try{h.setPose('walk')}catch(e){}}}
+/* ---------- 선로 위 ---------- */
+const TRI_RY=ANX_DK+.22;
+function triOccR(W){if(W.occR)return W.occR;const Z=anxZ();const n=1060,x0=Z.box[0]-5,z0=Z.box[1]-5;const c=document.createElement('canvas');c.width=c.height=n;const x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,n,n);x.fillStyle='#fff';
+  const C=anxC(),Lc=C[C.length-1].s,G=Z.gap/2,rs=Z.rs;const hw=s=>{const d=Math.abs(s-rs);return d<76?G+1.85:d<105?G+1.85+(d-76)/29*(4.9-G-1.85):4.9};const P=[],Q=[];for(let s=0;s<=Lc;s+=3){const a=anxAt(s);const w=hw(s);P.push([a.x+a.nx*w-x0,a.z+a.nz*w-z0]);Q.push([a.x-a.nx*w-x0,a.z-a.nz*w-z0])}
+  const R2=P.concat(Q.reverse());x.beginPath();R2.forEach((q,i)=>i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1]));x.closePath();x.fill();const [bx0,bz0,bx1,bz1]=Z.box;x.fillStyle='#000';x.fillRect(0,0,n,bz0-z0+1);x.fillRect(0,bz1-z0,n,n);x.fillRect(0,0,bx0-x0+1,n);x.fillRect(bx1-x0,0,n,n);
+  const D=x.getImageData(0,0,n,n).data;const b=new Uint8Array(n*n);for(let i=0;i<n*n;i++)b[i]=D[i*4]<128?1:0;return W.occR={x0,z0,cs:1,n,b}}
+function triProj(px,pz){const C=anxC();let best=null;for(let i=1;i<C.length;i++){const a=C[i-1],b=C[i];const vx=b.x-a.x,vz=b.z-a.z;const L2=vx*vx+vz*vz||1;let t=((px-a.x)*vx+(pz-a.z)*vz)/L2;t=clamp(t,0,1);const qx=a.x+vx*t,qz=a.z+vz*t;const d=Math.hypot(px-qx,pz-qz);if(!best||d<best.d){const L=Math.sqrt(L2);const nx=-vz/L,nz=vx/L;best={d,s:a.s+(b.s-a.s)*t,o:(px-qx)*nx+(pz-qz)*nz}}}return best}
+function triTrack(down,sg,s){const W=ANX.W;if(!W)return false;const Z=anxZ(),G=Z.gap/2;sg=sg||1;s=s==null?Z.rs:s;
+  if(down){W.R.position.y=-TRI_RY;FP3.occ=triOccR(W);ANX.lvl='r';const a=anxAt(s);const o=sg*(G+1.25);FP3.pos.set(a.x+a.nx*o,0,a.z+a.nz*o);FP3.yaw=Math.atan2(-a.tx,-a.tz);W.R.updateMatrixWorld(true);TRI.n.trk++;
+    try{outNote('<b>⚠ 선로 위</b><div>고가 위 자갈길 — 열차가 오면 경적이 울린다. 선로 밖(가장자리)으로 비켜라.</div>',3400)}catch(e){}}
+  else{try{anxLevel('p',sg,true)}catch(e){}const a=anxAt(s);const o=sg*(G+3.3);FP3.pos.set(a.x+a.nx*o,0,a.z+a.nz*o);TRI.n.up++}
+  try{if(typeof ALK!=='undefined'&&ALK.in&&typeof tmRegroup==='function'){tmRegroup();alkFamPlace();alkFade(240)}}catch(e){}ANX.sig='';return true}
+function triTrackStep(dt){if(ANX.lvl!=='r')return;const p=FP3.pos;const me=triProj(p.x,p.z);if(!me)return;TRI.warnT-=dt;TRI.hornT-=dt;let warn=null;
+  for(const T0 of TRN.list||[]){if(Math.abs(me.o-T0.o)>1.75)continue;const front=T0.s,rear=T0.s-T0.dir*T0.len;const ahead=(me.s-front)*T0.dir;const inside=(me.s-rear)*T0.dir>=0&&ahead<=0;
+    if(inside||(ahead>=0&&ahead<1.6&&T0.v>.3)){if(T0.v>.3){triHit(T0,me);return}triNudge(T0,me);continue}if(ahead>0&&ahead<170&&T0.v>.5)warn={T0,d:ahead}}
+  if(warn){if(TRI.hornT<=0){TRI.hornT=2.4;try{trnHorn(warn.T0,warn.d>90)}catch(e){}}if(TRI.warnT<=0){TRI.warnT=4;TRI.n.warn++;try{outNote(`<b>⚠ 열차 접근 — ${Math.round(warn.d)}m</b><div>선로에서 벗어나라! 가장자리나 두 선로 사이로.</div>`,2200)}catch(e){}}}}
+function triNudge(T0,me){const a=anxAt(me.s);const o=Math.abs(me.o)<Math.abs(T0.o)?0:Math.sign(T0.o||1)*(Math.abs(T0.o)+1.95);FP3.pos.set(a.x+a.nx*o,0,a.z+a.nz*o)}
+function triHit(T0,me){TRI.n.hit++;FX=[];try{hurt('me',35)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}const G=anxZ().gap/2;const cand=[0,Math.sign(T0.o||1)*(Math.abs(T0.o)+1.95)];const a=anxAt(me.s);let to=cand[0];for(const o of cand){const x=a.x+a.nx*o,z=a.z+a.nz*o;if(FP3.occ&&anxFree(FP3.occ,x,z,.3)){to=o;if(Math.abs(o-me.o)<Math.abs(cand[0]-me.o))break}}
+  FP3.pos.set(a.x+a.nx*to,0,a.z+a.nz*to);try{sv3Shake(1);vib([120,60,200])}catch(e){}try{outNote('<b>💥 열차에 받혔다</b><div>옆으로 튕겨 나갔다 — 체력 −35. 선로 위는 위험하다.</div>',3200)}catch(e){}}
+/* 선로 오르내리기 표식 */
+(function(){const b=window.anxSpots;if(typeof b!=='function')return;window.anxSpots=function(W){const r=b.apply(this,arguments);try{if(triOn()){const SP=Array.isArray(r)?r:ANX.spots;const Z=anxZ(),G=Z.gap/2,rs=Z.rs;const at=(s,o)=>{const a=anxAt(s);return{x:a.x+a.nx*o,z:a.z+a.nz*o}};
+  for(const sg of [1,-1])for(const ds of [-44,44]){const p=at(rs+ds,sg*(G+2.7));SP.push({id:`trkDn${sg}${ds}`,k:'trkDn',lv:'p',sg,ss:rs+ds,x:p.x,z:p.z,r:2.2,g:'⚠',n:'선로로 내려가기',s:'고가 위 선로를 걷는다 — 열차가 오면 비켜야 한다',h:0});const q=at(rs+ds,sg*(G+1.4));SP.push({id:`trkUp${sg}${ds}`,k:'trkUp',lv:'r',sg,ss:rs+ds,x:q.x,z:q.z,r:2.4,g:'🚉',n:'승강장으로 올라가기',s:'승강장 벽을 짚고 올라간다',h:0})}}}catch(e){triErr(e)}return r}})();
+(function(){const b=window.anxDo;if(typeof b!=='function')return;window.anxDo=function(c){if(c&&(c.k==='trkDn'||c.k==='trkUp')){if(!OUT.busy&&!OUT.enc)try{triTrack(c.k==='trkDn',c.sg,c.ss)}catch(e){triErr(e)}return}
+  if(c&&c.k==='trnIn'){if(!OUT.busy&&!OUT.enc&&c.T)try{triIn(c.T,c.ci,c.du)}catch(e){triErr(e)}return}return b.apply(this,arguments)}})();
+/* 정차한 열차: 걸어 들어가는 문 */
+(function(){const b=window.trnBoardSpot;if(typeof b!=='function')return;window.trnBoardSpot=function(T0){const r=b.apply(this,arguments);try{if(triOn()&&T0&&ANX.spots){const c=T0.cars[1];if(c){c.g.updateMatrixWorld(true);const du=triDoorU()[2];const P=c.g.localToWorld(new T.Vector3(2.55,0,du));
+  ANX.spots.push({id:'trnIn',k:'trnIn',lv:'p',x:P.x,z:P.z,r:2.6,g:'🚪',n:'열차 안으로 들어가기 — 걸어서 타고 좌석에 앉는다',s:'2호차 · 문이 열려 있는 동안',h:0,T:T0,ci:1,du});ANX.sig=''}}}catch(e){triErr(e)}return r}})();
+(function(){const b=window.trnSpotOff;if(typeof b!=='function')return;window.trnSpotOff=function(){const r=b.apply(this,arguments);try{if(ANX.spots){ANX.spots=ANX.spots.filter(c=>c.k!=='trnIn');ANX.sig=''}}catch(e){}return r}})();
+/* 표식 높이(선로 단) · 열차 안에서는 땅 위 표식·후보를 감춘다 */
+(function(){const b=window.anxUI;if(typeof b!=='function')return;window.anxUI=function(){if(TRI.on){try{const a=$('#oActs');if(a&&a.innerHTML)a.innerHTML='';ANX.mk.forEach(s=>{s.visible=false})}catch(e){}return}const r=b.apply(this,arguments);try{for(const c of ANX.spots||[])if(c.lv==='r'){const s=ANX.mk.get(c.id);if(s)s.position.y=TRI_RY+2.1}}catch(e){}return r}})();
+/* 위 줄 글자: 선로 위 · 열차 안 */
+(function(){const b=window.anxBar;if(typeof b!=='function')return;window.anxBar=function(){const r=b.apply(this,arguments);try{const el=$('#xBar');if(el&&(ANX.lvl==='r'||TRI.on)){const nm=anxNm()[2];const want=TRI.on?`${nm} · 열차 안`:`${nm} · 선로 위 ⚠`;const sp=[...el.querySelectorAll('span')].find(x=>x.textContent.indexOf(nm)===0);if(sp&&sp.textContent!==want){sp.textContent=want;el._h=''}}}catch(e){}return r}})();
+/* 떠나는 동안 팀원·가족은 숨긴다(170) */
+(function(){const b=window.alkRiding;if(typeof b!=='function')return;window.alkRiding=function(){return b.apply(this,arguments)||!!(TRI.on&&TRI.T&&TRI.T.st!=='dwell')}})();
+/* 매 프레임 */
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){const r=b.apply(this,arguments);try{if(ANX.on&&triOn()){triWalkStep(dt||0);triTrackStep(dt||0);triStep(dt||0)}triFxStep(dt||0)}catch(e){triErr(e)}return r}})();
+(function(){const b=window.anxLeave;if(typeof b!=='function')return;window.anxLeave=function(){try{if(TRI.on)triOut('leave');TRI.fx.forEach(F=>{try{F.g.removeFromParent()}catch(e){}});TRI.fx=[];const W=ANX.W;if(W&&W.R)W.R.position.y=0}catch(e){triErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.sv3Unmount;if(typeof b!=='function')return;window.sv3Unmount=function(){try{const e=document.getElementById('triBar');if(e)e.remove()}catch(x){}return b.apply(this,arguments)}})();
+/* ---------- 열차 안 화면 줄 ---------- */
+function triBar(){const el=SV3.el;let b=document.getElementById('triBar');if(!TRI.on||!el){if(b)b.remove();return}if(!b||b.parentNode!==el){if(b)b.remove();b=document.createElement('div');b.id='triBar';b.className='tri-bar';el.appendChild(b)}const T0=TRI.T;
+  const kmh=Math.round((T0.v||0)*3.6);const st=T0.st==='dwell'?(T0.door>.5?'정차 중 · 문 열림':'정차 중 · 문 닫힘'):T0.st==='in'?`역에 들어오는 중 · ${kmh}km/h`:`주행 중 · ${kmh}km/h`;const to=(ANX.zk||'A')==='A'?(TRI.term?'탕정역':'아산 방면'):(TRI.term?'아산역':'탕정 방면');
+  let btn='';if(TRI.seat)btn+='<button class="btn sm" data-tri="stand">일어서기</button>';else if(triSitCand())btn+='<button class="btn sm pri" data-tri="sit">💺 앉기</button>';if(triCanExit())btn+='<button class="btn sm pri" data-tri="out">🚪 내리기</button>';
+  const h=`<span class="tri-chip"><b>${TRI.ci+1}호차</b> · ${to} · ${st}${TRI.seat?' · 좌석':''}</span>${btn}`;if(TRI.uiH!==h||!b.innerHTML){TRI.uiH=h;b.innerHTML=h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tri]');if(!b)return;e.preventDefault();e.stopPropagation();try{const k=b.dataset.tri;if(k==='sit')triSit();else if(k==='stand')triStand();else if(k==='out')triOut('btn');triBar()}catch(x){triErr(x)}},true);
+if(typeof HELP84!=='undefined'){HELP84.push(['🚆 걸어서 타는 열차(v18.7)','탕정역·아산역 승강장에 피란 열차가 서서 문이 열리면 \'🚪 열차 안으로 들어가기\' — 1인칭으로 객차 안을 걷는다(통로 · 출입문 칸 · 연결부로 옆 칸). 좌석 줄 옆에서 \'💺 앉기\'(창가 자리), 둘러보기는 그대로. 문이 닫히면 열차가 그대로 떠난다 — 창밖 경치가 실제로 지나가고, 들판·먼 건물에 폭발이 보인다(연출). 구역 끝을 지나면 다음 역으로 들어오는 열차 안에서 이어지고, 서서 문이 열리면 \'🚪 내리기\'(종착 — 남아 있으면 내려 준다). 예전 \'피란 열차 타기\'는 빠른 이동으로 남아 있다.']);
+  HELP84.push(['⚠ 선로 위 · 역 사람들(v18.7)','승강장 끝 가장자리의 \'⚠ 선로로 내려가기\'로 고가 위 자갈길을 따라 구역 끝까지 걸을 수 있다. 열차가 같은 선로로 오면 경적과 \'⚠ 열차 접근\' — 선로 밖(가장자리)이나 두 선로 사이로 비켜라. 닿으면 튕겨 나간다(체력 −35). \'🚉 승강장으로 올라가기\'로 돌아온다. 승강장·역 광장 사람들은 걸어 다니고, 열차가 서면 몇이 문으로 걸어가 타고 몇이 내려 걸어 나온다.'])}
+
+/* v18.7 저사양 모드 (사용자 문의 2026-11-23 21:40 "갤럭시 A7 TAB에서 좀 끊김현상은 당연한가요?")
+   원인: 3D 화질 '자동'은 높음으로 시작해 처음 4초를 재고서야 내려간다(16 sv3QualTier) — 보급형 칩(예: 그래픽 Adreno 610급 · 램 3GB)에 큰 화면이면 첫 장면부터 끊긴다
+   · 처음 켤 때 한 번: 그래픽 칩 이름(WEBGL_debug_renderer_info)·기기 메모리(deviceMemory)로 보급형이면 저사양 모드로 시작한다 — 화질 '낮음'(거리 인파도 보통으로 따라감) · 그래픽 보정 끔 · 살아있는 도시 끔
+     (사용자가 이미 화질을 직접 골랐으면 건드리지 않는다) · 알림 한 번 '저사양 기기로 보여 가볍게 시작했다'
+   · 설정 '저사양 모드' 켬/끔 — 켜면 위 셋을 한 번에, 끄면 켜기 전 값으로 되돌린다(화질은 자동)
+   · 판정: Adreno 6xx 중 630 미만 · Adreno 5xx 이하 · Mali-G5x/G3x/T · PowerVR · 메모리 3GB 이하 — 추정이라 틀릴 수 있다(끄면 그만) · 자동 점검(webdriver)은 __lowTest일 때만 */
+const LOW={err:0,n:{auto:0,on:0,off:0}};
+function lowErr(e){if(LOW.err<4){LOW.err++;try{console.error('[180]',e)}catch(x){}}}
+function lowDetect(){const cached=store.get('sg.lowDet',null);if(cached&&typeof cached==='object'&&!window.__lowForce)return cached;let r='',low=false;const mem=+(navigator.deviceMemory||0);
+  try{const c=document.createElement('canvas');const gl=c.getContext('webgl')||c.getContext('experimental-webgl');const ext=gl&&gl.getExtension('WEBGL_debug_renderer_info');r=ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)||''):'';try{const lc=gl&&gl.getExtension('WEBGL_lose_context');if(lc)lc.loseContext()}catch(e){}}catch(e){}
+  if(window.__lowForce)r=String(window.__lowForce);const m=r.match(/Adreno[^0-9]*(\d{3})/i);if(m){const n=+m[1];if(n<630)low=true}if(/Mali-(G5\d|G3\d|T\d)/i.test(r)||/PowerVR/i.test(r))low=true;if(mem&&mem<=3)low=true;
+  const D={low,r:r.slice(0,60),mem};if(!window.__lowForce)store.set('sg.lowDet',D);return D}
+function lowIs(){return store.get('sg.lowspec',false)===true}
+function lowApply(on,auto){try{if(on){if(!lowIs()){store.set('sg.lowPrev',{qual:(cbGet('sel',{}).qual||'auto'),grade:store.get('sg.grade',true),city:store.get('sg.city',true)})}cbSet('sel',Object.assign(cbGet('sel',{}),{qual:'low'}));store.set('sg.qtier','low');store.set('sg.qtierSet',true);store.set('sg.grade',false);store.set('sg.city',false);store.set('sg.lowspec',true);LOW.n[auto?'auto':'on']++;try{if(typeof sv3SetQual==='function'&&typeof R3!=='undefined'&&R3.r)sv3SetQual('low')}catch(e){}}
+    else{const P=store.get('sg.lowPrev',null)||{};cbSet('sel',Object.assign(cbGet('sel',{}),{qual:P.qual&&P.qual!=='low'?P.qual:'auto'}));store.del('sg.qtierSet');store.set('sg.grade',P.grade!==false);store.set('sg.city',P.city!==false);store.set('sg.lowspec',false);LOW.n.off++}}catch(e){lowErr(e)}}
+/* 처음 켤 때 한 번 */
+function lowFirst(){try{if(navigator.webdriver&&!window.__lowTest)return null;if(store.get('sg.lowAsked',false))return null;store.set('sg.lowAsked',true);const q=(cbGet('sel',{}).qual||'auto');if(q!=='auto')return null;const D=lowDetect();if(!D.low)return D;lowApply(true,true);
+  setTimeout(()=>{try{toast('📉 보급형 기기로 보여 가볍게 시작했다 — 화질 낮음 · 그래픽 보정·살아있는 도시 끔 (설정 \'저사양 모드\'에서 끌 수 있다)',4200)}catch(e){}},1500);return D}catch(e){lowErr(e);return null}}
+try{lowFirst()}catch(e){}
+/* 설정 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="lowspec"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const D=store.get('sg.lowDet',null);const add=s4Seg('lowspec','저사양 모드',`끊기는 기기용 — 3D 화질 낮음 · 그래픽 보정 끔 · 살아있는 도시 끔을 한 번에(끄면 원래대로)${D&&D.low?' · 이 기기는 보급형으로 보인다':''}`,[[1,'켬'],[0,'끔']],lowIs()?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){lowErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='lowspec')return;try{const on=b.dataset.v==='1';lowApply(on,false);toast(on?'저사양 모드 — 화질 낮음 · 그래픽 보정·살아있는 도시 끔':'저사양 모드 끔 — 원래 설정으로',2400)}catch(x){lowErr(x)}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['📉 저사양 모드(v18.7)','보급형 폰·태블릿에서 끊기면 설정 \'저사양 모드\'를 켠다 — 3D 화질 낮음(거리 인파도 보통) · 그래픽 보정 끔 · 살아있는 도시 끔을 한 번에, 끄면 원래대로. 처음 켤 때 보급형 기기로 보이면 저절로 켜고 알려 준다. 더 가볍게: 날씨 끔 · 출혈 표현 보통 · 절전 모드 끄기 · 크롬 브라우저.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
