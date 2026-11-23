@@ -14213,7 +14213,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.8';
+const APP_VER='18.8.1';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -28697,6 +28697,30 @@ function sgStep(dt){if(SG.sched>0&&!SG.on){SG.sched-=dt;if(SG.sched<=0){SG.sched
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="siege"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('siege','열차 수색전','탕정역·아산역에 점거된 피란 열차 — 객차 한 칸씩 수색·제압 · 숨은 승객 확인(처음엔 반드시, 이후 턴마다 50%)',[[1,'켬'],[0,'끔']],store.get('sg.siege',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){sgErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='siege')return;try{store.set('sg.siege',b.dataset.v==='1')}catch(x){}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['🚨 열차 수색전(v18.8)','탕정역·아산역 권역에 들어가면(처음엔 반드시, 이후 턴마다 50%) 25초 뒤 점거된 피란 열차가 선다. 맨 끝 칸 뒷문의 \'🚨 열차 수색 — 진입\'으로 들어가 한 칸씩 수색한다(총이 없으면 경비 요원이 K1A를 건넨다). 칸마다 침투 테러조(가상 · 검은 복면·붉은 완장) 2명이 좌석 뒤에 웅크렸다가 일어나 쏜다 — 웅크린 적은 좌석이 총알을 막으니 일어설 때를 노린다. 좌석 사이에 숨은 승객은 다가가면 손을 든다 — 쏘면 위법. 모두 제압하면 \'🚆 열차 확보\'(공적 +60 · 신뢰·사기 · 아지트 첩보). 이 교전에서 체력은 20 아래로 안 떨어진다.']);
+
+/* v18.8.1 '🤝 신뢰 · 🔥 사기 · 📋 할 일' 칸이 다른 버튼과 겹치던 것 (사용자 제보 2026-11-23 22:18 "동네버팀목 칸이 다른 버튼과 중첩되어 불편해요 게임플레이에 방해되지 않는 위치로")
+   원인: 168의 칸은 오른쪽 위 고정 자리(위에서 104px)였다 — 신뢰 등급이 '동네 버팀목'처럼 길어지면 칸이 넓어지고, 상황에 따라 오른쪽 위 버튼 줄이 한 줄 늘면 겹친다
+   · 고정 자리 대신 빈자리를 찾는다: 화면에 떠 있는 버튼·막대·미니맵·계급 칩을 실제로 재서 ① 오른쪽 위 버튼 줄 아래(위에서 아래로 훑음) ② 막히면 왼쪽 계급 칩 아래 — 겹치지 않는 첫 자리
+     · 지금 자리가 겹칠 때만 옮긴다(0.5초마다 확인 · 깜박이지 않게) · 잠깐 뜨는 알림·안내 글은 피하지 않는다
+   · 글자를 줄인다: '🤝 동네 버팀목 · 🔥 높음 · 📋 1/2'(숫자는 누르면 열리는 등급표에) */
+const HFX={err:0,n:{place:0,left:0}};
+function hfxErr(e){if(HFX.err<4){HFX.err++;try{console.error('[182]',e)}catch(x){}}}
+const HFX_SKIP=/(^|\s)(fr-note|sv3-hint|tj-attr|anx-attr|sv3-vig|sv3-flash|out-enc|toast|rk-ban)(\s|$)/;
+function hfxRects(el,self){const ER=el.getBoundingClientRect();const A=ER.width*ER.height;const L=[];
+  el.querySelectorAll('button,[data-g3],[data-a],[data-rk],[data-mot],.tj-mini,canvas.anx-mini,#oStat,#xBar,.owc-ammo,.gun-auto,.fr-acts>*,.mot-ping,.snk-btn,.rk-chip,.mole-chip,.tri-bar').forEach(e=>{if(e===self||self.contains(e)||e.contains(self))return;if(HFX_SKIP.test(e.className||''))return;if(e.closest&&e.closest('#oNote,.out-enc,.mis-panel'))return;
+    const b=e.getBoundingClientRect();if(b.width<6||b.height<6||b.width*b.height>A*.25)return;let st;try{st=getComputedStyle(e)}catch(x){return}if(st.display==='none'||st.visibility==='hidden'||+st.opacity<.05)return;L.push(b)});return{ER,L}}
+function hfxFree(L,x,y,w,h,ER){if(y+h>ER.bottom-6||x<ER.left+2||x+w>ER.right-2)return false;for(const b of L)if(x<b.right+4&&x+w>b.left-4&&y<b.bottom+4&&y+h>b.top-4)return false;return true}
+function hfxPlace(c,force){const el=SV3.el;if(!c||!el||c.parentNode!==el)return false;const{ER,L}=hfxRects(el,c);const w=c.offsetWidth,h=c.offsetHeight;if(!w||!h)return false;const R=c.getBoundingClientRect();
+  if(!force&&c.dataset.hfx&&hfxFree(L,R.left,R.top,w,h,ER))return false;
+  for(let y=ER.top+48;y<ER.top+ER.height*.55;y+=4){const x=ER.right-12-w;if(hfxFree(L,x,y,w,h,ER)){c.style.left='auto';c.style.right='12px';c.style.top=Math.round(y-ER.top)+'px';c.dataset.hfx='r';HFX.n.place++;return true}}
+  const rk=document.getElementById('rkChip');const y0=rk&&rk.parentNode===el?rk.getBoundingClientRect().bottom+6:ER.top+120;
+  for(let y=y0;y<ER.top+ER.height*.8;y+=4){const x=ER.left+10;if(hfxFree(L,x,y,w,h,ER)){c.style.right='auto';c.style.left='10px';c.style.top=Math.round(y-ER.top)+'px';c.dataset.hfx='l';HFX.n.place++;HFX.n.left++;return true}}
+  return false}
+/* 짧은 글자 + 자리 */
+(function(){const b=window.motChip;if(typeof b!=='function')return;window.motChip=function(){const r=b.apply(this,arguments);try{const c=document.getElementById('motChip');if(c){if(c._hfxH!==c._h){const t=motT(),m=motM(),ti=motTi(t),mi=motMi(m);const T=motTasks();const dn=T.filter(x=>x.done).length;
+    c.innerHTML=`<span class="t${ti}">🤝 ${MOT_TT[ti][1]}</span><span class="m${mi}">🔥 ${MOT_MT[mi][1]}</span><span>📋 ${dn}/${T.length}</span>`;c.title=`신뢰 ${t} · 사기 ${Math.round(m)} — 눌러서 등급표`;c._hfxH=c._h;hfxPlace(c,true)}else if(!c.dataset.hfx)hfxPlace(c,true)}}catch(e){hfxErr(e)}return r}})();
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{HFX.t=(HFX.t||0)-(dt||0);if(HFX.t<=0){HFX.t=.5;const c=document.getElementById('motChip');if(c)hfxPlace(c,false)}}catch(e){hfxErr(e)}return r}})();
+addEventListener('resize',()=>{setTimeout(()=>{try{const c=document.getElementById('motChip');if(c)hfxPlace(c,true)}catch(e){}},200)});
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
