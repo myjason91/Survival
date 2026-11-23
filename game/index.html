@@ -14219,7 +14219,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.8.2';
+const APP_VER='18.8.3';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -28838,6 +28838,39 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 if(typeof HELP84!=='undefined'){try{const j=HELP84.findIndex(h=>/대면 쏜다/.test(h[0]));if(j>=0)HELP84[j]=[HELP84[j][0],HELP84[j][1]+' 주민·팀원·군경·아이가 표적 곁(1.4m)이나 사선(표적 너머까지)에 있으면 쏘지 않고 기다린다 — 조준점 위에 \'⛔ 주민이 가까이 — 자동사격 멈춤\'(v18.8.2). 손으로 쏘는 탄은 그대로 맞는다.'];
   const k=HELP84.findIndex(h=>/공수부대 강하는 언제/.test(h[0]));if(k>=0)HELP84[k]=[HELP84[k][0],HELP84[k][1]+" v18.8.2: 길에 세워 둔 무리가 있어도 막히지 않는다 — 가는 중인 돌발 상황은 접어 두고(벌점 없음), 미션은 잠시 멈췄다가 이어서 하고, 교전 중이면 '예약'(끝나면 3초 뒤 강하)."]}catch(e){}
   HELP84.push(['🚨 공습경보 간격 · 📻 라디오 끄기(v18.8.2)',"재래식 공습의 경보는 이제 보통 5~8분마다(밖에 나와 첫 경보는 2.5~4분 뒤) — 설정 '공습경보 간격'에서 드묾(10~15분)·잦음(예전 1.5~3분)을 고른다. 전장 감독의 💥 포격도 경보 앞뒤 90초 안에는 오지 않는다. 방송 띠의 ✕는 그 방송을 닫고 목소리도 멈춘다 · 탕정 생활 라디오에는 '📻 라디오 끄기'(설정 '탕정 생활 라디오'에서 다시 켠다). 🔭 정찰 버튼은 다른 단추와 겹치지 않는 자리로 스스로 옮기고, 드론을 띄운 동안에는 숨는다(▲ 고도 단추를 가리지 않게)."])}
+
+/* v18.8.3 손가락 자리 비우기 (사용자 제보 2026-11-24 00:07 화면 1장 — "계급 및 동네버팀목 부문이 내가 왼손 손가락으로 플레이어를 조작하는 곳이기 때문에 게임 플레이에 방해되지 않는 다른 곳으로 위치변경바랍니다")
+   원인: 계급 칩(173)은 왼쪽 240px 고정 · 신뢰·사기·할 일 칸(168 → 182)은 오른쪽이 막히면 '왼쪽 계급 칩 아래'로 내려갔다 — 둘 다 왼손 이동 막대 자리(화면 왼쪽 아래)
+   · 두 칸의 자리 = 위쪽 띠: 위 버튼 두 줄 바로 아래, 미니맵 오른쪽부터 왼→오른, 위→아래로 훑어 겹치지 않는 첫 자리(계급 칩 먼저, 그 옆에 신뢰 칸)
+     위쪽 띠가 다 막히면 오른쪽 가운데 위(오른손 사격 버튼 묶음보다 위) — 어떤 경우에도 손가락 자리에는 내려오지 않는다
+     · 왼손 자리 = 화면 왼쪽 42% · 위에서 42% 아래 / 오른손 자리 = 오른쪽 42% · 위에서 45% 아래 / 조준점 둘레(가운데 20% × 24%)도 비운다
+   · '4× 배율' 단추(65 · 버튼 배치 편집 77로 옮길 수 있다)가 다른 단추(상황·미션 등)와 겹치면 가장 가까운 빈자리로 비킨다 — 겹치지 않으면 손대지 않는다(사용자가 정한 자리 존중)
+   · 0.5초마다 확인 · 지금 자리가 괜찮으면 그대로(깜박이지 않게) */
+const TD={err:0,n:{rk:0,mot:0,zoom:0,fall:0},t:0};
+function tdErr(e){if(TD.err<5){TD.err++;try{console.error('[184]',e)}catch(x){}}}
+function tdZones(ER){const W=ER.width,H=ER.height,x0=ER.left,y0=ER.top;return[{l:x0,t:y0+H*.42,r:x0+W*.42,b:y0+H+40},{l:x0+W*.58,t:y0+H*.45,r:x0+W+40,b:y0+H+40},{l:x0+W*.4,t:y0+H*.38,r:x0+W*.6,b:y0+H*.62}]}
+function tdHit(x,y,w,h,Z){for(const z of Z)if(x<z.r&&x+w>z.l&&y<z.b&&y+h>z.t)return true;return false}
+function tdFree(L,x,y,w,h,ER,M){if(y<ER.top+2||y+h>ER.bottom-6||x<ER.left+2||x+w>ER.right-2)return false;for(const b of L)if(x<b.right+M&&x+w>b.left-M&&y<b.bottom+M&&y+h>b.top-M)return false;return true}
+/* 위쪽 띠 → 오른쪽 가운데 위 — 손가락 자리 밖의 첫 빈자리 */
+function tdDock(c,force,tag){const el=SV3.el;if(!c||!el||c.parentNode!==el)return false;const{ER,L}=hfxRects(el,c);const w=c.offsetWidth,h=c.offsetHeight;if(!w||!h)return false;const Z=tdZones(ER);const M=5;
+  const R=c.getBoundingClientRect();if(!force&&c.dataset.hfx&&tdFree(L,R.left,R.top,w,h,ER,M)&&!tdHit(R.left,R.top,w,h,Z))return false;
+  const put=(x,y,side)=>{c.style.right='auto';c.style.bottom='auto';c.style.left=Math.round(x-ER.left)+'px';c.style.top=Math.round(y-ER.top)+'px';c.dataset.hfx=side;TD.n[tag]=(TD.n[tag]|0)+1;return true};
+  const yMax=ER.top+ER.height*.42-h;for(let y=ER.top+40;y<=yMax;y+=4)for(let x=ER.left+8;x+w<=ER.right-8;x+=6){if(!tdHit(x,y,w,h,Z)&&tdFree(L,x,y,w,h,ER,M))return put(x,y,'t')}
+  for(let y=ER.top+ER.height*.12;y+h<=ER.top+ER.height*.45;y+=4){const x=ER.right-12-w;if(!tdHit(x,y,w,h,Z)&&tdFree(L,x,y,w,h,ER,M)){TD.n.fall++;return put(x,y,'r')}}
+  return false}
+/* 신뢰 칸(182의 자리 찾기)을 이 규칙으로 */
+window.hfxPlace=function(c,force){try{return tdDock(c,force,'mot')}catch(e){tdErr(e);return false}};
+function tdRk(force){const c=document.getElementById('rkChip');if(!c||c.hidden||!c.offsetWidth)return false;return tdDock(c,force,'rk')}
+(function(){const b=window.rkChip;if(typeof b!=='function')return;window.rkChip=function(){const r=b.apply(this,arguments);try{const c=document.getElementById('rkChip');if(c&&!c.dataset.hfx&&c.offsetWidth){tdRk(true);const m=document.getElementById('motChip');if(m)tdDock(m,false,'mot')}}catch(e){tdErr(e)}return r}})();
+/* '4× 배율' 단추: 겹칠 때만 가장 가까운 빈자리로(손가락 자리 규칙은 적용하지 않는다 — 오른손으로 누르는 단추) */
+function tdZoom(){const c=document.getElementById('gunZoomB');if(!c||!c.offsetWidth)return false;const el=SV3.el;if(!el||!el.contains(c))return false;const{ER,L}=hfxRects(el,c);const w=c.offsetWidth,h=c.offsetHeight;const R=c.getBoundingClientRect();
+  const sib=L.filter(b=>!(Math.abs(b.left-R.left)<1&&Math.abs(b.top-R.top)<1));if(tdFree(sib,R.left,R.top,w,h,ER,2))return false;
+  const P=(c.offsetParent||el).getBoundingClientRect();const C=[];for(let dx=-ER.width*.3;dx<=ER.width*.3;dx+=8)for(let dy=-ER.height*.1;dy<=ER.height*.55;dy+=6)C.push([R.left+dx,R.top+dy,Math.hypot(dx,dy)]);C.sort((a,b)=>a[2]-b[2]);
+  const Zc=[tdZones(ER)[2]];for(const [x,y] of C){if(y<ER.top+40||tdHit(x,y,w,h,Zc))continue;if(tdFree(sib,x,y,w,h,ER,6)){c.style.right='auto';c.style.bottom='auto';c.style.left=Math.round(x-P.left)+'px';c.style.top=Math.round(y-P.top)+'px';TD.n.zoom++;return true}}return false}
+/* 매 0.5초: 계급 칩 → 신뢰 칸 → 배율 단추 */
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){try{TD.t-=dt||0;if(TD.t<=0){TD.t=.5;tdRk(false);const m=document.getElementById('motChip');if(m)tdDock(m,false,'mot');tdZoom()}}catch(e){tdErr(e)}return b.apply(this,arguments)}})();
+addEventListener('resize',()=>{setTimeout(()=>{try{tdRk(true);const m=document.getElementById('motChip');if(m)tdDock(m,true,'mot');tdZoom()}catch(e){}},260)});
+if(typeof HELP84!=='undefined')HELP84.push(['🖐 손가락 자리 비우기(v18.8.3)',"계급 칩과 '🤝 신뢰 · 🔥 사기 · 📋 할 일' 칸은 위쪽 띠(위 버튼 두 줄 바로 아래, 미니맵 오른쪽)에 놓인다. 위쪽이 막히면 오른쪽 가운데 위로 — 왼손 이동 막대 자리(왼쪽 아래)와 오른손 사격 단추 자리(오른쪽 아래), 조준점 둘레에는 내려오지 않는다. '4× 배율' 단추가 다른 단추와 겹치면 가장 가까운 빈자리로 비킨다."]);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
