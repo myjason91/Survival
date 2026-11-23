@@ -14213,7 +14213,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.7';
+const APP_VER='18.8';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -28190,7 +28190,7 @@ const DTH_LIE={
          [['spine','chest',[0,1,-.02]],['chest','neck',[0,1,-.03]],['neck','head',[.45,1,-.14]],['shL','elL',[.85,.3,-.12]],['elL','handL',[.6,.75,-.1]],['shR','elR',[-.85,.3,-.12]],['elR','handR',[-.6,.75,-.1]],['hipL','kneeL',[.2,-1,-.03]],['kneeL','footL',[.15,-1,-.1]],['hipR','kneeR',[-.2,-1,-.03]],['kneeR','footR',[-.15,-1,-.1]]]]};
 const _dX=new T.Vector3(1,0,0),_dRx=new T.Quaternion(),_dB=new T.Quaternion(),_dT=new T.Vector3();
 function dthStart(h,dir){if(!h||!h.rbx||!h.mesh||h.dth)return;if(dthKidFam(h))return;if(h.prOn||(h.prK||0)>.05){DTH.n.skip++;return}
-  const yaw=h.root.rotation.y;let F=h.dthD?{x:h.dthD.x,z:h.dthD.z}:dir?{x:dir.x||0,z:dir.z||0}:null;let L=F?Math.hypot(F.x,F.z):0;if(L<1e-3){const a=Math.random()*6.283;F={x:Math.sin(a),z:Math.cos(a)};L=1}F.x/=L;F.z/=L;
+  const yaw=h.root.rotation.y;let F=h.dthD?{x:h.dthD.x,z:h.dthD.z}:dir?{x:dir.x||0,z:dir.z||0}:null;try{const par=h.root.parent;if(F&&par&&!par.isScene){const q=par.getWorldQuaternion(new T.Quaternion()).invert();const v=new T.Vector3(F.x,0,F.z).applyQuaternion(q);F={x:v.x,z:v.z}}}catch(e){}let L=F?Math.hypot(F.x,F.z):0;if(L<1e-3){const a=Math.random()*6.283;F={x:Math.sin(a),z:Math.cos(a)};L=1}F.x/=L;F.z/=L;
   const dot=F.x*Math.sin(yaw)+F.z*Math.cos(yaw);const fwd=Math.abs(dot)<.25?Math.random()<.5:dot>0;const tg=fwd?Math.atan2(F.x,F.z):Math.atan2(-F.x,-F.z);let dy=tg-yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));
   const head=!!h.dthHead;h.dth={t:0,fwd,yaw0:yaw,dy:Math.max(-.9,Math.min(.9,dy)),dur:head?.78:1.02+Math.random()*.28,head,v:Math.floor(Math.random()*3),q0:h.mesh.quaternion.clone(),y0:h.floor?-.42:0,sold:!!h.soldier,pool:null,cache:null,F};
   if(h.soldier){h.deadDir={x:0,z:0}}DTH.live.add(h);DTH.n.die++;h.dthD=null}
@@ -28225,18 +28225,20 @@ function dthInit(){if(DTH.geo)return;DTH.geo=new T.PlaneGeometry(1,1);DTH.geo.ro
   DTH.mats.s=[0,1,2].map(i=>mk(dthSplatTex(i+3,false)));DTH.mats.p=[0,1].map(i=>mk(dthSplatTex(i+11,true)))}
 function dthDecal(sc,x,y,z,size,kind){if(!sc)return null;dthInit();const L=DTH.mats[kind];const m=new T.Mesh(DTH.geo,L[Math.floor(Math.random()*L.length)]);m.position.set(x,y+.012+Math.random()*.004,z);m.rotation.y=Math.random()*6.283;m.scale.set(size,1,size*(.8+Math.random()*.3));m.renderOrder=1;m.castShadow=m.receiveShadow=false;m.name='blood';sc.add(m);
   DTH.dec.push(m);DTH.dec=DTH.dec.filter(q=>q.parent);while(DTH.dec.length>70){const o=DTH.dec.shift();try{o.removeFromParent()}catch(e){}}return m}
+/* 사람의 부모(장면 · 탄정역 세계 · 객차) 좌표로 바닥 자국을 둔다 — 층을 옮기거나 열차가 움직여도 따라간다 */
+function dthDecalW(h,wx,wz,size,kind){const par=(h&&h.root&&h.root.parent)||dthSceneOf(h);if(!par)return null;const gy=h.root.getWorldPosition(new T.Vector3()).y;const L=par.worldToLocal(new T.Vector3(wx,gy,wz));return dthDecal(par,L.x,L.y,L.z,size,kind)}
 function dthSceneOf(h){let o=h&&h.root;while(o&&o.parent)o=o.parent;return o&&o.isScene?o:(OUT.scene||null)}
 function dthHit(t,pt,d){const lv=dthLv();if(lv==='off'||!pt)return;const h=t.h;if(dthKidFam(h,t))return;const sc=dthSceneOf(h);if(!sc)return;DTH.n.spray++;
   const dir=d?new T.Vector3(d.x,d.y||0,d.z).normalize():new T.Vector3(Math.random()-.5,0,Math.random()-.5).normalize();const N=lv==='real'?(t.part==='head'?14:10):5;
   try{for(let i=0;i<N;i++){const sp=PK.sprite(puffTex(),i%3?'#7a0f10':'#5e0a0b',.05+Math.random()*.06,sc,{op:.95,fog:1});sp.position.copy(pt);const v=dir.clone().multiplyScalar(1.4+Math.random()*3.2).add(new T.Vector3((Math.random()-.5)*1.6,.3+Math.random()*1.2,(Math.random()-.5)*1.6));OWC.fxL=OWC.fxL||[];OWC.fxL.push({el:sp,t:0,life:.3+Math.random()*.35,v,s0:sp.scale.x,op:.95,grow:.1})}
     if(lv==='real'){const mist=PK.sprite(puffTex(),'#8a1414',.32,sc,{op:.55,fog:1});mist.position.copy(pt).addScaledVector(dir,.15);OWC.fxL.push({el:mist,t:0,life:.22,v:dir.clone().multiplyScalar(.8),s0:.32,op:.55,grow:.9})}}catch(e){dthErr(e)}
-  /* 뒤쪽 바닥 핏자국 */if(Math.random()<DTH.splatP){const gy=h.root.position.y;const k=.4+Math.random()*1.1;dthDecal(sc,pt.x+dir.x*k,gy,pt.z+dir.z*k,lv==='real'?.34+Math.random()*.32:.24+Math.random()*.16,'s');DTH.n.splat++}
+  /* 뒤쪽 바닥 핏자국 */if(Math.random()<DTH.splatP){const k=.4+Math.random()*1.1;dthDecalW(h,pt.x+dir.x*k,pt.z+dir.z*k,lv==='real'?.34+Math.random()*.32:.24+Math.random()*.16,'s');DTH.n.splat++}
   if(!h.dead)h.bldT=25}
 function dthPoolStart(h,D){const lv=dthLv();D.pool=lv==='real'?{m:null,t:0,s1:.9+Math.random()*.45}:{none:1};if(D.pool.none)return;const sc=dthSceneOf(h);const B=h.b&&(h.b.chest||h.b.spine);if(!sc||!B)return;const p=B.getWorldPosition(new T.Vector3());
-  D.pool.m=dthDecal(sc,p.x,h.root.position.y,p.z,.05,'p');if(D.pool.m)DTH.n.pool++}
+  D.pool.m=dthDecalW(h,p.x,p.z,.05,'p');if(D.pool.m)DTH.n.pool++}
 function dthPoolGrow(D){const P=D.pool;if(!P||!P.m)return;P.t=D.t-D.dur;const k=Math.min(1,P.t/9);const e=1-Math.pow(1-k,2.2);const s=.05+(P.s1-.05)*e;P.m.scale.set(s,1,s*.86)}
-function dthDrip(h,dt){h.bldT-=dt;if(dthLv()==='off')return;const p=h.root.position;if(!h.bldP){h.bldP={x:p.x,z:p.z};return}const d=Math.hypot(p.x-h.bldP.x,p.z-h.bldP.z);if(d<.75)return;h.bldP={x:p.x,z:p.z};if(dthLv()!=='real'&&Math.random()<.5)return;
-  dthDecal(dthSceneOf(h),p.x+(Math.random()-.5)*.3,p.y,p.z+(Math.random()-.5)*.3,.08+Math.random()*.09,'s');DTH.n.drip++}
+function dthDrip(h,dt){h.bldT-=dt;if(dthLv()==='off')return;const p=h.root.getWorldPosition(new T.Vector3());if(!h.bldP){h.bldP={x:p.x,z:p.z};return}const d=Math.hypot(p.x-h.bldP.x,p.z-h.bldP.z);if(d<.75)return;h.bldP={x:p.x,z:p.z};if(dthLv()!=='real'&&Math.random()<.5)return;
+  dthDecalW(h,p.x+(Math.random()-.5)*.3,p.z+(Math.random()-.5)*.3,.08+Math.random()*.09,'s');DTH.n.drip++}
 /* 붉은 연기(예전 출혈): 끔이면 그것도 없다 · 교전에서 아군·적끼리 맞을 때는 방울을 조금 */
 (function(){const b=window.owcBlood;if(typeof b!=='function')return;window.owcBlood=function(p){if(dthOn()&&dthLv()==='off')return;return b.apply(this,arguments)}})();
 /* 바닥 자국 재질은 장면을 만들 때 미리 데운다(첫 피에 화면이 멈칫하지 않게) */
@@ -28485,7 +28487,7 @@ function triSeatFree(ci,u,v){return !TRI.pax.some(p=>p.ci===ci&&Math.abs(p.u-u)<
 /* ---------- 타고 내리기 ---------- */
 function triIn(T0,ci,du){if(TRI.on||!T0||!ANX.on)return false;if(T0.st!=='dwell'||T0.door<.5)return false;try{if(typeof GUN!=='undefined'&&GUN.on)gunHolster(true)}catch(e){}
   TRI.on=true;TRI.T=T0;T0.keep=1;TRI.ci=ci==null?1:ci;TRI.u=du==null?triDoorU()[1]:du;TRI.v=1.05;TRI.seat=null;TRI.ride=null;TRI.term=0;for(const c of T0.cars)triBuildCar(c);triPax(T0);
-  FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;FP3.yaw=Math.PI/2;FP3.pitch=-.04;if(OUT.me)OUT.me.root.visible=false;TRI.n.in++;try{trnSpotOff()}catch(e){}try{if(typeof alkFade==='function')alkFade(320)}catch(e){}
+  FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;FP3.yaw=triRy()+Math.PI/2;TRI.ry=triRy();FP3.pitch=-.04;if(OUT.me)OUT.me.root.visible=false;TRI.n.in++;try{trnSpotOff()}catch(e){}try{if(typeof alkFade==='function')alkFade(320)}catch(e){}
   try{outNote(`<b>🚆 ${TRI.ci+1}호차</b><div>통로를 걸어 좌석에 앉을 수 있다 · 문이 닫히면 그대로 떠난다</div>`,3000)}catch(e){}triBar();return true}
 function triOut(why){if(!TRI.on)return false;const T0=TRI.T;const c=T0&&T0.cars[TRI.ci];let P=null,yaw=FP3.yaw;
   if(c){c.g.updateMatrixWorld(true);const D=triDoorU();let du=D[0];for(const d of D)if(Math.abs(d-TRI.u)<Math.abs(du-TRI.u))du=d;P=c.g.localToWorld(new T.Vector3(2.75,0,du));const Q=c.g.localToWorld(new T.Vector3(4,0,du));yaw=Math.atan2(-(Q.x-P.x),-(Q.z-P.z))}
@@ -28493,8 +28495,8 @@ function triOut(why){if(!TRI.on)return false;const T0=TRI.T;const c=T0&&T0.cars[
   try{if(ANX.lvl!=='p')anxLevel('p',1,true)}catch(e){}if(P)FP3.pos.set(P.x,0,P.z);FP3.yaw=yaw;FP3.pitch=-.05;if(OUT.me){OUT.me.root.visible=true;OUT.me.root.position.set(FP3.pos.x,0,FP3.pos.z)}
   try{if(typeof tmRegroup==='function'&&typeof ALK!=='undefined'&&ALK.in){tmRegroup();alkFamPlace()}}catch(e){}TRI.n.out++;if(why==='term')TRI.n.term++;try{if(typeof alkFade==='function')alkFade(280)}catch(e){}ANX.sig='';triBar();return true}
 function triSitCand(){if(!TRI.on||TRI.seat)return null;const c=TRI.T.cars[TRI.ci];const rows=c.g.userData.triRows||[];let best=null;for(const u of rows){const d=Math.abs(u-TRI.u);if(d<.75&&(!best||d<best.d))best={u,d}}if(!best)return null;
-  const lx=-Math.sin(FP3.yaw);const sd=Math.abs(lx)>.2?Math.sign(lx):(TRI.u%2>0?1:-1);for(const s of [sd,-sd])for(const v of [s*1.12,s*.72])if(triSeatFree(TRI.ci,best.u,v))return{u:best.u,v,sd:s};return null}
-function triSit(){const S=triSitCand();if(!S)return false;TRI.seat=S;TRI.u=S.u+.06;TRI.v=S.v;FP3.yaw=Math.PI+S.sd*1.0;FP3.pitch=-.06;TRI.n.sit++;triBar();return true}
+  const lx=-Math.sin(triLy());const sd=Math.abs(lx)>.2?Math.sign(lx):(TRI.u%2>0?1:-1);for(const s of [sd,-sd])for(const v of [s*1.12,s*.72])if(triSeatFree(TRI.ci,best.u,v))return{u:best.u,v,sd:s};return null}
+function triSit(){const S=triSitCand();if(!S)return false;TRI.seat=S;TRI.u=S.u+.06;TRI.v=S.v;FP3.yaw=triRy()+Math.PI+S.sd*1.0;FP3.pitch=-.06;TRI.n.sit++;triBar();return true}
 function triStand(){if(!TRI.seat)return false;TRI.v=0;TRI.seat=null;triBar();return true}
 function triCanExit(){if(!TRI.on||TRI.seat)return false;const T0=TRI.T;if(!T0||T0.st!=='dwell'||T0.door<.6)return false;return TRI.v>.75&&triDoorU().some(d=>Math.abs(d-TRI.u)<.7)}
 /* ---------- 걷기(차 기준 좌표: x = 옆, z = 앞) · 카메라 ---------- */
@@ -28504,23 +28506,27 @@ function triMove(dv,du){let u=TRI.u+du,v=TRI.v+dv;const h=TRN_CL/2-.35;
   if(u>h||u<-h){const nx=TRI.ci+(u>h?-1:1);if(Math.abs(v)<=.42&&nx>=0&&nx<TRI.T.cars.length){TRI.ci=nx;u=u>h?-h+(u-h):h+(u+h);TRI.n.cross++}else u=clamp(u,-h,h)}
   TRI.u=u;TRI.v=v}
 const _trV1=new T.Vector3(),_trV2=new T.Vector3();
+/* 시선: FP3.yaw는 세상 기준(총·다른 기능과 같게) · 차 기준 = FP3.yaw − 차 방향 · 차가 돌면 시선도 같이 돈다 */
+function triRy(ci){const T0=TRI.T;const c=T0&&T0.cars[ci==null?TRI.ci:ci];return c?c.g.rotation.y:0}
+function triLy(){return FP3.yaw-triRy()}
 function triStep(dt){if(!TRI.on)return;const T0=TRI.T;if(!T0||!T0.g.parent||!ANX.on){triOut('lost');return}const c=T0.cars[TRI.ci];if(!c)return;
-  if(!TRI.seat&&!OUT.enc){const len=Math.min(1,Math.hypot(FP3.mv.x,FP3.mv.y));if(len>.05){const y=FP3.yaw;const sp=1.55;triMove((-Math.sin(y)*FP3.mv.y+Math.cos(y)*FP3.mv.x)*sp*dt,(-Math.cos(y)*FP3.mv.y-Math.sin(y)*FP3.mv.x)*sp*dt)}}
+  {const ry=c.g.rotation.y;if(TRI.ry!=null){let d=ry-TRI.ry;d=Math.atan2(Math.sin(d),Math.cos(d));FP3.yaw+=d}TRI.ry=ry}
+  if(!TRI.seat&&!OUT.enc){const len=Math.min(1,Math.hypot(FP3.mv.x,FP3.mv.y));if(len>.05){const y=triLy();const sp=1.55;triMove((-Math.sin(y)*FP3.mv.y+Math.cos(y)*FP3.mv.x)*sp*dt,(-Math.cos(y)*FP3.mv.y-Math.sin(y)*FP3.mv.x)*sp*dt)}}
   const mvk=Math.min(1,T0.v/14);TRI.t=(TRI.t||0)+dt;const sw=mvk*(Math.sin(TRI.t*6.3)*.006+Math.sin(TRI.t*2.1)*.004);const bob=!TRI.seat&&Math.hypot(FP3.mv.x,FP3.mv.y)>.1?Math.sin(TRI.t*9)*.018:0;
-  const eye=(TRI.seat?TRI_SIT:TRI_EYE)+sw+bob;c.g.updateMatrixWorld(true);_trV1.set(TRI.v+sw*.6,TRN_FL+eye,TRI.u);c.g.localToWorld(_trV1);const cp=Math.cos(FP3.pitch);_trV2.set(TRI.v-Math.sin(FP3.yaw)*cp+sw*.6,TRN_FL+eye+Math.sin(FP3.pitch),TRI.u-Math.cos(FP3.yaw)*cp);c.g.localToWorld(_trV2);
-  const cam=SV3.cam;cam.position.copy(_trV1);cam.up.set(0,1,0);cam.lookAt(_trV2);FP3.pos.set(_trV1.x,0,_trV1.z);if(OUT.me)OUT.me.root.visible=false;
+  const eye=(TRI.seat?TRI_SIT:TRI_EYE)+sw+bob;c.g.updateMatrixWorld(true);_trV1.set(TRI.v+sw*.6,TRN_FL+eye,TRI.u);c.g.localToWorld(_trV1);const ly=triLy();const cp=Math.cos(FP3.pitch);_trV2.set(TRI.v-Math.sin(ly)*cp+sw*.6,TRN_FL+eye+Math.sin(FP3.pitch),TRI.u-Math.cos(ly)*cp);c.g.localToWorld(_trV2);
+  const cam=SV3.cam;if(!(typeof GUN!=='undefined'&&GUN.on&&GUN.fp)){cam.position.copy(_trV1);cam.up.set(0,1,0);cam.lookAt(_trV2)}FP3.pos.set(_trV1.x,0,_trV1.z);if(OUT.me)OUT.me.root.visible=false;
   /* 승객(가까운 칸만) */for(const p of TRI.pax){if(Math.abs(p.ci-TRI.ci)<=1)try{p.h.update(dt)}catch(e){}}
   /* 떠남 → 실시간 주행 · 폭발 · 구역 끝 → 다음 역 */if(T0.st==='out'&&!TRI.ride){TRI.ride={t:0,b:[5+Math.random()*1.5,12+Math.random()*2]};TRI.n.ride++;try{outNote('<b>🚆 출발</b><div>창밖으로 '+(ANX.zk==='B'?'탕정':'아산')+' 방면 들판이 지나간다</div>',2600)}catch(e){}}
   if(TRI.term&&T0.st==='dwell'&&T0.t>23){try{outNote('<b>🚉 종착</b><div>"이 열차는 여기까지 운행합니다." — 승객들과 함께 내렸다.</div>',3200)}catch(e){}triOut('term');return}
   if(TRI.ride){const R=TRI.ride;R.t+=dt;if(R.b.length&&R.t>=R.b[0]){R.b.shift();try{triBoom(T0)}catch(e){triErr(e)}}const L=anxC()[anxC().length-1].s;if(!TRI.term&&((T0.dir>0&&T0.s>L+80)||(T0.dir<0&&T0.s<-80))&&!R.arr){R.arr=1;triArrive()}}
   if((TRI.uiT=(TRI.uiT||0)-dt)<=0){TRI.uiT=.25;triBar()}}
 /* ---------- 다음 역: 어두워졌다가 들어오는 열차 안에서 ---------- */
-function triArrive(){const T0=TRI.T;const from=ANX.zk||'A',to=from==='A'?'B':'A';const keep={ci:TRI.ci,u:TRI.u,v:TRI.v,seat:TRI.seat,yaw:FP3.yaw,pitch:FP3.pitch};let el=document.getElementById('triFade');if(!el){el=document.createElement('div');el.id='triFade';el.className='tri-fade';document.body.appendChild(el)}el.classList.add('on');el.textContent=(to==='B'?'아산역':'탕정역')+' 접근 중';
+function triArrive(){const T0=TRI.T;const from=ANX.zk||'A',to=from==='A'?'B':'A';const keep={ci:TRI.ci,u:TRI.u,v:TRI.v,seat:TRI.seat,ly:triLy(),pitch:FP3.pitch};let el=document.getElementById('triFade');if(!el){el=document.createElement('div');el.id='triFade';el.className='tri-fade';document.body.appendChild(el)}el.classList.add('on');el.textContent=(to==='B'?'아산역':'탕정역')+' 접근 중';
   for(const c of T0.cars)triClearCar(c);triPaxClear();if(OUT.timed)OUT.h=Math.max(0,OUT.h-1/6);try{T0.g.removeFromParent()}catch(e){}TRN.list=TRN.list.filter(q=>q!==T0);try{ANX.mk.forEach(s=>{if(s.parent)s.parent.remove(s)});ANX.mk.clear()}catch(e){}
   try{if(OUT.me)(OUT.scene||ANX.me0).add(OUT.me.root)}catch(e){}const dir=to==='A'?-1:1;const sg=trnSide(dir);ANX.zk=to;ANX.arrive={sg,s:null};ANX.on=false;try{trnClear()}catch(e){}TRI.on=false;UI.screen='anx';render();TRN.zk=to;TRN.next=100;TRN.fnext=60+Math.random()*30;
   let T1=null;try{T1=trnSpawn('evac',dir)}catch(e){triErr(e)}if(!T1){el.classList.remove('on');FP3.noWalk=false;if(OUT.me)OUT.me.root.visible=true;return}T1.s=T1.stop-dir*230;T1.v=16;T1.h1=1;T1.keep=1;trnPlace(T1);
   TRI.on=true;TRI.T=T1;TRI.ci=keep.ci;TRI.u=keep.u;TRI.v=keep.v;TRI.seat=keep.seat;TRI.term=1;TRI.ride={t:0,b:[3.5+Math.random()]};for(const c of T1.cars)triBuildCar(c);triPax(T1);if(TRI.seat&&!triSeatFree(TRI.ci,TRI.seat.u,TRI.seat.v)){TRI.seat=null;TRI.v=0}
-  FP3.noWalk=true;FP3.yaw=keep.yaw;FP3.pitch=keep.pitch;try{anxLevel('p',sg,true)}catch(e){}if(OUT.me)OUT.me.root.visible=false;TRI.n.arr++;try{ANX.n.ride=(ANX.n.ride|0)+1}catch(e){}setTimeout(()=>{try{el.classList.remove('on')}catch(e){}},450);triStep(0)}
+  FP3.noWalk=true;TRI.ry=triRy();FP3.yaw=keep.ly+TRI.ry;FP3.pitch=keep.pitch;try{anxLevel('p',sg,true)}catch(e){}if(OUT.me)OUT.me.root.visible=false;TRI.n.arr++;try{ANX.n.ride=(ANX.n.ride|0)+1}catch(e){}setTimeout(()=>{try{el.classList.remove('on')}catch(e){}},450);triStep(0)}
 /* ---------- 창밖 폭발(연출) ---------- */
 function triBoom(T0,o){const W=ANX.W;if(!W)return null;o=o||{};const sg=o.side||(Math.random()<.5?1:-1);const ahead=(T0?T0.s:anxZ().rs)+(T0?T0.dir:1)*(o.ahead||80+Math.random()*120);const a=trnAt(ahead);const off=sg*(o.off||70+Math.random()*150);const x=a.x+a.nx*off,z=a.z+a.nz*off;
   const g=new T.Group();g.position.set(x,0,z);g.name='triBoom';W.R.add(g);const F={g,t:0,fire:[],smoke:[],deb:[],fl:null};
@@ -28620,6 +28626,77 @@ try{lowFirst()}catch(e){}
 (function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="lowspec"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const D=store.get('sg.lowDet',null);const add=s4Seg('lowspec','저사양 모드',`끊기는 기기용 — 3D 화질 낮음 · 그래픽 보정 끔 · 살아있는 도시 끔을 한 번에(끄면 원래대로)${D&&D.low?' · 이 기기는 보급형으로 보인다':''}`,[[1,'켬'],[0,'끔']],lowIs()?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){lowErr(e)}return h}})();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='lowspec')return;try{const on=b.dataset.v==='1';lowApply(on,false);toast(on?'저사양 모드 — 화질 낮음 · 그래픽 보정·살아있는 도시 끔':'저사양 모드 끔 — 원래 설정으로',2400)}catch(x){lowErr(x)}},true);
 if(typeof HELP84!=='undefined')HELP84.push(['📉 저사양 모드(v18.7)','보급형 폰·태블릿에서 끊기면 설정 \'저사양 모드\'를 켠다 — 3D 화질 낮음(거리 인파도 보통) · 그래픽 보정 끔 · 살아있는 도시 끔을 한 번에, 끄면 원래대로. 처음 켤 때 보급형 기기로 보이면 저절로 켜고 알려 준다. 더 가볍게: 날씨 끔 · 출혈 표현 보통 · 절전 모드 끄기 · 크롬 브라우저.']);
+
+/* v18.8 열차 수색전 — 멈춘 피란 열차에 숨어든 가상 '침투 테러조'를 객차 한 칸씩 수색·제압 (사용자 요청 2026-11-23 20:42 "열차안에 테러범들을 수색해서 사살하는 상황도 연출해 주시고")
+   · 탕정역·아산역 권역에 들어오면(처음엔 반드시, 이후 턴마다 50%) 25초 뒤 피란 열차가 서서 움직이지 않는다 — '🚨 피란 열차 점거' · 맨 끝 칸 뒷문 앞 '🚨 열차 수색 — 진입'
+   · 들어가면 179 객차 안 1인칭 + 총(없으면 경비 요원이 K1A를 건넨다) · 칸마다 테러조 2명(좌석 뒤에 웅크림 → 일어나 겨눔 → 3발 → 다시 숨음) · 숨은 승객 2명
+     · 웅크린 적은 좌석이 총알을 60% 막는다 · 적 사격은 같은 칸·가까울수록 잘 맞는다(한 발 체력 −7 · 이 교전에서는 20 아래로 안 떨어진다)
+     · 승객은 3.2m 안으로 다가가면 손을 들고 "쏘지 마세요!" — 신원 확인 · 쏘면 위법(119·173 그대로: 기강 −30 · 신뢰 하락) · 자동사격은 승객에게 안 나간다(176)
+   · 모두 쓰러뜨리면 '🚆 열차 확보' — 공적 +60 · 이웃 신뢰 +2 · 사기 +2 · 구한 승객 3명마다 신뢰 +1 · 아지트가 있으면 첩보 +2(소지품) · 승객들은 승강장으로 내리고 열차는 잠시 뒤 떠난다
+   · 문으로 나가면 잠시 멈춘다(다시 들어갈 수 있다) · 권역을 떠나면 국군 경비조가 넘겨받는다(보상 없음)
+   · 적은 행동·복장으로 정의한 가상 집단(검은 복면 · 붉은 완장 · 국적·단체·지역 아님) · 쓰러짐·출혈은 177 · 설정 '열차 수색전' · 교육용 모드 제외 · 자동 점검(webdriver)은 __sgTest일 때만 */
+const SG={on:false,T:null,en:[],px:[],err:0,blockP:.6,floor:20,n:{start:0,enter:0,fire:0,hitMe:0,block:0,kill:0,idd:0,clear:0,abort:0},t:0,res:null,sched:0};
+function sgErr(e){if(SG.err<6){SG.err++;try{console.error('[181]',e)}catch(x){}}}
+function sgOn(){try{if(navigator.webdriver&&!window.__sgTest)return false;if(typeof eduOn==='function'&&eduOn())return false;return typeof triOn==='function'&&triOn()&&store.get('sg.siege',true)!==false}catch(e){return false}}
+function sgLive(){return SG.en.filter(a=>!a.dead&&a.h&&!a.h.dead)}
+/* ---------- 언제 ---------- */
+function sgMaybe(){if(!sgOn()||!ANX.on||SG.on)return;const F=G.flags;if(F.sgT===(G.turn|0))return;const first=!(F.sgN|0);if(!first&&Math.random()>=.5){F.sgT=G.turn|0;return}F.sgT=G.turn|0;SG.sched=25}
+function sgStart(){if(SG.on||!ANX.on||!ANX.W)return false;const Z=anxZ();const dir=(ANX.zk||'A')==='A'?1:-1;try{for(const q of (TRN.list||[]).slice())if(q.kind==='evac'&&!q.keep){q.g.removeFromParent();TRN.list=TRN.list.filter(x=>x!==q)}}catch(e){}
+  const T0=trnSpawn('evac',dir);if(!T0)return false;T0.s=T0.stop;T0.v=0;T0.st='dwell';T0.t=6;T0.door=1;T0.keep=1;T0.siege=1;trnPlace(T0);TRN.next=Math.max(TRN.next||0,200);
+  SG.on=true;SG.T=T0;SG.en=[];SG.px=[];SG.t=0;SG.res=null;SG.n.start++;G.flags.sgN=(G.flags.sgN|0)+1;
+  /* 칸마다 적 2 · 승객 2 */T0.cars.forEach((c,ci)=>{const rows=triRows();for(let k=0;k<2;k++){const u=rows[(k*6+ci*2+3)%rows.length];const v=(k%2?1:-1)*.94;const a=sgMkEnemy(c,ci,u,v,ci*10+k);if(a)SG.en.push(a)}
+    for(let k=0;k<2;k++){const u=rows[(k*7+ci*3+8)%rows.length];const v=(k%2?-1:1)*.94;const p=sgMkPax(c,ci,u,v,ci*10+k);if(p)SG.px.push(p)}});
+  try{const ci=T0.cars.length-1;const c=T0.cars[ci];c.g.updateMatrixWorld(true);const du=Math.min(...triDoorU());const P=c.g.localToWorld(new T.Vector3(2.55,0,du));ANX.spots=ANX.spots.filter(q=>q.k!=='sgIn');ANX.spots.push({id:'sgIn',k:'sgIn',lv:'p',x:P.x,z:P.z,r:2.8,g:'🚨',n:'열차 수색 — 뒷문으로 진입',s:`침투 테러조 ${SG.en.length}명 · 숨은 승객 ${SG.px.length}명 · 웅크린 적은 좌석이 막는다`,h:0,ci,du});ANX.sig=''}catch(e){sgErr(e)}
+  try{trnSpotOff()}catch(e){}try{SND.siren&&SND.siren()}catch(e){}try{outNote(`<b>🚨 피란 열차 점거</b><div>검은 복면·붉은 완장의 침투 테러조(가상) ${SG.en.length}명이 승객을 붙잡고 객차에 숨었다 — 승강장 맨 끝 칸 뒷문으로 들어가 한 칸씩 수색하라.</div>`,6000)}catch(e){}return true}
+function sgMkEnemy(c,ci,u,v,seed){let h=null;try{const sp=Object.assign(isLook('gun',900+seed),{gun:'ak'});h=makeHuman(sp)}catch(e){sgErr(e)}if(!h)return null;try{if(typeof usHood==='function')usHood(h,true);if(typeof cwBand==='function'&&typeof cwMats==='function')cwBand(h,cwMats().red)}catch(e){}
+  h.root.position.set(v,TRN_FL,u);h.root.rotation.y=ci<3?0:Math.PI;c.g.add(h.root);try{h.setPose('crouch',true)}catch(e){}h.lookKeep=true;
+  const a={h,kind:'en',side:'en',nm:'침투 테러조',tagL:'',hp:2.2,sgE:1,tsg:{ci,u,v,st:'hide',t:1.2+Math.random()*2.5,shots:0,aim:0}};OUT.npcs.push(a);try{GUN.hits=[]}catch(e){}return a}
+function sgMkPax(c,ci,u,v,seed){let h=null;try{h=civHuman(470+seed,'crouch','civ')}catch(e){}if(!h)return null;h.root.position.set(v,TRN_FL,u);h.root.rotation.y=v>0?-Math.PI/2:Math.PI/2;c.g.add(h.root);const nm=(()=>{try{return npcName('sgp'+(G.seed||0)+'_'+seed,seed%2?'f':'m')}catch(e){return '승객'}})();
+  const a={h,kind:'civ',nm,tagL:'',sgP:1,tsg:{ci,u,v,idd:0}};OUT.npcs.push(a);try{GUN.hits=[]}catch(e){}return a}
+/* ---------- 들어가기 ---------- */
+function sgEnter(ci,du){const T0=SG.T;if(!T0||!SG.on)return false;T0.t=Math.min(T0.t,10);TRI.noPax=1;const ok=triIn(T0,ci,du);TRI.noPax=0;if(!ok)return false;SG.n.enter++;TRI.sg=1;
+  try{const L=gunArms();let id=GUN.eq&&L.some(a=>a.id===GUN.eq)?GUN.eq:(L.find(a=>ARMS[a.id]&&['ar','smg'].includes(ARMS[a.id].cat))||{}).id;if(!id){gunAdd('k1a',{force:true,ammo:90});id='k1a';outNote('<b>🔫 경비 요원이 K1A를 건넸다</b><div>"좌석 사이를 조심하세요 — 승객이 숨어 있습니다."</div>',2600)}gunEquip(id,true)}catch(e){sgErr(e)}
+  try{outNote(`<b>🚨 ${ci+1}호차 진입</b><div>좌석 뒤에 웅크린 적은 좌석이 총알을 막는다 — 일어설 때를 노려라. 손 든 사람은 승객이다.</div>`,3600)}catch(e){}return true}
+(function(){const b=window.triPax;if(typeof b!=='function')return;window.triPax=function(T0){if(TRI.noPax||(T0&&T0.siege)){try{triPaxClear()}catch(e){}return 0}return b.apply(this,arguments)}})();
+(function(){const b=window.anxDo;if(typeof b!=='function')return;window.anxDo=function(c){if(c&&c.k==='sgIn'){if(!OUT.busy&&!OUT.enc)try{sgEnter(c.ci,c.du)}catch(e){sgErr(e)}return}return b.apply(this,arguments)}})();
+/* 점거된 열차는 '타기' 후보 대신 진입 후보만 · 떠나지 않는다 */
+(function(){const b=window.trnBoardSpot;if(typeof b!=='function')return;window.trnBoardSpot=function(T0){if(T0&&T0.siege)return;return b.apply(this,arguments)}})();
+/* ---------- 적 · 승객 ---------- */
+const _sgW=new T.Vector3(),_sgM=new T.Vector3();
+function sgEnemyStep(a,dt){const S=a.tsg;const h=a.h;const me=TRI.on&&TRI.T===SG.T?TRI:null;const same=me&&me.ci===S.ci;S.t-=dt;
+  if(same){const du=me.u-S.u;h.root.rotation.y=du>=0?0:Math.PI}
+  if(S.st==='hide'){if(S.t<=0&&same){S.st='pop';S.t=.55+Math.random()*.35;S.shots=0;try{h.setPose('aim')}catch(e){}}else if(S.t<=0)S.t=.8}
+  else if(S.st==='pop'){if(S.t<=0){if(!same){S.st='hide';S.t=1.5;try{h.setPose('crouch')}catch(e){}return}S.st='fire';S.t=0}}
+  else if(S.st==='fire'){S.t-=0;if(S.shots<3){S.aim=(S.aim||0)-dt;if(S.aim<=0){S.aim=.18;S.shots++;sgShoot(a)}}else{S.st='hide';S.t=1.6+Math.random()*2.2;try{h.setPose('crouch')}catch(e){}}}}
+function sgShoot(a){SG.n.fire++;const S=a.tsg;const h=a.h;try{h.root.updateMatrixWorld(true);const B=h.b&&(h.b.handR||h.b.chest);if(B){B.getWorldPosition(_sgW);const fl=PK.sprite(flashTex(),'#ffe0a0',.45,h.root.parent,{add:1});h.root.parent.worldToLocal(_sgM.copy(_sgW));fl.position.copy(_sgM);setTimeout(()=>{try{fl.removeFromParent();fl.material.dispose()}catch(e){}},60)}}catch(e){}
+  try{const c=SV3.cam.position;const d=_sgW.distanceTo(c);SFX.shot('rifle',{d,az:0})}catch(e){}
+  if(!(TRI.on&&TRI.ci===S.ci))return;const d=Math.abs(TRI.u-S.u);const p=.32*(1-Math.min(.65,d/26))*(TRI.seat?.35:1);if(Math.random()<p){SG.n.hitMe++;FX=[];try{const M0=M('me');if((M0.hp|0)>SG.floor){hurt('me',7);if(M0.hp<SG.floor)M0.hp=SG.floor}}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}try{sv3Shake(.35);vib(40);const v=document.getElementById('sv3Vig');if(v){v.classList.add('hit');setTimeout(()=>v.classList.remove('hit'),220)}}catch(e){}}}
+function sgPaxStep(p){const S=p.tsg;if(S.idd||!TRI.on||TRI.ci!==S.ci)return;const d=Math.hypot(TRI.u-S.u,TRI.v-S.v);if(d<3.2){S.idd=1;SG.n.idd++;try{p.h.setPose('up')}catch(e){}try{bubSay(p.h,['쏘지 마세요! 승객이에요!','살려 주세요… 저 사람들이 총을…','손 들었어요! 쏘지 마요!'][SG.n.idd%3],2.6,'ok')}catch(e){}}}
+/* 웅크린 적: 좌석이 총알을 막는다 */
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){try{const a=t&&t.a;if(a&&a.sgE&&a.tsg&&a.tsg.st==='hide'&&!a.dead&&Math.random()<SG.blockP){SG.n.block++;try{const sp=PK.sprite(puffTex(),'#b9b2a6',.25,a.h.root.parent,{op:.8,fog:1});a.h.root.parent.worldToLocal(_sgM.copy(pt));sp.position.copy(_sgM);OWC.fxL=OWC.fxL||[];OWC.fxL.push({el:sp,t:0,life:.35,v:null,s0:.25,op:.8,grow:.8})}catch(e){}return}}catch(e){}return b.apply(this,arguments)}})();
+/* ---------- 끝 ---------- */
+function sgClear(){if(!SG.on||SG.res)return;const T0=SG.T;const saved=SG.px.filter(p=>!p.dead&&p.h&&!p.h.dead).length,hurtP=SG.px.length-saved;SG.res={saved,hurt:hurtP,kill:SG.en.length};SG.n.clear++;
+  FX=[];try{trust(2+Math.floor(saved/3));mor(2)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}try{if(typeof rkGain==='function')rkGain(60,'열차 수색전 — 열차 확보')}catch(e){}let intel='';try{if(typeof ajtS==='function'&&ajtOn()&&ajtS().on){ajtIntel(2,true,'열차 테러조 소지품');intel=' · 첩보 +2(소지품)'}}catch(e){}
+  try{outNote(`<b>🚆 열차 확보</b><div>침투 테러조 ${SG.en.length}명 제압 · 승객 ${saved}명 무사${hurtP?` · ${hurtP}명 다침`:''} · 공적 +60${intel}</div>`,5200)}catch(e){}try{for(const p of SG.px){if(!p.dead&&p.h&&!p.h.dead)try{p.h.setPose('idle');bubSay(p.h,'고마워요… 정말 고마워요',2.2,'ok')}catch(e){}}}catch(e){}
+  setTimeout(()=>{try{sgCleanPax()}catch(e){}},3500);if(T0){T0.siege=0;T0.t=12}}
+function sgCleanPax(){for(const p of SG.px){try{p.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(p.h)}catch(e){}}OUT.npcs=OUT.npcs.filter(a=>!a.sgP);SG.px=[];try{GUN.hits=[]}catch(e){}}
+function sgEnd(why){if(!SG.on)return;if(why==='abort'&&!SG.res)SG.n.abort++;for(const a of SG.en.concat(SG.px)){try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}}OUT.npcs=OUT.npcs.filter(a=>!a.sgE&&!a.sgP);SG.en=[];SG.px=[];
+  if(SG.T){SG.T.siege=0;SG.T.keep=0}SG.T=null;SG.on=false;try{ANX.spots=ANX.spots.filter(q=>q.k!=='sgIn');ANX.sig=''}catch(e){}try{GUN.hits=[]}catch(e){}}
+/* ---------- 매 프레임 ---------- */
+function sgStep(dt){if(SG.sched>0&&!SG.on){SG.sched-=dt;if(SG.sched<=0){SG.sched=0;try{sgStart()}catch(e){sgErr(e)}}}if(!SG.on)return;const T0=SG.T;if(!T0||!T0.g.parent){sgEnd('abort');return}SG.t+=dt;
+  if(T0.siege){T0.st='dwell';T0.t=Math.min(T0.t,10);T0.door=Math.max(T0.door,.99)}
+  for(const a of SG.en){const dead=a.dead||a.h.dead;try{if(!dead&&!SG.res)sgEnemyStep(a,dt);if(Math.abs((TRI.ci==null?-9:TRI.ci)-a.tsg.ci)<=1||!TRI.on)a.h.update(dt)}catch(e){sgErr(e)}}
+  for(const p of SG.px){if(p.dead||p.h.dead)continue;try{if(!SG.res)sgPaxStep(p);if(TRI.on&&Math.abs(TRI.ci-p.tsg.ci)<=1)p.h.update(dt)}catch(e){sgErr(e)}}
+  if(SG.res){if(T0.st==='out'&&!(TRI.on&&TRI.T===T0))sgEnd('done');return}if(!sgLive().length)sgClear()}
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){const r=b.apply(this,arguments);try{if(ANX.on)sgStep(dt||0)}catch(e){sgErr(e)}return r}})();
+(function(){const b=window.vAnx3;if(typeof b!=='function')return;window.vAnx3=function(){const r=b.apply(this,arguments);try{if(!TRI.on)sgMaybe()}catch(e){sgErr(e)}return r};try{if(SV3.views&&SV3.views.anx)SV3.views.anx=window.vAnx3}catch(e){}})();
+(function(){const b=window.anxLeave;if(typeof b!=='function')return;window.anxLeave=function(){try{if(SG.on){if(!SG.res)try{outNote('<b>🛡 국군 경비조가 열차를 넘겨받았다</b><div>수색을 마치지 못했다 — 보상은 없다.</div>',3200)}catch(e){}sgEnd('abort')}SG.sched=0}catch(e){sgErr(e)}return b.apply(this,arguments)}})();
+/* 열차 안 아래 줄에 수색 상황 */
+(function(){const b=window.triBar;if(typeof b!=='function')return;window.triBar=function(){const r=b.apply(this,arguments);try{const el=document.getElementById('triBar');if(el&&SG.on&&TRI.on&&TRI.T===SG.T){const left=sgLive().length;const idd=SG.px.filter(p=>p.tsg.idd).length;const chip=el.querySelector('.tri-chip');if(chip){const t=SG.res?`🚆 열차 확보 · 승객 ${SG.res.saved}명 무사`:`🚨 수색 · 남은 적 ${left}/${SG.en.length} · 확인한 승객 ${idd}/${SG.px.length}`;let sp=el.querySelector('.sg-chip');if(!sp){sp=document.createElement('span');sp.className='tri-chip sg-chip';el.insertBefore(sp,chip)}if(sp.textContent!==t)sp.textContent=t}}}catch(e){sgErr(e)}return r}})();
+/* 설정 · 도움말 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="siege"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0){const add=s4Seg('siege','열차 수색전','탕정역·아산역에 점거된 피란 열차 — 객차 한 칸씩 수색·제압 · 숨은 승객 확인(처음엔 반드시, 이후 턴마다 50%)',[[1,'켬'],[0,'끔']],store.get('sg.siege',true)!==false?1:0);h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){sgErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='siege')return;try{store.set('sg.siege',b.dataset.v==='1')}catch(x){}},true);
+if(typeof HELP84!=='undefined')HELP84.push(['🚨 열차 수색전(v18.8)','탕정역·아산역 권역에 들어가면(처음엔 반드시, 이후 턴마다 50%) 25초 뒤 점거된 피란 열차가 선다. 맨 끝 칸 뒷문의 \'🚨 열차 수색 — 진입\'으로 들어가 한 칸씩 수색한다(총이 없으면 경비 요원이 K1A를 건넨다). 칸마다 침투 테러조(가상 · 검은 복면·붉은 완장) 2명이 좌석 뒤에 웅크렸다가 일어나 쏜다 — 웅크린 적은 좌석이 총알을 막으니 일어설 때를 노린다. 좌석 사이에 숨은 승객은 다가가면 손을 든다 — 쏘면 위법. 모두 제압하면 \'🚆 열차 확보\'(공적 +60 · 신뢰·사기 · 아지트 첩보). 이 교전에서 체력은 20 아래로 안 떨어진다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
