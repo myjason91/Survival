@@ -2192,6 +2192,12 @@ canvas.im-shk{animation:im-shk .18s linear}
 .sv3 .ta-lab.hit b{color:#ffd27a}
 #aBar .ta-go{background:rgba(120,40,10,.78);border-color:rgba(255,150,80,.6)}
 .ev-board .ta-row{border-left:3px solid #ff9a3a;background:rgba(255,140,50,.07)}
+/* v19.4 · 방어 설비 단추 줄(좀비 띠 아래 · 점프·치료와 겹치지 않게 오른쪽 80px) */
+.sv3 .df-bar{position:absolute;right:80px;top:146px;z-index:17;display:flex;gap:6px;align-items:center}
+.sv3 .df-b{height:30px;padding:0 11px;border-radius:15px;border:1px solid rgba(255,190,120,.6);background:rgba(30,20,10,.74);color:#fff;font:800 12px/1 system-ui,sans-serif;white-space:nowrap}
+.sv3 .df-b small{color:#ffd27a;font-weight:800;margin-left:3px}.sv3 .df-b.pri{background:rgba(190,90,20,.86);border-color:#ffbf7a}.sv3 .df-b.on{background:rgba(120,30,20,.86)}
+.sv3 .df-heat{display:block;width:70px;height:6px;border-radius:3px;background:rgba(0,0,0,.5);overflow:hidden}.sv3 .df-heat i{display:block;height:100%;background:linear-gradient(90deg,#ffd27a,#ff4a2a)}
+.sv3:has(.mis-panel:not(.df-panel)) .df-bar{visibility:hidden}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14288,7 +14294,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='19.3';
+const APP_VER='19.4';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -29508,13 +29514,15 @@ function zdClamp(){const D=ZB.D;if(!D||!D.on||ANX.lvl!=='g')return;const B=ANX.W
 function zbOccStep(dt){if(ANX.zk!=='B')return;ZB.occT-=dt;if(ZB.occT>0)return;ZB.occT=.5;const p=FP3.pos;const cap=Math.min(18,zbCap());
   for(const a of ZB.list){if(a.dead)continue;const q=a.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)>115){zbRemove(a);a.dead=1;a.gone=1}}ZB.list=ZB.list.filter(a=>!a.gone);
   if(zbLive().length<cap){const q=zbSpotRing(p,30,58);if(q){zbMk(zbPick(null),q.x,q.z);ZB.n.occ++}}}
+/* v19.4: 걷거나 뛸 때 두 팔을 앞으로 뻗는다(위팔 뼈 Z축 — 클립이 뼈를 다시 쓴 프레임에만 · 안 쓴 프레임에 또 돌리면 팔이 돈다) */
+function zbArms(a){const h=a.h;if(a.dead||h.dead||h.pose==='angry'||!h.bone)return;for(const nm of ['Bip01_L_UpperArm','Bip01_R_UpperArm']){const b=h.bone[nm];if(!b)continue;const u=b.userData;if(u.zq&&b.quaternion.equals(u.zq))continue;b.rotateZ(a.run?1.0:1.25);u.zq=(u.zq||new T.Quaternion()).copy(b.quaternion)}}
 /* 신음: 25m 안에 있으면 2.5~4초마다 낮게 그르렁(가까울수록 크게) */
 function zbGroan(dt){ZB.sayT-=dt;if(ZB.sayT>0)return;ZB.sayT=2.5+Math.random()*1.5;if(!SND||!SND.on)return;const p=FP3.pos;let nd=1e9;for(const a of ZB.list){if(a.dead)continue;const q=a.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<nd)nd=d}if(nd>25)return;const v=.05+.13*(1-nd/25);
   try{const c=SND.ac();if(!c)return;const s=c.createBufferSource();s.buffer=SND.noise();const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=260+Math.random()*120;f.Q.value=4;const g=c.createGain();const t=c.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.15);g.gain.linearRampToValueAtTime(v*.6,t+.5);g.gain.exponentialRampToValueAtTime(.001,t+1.1);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t,Math.random());s.stop(t+1.2);SND.tone(95+Math.random()*30,.9,'sawtooth',v*.35,0,70)}catch(e){}}
 /* ---------- 매 걸음(권역 화면) ---------- */
 function zbTick(dt){if(!zbIn()||!zbOn()){if(ZB.list.length)zbClear();return}ZB.fr++;const p=FP3.pos;const lvP=ANX.lvl==='p';const D=ZB.D;const B=ANX.W.zdBar;
   if(D&&D.on)zdStep(dt);else zbOccStep(dt);
-  for(const a of ZB.list){if(a.dead){a.deadT+=dt;continue}const q=a.h.root.position;const far=Math.hypot(q.x-p.x,q.z-p.z)>80;try{zbStepOne(a,dt,p,lvP,D,B)}catch(e){zbErr(e)}if(!far||ZB.fr%4===0)try{a.h.update(far?dt*4:dt)}catch(e){}}
+  for(const a of ZB.list){if(a.dead){a.deadT+=dt;continue}const q=a.h.root.position;const far=Math.hypot(q.x-p.x,q.z-p.z)>80;try{zbStepOne(a,dt,p,lvP,D,B)}catch(e){zbErr(e)}if(!far||ZB.fr%4===0){try{a.h.update(far?dt*4:dt)}catch(e){}zbArms(a)}}
   for(const a of ZB.bodies){if(!a.gone)try{a.h.update(dt)}catch(e){}}
   if(D&&D.on)for(const q of D.al){try{if(q.h.pose!=='aim')q.h.setPose('aim');q.h.update(dt)}catch(e){}}
   if(ZB.fr%3===0)zbSep();
@@ -29676,6 +29684,103 @@ function taClear(){for(const v of TKA.veh)try{v.g.removeFromParent()}catch(e){}T
 (function(){const b=window.evBoard;if(typeof b!=='function')return;window.evBoard=function(open){const r=b.apply(this,arguments);try{if(!open||!taOn())return r;const p=document.getElementById('misPanel');if(!p||p.querySelector('.ta-row'))return r;const can=typeof awCan==='function'&&awCan();const e=document.createElement('div');e.className='mis-row ta-row';
   e.innerHTML=`<span class="mis-ico">🕳</span><div><b>땅굴 기갑 침공 — 아파트 창가 방어</b><small>전차·장갑차 3파 · 저격 · 💣 유탄 · 🛸 창가 드론 → 계단·실내 근접전</small>${can?'':'<em>아파트 세대(로비 말고)에 들어가서 시작</em>'}</div><button class="btn sm ${can?'pri':''}" data-g3="taboard"${can?'':' disabled'}>시작</button>`;const rows=p.querySelectorAll('.mis-row');const at=rows[1]||rows[0];if(at)at.after(e);else p.appendChild(e)}catch(e){taErr(e)}return r}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🕳 땅굴 기갑 침공(v19.3)','아파트 세대 위쪽 띠 \'🕳 땅굴 침공\'(또는 상황판) — 건물 앞 90~145m 땅이 꺼지며 땅굴이 열리고 가상의 기갑 3파(장갑차 2 → 전차 2·장갑차 1 → 전차 2·장갑차 1)와 보병이 올라온다. 전차는 52~78m에서 멈춰 6~9초마다 주포로 내 창 둘레를 친다(창 앞이면 크게 다친다 — ⤓ 숙이기). 장갑차는 기관포를 쏘고 뒷문으로 보병 3명을 내린다. 소총은 장갑에 튕긴다 — 💣 유탄(장갑차에 잘 듣는다)·🛸 창가 드론(오른쪽 위 💥 자폭 · 💣 폭탄 — 창밖으로 내밀어 띄운다 · 자폭 드론은 기갑에 부딪히면 터진다)이 답이다. 기갑 위 막대 = 내구. 다 부수면 땅굴 잔당이 계단으로 올라와 실내 근접전.']);
+
+/* ===================== 194 · v19.4 권역 총 단추 복구 · 🏗 탕정역 방어 설비(🔫 기관총 벙커 · 🚀 미사일 터렛 · 🤖 자동사격 로봇) ===================== */
+/* 사용자 제보·요청(2026-11-24 02:58): "탕정역.아산역 등에서 총으로 무장하여 사격하는 버튼 등이 없음 ㅠㅠ; 버그인가....
+   그리고 디펜스 잘 할 수 있도록 기관총벙커.미사일터렛.자동사격로봇 등 디펜스 재미를 느끼게 좀 만들어 주세요."
+   ① 버그(재현함): 열차로 다른 권역에 내리거나 권역 화면을 다시 그리면(155 vAnx3 → sv3Mount) 화면이 통째로 바뀌어 총 단추 묶음(#gunUI)이 사라지는데
+      총은 손에 든 채(GUN.on)라 다시 그려지지 않았다 — 총은 보이는데 사격·조준·재장전 단추가 없었다. 무장 단추(186)도 '들고 있음'이라 숨었다
+      → 밖·권역에서 총을 들고 있는데 단추 묶음이 없으면 0.4초 안에 다시 그린다(교전 화면·드론·운전·창가 저격·카드 중 제외) + 권역 화면을 그린 직후 바로
+   ② 방어 설비(방어 중 · 탕정역 방어선): 방벽 뒤 정해진 자리에 보급점으로 짓는다 — 보급점: 시작 150 · 좀비 하나 +2 · 파 저지 +40
+      · 🔫 기관총 벙커(80 · 2곳 · 방벽 뒤 3.4m · 옆 ±18m): 모래주머니 둥지 + 거치 기관총 + 국군 사수 — 70m 안 동쪽 적에게 초당 약 7발 연사
+          벙커 옆 '🔫 기관총 잡기' → 내가 들어가 K12로 직접 쏜다(탄 무한 · 연사하면 총열이 달아 과열 2.2초 · 움직이지 않음) · '벙커에서 나오기'
+      · 🚀 미사일 터렛(150 · 2곳 · 방벽 뒤 6m · 옆 ±31m): 5초마다 120m 안에서 가장 빽빽한 무리를 골라 미사일(연기 꼬리 · 포물선) → 반경 5m 폭발
+      · 🤖 자동사격 로봇(50 · 최대 4대): 방벽 뒤 1.6m를 오가며 45m 안 적에게 붉은 조준선 + 3점사(1.1초)
+      · 방벽이 무너지면 좀비가 가까운 설비를 할퀸다(벙커 300 · 터렛 200 · 로봇 120) — 0이면 부서진다 · 보급 상자가 설비도 +40% 고친다
+      · 지은 설비는 남는다(G.flags.zd.b) — 다음 방어 때 다시 선다 · 끝나면 수비대만 물러간다
+   ③ 좀비가 걷거나 뛸 때 두 팔을 앞으로 뻗는다(192 zbArms)
+   모두 가상의 장비·인물이다(실제 무기 체계·제조사 아님) */
+const DFS={err:0,n:{ui:0,arm:0,build:0,bk:0,tur:0,rob:0,man:0,heat:0,ms:0,brk:0,fix:0},st:[],man:null,uiT:0,ms:[],panel:false};
+const DFS_K={bk:{n:'기관총 벙커',ico:'🔫',cost:80,hp:300,max:2},tur:{n:'미사일 터렛',ico:'🚀',cost:150,hp:200,max:2},rob:{n:'자동사격 로봇',ico:'🤖',cost:50,hp:120,max:4}};
+const _df=[new T.Vector3(),new T.Vector3(),new T.Vector3()];
+function dfErr(e){if(DFS.err<6){DFS.err++;try{console.error('[194]',e)}catch(x){}}}
+/* ---------- ① 총 단추 복구 ---------- */
+function dfGunGuard(){try{if(typeof GUN==='undefined'||!GUN.on||!SV3.el)return;if(document.getElementById('gunUI'))return;if(GUN.ow||OUT.drv||OUT.ride||OUT.enc||(typeof OWC!=='undefined'&&OWC.on)||(typeof DFR!=='undefined'&&DFR.B)||(typeof KC!=='undefined'&&KC.on))return;
+  const anx=typeof ANX!=='undefined'&&ANX.on;const street=UI.screen==='outside'||UI.screen==='free';if(!anx&&!street)return;gunUI();DFS.n.ui++}catch(e){dfErr(e)}}
+(function(){const b=window.vAnx3;if(typeof b!=='function')return;window.vAnx3=function(){const r=b.apply(this,arguments);try{if(GUN.on)setTimeout(()=>{try{dfGunGuard()}catch(e){}},0)}catch(e){dfErr(e)}return r};try{if(SV3.views&&SV3.views.anx)SV3.views.anx=window.vAnx3}catch(e){}})();
+/* ---------- ② 설비 자리 ---------- */
+function dfSlots(L){return{bk:[[-3.4,-18],[-3.4,18]],tur:[[-6,-31],[-6,31]],rob:[[-1.6,-24],[-1.6,-8],[-1.6,8],[-1.6,24]]}}
+function dfsB(){const S=zbS();if(!S.b)S.b={bk:[0,0],tur:[0,0],rob:[0,0,0,0]};return S.b}
+function dfPts(){const D=ZB.D;return D?Math.floor(D.pts||0):0}
+/* 모양 */
+function dfMatC(c,o){return new T.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o||{}))}
+function dfMeshBk(){const g=new T.Group();const sb=dfMatC('#8a7650',{roughness:.97}),dk=dfMatC('#26282a',{roughness:.6,metalness:.4}),con=dfMatC('#9b988f');
+  for(let i=0;i<9;i++){const a=-1.15+i*.29;const r=1.6;const bx=new T.Mesh(new T.BoxGeometry(.7,.34,.5),sb);bx.position.set(Math.sin(a)*r,.2,Math.cos(a)*r);bx.rotation.y=a;g.add(bx);const b2=bx.clone();b2.position.y=.53;b2.rotation.y=a+.1;g.add(b2);const b3=bx.clone();b3.position.y=.86;g.add(b3)}
+  const roof=new T.Mesh(new T.BoxGeometry(3.6,.18,2.4),con);roof.position.set(0,2.05,.5);g.add(roof);for(const s of [-1,1]){const p=new T.Mesh(new T.BoxGeometry(.18,2,.18),con);p.position.set(s*1.6,1,-.5);g.add(p)}
+  const mg=new T.Group();mg.position.set(0,1.05,1.1);g.add(mg);const br=new T.Mesh(new T.CylinderGeometry(.045,.045,1.3,8),dk);br.rotation.x=Math.PI/2;br.position.z=.5;mg.add(br);const rc=new T.Mesh(new T.BoxGeometry(.18,.16,.6),dk);mg.add(rc);const leg=new T.Mesh(new T.CylinderGeometry(.03,.03,.5,6),dk);leg.position.set(0,-.25,.2);mg.add(leg);const mz=new T.Object3D();mz.position.set(0,0,1.2);mg.add(mz);g.userData.gun=mg;g.userData.mz=mz;return g}
+function dfMeshTur(){const g=new T.Group();const st=dfMatC('#4a4f45',{metalness:.3}),dk=dfMatC('#202224',{metalness:.5,roughness:.5}),wt=dfMatC('#d8d6cc');
+  const base=new T.Mesh(new T.CylinderGeometry(.9,1.1,.5,12),st);base.position.y=.25;g.add(base);const post=new T.Mesh(new T.CylinderGeometry(.22,.26,1.6,10),st);post.position.y=1.3;g.add(post);
+  const head=new T.Group();head.position.y=2.15;g.add(head);const box=new T.Mesh(new T.BoxGeometry(1.5,.9,1.2),st);head.add(box);for(let i=0;i<4;i++){const t=new T.Mesh(new T.CylinderGeometry(.17,.17,.3,10),dk);t.rotation.x=Math.PI/2;t.position.set(i%2?.36:-.36,i<2?.2:-.2,.62);head.add(t);const c=new T.Mesh(new T.CylinderGeometry(.1,.1,.02,8),wt);c.rotation.x=Math.PI/2;c.position.set(i%2?.36:-.36,i<2?.2:-.2,.78);head.add(c)}
+  g.userData.head=head;return g}
+function dfMeshRob(){const g=new T.Group();const bd=dfMatC('#5d6152',{metalness:.35,roughness:.6}),dk=dfMatC('#1b1c1e',{roughness:.9}),eye=new T.MeshBasicMaterial({color:'#ff3322'});
+  const hull=new T.Mesh(new T.BoxGeometry(.8,.45,1.1),bd);hull.position.y=.45;g.add(hull);for(const s of [-1,1]){const tr=new T.Mesh(new T.BoxGeometry(.22,.36,1.2),dk);tr.position.set(s*.48,.22,0);g.add(tr)}
+  const tur=new T.Group();tur.position.y=.85;g.add(tur);const tb=new T.Mesh(new T.BoxGeometry(.5,.32,.55),bd);tur.add(tb);const br=new T.Mesh(new T.CylinderGeometry(.035,.035,.7,8),dk);br.rotation.x=Math.PI/2;br.position.set(.08,0,.5);tur.add(br);const ey=new T.Mesh(new T.SphereGeometry(.05,8,6),eye);ey.position.set(-.12,.06,.29);tur.add(ey);const mz=new T.Object3D();mz.position.set(.08,0,.86);tur.add(mz);
+  const lz=new T.Mesh(new T.CylinderGeometry(.008,.008,1,4),new T.MeshBasicMaterial({color:'#ff2a1a',transparent:true,opacity:.7,depthWrite:false}));lz.rotation.x=Math.PI/2;lz.visible=false;tur.add(lz);g.userData.tur=tur;g.userData.mz=mz;g.userData.lz=lz;return g}
+/* 짓기 · 세우기 */
+function dfMk(k,i){const D=ZB.D;const L=D?D.L:zdLine();const sl=dfSlots(L)[k][i];if(!sl)return null;const p=zdW(L,sl[0],sl[1]);const g=k==='bk'?dfMeshBk():k==='tur'?dfMeshTur():dfMeshRob();g.position.set(p.x,0,p.z);g.rotation.y=Math.atan2(L.tx,L.tz);ANX.W.R.add(g);
+  const s={k,i,g,hp:DFS_K[k].hp,max:DFS_K[k].hp,t:.5+Math.random(),u:sl[0],o:sl[1],o0:sl[1],dir:i%2?1:-1,man:null,gun:null,brk:0};
+  if(k==='bk'){let h=null;try{h=civHuman(260+i,'aim','rok')}catch(e){h=null}if(h){const q=zdW(L,sl[0]-.6,sl[1]);h.root.position.set(q.x,0,q.z);h.root.rotation.y=Math.atan2(L.tx,L.tz);h.lookKeep=true;ANX.W.R.add(h.root);s.gun=h}}
+  DFS.st.push(s);return s}
+function dfsBuild(k){const D=ZB.D;if(!D||!D.on)return false;const K=DFS_K[k];const B=dfsB();const i=B[k].findIndex(x=>!x);if(i<0){outNote(`<b>${K.ico} ${K.n} — 자리가 다 찼다</b>`,1600);return false}if(dfPts()<K.cost){outNote(`<b>보급점이 모자란다</b><div>${K.n} ${K.cost} · 지금 ${dfPts()} — 좀비 하나 +2 · 파 저지 +40.</div>`,2200);return false}
+  D.pts-=K.cost;B[k][i]=1;const s=dfMk(k,i);DFS.n.build++;DFS.n[k]++;try{SND.tone(520,.08,'square',.05);SND.tone(780,.12,'square',.05,.09);vib(20)}catch(e){}try{if(s&&typeof dvSmoke==='function')dvSmoke(s.g.position.clone().setY(.6),3)}catch(e){}
+  outNote(`<b>${K.ico} ${K.n} 설치</b><div>${k==='bk'?'국군 사수가 들어갔다 — 옆에서 \'🔫 기관총 잡기\'로 직접 쏠 수 있다.':k==='tur'?'몰려 있는 무리를 골라 5초마다 미사일.':'방벽 뒤를 오가며 붉은 조준선으로 쏜다.'} 남은 보급점 ${dfPts()}.</div>`,3000);dfsPanel(DFS.panel);try{save()}catch(e){}return true}
+function dfSpawnAll(){dfClearAll();const B=dfsB();for(const k of ['bk','tur','rob'])B[k].forEach((on,i)=>{if(on)dfMk(k,i)})}
+function dfRemove(s){try{s.g.removeFromParent()}catch(e){}if(s.gun)try{s.gun.root.removeFromParent();RBX.live.delete(s.gun)}catch(e){}}
+function dfClearAll(){if(DFS.man)dfUnman(true);for(const s of DFS.st)dfRemove(s);DFS.st=[];for(const m of DFS.ms)try{m.g.removeFromParent()}catch(e){}DFS.ms=[]}
+function dfBreak(s){if(s.brk)return;s.brk=1;s.hp=0;DFS.n.brk++;const P=s.g.position;try{FX3.explode(new T.Vector3(P.x,1,P.z),{r:3,kind:'he'})}catch(e){}try{SND.boom(false,.6)}catch(e){}s.g.traverse(o=>{if(o.isMesh&&o.material&&o.material.color){const m=o.material.clone();m.color.multiplyScalar(.25);o.material=m}});if(s.k==='rob')s.g.rotation.z=.5;if(s.gun){try{humanDie(s.gun,null)}catch(e){}}
+  if(DFS.man&&DFS.man.s===s)dfUnman(true);const B=dfsB();B[s.k][s.i]=0;outNote(`<b>💥 ${DFS_K[s.k].n}이(가) 부서졌다</b><div>보급점으로 다시 짓는다.</div>`,2400)}
+/* ---------- 매 걸음: 설비 ---------- */
+function dfTgt(P,r,front){let best=null,bd=r;for(const a of zbLive()){const q=a.h.root.position;if(front&&ZB.D){const l=zdLoc(ZB.D.L,q.x,q.z);if(l.u<-1.5&&!(ANX.W.zdBar&&ANX.W.zdBar.broken))continue}const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;best=a}}return best}
+function dfShot(from,a,p,dmg){const q=a.h.root.position;const tgt=_df[1].set(q.x,1.15,q.z);const hit=Math.random()<p;try{owcTracer(from.clone(),hit?tgt.clone():tgt.clone().add(new T.Vector3((Math.random()-.5)*1.4,(Math.random()-.3),(Math.random()-.5)*1.4)),0)}catch(e){}if(hit){a.hp-=dmg;a.stag=.15;if(a.hp<=0)zbKill(a,'st',false,null)}}
+function dfStep(dt){const D=ZB.D;if(!D||!D.on)return;const L=D.L;
+  for(const s of DFS.st){if(s.brk)continue;s.t-=dt;const P=s.g.position;
+    if(s.k==='bk'){if(DFS.man&&DFS.man.s===s)continue;const a=dfTgt(P,70,true);if(!a){if(s.gun)try{s.gun.update(dt)}catch(e){}continue}const q=a.h.root.position;const yaw=Math.atan2(q.x-P.x,q.z-P.z);s.g.userData.gun.rotation.y=yaw-s.g.rotation.y;if(s.gun){s.gun.root.rotation.y=yaw;try{s.gun.update(dt)}catch(e){}}
+      if(s.t<=0){s.t=.14;s.bn=(s.bn||0)+1;if(s.bn%9===0)s.t=.9;const mz=s.g.userData.mz.getWorldPosition(_df[0]).clone();try{owcNpcFlash(mz)}catch(e){}if(s.bn%2===0)try{SFX.shot('mg',{d:SV3.cam.position.distanceTo(mz),az:0})}catch(e){}dfShot(mz,a,.33,1.3)}}
+    else if(s.k==='tur'){const head=s.g.userData.head;let best=null,bs=0;if(s.t<=0){for(const a of zbLive()){const q=a.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d>120)continue;let n=0;for(const b of zbLive()){const w=b.h.root.position;if(Math.hypot(w.x-q.x,w.z-q.z)<5)n++}if(n>bs){bs=n;best=a}}if(best){s.t=5;s.aim=best.h.root.position.clone();dfMissile(s,s.aim)}else s.t=.8}
+      if(s.aim){const want=Math.atan2(s.aim.x-P.x,s.aim.z-P.z)-s.g.rotation.y;let dy=want-head.rotation.y;dy=Math.atan2(Math.sin(dy),Math.cos(dy));head.rotation.y+=clamp(dy,-2*dt,2*dt)}}
+    else{/* 로봇: 오가며 쏜다 */const ud=s.g.userData;const a=dfTgt(P,45,true);if(a){const q=a.h.root.position;const yaw=Math.atan2(q.x-P.x,q.z-P.z)-s.g.rotation.y;ud.tur.rotation.y=yaw;const L2=Math.hypot(q.x-P.x,q.z-P.z);ud.lz.visible=true;ud.lz.scale.y=Math.max(.5,L2-.9);ud.lz.position.set(.08,0,.86+(L2-.9)/2);
+        if(s.t<=0){s.t=1.1;const mz=ud.mz.getWorldPosition(_df[0]).clone();for(let k=0;k<3;k++)setTimeout(()=>{try{if(!a.dead&&ZB.D){dfShot(mz,a,.5,1.4);try{SFX.shot('rifle',{d:SV3.cam.position.distanceTo(mz),az:0})}catch(e){}}}catch(e){}},k*90)}}
+      else{ud.lz.visible=false;s.o+=s.dir*1.2*dt;if(Math.abs(s.o-s.o0)>5)s.dir=-s.dir;const w=zdW(L,s.u,s.o);P.x=w.x;P.z=w.z;ud.tur.rotation.y*=.9}}}
+  /* 미사일 */DFS.ms=DFS.ms.filter(m=>{m.t+=dt;const u=Math.min(1,m.t/m.dur);const x=m.a.x+(m.b.x-m.a.x)*u,z=m.a.z+(m.b.z-m.a.z)*u,y=m.a.y+(m.b.y-m.a.y)*u+Math.sin(u*Math.PI)*m.arc;const px=m.g.position.clone();m.g.position.set(x,y,z);m.g.lookAt(px.lerp(m.g.position,2));m.pf-=dt;if(m.pf<=0){m.pf=.05;try{if(typeof dvSmoke1==='function')dvSmoke1(px)}catch(e){}}
+    if(u>=1){try{m.g.removeFromParent()}catch(e){}dfBoom(m.b);return false}return true});
+  /* 돌파 뒤: 가까운 좀비가 설비를 할퀸다 */if(ANX.W.zdBar&&ANX.W.zdBar.broken)for(const s of DFS.st){if(s.brk)continue;const P=s.g.position;for(const a of zbLive()){const q=a.h.root.position;if(Math.hypot(q.x-P.x,q.z-P.z)<1.9){s.hp-=a.rate*2*dt;a.stag=Math.max(a.stag,.05);if(a.h.pose!=='angry')try{a.h.setPose('angry')}catch(e){}}}if(s.hp<=0)dfBreak(s)}}
+function dfMissile(s,to){DFS.n.ms++;const head=s.g.userData.head;head.updateMatrixWorld(true);const a=head.getWorldPosition(new T.Vector3()).add(_df[2].set(0,.3,0));const b=new T.Vector3(to.x,.4,to.z);const g=new T.Group();const body=new T.Mesh(new T.CylinderGeometry(.09,.09,.9,8),dfMatC('#d8d6cc'));body.rotation.x=Math.PI/2;g.add(body);try{const f=PK.sprite(glowTex(),'#ffb24a',.9,null,{add:1});f.position.z=-.55;g.add(f)}catch(e){}g.position.copy(a);ANX.W.R.add(g);
+  const d=a.distanceTo(b);DFS.ms.push({g,a,b,t:0,dur:Math.max(.6,d/48),arc:Math.min(14,d*.18),pf:0});try{SND.tone(160,.5,'sawtooth',.06,0,420);SND.boom(false,.25)}catch(e){}}
+function dfBoom(p){try{FX3.explode(new T.Vector3(p.x,.6,p.z),{r:5,kind:'he'})}catch(e){}try{SND.boom(true,.8);sv3Shake(.35)}catch(e){}let n=0;for(const a of zbLive()){const q=a.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<5.2){a.hp-=d<3?99:3.5;if(a.hp<=0){zbKill(a,'st',false,null);n++}else a.stag=.4}}if(n>=3)try{if(typeof imOn==='function'&&imOn())imBanner('🚀',`미사일 — ${n}마리`,'','')}catch(e){}}
+/* ---------- 🔫 기관총 잡기(직접 사격) ---------- */
+function dfMan(s){if(DFS.man||!s||s.brk||!ZB.D)return false;const L=ZB.D.L;const W0=GUN.eq;let lent=false;if(!gunHas('k12')){gunAdd('k12',{force:true,ammo:0});lent=true}gunEquip('k12',true);const p=zdW(L,s.u-.5,s.o);FP3.pos.set(p.x,0,p.z);FP3.yaw=Math.atan2(-L.tx,-L.tz);FP3.pitch=-.03;FP3.noWalk=true;FP3.mv.x=FP3.mv.y=0;
+  if(s.gun)s.gun.root.visible=false;DFS.man={s,W0,lent,heat:0};DFS.n.man++;try{vib(25)}catch(e){}outNote('<b>🔫 기관총을 잡았다</b><div>탄은 끝이 없다 — 오래 쏘면 총열이 달아 잠시 멈춘다. \'벙커에서 나오기\'로 나온다.</div>',3200);dfsPanel(false);dfHud();return true}
+function dfUnman(quiet){const M=DFS.man;if(!M)return;DFS.man=null;FP3.noWalk=false;try{if(M.s.gun&&!M.s.brk)M.s.gun.root.visible=true}catch(e){}try{if(M.W0&&M.W0!=='k12'&&gunHas(M.W0))gunEquip(M.W0,true);else if(M.lent)gunHolster(true)}catch(e){}try{if(M.lent)gunDrop('k12')}catch(e){}if(!quiet)outNote('<b>벙커에서 나왔다</b>',1400);dfHud()}
+function dfManStep(dt){const M=DFS.man;if(!M)return;FP3.mv.x=FP3.mv.y=0;const W=ARMS.k12;if(GUN.eq!=='k12'){dfUnman(true);return}if(GUN.mag<10&&GUN.reload<=0)GUN.mag=W.mag;const fired=GUN.t-GUN.lastShot<.12;M.heat=clamp(M.heat+(fired?dt*.42:-dt*.5),0,1);if(M.heat>=1&&GUN.reload<=0){GUN.reload=2.2;GUN.fire=false;M.heat=.55;DFS.n.heat++;outNote('<b>🔥 총열 과열</b><div>2초 식힌다.</div>',1500);try{SND.tone(180,.4,'sawtooth',.05)}catch(e){}}}
+/* ---------- 화면: 설비 판 · 띠 단추 · 과열 ---------- */
+function dfNearBk(){const p=FP3.pos;for(const s of DFS.st){if(s.k!=='bk'||s.brk)continue;const P=s.g.position;if(Math.hypot(P.x-p.x,P.z-p.z)<3.2)return s}return null}
+function dfHud(){const u=document.getElementById('zbHud');const D=ZB.D;let b=document.getElementById('dfBar');if(!u||!D||!D.on){if(b)b.remove();return}if(!b||b.parentNode!==SV3.el){if(b)b.remove();b=document.createElement('div');b.id='dfBar';b.className='df-bar';SV3.el.appendChild(b)}
+  const nb=DFS.man?null:dfNearBk();const h=`<button data-g3="dfopen" class="df-b">🏗 설비 <small>${dfPts()}</small></button>${DFS.man?`<button data-g3="dfout" class="df-b on">벙커에서 나오기</button><i class="df-heat"><i style="width:${Math.round(DFS.man.heat*100)}%"></i></i>`:nb?'<button data-g3="dfman" class="df-b pri">🔫 기관총 잡기</button>':''}`;if(b._h!==h){b._h=h;b.innerHTML=h}}
+function dfsPanel(open){DFS.panel=!!open;let p=document.getElementById('dfPanel');if(!open||!ZB.D){if(p)p.remove();return}if(!SV3.el)return;if(!p){p=document.createElement('div');p.id='dfPanel';p.className='mis-panel df-panel';SV3.el.appendChild(p)}const B=dfsB();
+  const row=k=>{const K=DFS_K[k];const n=B[k].filter(Boolean).length;const can=n<K.max&&dfPts()>=K.cost;return `<div class="mis-row"><span class="mis-ico">${K.ico}</span><div><b>${K.n} <small>${n}/${K.max}</small></b><small>${k==='bk'?'초당 약 7발 · 70m · 직접 잡고 쏠 수 있다':k==='tur'?'5초마다 가장 빽빽한 무리에 미사일 · 반경 5m':'방벽 뒤를 오가며 3점사 · 45m'} · 내구 ${K.hp}</small></div><button class="btn sm ${can?'pri':''}" data-g3="dfbuild" data-k="${k}"${can?'':' disabled'}>${K.cost} 짓기</button></div>`};
+  const h=`<div class="mis-head"><b>🏗 방어 설비 · 보급점 ${dfPts()}</b><button class="btn sm" data-g3="dfclose">닫기</button></div>${row('bk')}${row('tur')}${row('rob')}<p class="mis-note">보급점: 좀비 하나 +2 · 파 저지 +40 · 지은 설비는 다음 방어에도 남는다. 방벽이 무너지면 좀비가 설비를 할퀸다 — 보급 상자가 고친다.</p>`;if(p.innerHTML!==h)p.innerHTML=h}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-g3=dfopen],[data-g3=dfclose],[data-g3=dfbuild],[data-g3=dfman],[data-g3=dfout]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.g3;
+  if(k==='dfopen')dfsPanel(!DFS.panel);else if(k==='dfclose')dfsPanel(false);else if(k==='dfbuild'){if(!b.disabled)dfsBuild(b.dataset.k)}else if(k==='dfman')dfMan(dfNearBk());else if(k==='dfout')dfUnman(false)},true);
+/* ---------- 192에 걸기 ---------- */
+(function(){const b=window.zdStart;if(typeof b!=='function')return;window.zdStart=function(){const r=b.apply(this,arguments);try{if(r&&ZB.D){ZB.D.pts=150;dfSpawnAll();setTimeout(()=>{try{if(ZB.D&&ZB.D.on)outNote('<b>🏗 방어 설비</b><div>오른쪽 위 \'🏗 설비\' — 보급점 150으로 기관총 벙커·미사일 터렛·자동사격 로봇을 짓는다(좀비 하나 +2 · 파 저지 +40).</div>',5200)}catch(e){}},6400)}}catch(e){dfErr(e)}return r}})();
+(function(){const b=window.zdEnd;if(typeof b!=='function')return;window.zdEnd=function(why){try{if(DFS.man)dfUnman(true);dfsPanel(false);dfClearAll();const e=document.getElementById('dfBar');if(e)e.remove()}catch(e){dfErr(e)}return b.apply(this,arguments)}})();
+(function(){const b=window.zbKill;if(typeof b!=='function')return;window.zbKill=function(a){const was=!!(a&&a.dead);const r=b.apply(this,arguments);try{if(!was&&a&&a.dead&&ZB.D&&ZB.D.on)ZB.D.pts=(ZB.D.pts||0)+2}catch(e){}return r}})();
+(function(){const b=window.zdTake;if(typeof b!=='function')return;window.zdTake=function(){const r=b.apply(this,arguments);try{let n=0;for(const s of DFS.st){if(s.brk||s.hp>=s.max)continue;s.hp=Math.min(s.max,s.hp+s.max*.4);n++}if(n){DFS.n.fix+=n;outNote(`<b>🔧 설비 ${n}곳 수리</b>`,1600)}}catch(e){dfErr(e)}return r}})();
+/* 파 저지 +40 */(function(){const b=window.zdStep;if(typeof b!=='function')return;window.zdStep=function(dt){const D=ZB.D;const w0=D?zbS().w:0;const r=b.apply(this,arguments);try{const D2=ZB.D;if(D2&&D2.on&&zbS().w>w0)D2.pts=(D2.pts||0)+40}catch(e){dfErr(e)}return r}})();
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){if(DFS.man){FP3.mv.x=FP3.mv.y=0}const r=b.apply(this,arguments);try{if(ZB.D&&ZB.D.on){dfStep(dt||0);dfManStep(dt||0)}DFS.uiT-=dt||0;if(DFS.uiT<=0){DFS.uiT=.25;dfGunGuard();dfHud();if(DFS.panel)dfsPanel(true)}}catch(e){dfErr(e)}return r}})();
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){const r=b.apply(this,arguments);try{if(typeof ANX!=='undefined'&&ANX.on)return r;DFS.uiT-=dt||0;if(DFS.uiT<=0){DFS.uiT=.4;dfGunGuard()}}catch(e){dfErr(e)}return r}})();
+(function(){const b=window.anxLeave;if(typeof b!=='function')return;window.anxLeave=function(){try{if(DFS.man)dfUnman(true);dfsPanel(false);dfClearAll()}catch(e){dfErr(e)}return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🏗 탕정역 방어 설비(v19.4)','탕정역 방어 중 오른쪽 위 \'🏗 설비\'(띠 아래) — 보급점(시작 150 · 좀비 하나 +2 · 파 저지 +40)으로 방벽 뒤에 짓는다. 🔫 기관총 벙커(80 · 2곳): 국군 사수가 초당 약 7발 — 벙커 옆에서 \'🔫 기관총 잡기\'로 직접 쏜다(탄 무한 · 과열하면 2초 멈춤). 🚀 미사일 터렛(150 · 2곳): 5초마다 가장 빽빽한 무리에 미사일(반경 5m). 🤖 자동사격 로봇(50 · 4대): 방벽 뒤를 오가며 붉은 조준선으로 3점사. 방벽이 무너지면 좀비가 설비를 할퀸다(보급 상자가 고친다). 지은 설비는 다음 방어에도 남는다. 권역에서 총을 든 채 화면이 바뀌어도 사격 단추가 다시 그려진다.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
