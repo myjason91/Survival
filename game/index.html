@@ -2170,6 +2170,16 @@ canvas.im-shk{animation:im-shk .18s linear}
 /* v19.1 · 시가전 총공세 */
 .ev-board .as-row{border-left:3px solid #ff6a3a;background:rgba(255,90,40,.08)}
 .sv3 .is-hud.as-hud{border-color:rgba(255,110,60,.55);box-shadow:0 0 0 1px rgba(255,90,40,.25),0 4px 14px rgba(0,0,0,.4)}
+/* v19.2 · 💊 자가 치료 단추(넣기 위 · 오른쪽 39%) — 누르면 둘레가 차오른다 */
+.sv3 .hl-btn{position:absolute;right:16px;top:39%;width:52px;height:52px;border-radius:50%;z-index:18;display:grid;place-items:center;padding:0;border:2px solid rgba(120,230,160,.65);background:rgba(10,40,24,.62);color:#eafff1;box-shadow:0 2px 8px rgba(0,0,0,.4);overflow:hidden;touch-action:none}
+.sv3 .hl-btn b{font-size:19px;line-height:1;margin-top:5px;position:relative;z-index:1}.sv3 .hl-btn small{font:700 9.5px/1 system-ui,sans-serif;margin-bottom:6px;position:relative;z-index:1}
+.sv3 .hl-btn .hl-ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(rgba(80,220,140,.55) var(--k,0%),transparent 0);z-index:0}
+.sv3 .hl-btn.on{border-color:#7cffb0;transform:scale(1.06)}
+/* v19.2 · 좀비 띠(권역 오른쪽 위) */
+.sv3 .zb-hud{position:absolute;right:10px;top:78px;z-index:17;min-width:190px;max-width:250px;padding:6px 10px 7px;border-radius:10px;background:rgba(18,14,10,.72);border:1px solid rgba(255,120,70,.45);color:#fff;font:600 11px/1.35 system-ui,sans-serif;pointer-events:none;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.sv3 .zb-hud b{display:block;font-size:12.5px;font-weight:800;color:#ffd7b8}.sv3 .zb-hud span{display:block;color:#f3efe8}.sv3 .zb-hud small{display:block;color:#ffcf9a;font-size:10px;margin-top:1px}
+.sv3 .zb-hud .zb-bar{display:block;height:5px;margin-top:4px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}.sv3 .zb-hud .zb-bar i{display:block;height:100%;border-radius:3px}
+.sv3:has(.mis-panel) .zb-hud{visibility:hidden}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14266,7 +14276,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='19.1';
+const APP_VER='19.2';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -29332,6 +29342,191 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
 /* 전장 감독 */
 try{if(typeof DIR_EV!=='undefined')DIR_EV.assault={n:'시가전 총공세',ico:'🔥',w:()=>{try{if(!asOn()||asWhy())return 0;if(performance.now()-AS.cool<600000)return 0;return typeof isArmed==='function'&&isArmed()?.45:0}catch(e){return 0}},start(E){return asStart({dir:1})},step(E,dt){return asMine()}}}catch(e){asErr(e)}
 if(typeof HELP84!=='undefined')HELP84.push(['🔥 시가전 총공세(v19.1)','🚨 상황판의 \'시가전 총공세\'(또는 전장 감독이 가끔 저절로) — 가상의 무장 침투조 30명이 5파로 골목·옥상에서 몰려온다. 아군은 적의 6분의 1인 5명: 무장한 팀원부터, 모자라면 완장을 찬 자경대원이 뒤에서 합류한다. 2파부터 명사수 하나는 상가 옥상 난간에 엎드려 쏜다(조준할 때 번쩍 — 팀원이 방향을 외친다). 돌격조는 골목에서 뛰쳐나와 바짝 붙고, 무장 괴한은 엄폐물 사이를 옮겨 다닌다. 나를 동시에 겨누는 적은 2명까지 · 받는 피해 ×0.75 · 3명 넘게 남아 있으면 끝까지 싸운다. 오른쪽 위 띠 = 파 · 지금 적 · 남은 적. 격퇴하면 이웃 신뢰 +3 · 사기 +3 · 노획.']);
+
+/* ===================== 191 · v19.2 💊 자가 치료 — 밖에서 의약품으로 내 체력을 올린다 ===================== */
+/* 사용자 요청(2026-11-24 01:50): "스스로 치료할 수는 없나요..? 의약품도 많은데 ㅠ"
+   · 밖(길거리 · 권역 · 교전 중 포함)에서 내 체력이 90 아래이고 의약품이 1회분 이상이면 오른쪽 '💊 치료' 단추(넣기 단추 위)
+   · 누르면 4초 무릎 꿇고 치료(그동안 움직이기·사격 멈춤 — 단추 둘레가 차오른다) → 의약품 1회분 · 체력 +30(최대 100)
+   · 응급 역할 팀원이 6m 안에 있으면 그가 돕는다: 2.5초 · +40(그 팀원이 말풍선)
+   · 치료 중에 맞으면(체력이 줄면) 멈춘다 — 약은 쓰지 않는다 · 다시 누르면 처음부터 · 출혈(63)은 '🩹 지혈'이 따로다
+   · 차·탈것·카드·드론 조종 중엔 숨는다 · 설정 없음(쓰지 않으면 그만) */
+const HL={on:false,t:0,dur:4,add:30,hp0:0,who:null,n:{start:0,done:0,cut:0},err:0,uiT:0};
+function hlErr(e){if(HL.err<5){HL.err++;try{console.error('[191]',e)}catch(x){}}}
+function hlMe(){try{return M('me')}catch(e){return null}}
+function hlMeds(){try{return Math.floor(G.res.meds||0)}catch(e){return 0}}
+function hlMedic(){try{const p=FP3.pos;return tmLive().find(m=>m.d.role==='응급'&&(m.d.st==='ok'||m.d.st==='hurt')&&m.h&&m.h.root.visible&&Math.hypot(m.h.root.position.x-p.x,m.h.root.position.z-p.z)<6)||null}catch(e){return null}}
+function hlCan(){try{const me=hlMe();if(!me||me.crit||!(me.hp<90)||hlMeds()<1)return false;if(!OUT.on||OUT.drv||OUT.ride||OUT.enc||OUT.mapOpen||OUT.ending)return false;if(OUT.busy&&!HL.on)return false;if(typeof DFR!=='undefined'&&DFR.B)return false;if(typeof TRI!=='undefined'&&TRI.on&&TRI.seat)return false;if(typeof KC!=='undefined'&&KC.on)return false;if(typeof GUN!=='undefined'&&GUN.ow)return false;return true}catch(e){return false}}
+function hlStart(){if(HL.on||!hlCan())return false;const me=hlMe();const md=hlMedic();HL.on=true;HL.t=0;HL.dur=md?2.5:4;HL.add=md?40:30;HL.hp0=me.hp;HL.who=md;HL.n.start++;
+  try{if(GUN&&GUN.fire)GUN.fire=false;GUN.ads=false}catch(e){}try{OUT.me&&OUT.me.setPose('kneel')}catch(e){}try{vib(20)}catch(e){}
+  if(md)try{bubSay(md.h,'제가 할게요 — 가만히요!',2,'ok')}catch(e){}hlUI();return true}
+function hlStop(cut){if(!HL.on)return;HL.on=false;if(cut){HL.n.cut++;outNote('<b>💊 치료가 끊겼다</b><div>맞았다 — 엄폐부터. 약은 쓰지 않았다.</div>',2200)}try{OUT.me&&OUT.me.setPose('idle')}catch(e){}hlUI()}
+function hlDone(){const me=hlMe();HL.on=false;HL.n.done++;FX=[];try{res('meds',-1)}catch(e){}const b=me.hp;me.hp=clamp(me.hp+HL.add,0,100);try{push(me.n,me.hp-b)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}
+  try{OUT.me&&OUT.me.setPose('idle')}catch(e){}try{SND.tone(660,.12,'sine',.06);SND.tone(990,.18,'sine',.06,.12)}catch(e){}try{vib([20,30,40])}catch(e){}
+  outNote(`<b>💊 치료했다 — 체력 ${b} → ${me.hp}</b><div>${HL.who?`${HL.who.d.nm} 씨가 도와 빨리 끝냈다. `:''}의약품 1회분을 썼다(남은 ${hlMeds()}).</div>`,3000);HL.who=null;hlUI()}
+function hlUI(){const el=SV3&&SV3.el;let b=document.getElementById('hlBtn');const show=!!el&&(HL.on||hlCan());if(!show){if(b)b.remove();return}
+  if(!b||b.parentNode!==el){if(b)b.remove();b=document.createElement('button');b.id='hlBtn';b.type='button';b.className='hl-btn';b.dataset.g3='hlgo';b.innerHTML='<i class="hl-ring"></i><b>💊</b><small>치료</small>';el.appendChild(b)}
+  const k=HL.on?Math.min(1,HL.t/HL.dur):0;const r=b.querySelector('.hl-ring');if(r)r.style.setProperty('--k',(k*100).toFixed(0)+'%');b.classList.toggle('on',HL.on);const s=b.querySelector('small');const t=HL.on?`${Math.ceil(HL.dur-HL.t)}초`:`치료 ${hlMeds()}`;if(s&&s.textContent!==t)s.textContent=t}
+function hlTick(dt){try{HL.uiT-=dt;if(HL.on){const me=hlMe();if(!me||me.hp<HL.hp0-.5||!OUT.on||OUT.drv||OUT.ride||OUT.enc){hlStop(me&&me.hp<HL.hp0-.5);return}HL.hp0=Math.max(HL.hp0,me.hp);HL.t+=dt;FP3.mv.x=FP3.mv.y=0;try{if(GUN.fire)GUN.fire=false}catch(e){}
+    if(OUT.me&&OUT.me.pose!=='kneel')try{OUT.me.setPose('kneel')}catch(e){}if(HL.who&&HL.who.h){try{const q=HL.who.h.root.position,p=FP3.pos;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d>1.3){q.x+=(p.x-q.x)/d*Math.min(d-1.1,3*dt);q.z+=(p.z-q.z)/d*Math.min(d-1.1,3*dt)}if(HL.who.h.pose!=='kneel'&&d<1.6)HL.who.h.setPose('kneel')}catch(e){}}
+    if(HL.t>=HL.dur){hlDone();return}if(HL.uiT<=0){HL.uiT=.1;hlUI()}}else if(HL.uiT<=0){HL.uiT=.4;hlUI()}}catch(e){hlErr(e)}}
+function hlAnx(){return typeof ANX!=='undefined'&&ANX.on}
+(function(){const b=window.outStep;if(typeof b!=='function')return;window.outStep=function(dt){if(HL.on)FP3.mv.x=FP3.mv.y=0;const r=b.apply(this,arguments);if(!hlAnx())hlTick(dt||0);return r}})();
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){if(HL.on)FP3.mv.x=FP3.mv.y=0;const r=b.apply(this,arguments);if(hlAnx())hlTick(dt||0);return r}})();
+(function(){const b=window.outReturn;if(typeof b!=='function')return;window.outReturn=function(){try{HL.on=false;const e=document.getElementById('hlBtn');if(e)e.remove()}catch(e){}return b.apply(this,arguments)}})();
+window.addEventListener('pointerdown',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-g3=hlgo]');if(!b)return;e.preventDefault();e.stopPropagation();if(HL.on)return;if(!hlStart())hlUI()},true);
+window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-g3=hlgo]');if(!b)return;e.preventDefault();e.stopPropagation()},true);
+if(typeof HELP84!=='undefined')HELP84.push(['💊 자가 치료(v19.2)','밖에서 내 체력이 90 아래이고 의약품이 있으면 오른쪽 넣기 단추 위에 \'💊 치료\'가 뜬다. 누르면 4초 동안 무릎 꿇고 치료 — 의약품 1회분으로 체력 +30(최대 100). 응급 역할 팀원이 6m 안이면 그가 도와 2.5초 · +40. 치료 중엔 움직이거나 쏠 수 없고, 맞으면 멈춘다(약은 그대로). 출혈은 \'🩹 지혈\'이 따로다.']);
+
+/* ===================== 192 · v19.2 청정지역의 끝 — 🛡 탕정역 방어선(좀비 1,000마리 · 10파) · 🧟 아산역 권역 좀비 점령지 ===================== */
+/* 사용자 요청(2026-11-24 01:50~01:59): "아산역.탕정역 도착했는데 사실 넘 심심하네요 … 좀비 1,000마리 사냥" · "좀비는 감염된 군인들, 감염된 시민들, 감염된 새벽별 부대원들 컨셉"
+   · "대한민국에서 탕정역까지만 청정지역 세계관 … 탕정역이 사실상 좀비의 경계라인이라, 여기에 최대한 좀비를 수비하는 디펜스형태" · "탕정역 쪽은 전략 디펜스 컨셉 … 아산역은 사실상 좀비에게 점령"
+   세계관(가상): 대한민국에서 탕정 시내 ~ 탕정역까지만 청정지역. 그 동쪽(아산역부터)은 감염 지역 — 탕정역 동쪽 광장에 경계 방벽
+   ① 🛡 탕정역 방어선(권역 A): 역 동쪽 60m에 철길을 가로지르는 방벽(콘크리트 방호벽 36 · 모래주머니 · 대전차 장애물 · 경계 표지) — 늘 서 있다
+      · 방벽 앞 '🧟 방어선 지휘소'에서 시작 → 10파 · 40~150마리(합 1,000) — 아산 쪽 철길·도로로 몰려와 방벽을 두드린다(방벽 내구 1,000)
+      · 방벽이 무너지면(돌파) 광장으로 쏟아져 나를 쫓는다 · 높이 10m 승강장은 저격 망루(좀비가 못 올라온다 — 아래에 모여 손을 휘젓는다)
+      · 국군 수비대 4명이 방벽 뒤에서 쏜다 · 팀원(🎖 부팀장 포함)도 쏜다 · 3·6·9파 뒤 보급 상자(쥔 총 탄 240 · 의약품 2 · 방벽 수리 +350)
+      · 방어하는 동안은 밖 시간이 흐르지 않는다 · 쓰러지면(체력 8 아래) 수비대가 역 뒤로 끌어내고 그 파는 다시(이긴 파는 저장 — 다음엔 이어서)
+      · 10파를 다 막으면 이웃 신뢰 +5 · 사기 +5 · '경계선 수호자' — 다시 하면 처음부터(누계는 계속)
+   ② 🧟 아산역 권역 = 좀비 점령지(권역 B): 광장의 피란민·통제 요원이 사라지고 좀비가 배회한다(늘 18마리 안팎) — 22m 안에 들거나 총에 맞으면 달려든다 · 승강장 위 생존자는 그대로
+   ③ 좀비(모두 가상): 🧟 감염된 시민(대다수 · 절뚝 걸음 1.0~1.45m/s · 체력 2) · 🪖 감염된 군인(체력 3.4 · 30%는 뛴다) · 🌟 감염된 새벽별 대원(정예 · 4m/s · 체력 6 · 후반 파일수록 많다)
+      · 몸 ×1 · 머리 ×3 · 다리 ×0.6 · 맞으면 휘청 · 붙으면 손을 휘저어 할퀸다(5/7/9) · 동시 최대 32마리(저사양 22) — 쓰러진 자리를 새 무리가 채운다(쓰러진 몸은 5초 뒤 · 많으면 먼저 치운다)
+      · 판정은 따로 — 주민 사격·계급 공적·교전 수칙 기록에 들어가지 않는다 · 타격감(188) 표시는 그대로 · 누계(G.flags.zd.k)는 두 권역 합
+   끄기: 설정 '좀비(청정지역 경계)' 또는 localStorage sg.zombie=false · 교육용 모드 제외 · 피·사망 묘사는 기존 수준 그대로 */
+const ZB={err:0,list:[],bodies:[],n:{spawn:0,kill:0,me:0,tm:0,al:0,hitMe:0,crate:0,brk:0,wave:0,occ:0,down:0},uiT:0,spT:0,tmT:0,sayT:0,mats:{},D:null,bar:null,occT:0,fr:0,hurtT:0};
+const ZB_T={civ:{n:'감염된 시민',hp:2,sp:[1.0,1.45],dmg:5,rate:3},sol:{n:'감염된 군인',hp:3.4,sp:[1.25,1.7],dmg:7,rate:4,runP:.3,rsp:[3.0,3.5]},elite:{n:'감염된 새벽별 대원',hp:6,sp:[3.9,4.5],dmg:9,rate:5,run:1}};
+const ZD_W=[40,55,70,85,100,110,120,130,140,150];
+const _zb=[new T.Vector3(),new T.Vector3()];
+function zbErr(e){if(ZB.err<6){ZB.err++;try{console.error('[192]',e)}catch(x){}}}
+function zbOn(){try{if(navigator.webdriver&&!window.__zbTest)return false;if(typeof eduOn==='function'&&eduOn())return false;return store.get('sg.zombie',true)!==false}catch(e){return false}}
+function zbS(){const F=G.flags;if(!F.zd)F.zd={w:0,k:0,asan:0,best:0,done:0,runs:0};return F.zd}
+function zbIn(){return typeof ANX!=='undefined'&&ANX.on&&!!ANX.W}
+function zbCap(){try{return (typeof LOW!=='undefined'&&LOW.on)||SV3.qt==='low'?22:32}catch(e){return 32}}
+function zbFree(x,z,r){try{return anxFree(ANX.W.occG,x,z,r||.5)}catch(e){return true}}
+function zbLive(){return ZB.list.filter(a=>!a.dead)}
+/* ---------- 모양: 감염된 피부(머리 색) · 더럽고 바랜 옷(몸 재질 곱) — 좀비 전용 재질 묶음이라 다른 사람에겐 번지지 않는다 ---------- */
+function zbMats(k,v,tint,body){const key=k+'|'+v+'|'+tint;if(ZB.mats[key])return;try{const ms=RBX.materials(k,v,tint);ms.forEach(m=>{if(!/head/.test(m.name||''))m.color.set(body)})}catch(e){zbErr(e)}ZB.mats[key]=1}
+function zbMake(type,seed){if(typeof RBX==='undefined'||!RBX.ok)return null;let k,v,tint,body;
+  if(type==='civ'){const L=RBX_LOOK.civ;k=L[seed%L.length];v='zb';tint='#a3ba92';body='#6e7b62'}else if(type==='sol'){k=RBX_LOOK.rok||'military_m_1';v='rok';tint='#94a488';body='#69775b'}else{k=RBX_LOOK.us||'military_m_2';v='dark';tint='#8c9a84';body='#5a6552'}
+  zbMats(k,v,tint,body);let h=null;try{h=makeHumanRBX(k,{pose:'limp',seed:900+seed,variant:v,tint})}catch(e){zbErr(e)}if(!h)return null;h.kind='zb';h.lookKeep=true;return h}
+function zbPick(w){const r=Math.random();const el=w==null?.05:Math.min(.2,w>=4?.03+.017*(w-3):0);const so=w==null?.25:.2+.015*w;return r<el?'elite':r<el+so?'sol':'civ'}
+function zbMk(type,x,z){const W=ANX.W;const h=zbMake(type,ZB.n.spawn*7+((Math.random()*97)|0));if(!h)return null;const T0=ZB_T[type];const run=!!T0.run||(T0.runP&&Math.random()<T0.runP);const sp=run?(T0.rsp||T0.sp):T0.sp;
+  h.root.position.set(x,0,z);h.root.rotation.y=Math.random()*6.28;W.R.add(h.root);try{h.setPose(run?'run':'limp',true)}catch(e){}
+  const a={h,kind:'en',side:'en',zb:1,type,run,hp:T0.hp,max:T0.hp,sp:sp[0]+Math.random()*(sp[1]-sp[0]),dmg:T0.dmg,rate:T0.rate,st:'go',atkT:.6,stag:0,aggro:0,nm:T0.n,tagL:'',owKill:1,wx:x,wz:z,wT:0,t:0};
+  OUT.npcs.push(a);ZB.list.push(a);ZB.n.spawn++;try{GUN.hits=[]}catch(e){}return a}
+function zbRemove(a){try{a.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(a.h)}catch(e){}a.gone=1;OUT.npcs=(OUT.npcs||[]).filter(x=>x!==a)}
+function zbClear(){for(const a of ZB.list)zbRemove(a);ZB.list=[];ZB.bodies=[];try{GUN.hits=[]}catch(e){}}
+/* ---------- 방어선 좌표(철길 접선 기준: u = 동쪽(아산 쪽) +, o = 옆) ---------- */
+function zdLine(){const Z=anxZ();const s=Z.rs+60;const a=anxAt(s);return{s,x:a.x,z:a.z,tx:a.tx,tz:a.tz,nx:a.nx,nz:a.nz,half:42}}
+function zdLoc(L,x,z){const dx=x-L.x,dz=z-L.z;return{u:dx*L.tx+dz*L.tz,o:dx*L.nx+dz*L.nz}}
+function zdW(L,u,o){return{x:L.x+L.tx*u+L.nx*o,z:L.z+L.tz*u+L.nz*o}}
+/* 방벽(늘 서 있다) */
+function zdBuild(){const W=ANX.W;if(!W||W.zdBar)return W&&W.zdBar;const L=zdLine();const g=new T.Group();g.name='zdBar';const yaw=Math.atan2(L.nx,L.nz);
+  const con=new T.MeshStandardMaterial({color:'#a9a79f',roughness:.92}),sb=new T.MeshStandardMaterial({color:'#8a7650',roughness:.97}),st=new T.MeshStandardMaterial({color:'#3b3d3e',roughness:.6,metalness:.4}),red=new T.MeshStandardMaterial({color:'#b3261e',roughness:.8});
+  const N=Math.round(L.half*2/2.4)+1;const jg=new T.BoxGeometry(2.3,1.05,.62);const sg=new T.BoxGeometry(2.25,.34,.72);const im=new T.InstancedMesh(jg,con,N),is=new T.InstancedMesh(sg,sb,N);const o=new T.Object3D();const base=[];
+  for(let i=0;i<N;i++){const oo=-L.half+i*2.4;const p=zdW(L,0,oo);o.position.set(p.x,.525,p.z);o.rotation.set(0,yaw,0);o.updateMatrix();im.setMatrixAt(i,o.matrix);base.push({x:p.x,z:p.z});o.position.y=1.22;o.updateMatrix();is.setMatrixAt(i,o.matrix)}
+  im.castShadow=im.receiveShadow=true;is.castShadow=true;g.add(im,is);
+  /* 대전차 장애물(X자 철골) — 방벽 앞 6m */const hg=new T.BoxGeometry(.14,.14,1.9);for(let i=0;i<9;i++){const oo=-L.half+5+i*(L.half*2-10)/8;const p=zdW(L,6+((i%2)*1.5),oo);const x=new T.Group();x.position.set(p.x,.62,p.z);x.rotation.y=i*.7;for(const [rx,rz] of [[.6,0],[-.6,0],[0,1.57]]){const m=new T.Mesh(hg,st);m.rotation.set(rx,0,rz);if(rz){m.rotation.set(0,0,0);m.rotation.y=1.57;m.rotation.x=.6}x.add(m)}g.add(x)}
+  /* 경계 표지(가운데 · 서쪽을 향해) */try{const c=document.createElement('canvas');c.width=512;c.height=160;const x=c.getContext('2d');x.fillStyle='#f2d21b';x.fillRect(0,0,512,160);x.fillStyle='#111';for(let i=-2;i<12;i++){x.beginPath();x.moveTo(i*48,0);x.lineTo(i*48+24,0);x.lineTo(i*48-16,160);x.lineTo(i*48-40,160);x.fill()}x.fillStyle='#f2d21b';x.fillRect(16,26,480,108);x.fillStyle='#111';x.font='900 46px system-ui,sans-serif';x.textAlign='center';x.fillText('⚠ 청정지역 경계',256,76);x.font='800 30px system-ui,sans-serif';x.fillText('탕정역 방어선 — 이 너머 감염 지역',256,118);
+    const tx=new T.CanvasTexture(c);tx.colorSpace=T.SRGBColorSpace;const pl=new T.Mesh(new T.PlaneGeometry(4.2,1.3),new T.MeshStandardMaterial({map:tx,roughness:.8,side:T.DoubleSide}));const p=zdW(L,-.4,0);pl.position.set(p.x,2.45,p.z);pl.rotation.y=Math.atan2(-L.tx,-L.tz);g.add(pl);for(const sx of [-1.9,1.9]){const q=zdW(L,-.4,sx);const post=new T.Mesh(new T.BoxGeometry(.12,2.6,.12),red);post.position.set(q.x,1.3,q.z);g.add(post)}}catch(e){zbErr(e)}
+  W.R.add(g);W.zdBar={g,im,is,N,base,yaw,L,broken:0};return W.zdBar}
+function zdBreak(on){const B=ANX.W&&ANX.W.zdBar;if(!B)return;const o=new T.Object3D();for(let i=0;i<B.N;i++){const p=B.base[i];o.position.set(p.x,on?.4:.525,p.z);o.rotation.set(on?(Math.random()-.5)*1.2:0,B.yaw+(on?(Math.random()-.5)*.9:0),on?(Math.random()-.5)*1.4:0);o.updateMatrix();B.im.setMatrixAt(i,o.matrix);o.position.y=on?.15:1.22;o.updateMatrix();B.is.setMatrixAt(i,o.matrix)}B.im.instanceMatrix.needsUpdate=true;B.is.instanceMatrix.needsUpdate=true;B.broken=on?1:0}
+/* ---------- 내 피해 ---------- */
+function zbHurtMe(a){const k=G&&G.diff==='train'?.7:G&&G.diff==='hard'?1.25:1;FX=[];try{hurt('me',a.dmg*k)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}ZB.n.hitMe++;try{vib([40,20,40])}catch(e){}try{sv3Flash(.35)}catch(e){}try{SND.tone(120,.12,'sawtooth',.06)}catch(e){}
+  const me=M('me');if(me&&me.hp<=8)zbDown()}
+function zbDown(){ZB.n.down++;const me=M('me');try{me.hp=Math.max(me.hp,25)}catch(e){}const D=ZB.D;
+  if(D&&D.on){zdEnd('down');return}
+  /* 점령지: 승강장(생존자 구역)으로 끌려 올라간다 */try{anxLevel('p',1)}catch(e){}for(const a of zbLive())a.aggro=0;outNote('<b>쓰러졌다 — 승강장으로 끌려 올라왔다</b><div>생존자들이 계단 위로 끌어올렸다. 좀비는 승강장으로 못 올라온다.</div>',4200)}
+/* ---------- 쏘기 판정(좀비는 따로) ---------- */
+function zbKill(a,by,head,d,src){if(a.dead)return;a.dead=1;a.lying=1;a.deadT=0;try{humanDie(a.h,d?{x:Math.sign(d.x)*(Math.abs(d.x)>Math.abs(d.z)?1:0),z:Math.sign(d.z)*(Math.abs(d.z)>=Math.abs(d.x)?1:0)}:null)}catch(e){}try{GUN.hits=[]}catch(e){}
+  ZB.n.kill++;const S=zbS();S.k++;if(ANX.zk==='B')S.asan++;if(ZB.D&&ZB.D.on)ZB.D.kills++;ZB.bodies.push(a);
+  if(by==='me'){ZB.n.me++;let shown=false;try{if(typeof imOn==='function'&&imOn()){const P=a.h.root.getWorldPosition(_zb[0]);const c=SV3.cam.position;imKill(!!head,Math.hypot(P.x-c.x,P.z-c.z),src||'gun');shown=true}}catch(e){}if(!shown)try{SFX.mech(head?'head':'hit')}catch(e){}}else if(by==='tm')ZB.n.tm++;else ZB.n.al++;
+  if(S.k%100===0)try{outNote(`<b>🧟 누계 ${S.k.toLocaleString()}마리</b><div>${S.k>=1000?'1,000마리 — 경계선의 전설이 됐다.':'청정지역을 지키는 숫자가 쌓인다.'}</div>`,2600)}catch(e){}}
+function zbShot(t,pt,d,W,first){const a=t.a;if(a.dead)return;const head=t.part==='head';const dmg=((W&&W.dmg)||1)*(head?3:t.part==='legs'?.6:1);try{if(SV3.scene===OUT.scene)owcBlood(pt)}catch(e){}a.hp-=dmg;a.aggro=1;
+  if(a.hp<=0){zbKill(a,'me',head,d,'gun');return}if(first!==false){try{if(typeof imOn==='function'&&imOn())imHit(head);else SFX.mech('hit')}catch(e){}}
+  a.stag=.28;try{if(d){const P=a.h.root.position;const L=Math.hypot(d.x,d.z)||1;const x=P.x+d.x/L*.22,z=P.z+d.z/L*.22;if(zbFree(x,z,.3)){P.x=x;P.z=z}}}catch(e){}}
+(function(){const b=window.gunHitPerson;if(typeof b!=='function')return;window.gunHitPerson=function(t,pt,d,W,first){const a=t&&t.a;if(a&&a.zb){try{zbShot(t,pt,d,W,first)}catch(e){zbErr(e)}return}return b.apply(this,arguments)}})();
+(function(){const b=window.gunKill;if(typeof b!=='function')return;window.gunKill=function(t,host,d,head){const a=t&&t.a;if(a&&a.zb){try{zbKill(a,'me',!!head,d,'boom')}catch(e){zbErr(e)}return}return b.apply(this,arguments)}})();
+/* ---------- 좀비 한 걸음 ---------- */
+function zbStepOne(a,dt,p,lvP,D,B){const h=a.h,P=h.root.position;a.t+=dt;a.stag=Math.max(0,a.stag-dt);const dx=p.x-P.x,dz=p.z-P.z;const dMe=Math.hypot(dx,dz);let tx=p.x,tz=p.z,goal='me';
+  if(D&&D.on&&B&&!B.broken){const q=zdLoc(D.L,P.x,P.z);/* 방벽은 몸으로 막는다(밀려 넘어오지 않게) */if(q.u<.95&&q.u>-1.6&&Math.abs(q.o)<D.L.half+.5){const w=zdW(D.L,.95,q.o);P.x=w.x;P.z=w.z;q.u=.95}if(q.u>.9){const o=clamp(q.o,-D.L.half+1,D.L.half-1);const w=zdW(D.L,.9,o);tx=w.x;tz=w.z;goal='bar';if(q.u<1.25&&Math.abs(q.o)<D.L.half+.5)goal='atbar'}}
+  else if(!D||!D.on){/* 점령지: 22m 안이거나 맞았으면 나를 쫓고, 아니면 배회 */if(!(a.aggro||dMe<22)||lvP){a.wT-=dt;if(a.wT<=0||Math.hypot(a.wx-P.x,a.wz-P.z)<1){a.wT=4+Math.random()*5;const r=3+Math.random()*7,an=Math.random()*6.28;a.wx=P.x+Math.sin(an)*r;a.wz=P.z+Math.cos(an)*r}tx=a.wx;tz=a.wz;goal='wander'}else a.aggro=1}
+  if(goal==='me'&&lvP){/* 승강장 위의 나: 아래에 모여 손을 휘젓는다 */if(dMe<5){if(h.pose!=='angry')try{h.setPose('angry')}catch(e){}h.root.rotation.y=Math.atan2(dx,dz);return}}
+  if(goal==='atbar'){if(h.pose!=='angry')try{h.setPose('angry')}catch(e){}h.root.rotation.y=Math.atan2(-D.L.tx,-D.L.tz);D.hp-=a.rate*dt;return}
+  if(goal==='me'&&!lvP&&dMe<1.15){if(h.pose!=='angry')try{h.setPose('angry')}catch(e){}h.root.rotation.y=Math.atan2(dx,dz);a.atkT-=dt;if(a.atkT<=0){a.atkT=1.1;zbHurtMe(a)}return}
+  if(a.stag>0)return;const mx=tx-P.x,mz=tz-P.z;const L=Math.hypot(mx,mz);if(L<.05)return;const sp=(goal==='wander'?Math.min(a.sp,1.1):a.sp)*dt;let nx=P.x+mx/L*sp,nz=P.z+mz/L*sp;
+  if(!zbFree(nx,nz,.35)){const sx=-mz/L,sz=mx/L;const sg=((a.h.seed||1)%2)?1:-1;if(zbFree(P.x+sx*sp*sg,P.z+sz*sp*sg,.35)){nx=P.x+sx*sp*sg;nz=P.z+sz*sp*sg}else if(zbFree(P.x-sx*sp*sg,P.z-sz*sp*sg,.35)){nx=P.x-sx*sp*sg;nz=P.z-sz*sp*sg}else{nx=P.x;nz=P.z;a.wT=0}}
+  P.x=nx;P.z=nz;const want=a.run&&goal!=='wander'?'run':'limp';if(h.pose!==want)try{h.setPose(want)}catch(e){}h.root.rotation.y=Math.atan2(mx,mz)}
+function zbSep(){const L=zbLive();for(let i=0;i<L.length;i++){const A=L[i].h.root.position;for(let j=i+1;j<L.length;j++){const B=L[j].h.root.position;const dx=B.x-A.x,dz=B.z-A.z;const d2=dx*dx+dz*dz;if(d2>.36||d2<1e-6)continue;const d=Math.sqrt(d2),k=(.6-d)/2/d;A.x-=dx*k;A.z-=dz*k;B.x+=dx*k;B.z+=dz*k}}}
+/* ---------- 생성 자리 ---------- */
+function zbSpotRing(p,r0,r1){for(let k=0;k<24;k++){const an=Math.random()*6.283,r=r0+Math.random()*(r1-r0);const x=p.x+Math.sin(an)*r,z=p.z+Math.cos(an)*r;const Z=anxZ().box;if(x<Z[0]+4||x>Z[2]-4||z<Z[1]+4||z>Z[3]-4)continue;if(zbFree(x,z,.6))return{x,z}}return null}
+function zbSpotEast(L){for(let k=0;k<24;k++){const u=50+Math.random()*32,o=(Math.random()*2-1)*(L.half+14);const w=zdW(L,u,o);if(zbFree(w.x,w.z,.6))return w}return null}
+/* ---------- 아군 사격(국군 수비대 · 팀원) ---------- */
+function zbFire(from,a,p,by,m){const q=a.h.root.position;const tgt=_zb[1].set(q.x,1.15,q.z);const W=ANX.W;try{owcTracer(from.clone(),Math.random()<p?tgt.clone():tgt.clone().add(new T.Vector3((Math.random()-.5)*1.6,(Math.random()-.3),(Math.random()-.5)*1.6)),0)}catch(e){}try{SFX.shot('rifle',{d:SV3.cam.position.distanceTo(from),az:0})}catch(e){}
+  if(Math.random()<p){a.hp-=1.4;a.stag=.2;if(a.hp<=0){zbKill(a,by,false,null);if(m&&m.h&&Math.random()<.35)try{bubSay(m.h,m.d&&m.d.vice?['부팀장, 하나 정리!','머리 노려요!','계속 와요 — 버텨!'][(Math.random()*3)|0]:['하나!','쓰러졌어요!','또 와요!'][(Math.random()*3)|0],1.4,'ok')}catch(e){}}}}
+function zbAllies(dt){ZB.tmT-=dt;if(ZB.tmT>0)return;ZB.tmT=.3;const L=zbLive();if(!L.length)return;const W=ANX.W;let nd=0;const near=(P,r)=>{let best=null,bd=r;for(const a of L){const q=a.h.root.position;const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;best=a}}nd=bd;return best};const fk=(d,R)=>clamp(1.2-d/R,.15,1);
+  try{for(const m of tmLive()){const d=m.d;if((d.st!=='ok'&&d.st!=='hurt')||!m.h||!m.h.root.visible)continue;if(typeof aplInScene==='function'&&!aplInScene(m.h))continue;if(typeof taBest==='function'&&!taBest(d))continue;m.zbT=(m.zbT==null?.5:m.zbT)-.3;if(m.zbT>0)continue;const P=m.h.root.getWorldPosition(_zb[0]);const a=near(P,42);if(!a){m.zbT=.4;continue}const vi=!!d.vice;m.zbT=vi?.55+Math.random()*.4:1.1+Math.random()*.8;
+    try{m.h.root.rotation.y=Math.atan2(a.h.root.position.x-P.x,a.h.root.position.z-P.z)}catch(e){}zbFire(P.clone().setY(P.y+1.35),a,(.42*(d.role==='사격'?1.3:1))*(vi?1.45:(typeof vcAura==='function'&&vcAura(m))?1.15:1)*fk(nd,35),'tm',m)}}catch(e){zbErr(e)}
+  const D=ZB.D;if(D&&D.on)for(const s of D.al){s.t-=.3;if(s.t>0)continue;const P=s.h.root.position;const a=near(P,60);if(!a){s.t=.5;continue}s.t=1.4+Math.random()*.8;s.h.root.rotation.y=Math.atan2(a.h.root.position.x-P.x,a.h.root.position.z-P.z);zbFire(new T.Vector3(P.x,1.4,P.z),a,.5*fk(nd,40),'al',null)}}
+/* ---------- ① 방어선 ---------- */
+function zdCan(){return zbOn()&&zbIn()&&(ANX.zk||'A')==='A'&&!(ZB.D&&ZB.D.on)&&!OUT.enc}
+function zdStart(){if(!zdCan())return false;const S=zbS();if(S.w>=ZD_W.length){S.w=0}const L=zdLine();zdBuild();zdBreak(false);zbClear();
+  const D={on:true,L,w:S.w,left:ZD_W[S.w],hp:1000,max:1000,rest:5,t:0,kills:0,al:[],crate:null,spT:0,brkSaid:0};ZB.D=D;S.runs++;
+  /* 국군 수비대 넷 — 방벽 뒤 2.5m */for(let i=0;i<4;i++){const o=[-27,-9,9,27][i];const p=zdW(L,-2.6,o);let h=null;try{h=civHuman(240+i,'aim','rok')}catch(e){h=null}if(!h)continue;h.root.position.set(p.x,0,p.z);h.root.rotation.y=Math.atan2(L.tx,L.tz);h.lookKeep=true;ANX.W.R.add(h.root);try{if(typeof mlBand==='function')mlBand(h)}catch(e){}D.al.push({h,t:1+i*.4})}
+  try{vib([60,40,60])}catch(e){}try{SND.tone(880,.16,'square',.05);SND.tone(620,.2,'square',.05,.2)}catch(e){}
+  outNote(`<b>🛡 탕정역 방어선 — ${D.w+1}파부터</b><div>아산 쪽에서 감염체가 몰려온다(${D.w+1}파 ${D.left}마리). 방벽(내구 1,000)이 무너지면 광장으로 쏟아진다 — 승강장(10m)은 저격 망루. 국군 수비대 4명이 함께 쏜다. 방어하는 동안 시간은 멈춘다.</div>`,6200);zdUI();return true}
+function zdWaveStart(){const D=ZB.D;D.left=ZD_W[D.w];D.t=0;ZB.n.wave++;const el=D.w>=4?'· 🌟 새벽별 감염 정예가 섞였다':'';outNote(`<b>🧟 ${D.w+1}파 — ${D.left}마리</b><div>철길과 도로를 따라 온다 ${el}</div>`,3200);try{SND.tone(300,.4,'sawtooth',.05,0,180)}catch(e){}}
+function zdCrate(){const D=ZB.D;const p=zdW(D.L,-12,0);const g=new T.Group();const box=new T.Mesh(new T.BoxGeometry(1.1,.75,.8),new T.MeshStandardMaterial({color:'#4d5b33',roughness:.8}));box.position.y=.38;g.add(box);try{const s=PK.sprite(glowTex(),'#ffe27a',1.2,null,{add:1});s.position.y=1.4;g.add(s)}catch(e){}g.position.set(p.x,0,p.z);ANX.W.R.add(g);D.crate={g,x:p.x,z:p.z};outNote('<b>📦 보급 상자가 왔다</b><div>방벽 12m 뒤 — 가까이 가면 줍는다(탄 240 · 의약품 2 · 방벽 수리 +350).</div>',3400)}
+function zdTake(){const D=ZB.D;if(!D||!D.crate)return;const c=D.crate;D.crate=null;try{c.g.removeFromParent()}catch(e){}ZB.n.crate++;let am='';try{let W=(GUN.eq&&ARMS[GUN.eq])||(typeof gunW==='function'&&gunW());if(!W||!W.am){const r=gunArms().find(x=>ARMS[x.id]&&ARMS[x.id].am);W=r&&ARMS[r.id]}const k=W&&W.am?W.am:'556';gunAmmoAdd(k,240);am=`${AMMO[k]?AMMO[k].n:'탄'} 240 · `}catch(e){zbErr(e)}FX=[];try{res('meds',2)}catch(e){}try{OUT.fx.push(...FX);outStat()}catch(e){}D.hp=Math.min(D.max,D.hp+350);if(D.hp>0&&ANX.W.zdBar&&ANX.W.zdBar.broken&&D.hp>200)zdBreak(false);
+  outNote(`<b>📦 보급</b><div>${am}의약품 2 · 방벽 수리(+350 → ${Math.round(D.hp)}).</div>`,2800);try{SND.tone(660,.1,'sine',.06);SND.tone(990,.14,'sine',.06,.1)}catch(e){}}
+function zdEnd(why){const D=ZB.D;if(!D)return;D.on=false;const S=zbS();for(const s of D.al)try{s.h.root.removeFromParent();RBX.live.delete(s.h)}catch(e){}if(D.crate)try{D.crate.g.removeFromParent()}catch(e){}
+  zbClear();zdBreak(false);S.best=Math.max(S.best,D.kills);FX=[];let txt='';
+  if(why==='win'){S.done=(S.done|0)+1;S.w=0;try{trust(5);mor(5)}catch(e){}txt=`<b>🛡 경계선 수호 — 10파 모두 막았다</b><div>이번 방어 ${D.kills}마리 · 누계 ${S.k.toLocaleString()}마리. 탕정은 오늘도 청정지역이다 — '경계선 수호자'.</div>`}
+  else if(why==='down'){ZB.n.down++;txt=`<b>쓰러졌다 — 수비대가 역 뒤로 끌어냈다</b><div>${D.w+1}파는 다시 막아야 한다(이긴 ${D.w}파까지는 저장). 이번 ${D.kills}마리.</div>`;try{let ok=false;for(const u of [-70,-60,-80,-50,-90,-40])for(const o of [0,8,-8,16,-16]){if(ok)break;const p=zdW(D.L,u,o);if(zbFree(p.x,p.z,.6)){FP3.pos.set(p.x,0,p.z);ok=true}}if(ANX.lvl!=='g')anxLevel('g',1,true)}catch(e){}}
+  else txt=`<b>🛡 방어선을 떠났다</b><div>${D.w+1}파부터 다시 이어진다. 이번 ${D.kills}마리 · 누계 ${S.k.toLocaleString()}마리.</div>`;
+  try{OUT.fx.push(...FX);outStat()}catch(e){}ZB.D=null;if(why!=='quiet')outNote(txt+(typeof fxChips==='function'?fxChips(FX):''),5600);try{save()}catch(e){}zdUI()}
+function zdStep(dt){const D=ZB.D;if(!D||!D.on)return;D.t+=dt;const S=zbS();const B=ANX.W.zdBar;
+  if(D.crate&&Math.hypot(D.crate.x-FP3.pos.x,D.crate.z-FP3.pos.z)<2.3&&ANX.lvl==='g')zdTake();
+  if(D.rest>0){D.rest-=dt;if(D.rest<=0)zdWaveStart();return}
+  /* 방벽 */if(D.hp<=0&&B&&!B.broken){zdBreak(true);ZB.n.brk++;outNote('<b>🧱 방벽 돌파!</b><div>광장으로 쏟아진다 — 승강장으로 올라가 위에서 쏘거나 물러서며 쏜다. 보급 상자가 오면 다시 세운다.</div>',4200);try{SND.boom(true,.7);sv3Shake(.5)}catch(e){}}
+  /* 채우기 */D.spT-=dt;const live=zbLive().length;if(D.left>0&&live<zbCap()&&D.spT<=0){D.spT=.32;const q=zbSpotEast(D.L);if(q){const a=zbMk(zbPick(D.w),q.x,q.z);if(a){D.left--;a.aggro=1}}}
+  /* 파 끝 */if(D.left<=0&&!live){S.w=D.w+1;try{FX=[];trust(1);OUT.fx.push(...FX);outStat()}catch(e){}if(S.w>=ZD_W.length){zdEnd('win');return}const cr=[3,6,9].includes(S.w);outNote(`<b>✅ ${D.w+1}파 저지</b><div>${cr?'보급 상자가 내려온다. ':''}14초 뒤 ${S.w+1}파(${ZD_W[S.w]}마리).</div>`,3400);D.w=S.w;D.rest=14;if(cr)zdCrate();try{save()}catch(e){}}}
+/* 방벽 너머(동쪽)로는 걸어 나가지 않는다(방어 중) */
+function zdClamp(){const D=ZB.D;if(!D||!D.on||ANX.lvl!=='g')return;const B=ANX.W.zdBar;if(B&&B.broken)return;const q=zdLoc(D.L,FP3.pos.x,FP3.pos.z);if(q.u>-.45&&q.u<3&&Math.abs(q.o)<D.L.half+.5){const w=zdW(D.L,-.45,q.o);FP3.pos.x=w.x;FP3.pos.z=w.z}}
+/* ---------- ② 점령지 ---------- */
+function zbOccStep(dt){if(ANX.zk!=='B')return;ZB.occT-=dt;if(ZB.occT>0)return;ZB.occT=.5;const p=FP3.pos;const cap=Math.min(18,zbCap());
+  for(const a of ZB.list){if(a.dead)continue;const q=a.h.root.position;if(Math.hypot(q.x-p.x,q.z-p.z)>115){zbRemove(a);a.dead=1;a.gone=1}}ZB.list=ZB.list.filter(a=>!a.gone);
+  if(zbLive().length<cap){const q=zbSpotRing(p,30,58);if(q){zbMk(zbPick(null),q.x,q.z);ZB.n.occ++}}}
+/* 신음: 25m 안에 있으면 2.5~4초마다 낮게 그르렁(가까울수록 크게) */
+function zbGroan(dt){ZB.sayT-=dt;if(ZB.sayT>0)return;ZB.sayT=2.5+Math.random()*1.5;if(!SND||!SND.on)return;const p=FP3.pos;let nd=1e9;for(const a of ZB.list){if(a.dead)continue;const q=a.h.root.position;const d=Math.hypot(q.x-p.x,q.z-p.z);if(d<nd)nd=d}if(nd>25)return;const v=.05+.13*(1-nd/25);
+  try{const c=SND.ac();if(!c)return;const s=c.createBufferSource();s.buffer=SND.noise();const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=260+Math.random()*120;f.Q.value=4;const g=c.createGain();const t=c.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.15);g.gain.linearRampToValueAtTime(v*.6,t+.5);g.gain.exponentialRampToValueAtTime(.001,t+1.1);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t,Math.random());s.stop(t+1.2);SND.tone(95+Math.random()*30,.9,'sawtooth',v*.35,0,70)}catch(e){}}
+/* ---------- 매 걸음(권역 화면) ---------- */
+function zbTick(dt){if(!zbIn()||!zbOn()){if(ZB.list.length)zbClear();return}ZB.fr++;const p=FP3.pos;const lvP=ANX.lvl==='p';const D=ZB.D;const B=ANX.W.zdBar;
+  if(D&&D.on)zdStep(dt);else zbOccStep(dt);
+  for(const a of ZB.list){if(a.dead){a.deadT+=dt;continue}const q=a.h.root.position;const far=Math.hypot(q.x-p.x,q.z-p.z)>80;try{zbStepOne(a,dt,p,lvP,D,B)}catch(e){zbErr(e)}if(!far||ZB.fr%4===0)try{a.h.update(far?dt*4:dt)}catch(e){}}
+  for(const a of ZB.bodies){if(!a.gone)try{a.h.update(dt)}catch(e){}}
+  if(D&&D.on)for(const q of D.al){try{if(q.h.pose!=='aim')q.h.setPose('aim');q.h.update(dt)}catch(e){}}
+  if(ZB.fr%3===0)zbSep();
+  /* 쓰러진 몸: 5초 뒤 · 10구 넘으면 오래된 것부터 */const old=ZB.bodies.filter(a=>!a.gone);if(old.length){for(const a of old){if(a.deadT>5||old.filter(x=>!x.gone).length>10){zbRemove(a)}}ZB.bodies=ZB.bodies.filter(a=>!a.gone);ZB.list=ZB.list.filter(a=>!a.gone)}
+  zbAllies(dt);zdClamp();zbGroan(dt);ZB.uiT-=dt;if(ZB.uiT<=0){ZB.uiT=.25;zdUI()}}
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){const h0=typeof OUT!=='undefined'?OUT.h:0;const r=b.apply(this,arguments);try{if(ZB.D&&ZB.D.on&&OUT.timed)OUT.h=h0;zbTick(dt||0)}catch(e){zbErr(e)}return r}})();
+/* ---------- 띠 ---------- */
+function zdUI(){const el=SV3&&SV3.el;let u=document.getElementById('zbHud');const show=zbIn()&&zbOn()&&((ZB.D&&ZB.D.on)||ANX.zk==='B');if(!show||!el){if(u)u.remove();return}
+  if(!u||u.parentNode!==el){if(u)u.remove();u=document.createElement('div');u.id='zbHud';u.className='zb-hud';el.appendChild(u)}const S=zbS();const D=ZB.D;let h;
+  if(D&&D.on){const k=Math.max(0,D.hp/D.max);const left=D.left+zbLive().length;h=`<b>🛡 탕정역 방어선 · ${D.w+1}/10파</b><span>${D.rest>0?`다음 파 ${Math.ceil(D.rest)}초`:`남은 ${left}`} · 누계 ${S.k.toLocaleString()}/1,000</span><i class="zb-bar"><i style="width:${Math.round(k*100)}%;background:${k<.3?'#e0503a':k<.6?'#e6a23a':'#2ccf7c'}"></i></i><small>방벽 ${Math.round(k*100)}%${ANX.W.zdBar&&ANX.W.zdBar.broken?' — 돌파됨':''}</small>`}
+  else h=`<b>🧟 아산역 — 좀비 점령지</b><span>근처 ${zbLive().length} · 누계 ${S.k.toLocaleString()}/1,000</span>`;if(u._h!==h){u._h=h;u.innerHTML=h}}
+/* ---------- 권역에 들어올 때 ---------- */
+(function(){const b=window.anxSpots;if(typeof b!=='function')return;window.anxSpots=function(W){const L=b.apply(this,arguments);try{if(zbOn()&&(ANX.zk||'A')==='A'){const Ln=zdLine();const p=zdW(Ln,-8,0);const S=zbS();L.push({id:'zd',k:'zd',lv:'g',x:p.x,z:p.z,r:3.4,g:'🧟',n:`방어선 지휘소 — 좀비 방어 ${S.w?`(${S.w+1}파부터 이어서)`:'(10파 · 1,000마리)'}`,s:`누계 ${S.k.toLocaleString()}마리 · 방어 중엔 시간이 멈춘다`,h:0})}}catch(e){zbErr(e)}return L}})();
+(function(){const b=window.anxDo;if(typeof b!=='function')return;window.anxDo=function(c){if(c&&c.k==='zd'){if(OUT.busy||OUT.enc)return;if(ZB.D&&ZB.D.on){outNote('<b>🛡 방어 중</b><div>방벽 앞을 지킨다.</div>',1600);return}zdStart();return}return b.apply(this,arguments)}})();
+(function(){const b=window.vAnx3;if(typeof b!=='function')return;window.vAnx3=function(){const r=b.apply(this,arguments);try{zbEnterZone()}catch(e){zbErr(e)}return r};try{if(SV3.views&&SV3.views.anx)SV3.views.anx=window.vAnx3}catch(e){}})();
+function zbEnterZone(){const W=ANX.W;if(!W)return;zbClear();ZB.D=null;const on=zbOn();const zk=ANX.zk||'A';
+  /* 점령지: 땅 위 사람(피란민·통제 요원)이 사라진다 — 승강장 위 생존자는 그대로 */for(const q of W.ppl||[]){if(q.lv!=='g')continue;if(on&&zk==='B'){if(q.h.root.visible){q.h.root.visible=false;q.zbHid=1}}else if(q.zbHid){q.h.root.visible=true;q.zbHid=0}}
+  if(!on)return;if(zk==='A'){zdBuild();zdBreak(false);setTimeout(()=>{try{if(zbIn()&&ANX.zk!=='B')outNote('<b>🛡 청정지역의 끝 — 탕정역</b><div>역 동쪽 광장에 경계 방벽이 서 있다. 그 너머 아산 쪽은 감염 지역 — 방벽 앞 \'🧟 방어선 지휘소\'에서 방어를 시작한다.</div>',5200)}catch(e){}},3800)}
+  else{ZB.occT=0;for(let i=0;i<10;i++){const q=zbSpotRing(FP3.pos,26,60);if(q)zbMk(zbPick(null),q.x,q.z)}outNote('<b>🧟 아산역 권역 — 좀비 점령지</b><div>광장에 사람이 없다. 감염된 시민·군인·새벽별 대원이 배회한다 — 22m 안에 들면 달려든다. 승강장 위만 안전하다.</div>',5200)}zdUI()}
+(function(){const b=window.anxLeave;if(typeof b!=='function')return;window.anxLeave=function(){try{if(ZB.D&&ZB.D.on)zdEnd('leave');zbClear();const e=document.getElementById('zbHud');if(e)e.remove()}catch(e){zbErr(e)}return b.apply(this,arguments)}})();
+/* 설정 */
+(function(){const b=window.s4Html;if(typeof b!=='function')return;window.s4Html=function(){let h=b.apply(this,arguments);try{if(typeof S4!=='undefined'&&S4.view==='main'&&!S4.conf&&h.indexOf('data-k="zombie"')<0&&h.indexOf('<div class="s4-sec">교육용 모드</div>')>=0&&typeof s4Seg==='function'){const add=s4Seg('zombie','좀비(청정지역 경계)','탕정역 방어선 · 아산역 좀비 점령지',[['1','켬'],['0','끔']],store.get('sg.zombie',true)===false?'0':'1');h=h.replace('<div class="s4-sec">교육용 모드</div>',add+'<div class="s4-sec">교육용 모드</div>')}}catch(e){zbErr(e)}return h}})();
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-s4=opt]');if(!b||b.dataset.k!=='zombie')return;try{store.set('sg.zombie',b.dataset.v==='1');toast(b.dataset.v==='1'?'좀비: 탕정역 방어선 · 아산역 점령지(권역에 다시 들어가면)':'좀비를 껐다',2600)}catch(x){}});
+if(typeof HELP84!=='undefined')HELP84.push(['🛡 탕정역 방어선 · 🧟 아산역 점령지(v19.2)','세계관: 대한민국에서 탕정 시내~탕정역까지만 청정지역(가상). 탕정역 동쪽 광장에 경계 방벽이 서 있고, 방벽 앞 \'🧟 방어선 지휘소\'에서 방어를 시작한다 — 10파 · 1,000마리가 아산 쪽 철길·도로로 몰려와 방벽(내구 1,000)을 두드린다. 무너지면 광장으로 쏟아진다. 높이 10m 승강장은 저격 망루(좀비가 못 올라온다). 국군 수비대 4명 · 팀원(부팀장 포함)이 함께 쏘고, 3·6·9파 뒤 보급 상자(탄 240 · 의약품 2 · 방벽 수리). 방어 중엔 시간이 멈춘다. 쓰러지면 역 뒤로 끌려 나오고 그 파부터 다시. 아산역 권역은 좀비 점령지 — 사람이 없고 감염된 시민·군인·새벽별 대원이 배회한다(22m 안이면 달려든다 · 승강장 위만 안전). 머리 ×3. 누계는 두 권역 합.']);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
