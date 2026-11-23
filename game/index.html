@@ -2126,6 +2126,13 @@ body.trn-on .apl-tag{visibility:hidden}
 /* v18.9 · 계급·신뢰 칸은 판(상황판·아지트·등급표 등)보다 뒤로 — 판이 열리면 숨긴다 */
 .sv3 .rk-chip,.sv3 .mot-chip{z-index:19}
 .sv3:has(.mis-panel) .rk-chip,.sv3:has(.mis-panel) .mot-chip,.sv3.td-panel .rk-chip,.sv3.td-panel .mot-chip{visibility:hidden}
+/* v19.0 · 🔫 무장 단추(점프 위) */
+.sv3 .ac-arm{right:16px;bottom:92px;width:64px;height:64px;border-color:rgba(255,200,120,.6);background:rgba(40,28,12,.62)}
+.sv3 .ac-arm b{font-size:20px;line-height:1}.sv3 .ac-arm small{font-size:10px}.sv3 .ac-arm i{position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);font-style:normal;font-size:9px;font-weight:700;white-space:nowrap;color:#ffd9a6;text-shadow:0 1px 2px #000}
+.sv3 .ac-arm.on{transform:scale(.9);background:rgba(255,170,60,.6)}
+/* v19.0 · 아파트 전투 버튼을 길거리 배치로: 따로 세운 오른쪽 기둥 숨김 · 창가에서도 점프·넣기·조준 자리 보이기(숙이기·유탄으로 바뀜) */
+.sv3.af2-aw .aw-btns #awCr,.sv3.af2-aw .aw-btns [data-g3=awsr]{display:none!important}
+.sv3.wf-on.af2-aw #gunUI .owc-jp,.sv3.wf-on.af2-aw #gunUI [data-gun=holster],.sv3.wf-on.af2-aw #gunAds{display:grid!important}
 </style>
 <div id="app" data-app="saengjon-72h"></div>
 <div id="fx-vignette" hidden></div>
@@ -14222,7 +14229,7 @@ function perfWarm(sc,cam,o){o=o||{};const r=R3.r;if(!r||!sc||!cam||window.__noRe
 
 /* ===================== 36 · 설정·정보: 접근성(글자 크기·번쩍임 줄이기·진동) · 교육용 모드 · 오류 기록 · 저장 정보 관리 · 정보·라이선스 · 조작법 ===================== */
 /* 모든 설정과 기록은 이 기기의 저장소(localStorage)에만 둔다. 서버로 보내는 것은 없다 */
-const APP_VER='18.9';
+const APP_VER='19.0';
 const A11Y={c:null,get(){if(!this.c)this.c=Object.assign({fs:'n',calm:false,vib:true},store.get('sg.a11y',{}));return this.c},
   set(p){this.c=Object.assign({},this.get(),p);store.set('sg.a11y',this.c);a11yApply();return this.c}};
 function eduOn(){return store.get('sg.edu',false)===true}
@@ -28933,6 +28940,122 @@ function ttStep(dt){if(!ttOn())return;if(!TRI.on){if(TT.on)ttDetach();return}con
 /* 내 좌석 후보에서 팀원 자리는 뺀다 */
 (function(){const b=window.triSeatFree;if(typeof b!=='function')return;window.triSeatFree=function(ci,u,v){if(TT.on&&ci===TRI.ci&&TT.L.some(e=>e.seat&&Math.abs(e.seat.u-u)<.3&&Math.abs(e.seat.v-v)<.3))return false;return b.apply(this,arguments)}})();
 if(typeof HELP84!=='undefined')HELP84.push(['🚆 팀원과 함께 타는 열차(v18.9)','열차에 오르면 팀원도 같은 칸으로 따라 탄다 — 내 뒤 통로에 한 줄로 서고, 내가 걸으면 따라 걷고, 칸을 옮기면 같이 옮긴다. 내가 앉으면 팀원도 가까운 빈 좌석에 앉는다. 🚨 열차 수색전에서는 같은 칸에서 일어나 쏘는 적에게 팀원도 응사한다(웅크린 적·숨은 승객은 쏘지 않는다) — 팀원은 내 뒤에 서서 사선을 막지 않는다. 내리면 승강장 내 곁으로 모인다.']);
+
+/* v19.0 Ⅰ — 🔫 무장 단추 · 검문 생포 → 아지트 구치소 또는 계엄군 인계 · 🔭 정찰 버튼 자리 손질 (사용자 제보 2026-11-24 00:48 화면 1장)
+   "우측에 무장버튼 만들어줘 그러면 직전에 장착한 무기를 자연스레 착용하게 해 주세요. 그리고 검문 시 기자가 아닌 적군.간첩이라면 생포해서 우리 지하실에 가두거나, 군인들이 달려와서 인계하게 해 주세요"
+   ① 🔫 무장: 총을 넣은(넣기) 뒤에는 꺼낼 단추가 배낭뿐이었다 → 오른쪽 주먹 위에 '🔫 무장'(직전에 든 총 이름) — 누르면 그 총을 바로 든다(탄창 그대로) · 총을 들면 사라진다
+      운전·탈것·카드·열차 안·교전 화면에서는 숨는다 · 교육용 모드는 총이 없으니 숨는다
+   ② 검문(55): 기자가 아니라 간첩으로 드러나 붙잡으면(확인 · 덮침 · 추격) 바로 '검문소 국군에 넘겼다'로 사라졌다 →
+      두 손을 뒤로 묶고 무릎을 꿇린 뒤 고른다: 🔒 새벽별 아지트 지하 구치소로(178 구치소 3칸 · 팀원 한 명이 호송) / 🪖 계엄군을 부른다(둘이 달려와 데려간다)
+      아지트가 아직 없거나 구치소가 가득 차면 계엄군 인계만 · 보상(신뢰 +4 · 사기 +2)은 붙잡은 순간 그대로
+   ③ 🔭 정찰 버튼(183): 오른쪽 가장자리가 잠깐 막혀 옮겨 간 뒤 화면 가운데(조준 영역)에 남았다(사용자 화면) → 원래 자리(오른쪽 가장자리 46%)가 비면 돌아간다 ·
+      옮길 때도 오른쪽 30% 안에서만 · 가운데(조준점 둘레)는 금지 */
+const AC={err:0,n:{arm:0,cap:0,jail:0,army:0,ping:0},cap:null,army:null};
+function acErr(e){if(AC.err<5){AC.err++;try{console.error('[186]',e)}catch(x){}}}
+
+/* ---------- ① 🔫 무장 ---------- */
+function acArmId(){try{const id=(typeof GUN!=='undefined'&&GUN.eq)||(G&&G.eq);return id&&ARMS[id]&&gunHas(id)?id:null}catch(e){return null}}
+function acArmShow(){try{if(typeof OUT==='undefined'||!OUT.on||!SV3.el)return false;if(typeof GUN==='undefined'||GUN.on||GUN.ow)return false;if(typeof eduOn==='function'&&eduOn())return false;
+  if(OUT.drv||OUT.ride||OUT.enc||OUT.busy||OUT.mapOpen)return false;if(typeof TRI!=='undefined'&&TRI.on)return false;if(typeof OWC!=='undefined'&&OWC.on)return false;if(typeof DFR!=='undefined'&&DFR.B)return false;
+  const k=SV3.kind;if(!(k==='outside'||k==='street'||k==='anx'||k==='apt'))return false;return !!acArmId()}catch(e){return false}}
+function acArmBtn(){const el=SV3.el;let b=document.getElementById('acArm');const show=acArmShow();if(!show){if(b&&!b.hidden)b.hidden=true;return}
+  if(!b||b.parentNode!==el){if(b)b.remove();b=document.createElement('button');b.id='acArm';b.type='button';b.className='sv3-punch ac-arm';b.dataset.g3='acarm';b.setAttribute('aria-label','무장 — 직전에 든 총을 든다');el.appendChild(b)}
+  const W=ARMS[acArmId()];const nm=(W&&W.n||'총').replace(/\s*\(.*\)$/,'');const h=`<b>🔫</b><small>무장</small><i>${nm.length>7?nm.slice(0,7)+'…':nm}</i>`;if(b._h!==h){b._h=h;b.innerHTML=h}if(b.hidden)b.hidden=false}
+function acArm(){const id=acArmId();if(!id)return false;try{if(typeof GUN!=='undefined')GUN.sheathed=false;const ok=gunEquip(id,true);if(ok){AC.n.arm++;try{SFX.mech('bolt')}catch(e){}vib(18)}acArmBtn();return ok}catch(e){acErr(e);return false}}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('[data-g3=acarm]');if(!b)return;e.preventDefault();e.stopPropagation();if(acArm()){b.classList.add('on');setTimeout(()=>b.classList.remove('on'),160)}},{passive:false,capture:true});
+
+/* ---------- ③ 🔭 정찰 버튼: 원래 자리로 돌아가기 · 오른쪽 30% 안에서만 ---------- */
+window.v882PingPlace=function(force){try{const c=document.getElementById('motPing');const el=SV3.el;if(!c||!el||c.parentNode!==el||c.hidden)return false;const{ER,L}=hfxRects(el,c);const w=c.offsetWidth||58,h=c.offsetHeight||58;if(!w||!h)return false;const M=8;
+  const Zc={l:ER.left+ER.width*.3,t:ER.top+ER.height*.25,r:ER.left+ER.width*.7,b:ER.top+ER.height*.75};
+  const free=(x,y)=>{if(y<ER.top+44||y+h>ER.bottom-8||x<ER.left+ER.width*.7-4||x+w>ER.right-4)return false;if(x<Zc.r&&x+w>Zc.l&&y<Zc.b&&y+h>Zc.t)return false;for(const b of L)if(x<b.right+M&&x+w>b.left-M&&y<b.bottom+M&&y+h>b.top-M)return false;return true};
+  const hx=ER.right-14-w,hy=ER.top+ER.height*.46;const R=c.getBoundingClientRect();const atHome=Math.abs(R.left-hx)<2&&Math.abs(R.top-hy)<2;
+  if(!force&&c.dataset.hfx&&(atHome||!free(hx,hy))&&free(R.left,R.top))return false;
+  const put=(x,y)=>{c.style.right='auto';c.style.left=Math.round(x-ER.left)+'px';c.style.top=Math.round(y-ER.top)+'px';c.dataset.hfx='p';AC.n.ping++;return true};
+  if(free(hx,hy))return put(hx,hy);const C=[];for(let dx=0;dx<=ER.width*.3;dx+=8)for(let dy=-ER.height*.3;dy<=ER.height*.3;dy+=6)C.push([hx-dx,hy+dy,Math.hypot(dx*1.6,dy)]);C.sort((a,b)=>a[2]-b[2]);for(const [x,y] of C)if(free(x,y))return put(x,y);return false}catch(e){acErr(e);return false}};
+
+/* ---------- ② 검문 생포 → 구치소 또는 인계 ---------- */
+function acCapOn(){try{return typeof SPY!=='undefined'}catch(e){return false}}
+function acJailFree(){try{if(typeof ajtOn!=='function'||!ajtOn())return 0;const S=ajtS();if(!S||!S.on)return 0;return Math.max(0,3-S.pr.length)}catch(e){return 0}}
+function acBind(a){a.spy=null;a.mode='stand';a.kind='cap';a.acCap=1;a.tagL=`🔗 ${a.nm} — 생포`;try{a.h.setPose('kneel')}catch(e){try{a.h.setPose('crouch')}catch(x){}}try{lifeFace(a.h,FP3.pos.x,FP3.pos.z)}catch(e){}if(typeof PED!=='undefined')PED.list=PED.list.filter(x=>x!==a)}
+function acRemove(a){try{a.h.root.visible=false;a.kind='gone'}catch(e){}if(typeof PED!=='undefined')PED.list=PED.list.filter(x=>x!==a);OUT.npcs=OUT.npcs.filter(x=>x!==a);if(typeof SPY!=='undefined'&&SPY.cur===a)SPY.cur=null}
+function acCapCard(){const C=AC.cap;if(!C||!OUT.on)return;const a=C.a;const free=acJailFree();const ch=[];
+  if(free)ch.push({t:'🔒 새벽별 아지트 지하 구치소로 데려간다',ok:true,s:`팀원 한 명이 호송 — 심문한 뒤 헌병에 넘긴다(빈칸 ${free}/3)`,go:()=>{let add=null;try{add=ajtCapture({spyCap:1})}catch(e){acErr(e)}if(add&&add.jail){AC.n.jail++;acEscort(a);return `${a.nm} — 두 손을 뒤로 묶고 머리에 천을 씌웠다. 팀원이 뒷골목으로 아지트까지 호송한다. 구치소에서 심문을 기다린다.`}acArmy(a);return '구치소가 가득 찼다 — 계엄군을 불러 넘긴다.'}});
+  ch.push({t:'🪖 가까운 계엄군을 부른다 — 달려와 인계받는다',ok:true,s:'무전 · 1분 안에 도착',go:()=>{acArmy(a);return '무전으로 위치를 불렀다. 계엄군 둘이 뛰어온다 — 그동안 묶인 채 꿇어앉아 있다.'}});
+  const why=free?'':((typeof ajtOn==='function'&&ajtOn()&&ajtS()&&ajtS().on)?' 아지트 구치소는 가득 찼다.':' 아직 아지트가 없다 — 계엄군에 넘긴다.');
+  try{outEncShow({id:'spy-cap',cat:'검문 · 생포',art:'shield',tone:'amber',title:`${a.nm} — 생포했다`,text:`무전기·위조 신분증·좌표 메모. 두 손을 뒤로 묶고 무릎을 꿇렸다.${why} 어디로 넘길까?`,choices:ch})}catch(e){acErr(e);acArmy(a)}}
+/* 아지트로 호송: 묶인 채 일어나 뒷골목 쪽으로 걸어가 사라진다 */
+function acEscort(a){try{a.h.setPose('walk')}catch(e){}const p=FP3.pos;const q=a.h.root.position;let dx=q.x-p.x,dz=q.z-p.z;const d=Math.hypot(dx,dz)||1;AC.esc={a,t:0,dx:dx/d,dz:dz/d}}
+/* 계엄군 둘이 달려와 데려간다 */
+function acArmy(a){AC.n.army++;const q=a.h.root.position;let best=null;for(let k=0;k<16;k++){const ang=k/16*6.283;const x=q.x+Math.cos(ang)*34,z=q.z+Math.sin(ang)*34;let ok=true;try{ok=owcFree(x,z,.6)}catch(e){}if(ok){best={x,z};break}}if(!best)best={x:q.x+30,z:q.z};
+  const S=[];for(let i=0;i<2;i++){let h=null;try{h=civHuman(70+i,'run','rok')}catch(e){h=null}if(!h)continue;h.root.position.set(best.x+i*1.1,0,best.z+i*.8);OUT.scene.add(h.root);try{if(typeof mlBand==='function')mlBand(h)}catch(e){}try{if(typeof mlGun==='function')mlGun(h)}catch(e){}S.push({h,i})}
+  AC.army={a,S,ph:'run',t:0,from:best};if(!S.length){acRemove(a);AC.army=null}try{outNote('<b>🪖 계엄군 출동</b><div>두 명이 뛰어온다 — 붙잡은 사람을 넘긴다.</div>',2600)}catch(e){}}
+function acStep(dt){
+  const E=AC.esc;if(E){E.t+=dt;const P=E.a.h.root.position;P.x+=E.dx*1.3*dt;P.z+=E.dz*1.3*dt;E.a.h.root.rotation.y=Math.atan2(E.dx,E.dz);try{E.a.h.update(dt)}catch(e){}if(E.t>4.5){acRemove(E.a);AC.esc=null}}
+  const A=AC.army;if(!A)return;A.t+=dt;const q=A.a.h.root.position;
+  if(A.ph==='run'){let near=0;for(const s of A.S){const P=s.h.root.position;const tx=q.x+(s.i?1.0:-1.0),tz=q.z+.6;const dx=tx-P.x,dz=tz-P.z;const d=Math.hypot(dx,dz);if(d>.25){const v=Math.min(d,4.6*dt);P.x+=dx/d*v;P.z+=dz/d*v;s.h.root.rotation.y=Math.atan2(dx,dz);if(s.h.pose!=='run')try{s.h.setPose('run')}catch(e){}}else{near++;if(s.h.pose!=='aim'&&s.i===0)try{s.h.setPose('aim')}catch(e){}else if(s.i===1&&s.h.pose!=='idle')try{s.h.setPose('idle')}catch(e){}s.h.root.rotation.y=Math.atan2(q.x-P.x,q.z-P.z)}try{s.h.update(dt)}catch(e){}}
+    if(near===A.S.length||A.t>14){A.ph='take';A.t=0;try{A.a.h.setPose('up')}catch(e){}try{bubSay(A.S[0].h,'인계받겠습니다. 수고하셨습니다!',2.4,'ok')}catch(e){}}}
+  else if(A.ph==='take'){for(const s of A.S)try{s.h.update(dt)}catch(e){}try{A.a.h.update(dt)}catch(e){}if(A.t>2.4){A.ph='leave';A.t=0;try{A.a.h.setPose('walk')}catch(e){}for(const s of A.S)try{s.h.setPose('walk')}catch(e){}}}
+  else if(A.ph==='leave'){const dx=A.from.x-q.x,dz=A.from.z-q.z;const d=Math.hypot(dx,dz)||1;const v=1.5*dt;const ry=Math.atan2(dx,dz);q.x+=dx/d*v;q.z+=dz/d*v;A.a.h.root.rotation.y=ry;try{A.a.h.update(dt)}catch(e){}A.S.forEach(s=>{const P=s.h.root.position;P.x=q.x+(s.i?.9:-.9);P.z=q.z-.5;s.h.root.rotation.y=ry;try{s.h.update(dt)}catch(e){}});
+    if(A.t>7){acRemove(A.a);A.S.forEach(s=>{try{s.h.root.removeFromParent();if(typeof RBX!=='undefined')RBX.live.delete(s.h)}catch(e){}});AC.army=null}}}
+(function(){const b=window.spyCaught;if(typeof b!=='function')return;window.spyCaught=function(a,how){if(how==='army'||!a||!a.h||!OUT.on)return b.apply(this,arguments);
+  try{G.flags.spyCap=(G.flags.spyCap||0)+1;FX=[];trust(4);mor(2);OUT.fx.push(...FX);try{outStat()}catch(e){}if(typeof SPY!=='undefined'){SPY.chase=null;if(SPY.cur===a)SPY.cur=null}acBind(a);AC.cap={a,how};AC.n.cap++;
+    if(OUT.enc){const prev=OUT.enc.after;OUT.enc.after=()=>{try{if(typeof prev==='function')prev()}catch(e){}acCapCard()}}else setTimeout(()=>{try{if(!OUT.enc)acCapCard();else{const p2=OUT.enc.after;OUT.enc.after=()=>{try{if(typeof p2==='function')p2()}catch(e){}acCapCard()}}}catch(e){acErr(e)}},900)}catch(e){acErr(e);return b.apply(this,arguments)}}})();
+/* 카드·알림 글: '검문소 국군에 넘겼다'는 이제 고른 뒤의 일 */
+(function(){const b=window.spyCard;if(typeof b!=='function')return;window.spyCard=function(a){const r=b.apply(this,arguments);try{const E=OUT.enc;if(E&&E.id==='spy-check')for(const c of E.choices||[]){const g=c.go;if(typeof g!=='function'||g.__ac)continue;c.go=function(){const t=g.apply(this,arguments);return typeof t==='string'?t.replace(/검문소 국군에 넘겼다\.?/g,'붙잡았다 — 어디로 넘길지 정한다.'):t};c.go.__ac=1}}catch(e){acErr(e)}return r}})();
+(function(){const b=window.spyChase;if(typeof b!=='function')return;window.spyChase=function(){const on=window.outNote;window.outNote=function(h,ms){return on.call(this,String(h).replace(/ ?검문소 국군에 넘겼다\.?/g,''),ms)};try{return b.apply(this,arguments)}finally{window.outNote=on}}})();
+/* 매 걸음 */
+(function(){const b=window.tjStep;if(typeof b!=='function')return;window.tjStep=function(dt){const r=b.apply(this,arguments);try{AC.t=(AC.t||0)-(dt||0);if(AC.t<=0){AC.t=.25;acArmBtn()}if(AC.esc||AC.army)acStep(dt||0)}catch(e){acErr(e)}return r}})();
+(function(){const b=window.anxStep;if(typeof b!=='function')return;window.anxStep=function(dt){const r=b.apply(this,arguments);try{AC.t=(AC.t||0)-(dt||0);if(AC.t<=0){AC.t=.25;acArmBtn()}}catch(e){acErr(e)}return r}})();
+(function(){const b=window.tjPopulate;if(typeof b!=='function')return;window.tjPopulate=function(){AC.esc=null;AC.army=null;AC.cap=null;return b.apply(this,arguments)}})();
+if(typeof HELP84!=='undefined'){HELP84.push(['🔫 무장 단추 · 검문 생포(v19.0)',"총을 넣으면(넣기) 오른쪽 주먹 위에 '🔫 무장'이 생긴다 — 누르면 직전에 든 총을 바로 든다. 검문에서 기자가 아니라 간첩으로 드러나 붙잡으면, 두 손을 뒤로 묶고 무릎을 꿇린 뒤 고른다: 🔒 새벽별 아지트 지하 구치소로(팀원이 호송 · 3칸) 또는 🪖 계엄군을 불러 인계(둘이 뛰어와 데려간다). 아지트가 없거나 구치소가 가득 차면 인계만."])}
+
+/* v19.0 Ⅱ 아파트 전투 다듬기 (사용자 제보 2026-11-24 00:36 "특히 아파트 CQB 플레이가 너무 부자연스럽고 적 침투 시 자동사격도 안되고..창밖에서 경계 시에도 평상시 모드처럼 버튼들을 구성바랍니다")
+   ① 자동사격이 몸을 겨눠도 안 나가던 것(재현함): 176의 겨눔점은 '서 있으면 1.25m · aim/kneel 상태면 0.85m' 한 점이었다 — 돌입조(101)는 서서 겨눌 때도 상태 이름이 'aim'이라
+      겨눔점이 허리(0.85m)로 내려가, 가슴을 겨누면 5m에서 4.6° 벗어나 '몸 위'로 치지 않았다 → 겨눔점을 몸통 세로 막대(발목 0.3m ~ 머리 1.72m · 웅크림 1.12m)에서
+      조준선에 가장 가까운 곳으로 · 가리는 것 확인도 그 점으로(가구 위로 보이는 머리·어깨만 보여도 쏜다) · 위치는 세계 좌표(묶음 안 인물도 맞게)
+   ② 창가 저지(154): 조준선 둘레 각도 허용(1.3°)과 저절로 끌려가는 조준을 길거리와 같게 — 손으로 몸 위에 대면 쏜다(몸 폭 ±0.4m) · 끌림은 설정 '조준 보정'을 켰을 때만
+   ③ 버튼을 평상시처럼: 창가·계단·실내 모두 길거리 총 화면 배치(버튼 배치 편집 77 그대로) — 따로 세운 오른쪽 기둥(숙이기·유탄·조준경)을 없애고
+      ⤒ 점프 자리 → ⤓ 숙이기 · 넣기는 넣기 그대로(창가 자리에서 물러나기) · 💣 유탄만 오른쪽 위에 하나 · 창가에서도 조준경(조준) 단추는 길거리 자리 그대로(조준경이 없으면 처음 한 번 창가 지급 조준경을 단다)
+   ④ 실내 근접전(101 돌입조)이 부자연스럽던 것: 실내에서 늘 '뛰기' 2.4m/s로 달려와 두 명이 한 자리에 겹쳐 섰다(캡처) →
+      9m 안에서는 총을 든 채 걷기 1.5m/s · 앞사람 0.8m 안이면 멈춰 기다린다(문 앞에 줄 서기) · 겨눌 때 3.5m 밖이면 45%는 무릎 쏴
+   · 자동 점검(webdriver)은 176·126 규칙(__afTest)을 따른다 */
+const AF2={err:0,n:{pick:0,win:0,wait:0,slow:0,kneel:0,map:0}};
+function af2Err(e){if(AF2.err<5){AF2.err++;try{console.error('[187]',e)}catch(x){}}}
+const _a2P=new T.Vector3(),_a2Q=new T.Vector3(),_a2V=new T.Vector3();
+/* 몸통 세로 막대 위에서 조준선에 가장 가까운 점 */
+function af2Seg(t){const h=t.h;const a=t.a||{};const p=h.pose||'';if(p==='dead'||a.lying)return null;const low=p==='crouch'||p==='kneel'||a.st==='kneel'||a.st==='crouch'||a.kn===1;return [.3,low?1.12:1.72]}
+function af2Near(P,seg,o,d,out){const dx=P.x-o.x,dz=P.z-o.z;const hh=d.x*d.x+d.z*d.z;const s=hh>1e-6?(dx*d.x+dz*d.z)/hh:0;const y=clamp(o.y+d.y*Math.max(0,s),P.y+seg[0],P.y+seg[1]);return out.set(P.x,y,P.z)}
+window.faPick=function(o,d,maxD,tol,pull){const seen=new Set();let best=null;try{gunHitList()}catch(e){}
+  GUN.hitMap.forEach(t=>{if(!t||!t.h||seen.has(t.h))return;seen.add(t.h);if(!faOk(t))return;const seg=af2Seg(t);if(!seg)return;t.h.root.getWorldPosition(_a2P);af2Near(_a2P,seg,o,d,_a2Q);_a2V.copy(_a2Q).sub(o);const L=_a2V.length();if(L<1.2||L>maxD)return;_a2V.divideScalar(L);
+    const ang=Math.acos(clamp(_a2V.dot(d),-1,1));const tl=Math.max(.012,Math.atan(.38/L));const cone=pull?Math.max(tol,Math.atan(.55/L))*2.2:tl;if(ang>cone)return;if(best&&ang>=best.ang)return;best={t,v:_a2V.clone(),ang,L,tl}});
+  if(!best)return null;try{const c=gunCast(o.clone(),best.v.clone(),best.L+1.5);if(!c||!c.tgt||c.tgt.h!==best.t.h)return null}catch(e){return null}AF2.n.pick++;return best};
+/* ② 창가 자동사격 — 길거리와 같은 규칙 */
+if(typeof wfAfStep==='function')window.wfAfStep=function(dt){const W=gunW();if(!afOn()||!W||!afWeaponOk(W)||!GUN.on||!GUN.fp||afBusy()||GUN.reload>0){AF.on=null;AF.t=0;return}
+  const A=awAim();const ads=GUN.adsK>.5;let best=null;
+  for(const a of AW.en){if(!a||a.dead||!a.h||a.h.dead||a.gone)continue;const t={a,h:a.h,kind:a.kind||'en'};const seg=af2Seg(t)||[.3,1.72];const P=a.h.root.position;af2Near(P,seg,A.o,A.d,_a2Q);_a2V.copy(_a2Q).sub(A.o);const L=_a2V.length();if(L<3||L>320)continue;_a2V.divideScalar(L);
+    const ang=Math.acos(clamp(_a2V.dot(A.d),-1,1));const tl=Math.max(ads?.005:.009,Math.atan(.4/L));const pull=faAimOn();const cone=pull?tl*2.6:tl;if(ang>cone)continue;if(best&&ang>=best.ang)continue;if(!a.wfSn&&!awLosWin(a))continue;best={a,v:_a2V.clone(),ang,L,tl,pull}}
+  if(best&&best.pull&&best.ang>.003){const dL=APTW.on?best.v.clone().applyQuaternion(AW.qi):best.v;const ty=Math.atan2(-dL.x,-dL.z),tp=Math.asin(clamp(dL.y,-1,1));let dy=ty-FP3.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));const k=Math.min(1,dt*(ads?2.4:1.5))*(GUN.fire?.45:.6);FP3.yaw+=dy*k;FP3.pitch+=(tp-FP3.pitch)*k;try{WF.n.assist++}catch(e){}}
+  if(GUN.fire){AF.on=null;AF.t=0;return}const key=best&&best.ang<best.tl?best.a.h:null;if(key!==AF.on){AF.on=key;AF.t=0}else if(key)AF.t+=dt;if(!key||AF.t<.15)return;
+  const rate=W.auto?W.rate:Math.max(W.rate,.3);if(GUN.mag>0&&GUN.t-GUN.lastShot>=rate){if(gunShoot()){AF.shots++;AF2.n.win++;try{WF.n.af++}catch(e){}try{afFlash()}catch(e){}}}else if(GUN.mag<=0&&gunAmmoOf(W.am)>0&&GUN.t-GUN.lastShot>.3){try{gunReload()}catch(e){}}};
+/* ③ 버튼을 평상시처럼 */
+function af2Map(){const el=SV3.el;if(!el)return;const on=typeof AW!=='undefined'&&AW.on&&AW.ph!=='end'&&GUN.on;if(el.classList.contains('af2-aw')!==on)el.classList.toggle('af2-aw',on);const U=document.getElementById('gunUI');if(!U)return;
+  const jp=U.querySelector('.owc-jp'),hs=U.querySelector('[data-gun=holster]');
+  const set=(b,k,html,cls,hide)=>{if(!b)return;if(on){if(b.dataset.af2!==k){b.dataset.af2=k;b.dataset.af2o=b.innerHTML;AF2.n.map++}if(b._af2h!==html){b._af2h=html;b.innerHTML=html}b.classList.toggle('on',!!cls);b.style.visibility=hide?'hidden':''}else if(b.dataset.af2){b.innerHTML=b.dataset.af2o||b.innerHTML;delete b.dataset.af2;delete b.dataset.af2o;b._af2h=null;b.classList.remove('on');b.style.visibility=''}};
+  set(jp,'cr','<b>⤓</b><span>숙이기</span>',on&&AW.cr,false)}
+function af2Tap(e){const b=e.target.closest&&e.target.closest('[data-af2]');if(!b||!SV3.el||!SV3.el.classList.contains('af2-aw'))return false;e.preventDefault();e.stopPropagation();if(e.type!=='click')return true;const k=b.dataset.af2;const t=document.querySelector('[data-g3=awcr]');if(t)t.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));setTimeout(()=>{try{af2Map()}catch(x){}},30);return true}
+window.addEventListener('pointerdown',af2Tap,true);window.addEventListener('click',af2Tap,true);
+/* 창가: 조준(조준경) 단추를 누를 때 조준경 달린 총이 아니면 창가 지급 조준경부터 */
+window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#gunAds');if(!b||typeof AW==='undefined'||!AW.on||AW.ph!=='out')return;try{if(typeof gunScoped==='function'&&!gunScoped()&&typeof kbSniper==='function'){e.preventDefault();e.stopPropagation();kbSniper();setTimeout(()=>{try{af2Map()}catch(x){}},30)}}catch(x){af2Err(x)}},true);
+/* ④ 실내 근접전: 걷기 · 줄 서기 · 무릎 쏴 */
+(function(){const b=window.awCqStep;if(typeof b!=='function')return;window.awCqStep=function(a,dt){const P=a&&a.h&&a.h.root.position;if(!P||a.dead||a.h.dead)return b.apply(this,arguments);const x0=P.x,z0=P.z,st0=a.st;const r=b.apply(this,arguments);
+  try{if(a.dead||a.h.dead)return r;const mx=P.x-x0,mz=P.z-z0;const m=Math.hypot(mx,mz);const tp=FP3.pos;const d=Math.hypot(tp.x-P.x,tp.z-P.z);
+    if(m>1e-4){/* 앞사람 0.8m 안이면 기다린다 */for(const o of AW.cq){if(o===a||o.dead||o.h.dead)continue;const q=o.h.root.position;const ox=q.x-P.x,oz=q.z-P.z;if(Math.hypot(ox,oz)<.8&&(ox*mx+oz*mz)>0){P.x=x0;P.z=z0;AF2.n.wait++;if(a.h.pose==='run')try{a.h.setPose('idle')}catch(e){}return r}}
+      /* 9m 안: 총을 든 채 걷기 1.5m/s */if(d<9&&a.st!=='enter'&&m>1.5*dt){const k=1.5*dt/m;P.x=x0+mx*k;P.z=z0+mz*k;AF2.n.slow++;if(a.h.pose==='run')try{a.h.setPose('walk')}catch(e){}}}
+    if(a.st==='aim'&&st0!=='aim'){a.kn=(d>3.5&&Math.random()<.45)?1:0;if(a.kn){AF2.n.kneel++;try{a.h.setPose('kneel')}catch(e){}}}
+    else if(a.kn&&(a.st==='aim'||a.st==='fire')){if(a.h.pose!=='kneel')try{a.h.setPose('kneel')}catch(e){}}else if(a.kn&&a.st==='hunt')a.kn=0}catch(e){af2Err(e)}return r}})();
+(function(){const b=window.awUI;if(typeof b!=='function')return;window.awUI=function(){const r=b.apply(this,arguments);try{af2Map()}catch(e){af2Err(e)}return r}})();
+(function(){const b=window.gunUI;if(typeof b!=='function')return;window.gunUI=function(){const r=b.apply(this,arguments);try{af2Map()}catch(e){af2Err(e)}return r}})();
+if(typeof HELP84!=='undefined')HELP84.push(['🏢 아파트 전투 다듬기(v19.0)',"창가 저지 · 계단 · 실내 근접전 모두 버튼이 길거리 총 화면과 같은 자리다(버튼 배치 편집 그대로) — ⤒ 점프 자리가 ⤓ 숙이기로 바뀌고, 넣기는 그대로(창가 자리에서 물러난다), 💣 유탄만 오른쪽 위에 하나 남는다. 창가에서도 조준경(조준) 단추는 길거리 자리. 자동사격은 조준점을 적의 몸(발목~머리) 어디에 대도 쏜다 — 가구 위로 머리·어깨만 보여도. 시점이 끌려가는 조준 보정은 설정에서 켰을 때만. 실내로 들어온 돌입조는 9m 안에서 총을 든 채 걸어 들어오고, 앞사람이 막히면 문 앞에 줄을 서며, 일부는 무릎 쏴로 겨눈다."]);
 
 /* ===================== 08 · 시작 · 설치판(PWA) ===================== */
 (function boot(){
